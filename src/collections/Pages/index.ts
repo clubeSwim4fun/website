@@ -114,6 +114,14 @@ export const Pages: CollectionConfig<'pages'> = {
       ],
     },
     {
+      name: 'parentPage',
+      type: 'relationship',
+      relationTo: 'pages',
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
       name: 'publishedAt',
       type: 'date',
       admin: {

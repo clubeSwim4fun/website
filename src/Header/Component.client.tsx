@@ -8,6 +8,7 @@ import type { Header } from '@/payload-types'
 
 import { Logo } from '@/components/Logo/Logo'
 import { HeaderNav } from './Nav'
+import MobileHeaderNav from './MobileNav'
 
 interface HeaderClientProps {
   data: Header
@@ -17,7 +18,26 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
   /* Storing the value in a useState to avoid hydration errors */
   const [theme, setTheme] = useState<string | null>(null)
   const { headerTheme, setHeaderTheme } = useHeaderTheme()
+  const [showMenu, setShowMenu] = useState(true)
+  const [lastScrollY, setLastScrollY] = useState(0)
   const pathname = usePathname()
+
+  const handleScroll = () => {
+    if (window.scrollY < 100) {
+      return
+    }
+    setShowMenu(window.scrollY < lastScrollY)
+
+    setLastScrollY(window.scrollY)
+  }
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll)
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [lastScrollY])
 
   useEffect(() => {
     setHeaderTheme(null)
@@ -30,11 +50,17 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
   }, [headerTheme])
 
   return (
-    <header className="container relative z-20   " {...(theme ? { 'data-theme': theme } : {})}>
-      <div className="py-8 flex justify-between">
-        <Link href="/">
-          <Logo loading="eager" priority="high" className="invert dark:invert-0" />
+    <header
+      className={`${showMenu ? 'transform translate-y-0' : 'transform -translate-y-full'}
+         fixed duration-500 z-20 w-full bg-white
+        `}
+      {...(theme ? { 'data-theme': theme } : {})}
+    >
+      <div className="container py-8 flex flex-col md:flex-row justify-between relative">
+        <Link href="/" className="w-fit">
+          <Logo media={data.logo} />
         </Link>
+        <MobileHeaderNav data={data} />
         <HeaderNav data={data} />
       </div>
     </header>

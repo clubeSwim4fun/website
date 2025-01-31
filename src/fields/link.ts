@@ -89,19 +89,20 @@ export const link: LinkType = ({ appearances, disableLabel = false, overrides = 
     },
   ]
 
-  if (!disableLabel) {
-    linkTypes.map((linkType) => ({
-      ...linkType,
-      admin: {
-        ...linkType.admin,
-        width: '50%',
-      },
-    }))
-
-    linkResult.fields.push({
+  const childFields: Field[] = [
+    {
       type: 'row',
       fields: [
-        ...linkTypes,
+        {
+          name: 'reference',
+          type: 'relationship',
+          label: 'Page to related to aaaaaa',
+          admin: {
+            width: '50%',
+          },
+          relationTo: ['pages'],
+          required: true,
+        },
         {
           name: 'label',
           type: 'text',
@@ -112,9 +113,60 @@ export const link: LinkType = ({ appearances, disableLabel = false, overrides = 
           required: true,
         },
       ],
-    })
+    },
+  ]
+
+  if (!disableLabel) {
+    linkTypes.map((linkType) => ({
+      ...linkType,
+      admin: {
+        ...linkType.admin,
+        width: '50%',
+      },
+    }))
+
+    linkResult.fields.push(
+      {
+        type: 'row',
+        fields: [
+          ...linkTypes,
+          {
+            name: 'label',
+            type: 'text',
+            admin: {
+              width: '50%',
+            },
+            label: 'Label',
+            required: true,
+          },
+        ],
+      },
+      {
+        name: 'hasChildren',
+        type: 'checkbox',
+        admin: {
+          width: '100%',
+        },
+        defaultValue: false,
+        label: 'Has Children?',
+      },
+      {
+        name: 'childrenPages',
+        type: 'array',
+        admin: {
+          initCollapsed: true,
+          components: {
+            RowLabel: '@/Header/RowLabel#RowLabel',
+          },
+          condition: (_, sibilingData) => sibilingData?.hasChildren,
+          width: '100%',
+        },
+        maxRows: 6,
+        fields: childFields,
+      },
+    )
   } else {
-    linkResult.fields = [...linkResult.fields, ...linkTypes]
+    linkResult.fields = [...linkResult.fields, ...linkTypes, ...childFields]
   }
 
   if (appearances !== false) {

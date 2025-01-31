@@ -47,6 +47,8 @@
     --success: 196 52% 74%;
     --warning: 34 89% 85%;
     --error: 10 100% 86%;
+
+    --blue-swim: 193, 51%, 46%;
   }
 
   [data-theme='dark'] {
@@ -81,6 +83,8 @@
     --success: 196 100% 14%;
     --warning: 34 51% 25%;
     --error: 10 39% 43%;
+
+    --blue-swim: 193, 51%, 46%;
   }
 }
 
@@ -100,4 +104,8 @@ html {
 html[data-theme='dark'],
 html[data-theme='light'] {
   opacity: initial;
+}
+
+.no-scroll {
+  overflow: hidden;
 }

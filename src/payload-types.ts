@@ -125,6 +125,17 @@ export interface Page {
                 } | null);
             url?: string | null;
             label: string;
+            hasChildren?: boolean | null;
+            childrenPages?:
+              | {
+                  reference: {
+                    relationTo: 'pages';
+                    value: string | Page;
+                  };
+                  label: string;
+                  id?: string | null;
+                }[]
+              | null;
             /**
              * Choose how the link should be rendered.
              */
@@ -144,6 +155,7 @@ export interface Page {
     image?: (string | null) | Media;
     description?: string | null;
   };
+  parentPage?: (string | null) | Page;
   publishedAt?: string | null;
   slug?: string | null;
   slugLock?: boolean | null;
@@ -365,6 +377,17 @@ export interface CallToActionBlock {
               } | null);
           url?: string | null;
           label: string;
+          hasChildren?: boolean | null;
+          childrenPages?:
+            | {
+                reference: {
+                  relationTo: 'pages';
+                  value: string | Page;
+                };
+                label: string;
+                id?: string | null;
+              }[]
+            | null;
           /**
            * Choose how the link should be rendered.
            */
@@ -415,6 +438,17 @@ export interface ContentBlock {
               } | null);
           url?: string | null;
           label: string;
+          hasChildren?: boolean | null;
+          childrenPages?:
+            | {
+                reference: {
+                  relationTo: 'pages';
+                  value: string | Page;
+                };
+                label: string;
+                id?: string | null;
+              }[]
+            | null;
           /**
            * Choose how the link should be rendered.
            */
@@ -946,6 +980,14 @@ export interface PagesSelect<T extends boolean = true> {
                     reference?: T;
                     url?: T;
                     label?: T;
+                    hasChildren?: T;
+                    childrenPages?:
+                      | T
+                      | {
+                          reference?: T;
+                          label?: T;
+                          id?: T;
+                        };
                     appearance?: T;
                   };
               id?: T;
@@ -968,6 +1010,7 @@ export interface PagesSelect<T extends boolean = true> {
         image?: T;
         description?: T;
       };
+  parentPage?: T;
   publishedAt?: T;
   slug?: T;
   slugLock?: T;
@@ -992,6 +1035,14 @@ export interface CallToActionBlockSelect<T extends boolean = true> {
               reference?: T;
               url?: T;
               label?: T;
+              hasChildren?: T;
+              childrenPages?:
+                | T
+                | {
+                    reference?: T;
+                    label?: T;
+                    id?: T;
+                  };
               appearance?: T;
             };
         id?: T;
@@ -1018,6 +1069,14 @@ export interface ContentBlockSelect<T extends boolean = true> {
               reference?: T;
               url?: T;
               label?: T;
+              hasChildren?: T;
+              childrenPages?:
+                | T
+                | {
+                    reference?: T;
+                    label?: T;
+                    id?: T;
+                  };
               appearance?: T;
             };
         id?: T;
@@ -1478,6 +1537,7 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
  */
 export interface Header {
   id: string;
+  logo?: (string | null) | Media;
   navItems?:
     | {
         link: {
@@ -1494,6 +1554,17 @@ export interface Header {
               } | null);
           url?: string | null;
           label: string;
+          hasChildren?: boolean | null;
+          childrenPages?:
+            | {
+                reference: {
+                  relationTo: 'pages';
+                  value: string | Page;
+                };
+                label: string;
+                id?: string | null;
+              }[]
+            | null;
         };
         id?: string | null;
       }[]
@@ -1523,6 +1594,17 @@ export interface Footer {
               } | null);
           url?: string | null;
           label: string;
+          hasChildren?: boolean | null;
+          childrenPages?:
+            | {
+                reference: {
+                  relationTo: 'pages';
+                  value: string | Page;
+                };
+                label: string;
+                id?: string | null;
+              }[]
+            | null;
         };
         id?: string | null;
       }[]
@@ -1535,6 +1617,7 @@ export interface Footer {
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
+  logo?: T;
   navItems?:
     | T
     | {
@@ -1546,6 +1629,14 @@ export interface HeaderSelect<T extends boolean = true> {
               reference?: T;
               url?: T;
               label?: T;
+              hasChildren?: T;
+              childrenPages?:
+                | T
+                | {
+                    reference?: T;
+                    label?: T;
+                    id?: T;
+                  };
             };
         id?: T;
       };
@@ -1569,6 +1660,14 @@ export interface FooterSelect<T extends boolean = true> {
               reference?: T;
               url?: T;
               label?: T;
+              hasChildren?: T;
+              childrenPages?:
+                | T
+                | {
+                    reference?: T;
+                    label?: T;
+                    id?: T;
+                  };
             };
         id?: T;
       };
@@ -1622,17 +1721,6 @@ export interface BannerBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'banner';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "CodeBlock".
- */
-export interface CodeBlock {
-  language?: ('typescript' | 'javascript' | 'css') | null;
-  code: string;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'code';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

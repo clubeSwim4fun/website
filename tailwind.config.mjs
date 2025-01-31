@@ -92,6 +92,7 @@ const config = {
         success: 'hsl(var(--success))',
         error: 'hsl(var(--error))',
         warning: 'hsl(var(--warning))',
+        blueSwim: 'hsl(var(--blue-swim))',
       },
       fontFamily: {
         mono: ['var(--font-geist-mono)'],
