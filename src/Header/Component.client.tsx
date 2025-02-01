@@ -52,7 +52,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
   return (
     <header
       className={`${showMenu ? 'transform translate-y-0' : 'transform -translate-y-full'}
-         fixed duration-500 z-20 w-full bg-white
+         fixed duration-500 z-20 w-full bg-white dark:bg-blue-950
         `}
       {...(theme ? { 'data-theme': theme } : {})}
     >

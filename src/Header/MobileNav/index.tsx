@@ -75,16 +75,16 @@ const MobileHeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
           {...link}
           appearance="link"
           onClick={() => setIsOpen(false)}
-          className={`pl-2 flex text-black justify-between items-center py-4 border-b border-gray-300 rounded-none ${getLinkHref(link) === pathname && 'bg-blueSwim text-white'}`}
+          className={`pl-2 flex text-black dark:text-white justify-between items-center py-4 border-b border-gray-300 rounded-none ${getLinkHref(link) === pathname && 'bg-blueSwim text-white'}`}
         >
           <ChevronDown
             onClick={(e) => handleMenuItemClick(e, id)}
             height={20}
             width={20}
-            className={`group-[.sub-open]:rotate-180 text-black ${getLinkHref(link) === pathname && 'text-white'} mr-2`}
+            className={`group-[.sub-open]:rotate-180 text-black dark:text-white ${getLinkHref(link) === pathname && 'text-white'} mr-2`}
           />
         </CMSLink>
-        <div className="max-h-0 group-[.sub-open]:max-h-full overflow-hidden flex flex-col transition-[max-h] duration-500 bg-white justify-center min-w-full">
+        <div className="max-h-0 group-[.sub-open]:max-h-full overflow-hidden flex flex-col transition-[max-h] duration-500 bg-white dark:bg-blue-950 justify-center min-w-full">
           {link.childrenPages?.map((child, i) => (
             <CMSLink
               key={i}
@@ -92,7 +92,7 @@ const MobileHeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
               {...child}
               appearance="link"
               onClick={() => setIsOpen(false)}
-              className={`text-black rounded-none pl-6 pr-6 py-4 border-b border-gray-300 ${getLinkHref({ type: 'reference', ...child }) === pathname && 'bg-blueSwim text-white'}`}
+              className={`text-black dark:text-white rounded-none pl-6 pr-6 py-4 border-b border-gray-300  ${getLinkHref({ type: 'reference', ...child }) === pathname && 'bg-blueSwim text-white'}`}
             />
           ))}
         </div>
@@ -103,7 +103,7 @@ const MobileHeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
   return (
     <div className="flex md:hidden group relative">
       <Button
-        className={`w-6 h-6 relative group bg-white hover:bg-white ${isOpen && 'open'} absolute -top-9 right-2`}
+        className={`w-6 h-6 relative group bg-transparent hover:bg-transparent ${isOpen && 'open'} absolute -top-9 right-2`}
         onClick={handleMenuClick}
         title="Menu"
       >
@@ -114,7 +114,7 @@ const MobileHeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
       </Button>
       <nav
         aria-label="Mobile navigation"
-        className={`${isOpen ? 'max-h-[100vh]' : 'max-h-0'} overflow-hidden h-[85vh] w-full transition-all duration-300 flex flex-col ${isOpen && 'pt-6'}`}
+        className={`${isOpen ? 'max-h-[100vh]' : 'max-h-0'} overflow-hidden h-[90vh] w-full transition-all duration-300 flex flex-col ${isOpen && 'pt-6'}`}
       >
         {navItems.map(({ link }, i) => {
           return (
@@ -127,7 +127,7 @@ const MobileHeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
                   {...link}
                   appearance="link"
                   onClick={() => setIsOpen(false)}
-                  className={`pl-2 text-black py-4 border-b border-gray-300 rounded-none ${getLinkHref(link) === pathname && 'bg-blueSwim text-white'}`}
+                  className={`pl-2 text-black dark:text-white py-4 border-b border-gray-300 rounded-none ${getLinkHref(link) === pathname && 'bg-blueSwim text-white'}`}
                 />
               )}
             </Fragment>
