@@ -6,15 +6,16 @@ import { isAdmin } from '@/access/isAdmin'
 import { isAdminOrEditor } from '@/access/isAdminOrEditor'
 
 import { User } from '@/payload-types'
+import { anyone } from '@/access/anyone'
 
 export const Users: CollectionConfig = {
   slug: 'users',
   access: {
     admin: isAdminOrEditor,
-    create: isAdmin,
+    create: anyone,
     delete: isAdmin,
     read: authenticated, // Check this later, probably needs to change as can be accessed via Postman for example
-    update: isAdmin,
+    update: authenticated,
   },
   admin: {
     defaultColumns: ['name', 'email', 'role', 'groups', 'createdAt', 'updatedAt'],

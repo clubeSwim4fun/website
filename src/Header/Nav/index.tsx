@@ -2,13 +2,15 @@
 
 import React, { Fragment } from 'react'
 
-import type { Header as HeaderType } from '@/payload-types'
+import type { Header as HeaderType, User } from '@/payload-types'
 
 import { CMSLink } from '@/components/Link'
 import Link from 'next/link'
 import { ChevronDown, SearchIcon } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import LogoutButton from '../Logout'
 
-export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
+export const HeaderNav: React.FC<{ data: HeaderType; user: User }> = ({ data, user }) => {
   const navItems = data?.navItems || []
 
   return (
@@ -48,6 +50,18 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
           </Fragment>
         )
       })}
+      {!user && (
+        <Button asChild variant={'link'} size={'clear'}>
+          {/* TODO - Add label  */}
+          <Link
+            href={'/sign-in'}
+            className="text-black dark:text-white group flex flex-col items-center"
+          >
+            Login
+          </Link>
+        </Button>
+      )}
+      {user && <LogoutButton />}
       <Link href="/search">
         <span className="sr-only">Search</span>
         <SearchIcon className="w-5 text-primary stroke-black dark:stroke-white" />

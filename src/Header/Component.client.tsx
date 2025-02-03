@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
-import type { Header } from '@/payload-types'
+import type { Header, User } from '@/payload-types'
 
 import { Logo } from '@/components/Logo/Logo'
 import { HeaderNav } from './Nav'
@@ -12,9 +12,10 @@ import MobileHeaderNav from './MobileNav'
 
 interface HeaderClientProps {
   data: Header
+  user: User
 }
 
-export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
+export const HeaderClient: React.FC<HeaderClientProps> = ({ data, user }) => {
   /* Storing the value in a useState to avoid hydration errors */
   const [theme, setTheme] = useState<string | null>(null)
   const { headerTheme, setHeaderTheme } = useHeaderTheme()
@@ -60,8 +61,8 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
         <Link href="/" className="w-fit">
           <Logo media={data.logo} />
         </Link>
-        <MobileHeaderNav data={data} />
-        <HeaderNav data={data} />
+        <MobileHeaderNav data={data} user={user} />
+        <HeaderNav data={data} user={user} />
       </div>
     </header>
   )

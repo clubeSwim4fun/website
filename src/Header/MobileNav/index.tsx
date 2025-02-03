@@ -1,11 +1,12 @@
 'use client'
 
 import React, { Fragment, useState } from 'react'
-import type { Header as HeaderType, Page, Post } from '@/payload-types'
+import type { Header as HeaderType, Page, Post, User } from '@/payload-types'
 import { Button } from '@/components/ui/button'
 import { CMSLink } from '@/components/Link'
 import { ChevronDown } from 'lucide-react'
 import { usePathname } from 'next/navigation'
+import Link from 'next/link'
 
 type LinkType = {
   type?: ('reference' | 'custom') | null
@@ -46,7 +47,7 @@ const getLinkHref = (link: LinkType) => {
   return href
 }
 
-const MobileHeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
+const MobileHeaderNav: React.FC<{ data: HeaderType; user: User }> = ({ data, user }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [subNavOpen, setSubNavOpen] = useState<string[]>([])
   const navItems = data?.navItems || []
@@ -133,6 +134,17 @@ const MobileHeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
             </Fragment>
           )
         })}
+        {/* TODO - Improve this section to have a box and allow to login or create an account */}
+        <Button asChild variant={'link'} size={'clear'}>
+          {/* TODO - Add label  */}
+          <Link
+            href={'/sign-in'}
+            onClick={() => setIsOpen(false)}
+            className={`pl-2 text-black dark:text-white py-4 border-b border-gray-300 rounded-none ${'/sign-in' === pathname && 'bg-blueSwim text-white'}`}
+          >
+            Login
+          </Link>
+        </Button>
       </nav>
     </div>
   )
