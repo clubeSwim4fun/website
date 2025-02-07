@@ -1,17 +1,17 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
 import React, { FormEvent, ReactElement, useState } from 'react'
 
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { login, LoginResponse } from '@/actions/login'
 import { Input } from '@/components/ui/input'
+import { useSearchParams } from 'next/navigation'
 
 export default function LoginForm(): ReactElement {
   const [isPending, setIsPending] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const router = useRouter()
+  const searchParams = useSearchParams()
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -24,10 +24,7 @@ export default function LoginForm(): ReactElement {
 
     const result: LoginResponse = await login({ email, password })
 
-    if (result.success) {
-      // Redirect manually after successful login
-      router.push('/')
-    } else {
+    if (!result.success) {
       // Display the error message
       setError(result.error || 'Login failed')
     }
@@ -35,11 +32,14 @@ export default function LoginForm(): ReactElement {
     setIsPending(false)
   }
 
+  const callbackUrl = searchParams.get('callbackUrl') || '/'
+
   return (
     <div className="flex gap-8 min-h-full flex-col justify-center items-center">
       <div className="text-3xl">Login</div>
       <div className="w-full mx-auto sm:max-w-lg">
         <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+          <input type="hidden" name="callbackUrl" value={callbackUrl} />
           <div className="flex flex-col gap-2">
             <label htmlFor="email">Email</label>
             <Input
