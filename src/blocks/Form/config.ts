@@ -18,6 +18,12 @@ export const FormBlock: Block = {
       required: true,
     },
     {
+      name: 'isRegistrationForm',
+      label: 'Formulário para Registo de utilizador?',
+      type: 'checkbox',
+      defaultValue: false,
+    },
+    {
       name: 'enableIntro',
       type: 'checkbox',
       label: 'Enable Intro Content',

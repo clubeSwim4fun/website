@@ -11,6 +11,7 @@ import { RenderHero } from '@/heros/RenderHero'
 import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
+import { UploadInput } from '@payloadcms/ui'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
@@ -64,7 +65,6 @@ export default async function Page({ params: paramsPromise }: Args) {
       <PayloadRedirects disableNotFound url={url} />
 
       {draft && <LivePreviewListener />}
-
       <RenderHero {...hero} />
       <RenderBlocks blocks={layout} />
     </article>

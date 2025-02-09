@@ -17,6 +17,7 @@ export type FormBlockType = {
   enableIntro: boolean
   form: FormType
   introContent?: SerializedEditorState
+  isRegistrationForm?: boolean
 }
 
 export const FormBlock: React.FC<
@@ -29,6 +30,7 @@ export const FormBlock: React.FC<
     form: formFromProps,
     form: { id: formID, confirmationMessage, confirmationType, redirect, submitButtonLabel } = {},
     introContent,
+    isRegistrationForm,
   } = props
 
   const formMethods = useForm({

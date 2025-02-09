@@ -818,6 +818,7 @@ export interface ArchiveBlock {
  */
 export interface FormBlock {
   form: string | Form;
+  isRegistrationForm?: boolean | null;
   enableIntro?: boolean | null;
   introContent?: {
     root: {
@@ -926,15 +927,6 @@ export interface Form {
             name: string;
             label?: string | null;
             width?: number | null;
-            required?: boolean | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'state';
-          }
-        | {
-            name: string;
-            label?: string | null;
-            width?: number | null;
             defaultValue?: string | null;
             required?: boolean | null;
             id?: string | null;
@@ -951,6 +943,9 @@ export interface Form {
             blockName?: string | null;
             blockType: 'textarea';
           }
+        | Password
+        | Phone
+        | MediaUpload
       )[]
     | null;
   submitButtonLabel?: string | null;
@@ -1008,8 +1003,48 @@ export interface Form {
         id?: string | null;
       }[]
     | null;
+  test?: string | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Password".
+ */
+export interface Password {
+  name: string;
+  label: string;
+  hasConfirmPassword?: boolean | null;
+  confirmLabel?: string | null;
+  errorPassword?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'password';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Phone".
+ */
+export interface Phone {
+  name: string;
+  label: string;
+  required?: boolean | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'phone';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MediaUpload".
+ */
+export interface MediaUpload {
+  name: string;
+  label: string;
+  media?: (string | null) | Media;
+  required?: boolean | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'media';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1428,6 +1463,7 @@ export interface ArchiveBlockSelect<T extends boolean = true> {
  */
 export interface FormBlockSelect<T extends boolean = true> {
   form?: T;
+  isRegistrationForm?: T;
   enableIntro?: T;
   introContent?: T;
   id?: T;
@@ -1730,16 +1766,6 @@ export interface FormsSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
-        state?:
-          | T
-          | {
-              name?: T;
-              label?: T;
-              width?: T;
-              required?: T;
-              id?: T;
-              blockName?: T;
-            };
         text?:
           | T
           | {
@@ -1762,6 +1788,9 @@ export interface FormsSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
+        password?: T | PasswordSelect<T>;
+        phone?: T | PhoneSelect<T>;
+        media?: T | MediaUploadSelect<T>;
       };
   submitButtonLabel?: T;
   confirmationType?: T;
@@ -1783,8 +1812,45 @@ export interface FormsSelect<T extends boolean = true> {
         message?: T;
         id?: T;
       };
+  test?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Password_select".
+ */
+export interface PasswordSelect<T extends boolean = true> {
+  name?: T;
+  label?: T;
+  hasConfirmPassword?: T;
+  confirmLabel?: T;
+  errorPassword?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Phone_select".
+ */
+export interface PhoneSelect<T extends boolean = true> {
+  name?: T;
+  label?: T;
+  required?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MediaUpload_select".
+ */
+export interface MediaUploadSelect<T extends boolean = true> {
+  name?: T;
+  label?: T;
+  media?: T;
+  required?: T;
+  id?: T;
+  blockName?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

@@ -4,9 +4,11 @@ import { Email } from './Email'
 import { Message } from './Message'
 import { Number } from './Number'
 import { Select } from './Select'
-import { State } from './State'
 import { Text } from './Text'
 import { Textarea } from './Textarea'
+import { Password } from './Password'
+import { Phone } from './Phone'
+import { Media } from './Media'
 
 export const fields = {
   checkbox: Checkbox,
@@ -15,7 +17,9 @@ export const fields = {
   message: Message,
   number: Number,
   select: Select,
-  state: State,
   text: Text,
   textarea: Textarea,
+  password: Password,
+  phone: Phone,
+  media: Media,
 }

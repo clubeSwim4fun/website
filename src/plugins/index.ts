@@ -1,5 +1,5 @@
 import { payloadCloudPlugin } from '@payloadcms/payload-cloud'
-import { formBuilderPlugin } from '@payloadcms/plugin-form-builder'
+import { formBuilderPlugin, fields as formBuilderFields } from '@payloadcms/plugin-form-builder'
 import { nestedDocsPlugin } from '@payloadcms/plugin-nested-docs'
 import { redirectsPlugin } from '@payloadcms/plugin-redirects'
 import { seoPlugin } from '@payloadcms/plugin-seo'
@@ -13,6 +13,9 @@ import { beforeSyncWithSearch } from '@/search/beforeSync'
 
 import { Page, Post } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
+import { Password } from '@/blocks/Form/Password/config'
+import { Phone } from '@/blocks/Form/Phone/config'
+import { Media } from '@/blocks/Form/Media/config'
 
 const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
   return doc?.title ? `${doc.title} | Payload Website Template` : 'Payload Website Template'
@@ -57,11 +60,14 @@ export const plugins: Plugin[] = [
   }),
   formBuilderPlugin({
     fields: {
-      payment: false,
+      password: Password,
+      phone: Phone,
+      media: Media,
+      state: false,
     },
     formOverrides: {
       fields: ({ defaultFields }) => {
-        return defaultFields.map((field) => {
+        const test = defaultFields.map((field) => {
           if ('name' in field && field.name === 'confirmationMessage') {
             return {
               ...field,
@@ -78,6 +84,14 @@ export const plugins: Plugin[] = [
           }
           return field
         })
+
+        return [
+          ...test,
+          {
+            name: 'test',
+            type: 'text',
+          },
+        ]
       },
     },
   }),
