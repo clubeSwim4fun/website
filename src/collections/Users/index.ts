@@ -39,7 +39,7 @@ export const Users: CollectionConfig = {
           name: 'surname',
           label: 'Apelido',
           type: 'text',
-          required: true,
+          // required: true,
           admin: {
             width: '30%',
           },
@@ -48,7 +48,7 @@ export const Users: CollectionConfig = {
           name: 'nationality',
           label: 'Nacionalidade',
           type: 'select',
-          required: true,
+          // required: true,
           options: COUNTRY_LIST.map((c) => c.name),
           admin: {
             width: '40%',
@@ -63,7 +63,7 @@ export const Users: CollectionConfig = {
           name: 'phone',
           label: 'Telemóvel',
           type: 'text',
-          required: true,
+          // required: true,
           admin: {
             width: '30%',
           },
@@ -72,7 +72,7 @@ export const Users: CollectionConfig = {
           name: 'identity',
           label: 'Documento Identificação',
           type: 'text',
-          required: true,
+          // required: true,
           admin: {
             width: '30%',
           },
@@ -81,8 +81,8 @@ export const Users: CollectionConfig = {
           name: 'identityFile',
           label: 'Fotocópia do Documento Identificação',
           type: 'upload',
-          required: true,
-          relationTo: 'media',
+          // required: true,
+          relationTo: 'user-media',
           admin: {
             width: '40%',
           },
@@ -90,10 +90,10 @@ export const Users: CollectionConfig = {
       ],
     },
     {
-      name: 'profilePicutre',
+      name: 'profilePicture',
       label: 'Foto do Perfil',
       type: 'upload',
-      required: true,
+      // required: true,
       relationTo: 'media',
       admin: {
         position: 'sidebar',
@@ -126,7 +126,7 @@ export const Users: CollectionConfig = {
     {
       name: 'nif',
       label: 'NIF',
-      required: true,
+      // required: true,
       type: 'text',
       admin: {
         position: 'sidebar',
@@ -135,7 +135,7 @@ export const Users: CollectionConfig = {
     {
       name: 'gender',
       label: 'Genero',
-      required: true,
+      // required: true,
       type: 'radio',
       options: ['masculino', 'feminino'],
       admin: {
@@ -145,7 +145,7 @@ export const Users: CollectionConfig = {
     {
       name: 'groups',
       label: 'Grupos',
-      required: true,
+      // required: true,
       type: 'relationship',
       relationTo: ['groups', 'group-categories'],
       hasMany: true,
@@ -166,7 +166,7 @@ export const Users: CollectionConfig = {
     {
       name: 'birthDate',
       label: 'Data de nascimento',
-      required: true,
+      // required: true,
       type: 'date',
       admin: {
         position: 'sidebar',
@@ -175,7 +175,7 @@ export const Users: CollectionConfig = {
     {
       name: 'disability',
       label: 'Categoria Deficiência',
-      required: true,
+      // required: true,
       type: 'select',
       defaultValue: 'Nenhuma',
       options: [
@@ -219,7 +219,7 @@ export const Users: CollectionConfig = {
             {
               name: 'street',
               label: 'Rua',
-              required: true,
+              // required: true,
               type: 'text',
               admin: {
                 width: '45%',
@@ -228,7 +228,7 @@ export const Users: CollectionConfig = {
             {
               name: 'number',
               label: 'Nº Porta',
-              required: true,
+              // required: true,
               type: 'text',
               admin: {
                 width: '15%',
@@ -237,7 +237,7 @@ export const Users: CollectionConfig = {
             {
               name: 'state',
               label: 'Localidade',
-              required: true,
+              // required: true,
               type: 'text',
               admin: {
                 width: '20%',
@@ -246,7 +246,7 @@ export const Users: CollectionConfig = {
             {
               name: 'zipcode',
               label: 'Código Postal',
-              required: true,
+              // required: true,
               type: 'text',
               admin: {
                 width: '20%',

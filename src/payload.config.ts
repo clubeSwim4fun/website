@@ -18,6 +18,8 @@ import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
 import { Groups } from './collections/Groups'
 import { GroupCategories } from './collections/GroupCategories'
+import { UserMedia } from './collections/Users/Media'
+
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
@@ -56,7 +58,7 @@ export default buildConfig({
   db: mongooseAdapter({
     url: process.env.DATABASE_URI || '',
   }),
-  collections: [Pages, Posts, Media, Categories, Users, Groups, GroupCategories],
+  collections: [Pages, Posts, Media, Categories, Users, Groups, GroupCategories, UserMedia],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   plugins: [

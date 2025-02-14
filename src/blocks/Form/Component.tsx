@@ -10,6 +10,11 @@ import type { SerializedEditorState } from '@payloadcms/richtext-lexical/lexical
 
 import { fields } from './fields'
 import { getClientSideURL } from '@/utilities/getURL'
+import { User, UserMedia, UserMediaSelect } from '@/payload-types'
+import { createUser } from '@/actions/createUser'
+import { useUploadFile } from '@/hooks/use-upload-file'
+import { toast } from '@payloadcms/ui'
+import { getErrorMessage } from '@/utilities/handle-error'
 
 export type FormBlockType = {
   blockName?: string
@@ -19,6 +24,9 @@ export type FormBlockType = {
   introContent?: SerializedEditorState
   isRegistrationForm?: boolean
 }
+
+export type CreateuserType = Omit<User, 'id' | 'createdAt' | 'updatedAt'>
+export type CreateUserMediaType = Omit<UserMedia, 'id' | 'createdAt' | 'updatedAt'>
 
 export const FormBlock: React.FC<
   {
@@ -32,6 +40,10 @@ export const FormBlock: React.FC<
     introContent,
     isRegistrationForm,
   } = props
+
+  const { onUpload, progresses, uploadedFiles, isUploading } = useUploadFile('imageUploader', {
+    defaultUploadedFiles: [],
+  })
 
   const formMethods = useForm({
     defaultValues: formFromProps.fields,
@@ -49,15 +61,46 @@ export const FormBlock: React.FC<
   const router = useRouter()
 
   const onSubmit = useCallback(
-    (data: FormFieldBlock[]) => {
+    (data: FormFieldBlock[] | {}) => {
       let loadingTimerID: ReturnType<typeof setTimeout>
       const submitForm = async () => {
         setError(undefined)
 
-        const dataToSend = Object.entries(data).map(([name, value]) => ({
-          field: name,
-          value,
-        }))
+        const dataToSend = Object.entries(data).map(([name, value]) => {
+          return {
+            field: name,
+            value,
+          }
+        })
+
+        // const test = await handleFileUpload()
+        if (isRegistrationForm) {
+          const userData: CreateuserType = {
+            name: dataToSend.find((d) => d.field === 'name')?.value?.toString() || '',
+            email: dataToSend.find((d) => d.field === 'email')?.value?.toString() || '',
+            password: dataToSend.find((d) => d.field === 'password')?.value?.toString() || '',
+          }
+          const files = dataToSend.find((d) => d.field === 'doc')?.value as unknown as File[]
+
+          const uploadedKey = await onUpload(files)
+
+          console.log('update: ', uploadedKey)
+
+          if (uploadedKey?.length) {
+            const file: CreateUserMediaType = {
+              _key: uploadedKey[0]?.key,
+              filename: uploadedKey[0]?.name,
+              mimeType: uploadedKey[0]?.type,
+              filesize: uploadedKey[0]?.size,
+              url: 'https://utfs.io/a/5qm6rjjj20/VeXHyeRWkwCaEdoPkQrXPt6k083zcijbAvS5Mh1YGnLsylUN',
+            }
+
+            console.log('user: ', userData)
+            await createUser(userData, file)
+          }
+        }
+
+        console.log('t', dataToSend)
 
         // delay loading indicator by 1s
         loadingTimerID = setTimeout(() => {
