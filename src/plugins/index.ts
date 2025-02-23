@@ -5,7 +5,7 @@ import { redirectsPlugin } from '@payloadcms/plugin-redirects'
 import { uploadthingStorage } from '@payloadcms/storage-uploadthing'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import { searchPlugin } from '@payloadcms/plugin-search'
-import { Plugin } from 'payload'
+import { Field, Plugin } from 'payload'
 import { revalidateRedirects } from '@/hooks/revalidateRedirects'
 import { GenerateTitle, GenerateURL } from '@payloadcms/plugin-seo/types'
 import { FixedToolbarFeature, HeadingFeature, lexicalEditor } from '@payloadcms/richtext-lexical'
@@ -17,6 +17,11 @@ import { getServerSideURL } from '@/utilities/getURL'
 import { Password } from '@/blocks/Form/Password/config'
 import { Phone } from '@/blocks/Form/Phone/config'
 import { Media } from '@/blocks/Form/Media/config'
+import { Text } from '@/blocks/Form/Text/config'
+import { Checkbox } from '@/blocks/Form/Checkbox/config'
+import { Country } from '@/blocks/Form/Country/config'
+import { Number } from '@/blocks/Form/Number/config'
+import { Select } from '@/blocks/Form/Select/config'
 
 const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
   return doc?.title ? `${doc.title} | Payload Website Template` : 'Payload Website Template'
@@ -64,11 +69,16 @@ export const plugins: Plugin[] = [
       password: Password,
       phone: Phone,
       media: Media,
+      text: Text,
+      checkbox: Checkbox,
+      country: Country,
+      number: Number,
+      select: Select,
       state: false,
     },
     formOverrides: {
       fields: ({ defaultFields }) => {
-        const test = defaultFields.map((field) => {
+        return defaultFields.map((field: Field) => {
           if ('name' in field && field.name === 'confirmationMessage') {
             return {
               ...field,
@@ -83,14 +93,67 @@ export const plugins: Plugin[] = [
               }),
             }
           }
-          return field
+          return {
+            ...field,
+            fields: [
+              {
+                type: 'row',
+                fields: [
+                  {
+                    name: 'test',
+                    type: 'text',
+                    admin: {
+                      width: '50%',
+                    },
+                    required: true,
+                  },
+                  {
+                    name: 'test2',
+                    type: 'text',
+                    admin: {
+                      width: '50%',
+                    },
+                    required: true,
+                  },
+                ],
+              },
+            ],
+          }
         })
+      },
+    },
+    formSubmissionOverrides: {
+      fields: ({ defaultFields }) => {
+        // Removes the submissionData as I want to override
+        const customFields = [...defaultFields.filter((field) => field.type !== 'array')] as Field[]
 
         return [
-          ...test,
+          ...customFields,
           {
-            name: 'test',
-            type: 'text',
+            name: 'submissionData',
+            type: 'array',
+            admin: {
+              readOnly: true,
+            },
+            fields: [
+              {
+                name: 'field',
+                type: 'text',
+                required: true,
+              },
+              {
+                name: 'isArray',
+                type: 'checkbox',
+                admin: {
+                  hidden: true,
+                },
+              },
+              {
+                name: 'value',
+                type: 'text',
+                required: false,
+              },
+            ],
           },
         ]
       },

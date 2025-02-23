@@ -13,8 +13,6 @@ import { getClientSideURL } from '@/utilities/getURL'
 import { User, UserMedia, UserMediaSelect } from '@/payload-types'
 import { createUser } from '@/actions/createUser'
 import { useUploadFile } from '@/hooks/use-upload-file'
-import { toast } from '@payloadcms/ui'
-import { getErrorMessage } from '@/utilities/handle-error'
 
 export type FormBlockType = {
   blockName?: string
@@ -25,8 +23,19 @@ export type FormBlockType = {
   isRegistrationForm?: boolean
 }
 
+type CustomFormFieldBlock = FormFieldBlock & {
+  name: string
+  relatesTo: string
+}
+
 export type CreateuserType = Omit<User, 'id' | 'createdAt' | 'updatedAt'>
-export type CreateUserMediaType = Omit<UserMedia, 'id' | 'createdAt' | 'updatedAt'>
+export type CreateUserMediaType = Omit<UserMedia, 'id' | 'createdAt' | 'updatedAt'> & {
+  relatesTo?: string
+}
+export type ProfileFile = {
+  file: File
+  relatesTo?: string
+}
 
 export const FormBlock: React.FC<
   {
@@ -61,46 +70,78 @@ export const FormBlock: React.FC<
   const router = useRouter()
 
   const onSubmit = useCallback(
-    (data: FormFieldBlock[] | {}) => {
+    (data: FormFieldBlock[]) => {
       let loadingTimerID: ReturnType<typeof setTimeout>
       const submitForm = async () => {
         setError(undefined)
 
+        const files: ProfileFile[] = []
+        const fields = formFromProps.fields as CustomFormFieldBlock[]
+
         const dataToSend = Object.entries(data).map(([name, value]) => {
+          if (Array.isArray(value)) {
+            return {
+              field: name,
+              isArray: true,
+              values: value.map((v) => {
+                if (v instanceof File) {
+                  const newFile = new File([v], `${name}-${v.name}`, {
+                    type: v.type,
+                    lastModified: v.lastModified,
+                  })
+
+                  files.push({
+                    file: newFile,
+                    relatesTo: fields.find((field) => field.name === name)?.relatesTo,
+                  })
+                }
+
+                return {
+                  value: v.path,
+                }
+              }),
+            }
+          }
+
           return {
             field: name,
             value,
           }
         })
 
-        // const test = await handleFileUpload()
         if (isRegistrationForm) {
           const userData: CreateuserType = {
             name: dataToSend.find((d) => d.field === 'name')?.value?.toString() || '',
             email: dataToSend.find((d) => d.field === 'email')?.value?.toString() || '',
             password: dataToSend.find((d) => d.field === 'password')?.value?.toString() || '',
           }
-          const files = dataToSend.find((d) => d.field === 'doc')?.value as unknown as File[]
 
-          const uploadedKey = await onUpload(files)
+          if (files?.length) {
+            const uploadedFiles = await onUpload(files)
 
-          console.log('update: ', uploadedKey)
+            if (uploadedFiles?.length) {
+              const userFiles: CreateUserMediaType[] = []
 
-          if (uploadedKey?.length) {
-            const file: CreateUserMediaType = {
-              _key: uploadedKey[0]?.key,
-              filename: uploadedKey[0]?.name,
-              mimeType: uploadedKey[0]?.type,
-              filesize: uploadedKey[0]?.size,
-              url: 'https://utfs.io/a/5qm6rjjj20/VeXHyeRWkwCaEdoPkQrXPt6k083zcijbAvS5Mh1YGnLsylUN',
+              uploadedFiles.forEach((uploadedFile) => {
+                const fileName = uploadedFile?.serverData?.uploadedBy?.name || ''
+                const relatesTo = uploadedFile?.serverData?.updatedFile.relatesTo || ''
+
+                const file: CreateUserMediaType = {
+                  _key: `${uploadedFile?.key}`,
+                  filename: `${fileName}_${uploadedFile?.name}_${uploadedFile?.key.slice(0, 3)}`,
+                  mimeType: uploadedFile?.type,
+                  filesize: uploadedFile?.size,
+                  url: `https://utfs.io/a/${process.env.NEXT_PUBLIC_UPLOADTHING_ID}/${uploadedFile?.key}`,
+                  relatesTo,
+                }
+
+                userFiles.push(file)
+              })
+
+              await createUser(userData, userFiles)
             }
-
-            console.log('user: ', userData)
-            await createUser(userData, file)
           }
         }
-
-        console.log('t', dataToSend)
 
         // delay loading indicator by 1s
         loadingTimerID = setTimeout(() => {

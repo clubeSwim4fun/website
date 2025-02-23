@@ -1,3 +1,4 @@
+import userCollectionFieldsName from '@/utilities/getUsersFields'
 import { Block } from 'payload'
 
 export const Phone: Block = {
@@ -17,6 +18,11 @@ export const Phone: Block = {
     {
       name: 'required',
       type: 'checkbox',
+    },
+    {
+      name: 'relatesTo',
+      type: 'select',
+      options: userCollectionFieldsName,
     },
   ],
 }

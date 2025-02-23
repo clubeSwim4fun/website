@@ -6,6 +6,7 @@ import { toast } from '@payloadcms/ui'
 import { type ClientUploadedFileData } from 'uploadthing/types'
 import { OurFileRouter } from '@/app/(payload)/api/uploadthing/core'
 import { uploadFiles } from 'lib/uploadthing'
+import { ProfileFile } from '@/blocks/Form/Component'
 
 interface UploadedFile<T = unknown> extends ClientUploadedFileData<T> {}
 
@@ -28,7 +29,9 @@ export function useUploadFile(
   const [progresses, setProgresses] = React.useState<Record<string, number>>({})
   const [isUploading, setIsUploading] = React.useState(false)
 
-  async function onUpload(files: File[]) {
+  async function onUpload(profileFiles: ProfileFile[]) {
+    const files = profileFiles.map((p) => p.file)
+
     setIsUploading(true)
     try {
       const res = await uploadFiles(endpoint, {
@@ -44,7 +47,15 @@ export function useUploadFile(
         },
       })
 
+      res.forEach((r) => {
+        const profileFile = profileFiles.find(
+          (file) => file.file.name === r.serverData.updatedFile.name,
+        )
+        r.serverData.updatedFile.relatesTo = profileFile?.relatesTo || 'noMatch'
+      })
+
       setUploadedFiles((prev) => (prev ? [...prev, ...res] : res))
+
       return res
     } catch (err) {
       toast.error(getErrorMessage(err))

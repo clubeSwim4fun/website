@@ -154,7 +154,7 @@ export const Users: CollectionConfig = {
 
         if (relationTo === 'group-categories') {
           return {
-            parent: { in: parentGroup?.groups.map((g) => g.value) },
+            parent: { in: parentGroup?.groups?.map((g) => g.value) },
           }
         }
         return true

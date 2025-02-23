@@ -1,9 +1,9 @@
 import userCollectionFieldsName from '@/utilities/getUsersFields'
 import { Block } from 'payload'
 
-export const Media: Block = {
-  slug: 'media',
-  interfaceName: 'MediaUpload',
+export const Checkbox: Block = {
+  slug: 'checkbox',
+  interfaceName: 'Checkbox',
   fields: [
     {
       name: 'name',
@@ -16,9 +16,8 @@ export const Media: Block = {
       required: true,
     },
     {
-      name: 'media',
-      type: 'upload',
-      relationTo: 'media',
+      name: 'defaultValue',
+      type: 'checkbox',
     },
     {
       name: 'required',

@@ -1,9 +1,9 @@
 import userCollectionFieldsName from '@/utilities/getUsersFields'
 import { Block } from 'payload'
 
-export const Media: Block = {
-  slug: 'media',
-  interfaceName: 'MediaUpload',
+export const Country: Block = {
+  slug: 'country',
+  interfaceName: 'Country',
   fields: [
     {
       name: 'name',
@@ -14,11 +14,6 @@ export const Media: Block = {
       name: 'label',
       type: 'text',
       required: true,
-    },
-    {
-      name: 'media',
-      type: 'upload',
-      relationTo: 'media',
     },
     {
       name: 'required',

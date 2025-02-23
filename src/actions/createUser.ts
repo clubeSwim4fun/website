@@ -11,34 +11,44 @@ interface CreateUserResponse {
 
 export async function createUser(
   userData: CreateuserType,
-  file: CreateUserMediaType | undefined,
+  files: CreateUserMediaType[] | undefined,
 ): Promise<CreateUserResponse> {
   const payload = await getPayload({ config })
 
-  console.log('will upload file ', file)
   try {
     // Upload the file to the media collection
-    const mediaDoc = await payload.create({
-      collection: 'user-media',
+    const createdMediaIds: { id: string; relatesTo?: string }[] = []
+    if (files?.length) {
+      for (const file of files) {
+        console.log('file: ', file)
+        const mediaDoc = await payload.create({
+          collection: 'user-media',
+          data: {
+            _key: file?._key,
+            mimeType: file?.mimeType,
+            filename: file?.filename,
+            filesize: file?.filesize,
+            url: file?.url,
+          },
+        })
+
+        createdMediaIds.push({ id: mediaDoc.id, relatesTo: file.relatesTo })
+      }
+    }
+    console.log('medias: ', createdMediaIds)
+
+    const profilePictureFile = createdMediaIds?.find((f) => f.relatesTo === 'profilePicture')
+
+    console.log('file: ', profilePictureFile)
+    const response = await payload.create({
+      collection: 'users',
       data: {
-        _key: file?._key,
-        mimeType: file?.mimeType,
-        filename: file?.filename,
-        filesize: file?.filesize,
-        url: file?.url,
+        ...userData,
+        profilePicture: profilePictureFile?.id,
       },
     })
 
-    console.log('media', mediaDoc)
-    // const response = await payload.create({
-    //   collection: 'users',
-    //   data: {
-    //     ...userData,
-    //     profilePicutre: file,
-    //   },
-    // })
-
-    // console.log('res', response)
+    console.log('created: ', response)
 
     return {
       success: true,

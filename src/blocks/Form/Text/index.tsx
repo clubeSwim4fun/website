@@ -18,7 +18,6 @@ export const Text: React.FC<
     <Width width={width}>
       <Label htmlFor={name}>
         {label}
-
         {required && (
           <span className="required">
             * <span className="sr-only">(required)</span>
