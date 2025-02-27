@@ -15,6 +15,7 @@ import { Footer } from './Footer/config'
 import { Header } from './Header/config'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
+import { s3Storage } from '@payloadcms/storage-s3'
 import { getServerSideURL } from './utilities/getURL'
 import { Groups } from './collections/Groups'
 import { GroupCategories } from './collections/GroupCategories'
@@ -75,6 +76,20 @@ export default buildConfig({
   plugins: [
     ...plugins,
     // storage-adapter-placeholder
+    s3Storage({
+      collections: {
+        'user-media': true,
+      },
+      bucket: process.env.S3_BUCKET || '',
+      config: {
+        credentials: {
+          accessKeyId: process.env.S3_ACCESS_KEY_ID || '',
+          secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || '',
+        },
+        region: process.env.S3_REGION,
+        // ... Other S3 configuration
+      },
+    }),
   ],
   secret: process.env.PAYLOAD_SECRET,
   sharp,

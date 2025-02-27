@@ -2,7 +2,8 @@
 
 import { getPayload } from 'payload'
 import config from '@payload-config'
-import { CreateUserMediaType, CreateuserType } from '@/blocks/Form/Component'
+import { CreateuserType, ProfileFile } from '@/blocks/Form/Component'
+import { UserMedia } from '@/payload-types'
 
 interface CreateUserResponse {
   success: boolean
@@ -11,31 +12,40 @@ interface CreateUserResponse {
 
 export async function createUser(
   userData: CreateuserType,
-  files: CreateUserMediaType[] | undefined,
+  files?: ProfileFile[] | undefined,
 ): Promise<CreateUserResponse> {
   const payload = await getPayload({ config })
 
   try {
     // Upload the file to the media collection
+    let test: UserMedia | null
+
     const createdMediaIds: { id: string; relatesTo?: string }[] = []
     if (files?.length) {
       for (const file of files) {
         console.log('file: ', file)
-        const mediaDoc = await payload.create({
+        const arrayBuffer = await file.file.arrayBuffer()
+        const buffer = Buffer.from(arrayBuffer)
+        test = await payload.create({
           collection: 'user-media',
           data: {
-            _key: file?._key,
-            mimeType: file?.mimeType,
-            filename: file?.filename,
-            filesize: file?.filesize,
-            url: file?.url,
+            alt: 'description test',
+          },
+          file: {
+            data: buffer,
+            mimetype: file.file.type,
+            name: file.file.name,
+            size: file.file.size,
           },
         })
 
-        createdMediaIds.push({ id: mediaDoc.id, relatesTo: file.relatesTo })
+        console.log('created: ', test)
+
+        createdMediaIds.push({ id: test.id, relatesTo: file.relatesTo })
       }
+    } else {
+      test = null
     }
-    console.log('medias: ', createdMediaIds)
 
     const profilePictureFile = createdMediaIds?.find((f) => f.relatesTo === 'profilePicture')
 
@@ -44,7 +54,7 @@ export async function createUser(
       collection: 'users',
       data: {
         ...userData,
-        profilePicture: profilePictureFile?.id,
+        profilePicture: files && files[0]?.file, // I need to simplify and use Media without converting to File
       },
     })
 

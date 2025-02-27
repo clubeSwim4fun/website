@@ -12,7 +12,8 @@ import { fields } from './fields'
 import { getClientSideURL } from '@/utilities/getURL'
 import { User, UserMedia, UserMediaSelect } from '@/payload-types'
 import { createUser } from '@/actions/createUser'
-import { useUploadFile } from '@/hooks/use-upload-file'
+// import { useUploadFile } from '@/hooks/use-upload-file'
+import fs from 'fs'
 
 export type FormBlockType = {
   blockName?: string
@@ -29,7 +30,8 @@ type CustomFormFieldBlock = FormFieldBlock & {
 }
 
 export type CreateuserType = Omit<User, 'id' | 'createdAt' | 'updatedAt'>
-export type CreateUserMediaType = Omit<UserMedia, 'id' | 'createdAt' | 'updatedAt'> & {
+export type CreateUserMediaType = {
+  file: Omit<UserMedia, 'id' | 'createdAt' | 'updatedAt'>
   relatesTo?: string
 }
 export type ProfileFile = {
@@ -50,9 +52,9 @@ export const FormBlock: React.FC<
     isRegistrationForm,
   } = props
 
-  const { onUpload, progresses, uploadedFiles, isUploading } = useUploadFile('imageUploader', {
-    defaultUploadedFiles: [],
-  })
+  // const { onUpload, progresses, uploadedFiles, isUploading } = useUploadFile('imageUploader', {
+  //   defaultUploadedFiles: [],
+  // })
 
   const formMethods = useForm({
     defaultValues: formFromProps.fields,
@@ -116,31 +118,33 @@ export const FormBlock: React.FC<
             password: dataToSend.find((d) => d.field === 'password')?.value?.toString() || '',
           }
 
-          if (files?.length) {
-            const uploadedFiles = await onUpload(files)
+          // if (files?.length) {
+          //   const uploadedFiles = await onUpload(files)
 
-            if (uploadedFiles?.length) {
-              const userFiles: CreateUserMediaType[] = []
+          //   if (uploadedFiles?.length) {
+          //     const userFiles: CreateUserMediaType[] = []
 
-              uploadedFiles.forEach((uploadedFile) => {
-                const fileName = uploadedFile?.serverData?.uploadedBy?.name || ''
-                const relatesTo = uploadedFile?.serverData?.updatedFile.relatesTo || ''
+          //     uploadedFiles.forEach((uploadedFile) => {
+          //       const fileName = uploadedFile?.serverData?.uploadedBy?.name || ''
+          //       const relatesTo = uploadedFile?.serverData?.updatedFile.relatesTo || ''
 
-                const file: CreateUserMediaType = {
-                  _key: `${uploadedFile?.key}`,
-                  filename: `${fileName}_${uploadedFile?.name}_${uploadedFile?.key.slice(0, 3)}`,
-                  mimeType: uploadedFile?.type,
-                  filesize: uploadedFile?.size,
-                  url: `https://utfs.io/a/${process.env.NEXT_PUBLIC_UPLOADTHING_ID}/${uploadedFile?.key}`,
-                  relatesTo,
-                }
+          //       const file: CreateUserMediaType = {
+          //         _key: `${uploadedFile?.key}`,
+          //         filename: `${fileName}_${uploadedFile?.name}_${uploadedFile?.key.slice(0, 3)}`,
+          //         mimeType: uploadedFile?.type,
+          //         filesize: uploadedFile?.size,
+          //         url: `https://utfs.io/a/${process.env.NEXT_PUBLIC_UPLOADTHING_ID}/${uploadedFile?.key}`,
+          //         relatesTo,
+          //       }
 
-                userFiles.push(file)
-              })
+          //       userFiles.push(file)
+          //     })
 
-              await createUser(userData, userFiles)
-            }
-          }
+          //     await createUser(userData, userFiles)
+          //   }
+          // }
+
+          await createUser(userData, files)
         }
 
         // delay loading indicator by 1s

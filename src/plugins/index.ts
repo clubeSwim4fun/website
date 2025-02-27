@@ -2,7 +2,6 @@ import { payloadCloudPlugin } from '@payloadcms/payload-cloud'
 import { formBuilderPlugin } from '@payloadcms/plugin-form-builder'
 import { nestedDocsPlugin } from '@payloadcms/plugin-nested-docs'
 import { redirectsPlugin } from '@payloadcms/plugin-redirects'
-import { uploadthingStorage } from '@payloadcms/storage-uploadthing'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import { searchPlugin } from '@payloadcms/plugin-search'
 import { Field, Plugin } from 'payload'
@@ -169,13 +168,4 @@ export const plugins: Plugin[] = [
     },
   }),
   payloadCloudPlugin(),
-  uploadthingStorage({
-    collections: {
-      'user-media': true,
-    },
-    options: {
-      token: process.env.UPLOADTHING_TOKEN,
-      acl: 'public-read',
-    },
-  }),
 ]
