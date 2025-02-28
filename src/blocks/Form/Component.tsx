@@ -10,7 +10,7 @@ import type { SerializedEditorState } from '@payloadcms/richtext-lexical/lexical
 
 import { fields } from './fields'
 import { getClientSideURL } from '@/utilities/getURL'
-import { User, UserMedia, UserMediaSelect } from '@/payload-types'
+import { Media, User, UserMedia, UserMediaSelect } from '@/payload-types'
 import { createUser } from '@/actions/createUser'
 // import { useUploadFile } from '@/hooks/use-upload-file'
 import fs from 'fs'
@@ -80,7 +80,10 @@ export const FormBlock: React.FC<
         const files: ProfileFile[] = []
         const fields = formFromProps.fields as CustomFormFieldBlock[]
 
+        console.log('data', data)
+
         const dataToSend = Object.entries(data).map(([name, value]) => {
+          console.log(`[${name}]:${value}`)
           if (Array.isArray(value)) {
             return {
               field: name,
@@ -118,6 +121,10 @@ export const FormBlock: React.FC<
             password: dataToSend.find((d) => d.field === 'password')?.value?.toString() || '',
           }
 
+          const test = data as any
+          const media = test.documento[0] as any
+          console.log('media', media)
+
           // if (files?.length) {
           //   const uploadedFiles = await onUpload(files)
 
@@ -144,7 +151,7 @@ export const FormBlock: React.FC<
           //   }
           // }
 
-          await createUser(userData, files)
+          await createUser(userData, files, media)
         }
 
         // delay loading indicator by 1s

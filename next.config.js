@@ -20,6 +20,11 @@ const nextConfig = {
       }),
     ],
   },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '3mb',
+    },
+  },
   reactStrictMode: true,
   redirects,
 }

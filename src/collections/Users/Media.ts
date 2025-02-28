@@ -15,7 +15,7 @@ export const UserMedia: CollectionConfig = {
     admin: isAdminOrEditor,
     create: anyone,
     delete: isAdmin,
-    read: authenticated, // Check this later, probably needs to change as can be accessed via Postman for example
+    read: anyone, // Check this later, probably needs to change as can be accessed via Postman for example
     update: authenticated,
   },
   fields: [
