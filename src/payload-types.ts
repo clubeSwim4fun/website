@@ -74,7 +74,6 @@ export interface Config {
     groups: Group;
     'group-categories': GroupCategory;
     'user-media': UserMedia;
-    test: Test;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -94,7 +93,6 @@ export interface Config {
     groups: GroupsSelect<false> | GroupsSelect<true>;
     'group-categories': GroupCategoriesSelect<false> | GroupCategoriesSelect<true>;
     'user-media': UserMediaSelect<false> | UserMediaSelect<true>;
-    test: TestSelect<false> | TestSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -1410,67 +1408,6 @@ export interface DateField {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "test".
- */
-export interface Test {
-  id: string;
-  alt?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
-  sizes?: {
-    thumbnail?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    square?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    small?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    medium?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    large?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-  };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -1673,10 +1610,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'user-media';
         value: string | UserMedia;
-      } | null)
-    | ({
-        relationTo: 'test';
-        value: string | Test;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -2111,78 +2044,6 @@ export interface GroupCategoriesSelect<T extends boolean = true> {
  * via the `definition` "user-media_select".
  */
 export interface UserMediaSelect<T extends boolean = true> {
-  alt?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  url?: T;
-  thumbnailURL?: T;
-  filename?: T;
-  mimeType?: T;
-  filesize?: T;
-  width?: T;
-  height?: T;
-  focalX?: T;
-  focalY?: T;
-  sizes?:
-    | T
-    | {
-        thumbnail?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        square?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        small?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        medium?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        large?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-      };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "test_select".
- */
-export interface TestSelect<T extends boolean = true> {
   alt?: T;
   updatedAt?: T;
   createdAt?: T;
