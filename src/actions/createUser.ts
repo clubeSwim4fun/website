@@ -20,12 +20,13 @@ export type CreateuserType = Omit<User, 'id' | 'createdAt' | 'updatedAt'>
 
 export async function createUser(userData: CreateUserRequestType): Promise<CreateUserResponse> {
   const payload = await getPayload({ config })
-  const uploadedFiles = []
+  const tempFilesToDelete = []
 
   try {
     const userObject: CreateuserType = {}
 
     for (const [name, data] of Object.entries(userData)) {
+      const uploadedFiles = []
       // If data value is an array, we need to treat all files to first upload,
       //  then add as reference to user object
       if (Array.isArray(data.value)) {
@@ -49,6 +50,7 @@ export async function createUser(userData: CreateUserRequestType): Promise<Creat
             })
 
             uploadedFiles.push(mediaToUpload)
+            tempFilesToDelete.push(mediaToUpload)
           }
         }
 
@@ -58,7 +60,7 @@ export async function createUser(userData: CreateUserRequestType): Promise<Creat
       }
     }
 
-    await payload.create({
+    const response = await payload.create({
       collection: 'users',
       data: {
         ...userObject,
@@ -72,7 +74,7 @@ export async function createUser(userData: CreateUserRequestType): Promise<Creat
       message: 'user created successfully',
     }
   } catch (err) {
-    uploadedFiles.forEach((file) => {
+    tempFilesToDelete.forEach((file) => {
       payload.delete({
         collection: 'user-media',
         id: file.id,

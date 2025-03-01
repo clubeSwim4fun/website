@@ -16,6 +16,11 @@ export const DatePicker: Block = {
       required: true,
     },
     {
+      name: 'placeholder',
+      type: 'text',
+      required: true,
+    },
+    {
       name: 'required',
       type: 'checkbox',
     },

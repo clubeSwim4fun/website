@@ -14,13 +14,14 @@ import { CalendarIcon } from 'lucide-react'
 import { Calendar } from '@/components/ui/calendar'
 import { format } from 'date-fns'
 import { DateField } from '@/payload-types'
+import { pt } from 'react-day-picker/locale'
 
 export const DatePicker: React.FC<
   DateField & {
     control: Control
     errors: Partial<FieldErrorsImpl>
   }
-> = ({ name, control, errors, label, required }) => {
+> = ({ name, control, errors, label, required, placeholder }) => {
   return (
     <Width width={'100%'}>
       <Label className="" htmlFor={name}>
@@ -45,7 +46,13 @@ export const DatePicker: React.FC<
                   !value && 'text-muted-foreground',
                 )}
               >
-                {value ? format(value, 'PPP') : <span>Pick a date</span>}
+                {value ? (
+                  format(value, 'PPP', {
+                    locale: pt,
+                  })
+                ) : (
+                  <span>{placeholder}</span>
+                )}
                 <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
               </Button>
             </PopoverTrigger>
@@ -54,8 +61,10 @@ export const DatePicker: React.FC<
                 mode="single"
                 selected={value}
                 onSelect={onChange}
+                endMonth={new Date(new Date().getFullYear(), new Date().getMonth())}
                 disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
-                initialFocus
+                locale={pt}
+                autoFocus
               />
             </PopoverContent>
           </Popover>

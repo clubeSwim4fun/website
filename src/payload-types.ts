@@ -1381,6 +1381,7 @@ export interface Address {
 export interface DateField {
   name: string;
   label: string;
+  placeholder: string;
   required?: boolean | null;
   relatesTo?:
     | (
@@ -2338,6 +2339,7 @@ export interface AddressSelect<T extends boolean = true> {
 export interface DateFieldSelect<T extends boolean = true> {
   name?: T;
   label?: T;
+  placeholder?: T;
   required?: T;
   relatesTo?: T;
   id?: T;

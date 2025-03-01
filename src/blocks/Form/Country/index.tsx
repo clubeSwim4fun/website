@@ -14,7 +14,7 @@ import { Controller } from 'react-hook-form'
 
 import { Error } from '../Error'
 import { Width } from '../Width'
-import { countryOptions } from './options'
+import COUNTRY_LIST from '@/utilities/countryList'
 
 export const Country: React.FC<
   CountryField & {
@@ -38,18 +38,18 @@ export const Country: React.FC<
         defaultValue=""
         name={name}
         render={({ field: { onChange, value } }) => {
-          const controlledValue = countryOptions.find((t) => t.value === value)
+          const controlledValue = COUNTRY_LIST.find((t) => t.name === value)
 
           return (
-            <Select onValueChange={(val) => onChange(val)} value={controlledValue?.value}>
+            <Select onValueChange={(val) => onChange(val)} value={controlledValue?.name}>
               <SelectTrigger className="w-full" id={name}>
                 <SelectValue placeholder={label} />
               </SelectTrigger>
               <SelectContent>
-                {countryOptions.map(({ label, value }) => {
+                {COUNTRY_LIST.map(({ name }) => {
                   return (
-                    <SelectItem key={value} value={value}>
-                      {label}
+                    <SelectItem key={name} value={name}>
+                      {name}
                     </SelectItem>
                   )
                 })}
