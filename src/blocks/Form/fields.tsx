@@ -9,6 +9,8 @@ import { Textarea } from './Textarea'
 import { Password } from './Password'
 import { Phone } from './Phone'
 import { Media } from './Media'
+import { DatePicker } from './Date'
+import { Address } from './Address'
 
 export const fields = {
   checkbox: Checkbox,
@@ -22,4 +24,6 @@ export const fields = {
   password: Password,
   phone: Phone,
   media: Media,
+  datePicker: DatePicker,
+  address: Address,
 }

@@ -145,7 +145,6 @@ export const Users: CollectionConfig = {
     {
       name: 'groups',
       label: 'Grupos',
-      // required: true,
       type: 'relationship',
       relationTo: ['groups', 'group-categories'],
       hasMany: true,

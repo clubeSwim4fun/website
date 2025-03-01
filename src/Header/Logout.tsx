@@ -25,7 +25,6 @@ export default function LogoutButton() {
       // Display error message
       // TODO - Add toast error
       setError(result.error || 'Logout failed')
-      console.log(error)
     }
   }
 

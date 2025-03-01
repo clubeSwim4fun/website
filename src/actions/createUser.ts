@@ -1,101 +1,86 @@
 'use server'
 
-import { getPayload } from 'payload'
+import { getPayload, User } from 'payload'
 import config from '@payload-config'
-import { CreateuserType, ProfileFile } from '@/blocks/Form/Component'
-import { Media, UserMedia } from '@/payload-types'
-import fs from 'fs'
 
 interface CreateUserResponse {
   success: boolean
+  message?: string
   error?: string
 }
 
-export async function createUser(
-  userData: CreateuserType,
-  files?: ProfileFile[] | undefined,
-  media?: File,
-): Promise<CreateUserResponse> {
+export type CreateUserRequestType = {
+  [key: string]: {
+    value: string | File[]
+    relatesTo: string
+  }
+}
+
+export type CreateuserType = Omit<User, 'id' | 'createdAt' | 'updatedAt'>
+
+export async function createUser(userData: CreateUserRequestType): Promise<CreateUserResponse> {
   const payload = await getPayload({ config })
+  const uploadedFiles = []
 
   try {
-    // // Upload the file to the media collection
-    // let test: UserMedia | null
+    const userObject: CreateuserType = {}
 
-    // const createdMediaIds: { id: string; relatesTo?: string }[] = []
+    for (const [name, data] of Object.entries(userData)) {
+      // If data value is an array, we need to treat all files to first upload,
+      //  then add as reference to user object
+      if (Array.isArray(data.value)) {
+        const files = data.value
 
-    // let buffer;
-    // if (files?.length) {
-    //   for (const file of files) {
-    //     console.log('file: ', file)
-    //     const arrayBuffer = await file.file.arrayBuffer()
-    //     buffer = Buffer.from(arrayBuffer)
-    //     test = await payload.create({
-    //       collection: 'user-media',
-    //       data: {
-    //         alt: 'test',
-    //       },
-    //       disableVerificationEmail: true,
+        for (const file of files) {
+          const fileBuffer = await file?.arrayBuffer()
 
-    //       file: {
-    //         data: buffer,
-    //         mimetype: file.file.type,
-    //         name: file.file.name,
-    //         size: file.file.size,
-    //       },
-    //     })
+          if (fileBuffer) {
+            const mediaToUpload = await payload.create({
+              collection: 'user-media',
+              data: {
+                alt: `${name}_image`,
+              },
+              file: {
+                data: Buffer.from(fileBuffer),
+                name: file.name,
+                mimetype: file.type,
+                size: file.size,
+              },
+            })
 
-    //     console.log('created: ', test)
+            uploadedFiles.push(mediaToUpload)
+          }
+        }
 
-    //     createdMediaIds.push({ id: test.id, relatesTo: file.relatesTo })
-    //   }
-    // } else {
-    //   test = null
-    // }
+        userObject[data.relatesTo] = uploadedFiles
+      } else {
+        userObject[data.relatesTo] = data.value
+      }
+    }
 
-    console.log('mmm', media)
-    const fileBuffer = await media?.arrayBuffer()
-
-    const mediaData = {
-      alt: 'description test',
-      file: {
-        data: fileBuffer,
-        filename: media?.name, // replace with your file name
-        mimeType: media?.type,
+    await payload.create({
+      collection: 'users',
+      data: {
+        ...userObject,
+        name: userObject.name,
+        email: userObject.email,
       },
-    }
-    if (fileBuffer) {
-      const newMedia = await payload.create({
-        collection: 'user-media',
-        data: mediaData,
-        file: {
-          data: Buffer.from(fileBuffer),
-          name: media?.name || '',
-          size: Number(media?.type) || 200,
-          mimetype: media?.type || '',
-        },
-      })
-      console.log('media created: ', newMedia)
-      const response = await payload.create({
-        collection: 'users',
-        data: {
-          ...userData,
-          name: 'test',
-          profilePicture: newMedia, // I need to simplify and use Media without converting to File
-        },
-      })
-      console.log('created: ', response)
-    }
+    })
 
     return {
       success: true,
+      message: 'user created successfully',
     }
-  } catch (error) {
-    console.log('error', error)
-
+  } catch (err) {
+    uploadedFiles.forEach((file) => {
+      payload.delete({
+        collection: 'user-media',
+        id: file.id,
+      })
+    })
     return {
       success: false,
-      error: 'An error has happened', // improve this later
+      error: err instanceof Error ? err.message : String(err),
     }
   }
 }

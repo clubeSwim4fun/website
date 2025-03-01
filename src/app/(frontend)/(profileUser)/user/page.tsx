@@ -4,7 +4,6 @@ import { notFound } from 'next/navigation'
 
 const UserPage = async () => {
   const userObject = await getMeUser()
-  console.log('user', userObject)
 
   if (!userObject) notFound()
 

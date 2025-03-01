@@ -6,7 +6,7 @@ import React from 'react'
 import { Error } from '../Error'
 import { Width } from '../Width'
 import { PhoneInput } from '@/components/ui/phone-input'
-import { PhoneBlock } from '@/payload-types'
+import { Phone as PhoneBlock } from '@/payload-types'
 
 export const Phone: React.FC<
   PhoneBlock & {

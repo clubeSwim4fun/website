@@ -21,6 +21,8 @@ import { Checkbox } from '@/blocks/Form/Checkbox/config'
 import { Country } from '@/blocks/Form/Country/config'
 import { Number } from '@/blocks/Form/Number/config'
 import { Select } from '@/blocks/Form/Select/config'
+import { Address } from '@/blocks/Form/Address/config'
+import { DatePicker } from '@/blocks/Form/Date/config'
 
 const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
   return doc?.title ? `${doc.title} | Payload Website Template` : 'Payload Website Template'
@@ -73,6 +75,8 @@ export const plugins: Plugin[] = [
       country: Country,
       number: Number,
       select: Select,
+      address: Address,
+      date: DatePicker,
       state: false,
     },
     formOverrides: {
@@ -92,32 +96,7 @@ export const plugins: Plugin[] = [
               }),
             }
           }
-          return {
-            ...field,
-            fields: [
-              {
-                type: 'row',
-                fields: [
-                  {
-                    name: 'test',
-                    type: 'text',
-                    admin: {
-                      width: '50%',
-                    },
-                    required: true,
-                  },
-                  {
-                    name: 'test2',
-                    type: 'text',
-                    admin: {
-                      width: '50%',
-                    },
-                    required: true,
-                  },
-                ],
-              },
-            ],
-          }
+          return field
         })
       },
     },

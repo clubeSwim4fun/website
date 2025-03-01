@@ -64,6 +64,7 @@ export interface Config {
   auth: {
     users: UserAuthOperations;
   };
+  blocks: {};
   collections: {
     pages: Page;
     posts: Post;
@@ -73,6 +74,7 @@ export interface Config {
     groups: Group;
     'group-categories': GroupCategory;
     'user-media': UserMedia;
+    test: Test;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -92,6 +94,7 @@ export interface Config {
     groups: GroupsSelect<false> | GroupsSelect<true>;
     'group-categories': GroupCategoriesSelect<false> | GroupCategoriesSelect<true>;
     'user-media': UserMediaSelect<false> | UserMediaSelect<true>;
+    test: TestSelect<false> | TestSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -693,7 +696,6 @@ export interface User {
 export interface UserMedia {
   id: string;
   alt?: string | null;
-  _key?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -707,7 +709,6 @@ export interface UserMedia {
   focalY?: number | null;
   sizes?: {
     thumbnail?: {
-      _key?: string | null;
       url?: string | null;
       width?: number | null;
       height?: number | null;
@@ -716,7 +717,6 @@ export interface UserMedia {
       filename?: string | null;
     };
     square?: {
-      _key?: string | null;
       url?: string | null;
       width?: number | null;
       height?: number | null;
@@ -725,7 +725,6 @@ export interface UserMedia {
       filename?: string | null;
     };
     small?: {
-      _key?: string | null;
       url?: string | null;
       width?: number | null;
       height?: number | null;
@@ -734,7 +733,6 @@ export interface UserMedia {
       filename?: string | null;
     };
     medium?: {
-      _key?: string | null;
       url?: string | null;
       width?: number | null;
       height?: number | null;
@@ -743,7 +741,6 @@ export interface UserMedia {
       filename?: string | null;
     };
     large?: {
-      _key?: string | null;
       url?: string | null;
       width?: number | null;
       height?: number | null;
@@ -978,25 +975,8 @@ export interface Form {
   title: string;
   fields?:
     | (
-        | {
-            name: string;
-            label?: string | null;
-            width?: number | null;
-            required?: boolean | null;
-            defaultValue?: boolean | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'checkbox';
-          }
-        | {
-            name: string;
-            label?: string | null;
-            width?: number | null;
-            required?: boolean | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'country';
-          }
+        | Checkbox
+        | Country
         | {
             name: string;
             label?: string | null;
@@ -1026,43 +1006,9 @@ export interface Form {
             blockName?: string | null;
             blockType: 'message';
           }
-        | {
-            name: string;
-            label?: string | null;
-            width?: number | null;
-            defaultValue?: number | null;
-            required?: boolean | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'number';
-          }
-        | {
-            name: string;
-            label?: string | null;
-            width?: number | null;
-            defaultValue?: string | null;
-            options?:
-              | {
-                  label: string;
-                  value: string;
-                  id?: string | null;
-                }[]
-              | null;
-            required?: boolean | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'select';
-          }
-        | {
-            name: string;
-            label?: string | null;
-            width?: number | null;
-            defaultValue?: string | null;
-            required?: boolean | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'text';
-          }
+        | Number
+        | Select
+        | Text
         | {
             name: string;
             label?: string | null;
@@ -1076,6 +1022,8 @@ export interface Form {
         | Password
         | Phone
         | MediaUpload
+        | Address
+        | DateField
       )[]
     | null;
   submitButtonLabel?: string | null;
@@ -1133,9 +1081,179 @@ export interface Form {
         id?: string | null;
       }[]
     | null;
-  test?: string | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Checkbox".
+ */
+export interface Checkbox {
+  name: string;
+  label: string;
+  defaultValue?: boolean | null;
+  required?: boolean | null;
+  relatesTo?:
+    | (
+        | 'name'
+        | 'surname'
+        | 'nationality'
+        | 'phone'
+        | 'identity'
+        | 'identityFile'
+        | 'profilePicture'
+        | 'role'
+        | 'nif'
+        | 'gender'
+        | 'groups'
+        | 'birthDate'
+        | 'disability'
+        | 'wantsToBeFederado'
+        | 'heardAboutClub'
+        | 'Address'
+      )
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'checkbox';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Country".
+ */
+export interface Country {
+  name: string;
+  label: string;
+  required?: boolean | null;
+  relatesTo?:
+    | (
+        | 'name'
+        | 'surname'
+        | 'nationality'
+        | 'phone'
+        | 'identity'
+        | 'identityFile'
+        | 'profilePicture'
+        | 'role'
+        | 'nif'
+        | 'gender'
+        | 'groups'
+        | 'birthDate'
+        | 'disability'
+        | 'wantsToBeFederado'
+        | 'heardAboutClub'
+        | 'Address'
+      )
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'country';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Number".
+ */
+export interface Number {
+  name: string;
+  label: string;
+  defaultValue?: number | null;
+  required?: boolean | null;
+  relatesTo?:
+    | (
+        | 'name'
+        | 'surname'
+        | 'nationality'
+        | 'phone'
+        | 'identity'
+        | 'identityFile'
+        | 'profilePicture'
+        | 'role'
+        | 'nif'
+        | 'gender'
+        | 'groups'
+        | 'birthDate'
+        | 'disability'
+        | 'wantsToBeFederado'
+        | 'heardAboutClub'
+        | 'Address'
+      )
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'number';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Select".
+ */
+export interface Select {
+  name: string;
+  label: string;
+  defaultValue?: string | null;
+  options?:
+    | {
+        label: string;
+        value: string;
+        id?: string | null;
+      }[]
+    | null;
+  required?: boolean | null;
+  relatesTo?:
+    | (
+        | 'name'
+        | 'surname'
+        | 'nationality'
+        | 'phone'
+        | 'identity'
+        | 'identityFile'
+        | 'profilePicture'
+        | 'role'
+        | 'nif'
+        | 'gender'
+        | 'groups'
+        | 'birthDate'
+        | 'disability'
+        | 'wantsToBeFederado'
+        | 'heardAboutClub'
+        | 'Address'
+      )
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'select';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Text".
+ */
+export interface Text {
+  name: string;
+  label: string;
+  defaultValue?: string | null;
+  required?: boolean | null;
+  relatesTo?:
+    | (
+        | 'name'
+        | 'surname'
+        | 'nationality'
+        | 'phone'
+        | 'identity'
+        | 'identityFile'
+        | 'profilePicture'
+        | 'role'
+        | 'nif'
+        | 'gender'
+        | 'groups'
+        | 'birthDate'
+        | 'disability'
+        | 'wantsToBeFederado'
+        | 'heardAboutClub'
+        | 'Address'
+      )
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'text';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1159,6 +1277,26 @@ export interface Phone {
   name: string;
   label: string;
   required?: boolean | null;
+  relatesTo?:
+    | (
+        | 'name'
+        | 'surname'
+        | 'nationality'
+        | 'phone'
+        | 'identity'
+        | 'identityFile'
+        | 'profilePicture'
+        | 'role'
+        | 'nif'
+        | 'gender'
+        | 'groups'
+        | 'birthDate'
+        | 'disability'
+        | 'wantsToBeFederado'
+        | 'heardAboutClub'
+        | 'Address'
+      )
+    | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'phone';
@@ -1172,9 +1310,164 @@ export interface MediaUpload {
   label: string;
   media?: (string | null) | Media;
   required?: boolean | null;
+  relatesTo?:
+    | (
+        | 'name'
+        | 'surname'
+        | 'nationality'
+        | 'phone'
+        | 'identity'
+        | 'identityFile'
+        | 'profilePicture'
+        | 'role'
+        | 'nif'
+        | 'gender'
+        | 'groups'
+        | 'birthDate'
+        | 'disability'
+        | 'wantsToBeFederado'
+        | 'heardAboutClub'
+        | 'Address'
+      )
+    | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'media';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Address".
+ */
+export interface Address {
+  name: string;
+  label: string;
+  relatesTo?:
+    | (
+        | 'name'
+        | 'surname'
+        | 'nationality'
+        | 'phone'
+        | 'identity'
+        | 'identityFile'
+        | 'profilePicture'
+        | 'role'
+        | 'nif'
+        | 'gender'
+        | 'groups'
+        | 'birthDate'
+        | 'disability'
+        | 'wantsToBeFederado'
+        | 'heardAboutClub'
+        | 'Address'
+      )
+    | null;
+  address?: {
+    street?: string | null;
+    streetLabel?: string | null;
+    streetRequired?: boolean | null;
+    numberLabel?: string | null;
+    numberRequired?: boolean | null;
+    stateLabel?: string | null;
+    stateRequired?: boolean | null;
+    zipcodeLabel?: string | null;
+    zipRequired?: boolean | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'address';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "DateField".
+ */
+export interface DateField {
+  name: string;
+  label: string;
+  required?: boolean | null;
+  relatesTo?:
+    | (
+        | 'name'
+        | 'surname'
+        | 'nationality'
+        | 'phone'
+        | 'identity'
+        | 'identityFile'
+        | 'profilePicture'
+        | 'role'
+        | 'nif'
+        | 'gender'
+        | 'groups'
+        | 'birthDate'
+        | 'disability'
+        | 'wantsToBeFederado'
+        | 'heardAboutClub'
+        | 'Address'
+      )
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'datePicker';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "test".
+ */
+export interface Test {
+  id: string;
+  alt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    square?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    small?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    medium?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    large?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1380,6 +1673,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'user-media';
         value: string | UserMedia;
+      } | null)
+    | ({
+        relationTo: 'test';
+        value: string | Test;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -1815,7 +2112,6 @@ export interface GroupCategoriesSelect<T extends boolean = true> {
  */
 export interface UserMediaSelect<T extends boolean = true> {
   alt?: T;
-  _key?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -1833,7 +2129,6 @@ export interface UserMediaSelect<T extends boolean = true> {
         thumbnail?:
           | T
           | {
-              _key?: T;
               url?: T;
               width?: T;
               height?: T;
@@ -1844,7 +2139,6 @@ export interface UserMediaSelect<T extends boolean = true> {
         square?:
           | T
           | {
-              _key?: T;
               url?: T;
               width?: T;
               height?: T;
@@ -1855,7 +2149,6 @@ export interface UserMediaSelect<T extends boolean = true> {
         small?:
           | T
           | {
-              _key?: T;
               url?: T;
               width?: T;
               height?: T;
@@ -1866,7 +2159,6 @@ export interface UserMediaSelect<T extends boolean = true> {
         medium?:
           | T
           | {
-              _key?: T;
               url?: T;
               width?: T;
               height?: T;
@@ -1877,7 +2169,78 @@ export interface UserMediaSelect<T extends boolean = true> {
         large?:
           | T
           | {
-              _key?: T;
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "test_select".
+ */
+export interface TestSelect<T extends boolean = true> {
+  alt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+  sizes?:
+    | T
+    | {
+        thumbnail?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        square?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        small?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        medium?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        large?:
+          | T
+          | {
               url?: T;
               width?: T;
               height?: T;
@@ -1912,27 +2275,8 @@ export interface FormsSelect<T extends boolean = true> {
   fields?:
     | T
     | {
-        checkbox?:
-          | T
-          | {
-              name?: T;
-              label?: T;
-              width?: T;
-              required?: T;
-              defaultValue?: T;
-              id?: T;
-              blockName?: T;
-            };
-        country?:
-          | T
-          | {
-              name?: T;
-              label?: T;
-              width?: T;
-              required?: T;
-              id?: T;
-              blockName?: T;
-            };
+        checkbox?: T | CheckboxSelect<T>;
+        country?: T | CountrySelect<T>;
         email?:
           | T
           | {
@@ -1950,46 +2294,9 @@ export interface FormsSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
-        number?:
-          | T
-          | {
-              name?: T;
-              label?: T;
-              width?: T;
-              defaultValue?: T;
-              required?: T;
-              id?: T;
-              blockName?: T;
-            };
-        select?:
-          | T
-          | {
-              name?: T;
-              label?: T;
-              width?: T;
-              defaultValue?: T;
-              options?:
-                | T
-                | {
-                    label?: T;
-                    value?: T;
-                    id?: T;
-                  };
-              required?: T;
-              id?: T;
-              blockName?: T;
-            };
-        text?:
-          | T
-          | {
-              name?: T;
-              label?: T;
-              width?: T;
-              defaultValue?: T;
-              required?: T;
-              id?: T;
-              blockName?: T;
-            };
+        number?: T | NumberSelect<T>;
+        select?: T | SelectSelect<T>;
+        text?: T | TextSelect<T>;
         textarea?:
           | T
           | {
@@ -2004,6 +2311,8 @@ export interface FormsSelect<T extends boolean = true> {
         password?: T | PasswordSelect<T>;
         phone?: T | PhoneSelect<T>;
         media?: T | MediaUploadSelect<T>;
+        address?: T | AddressSelect<T>;
+        datePicker?: T | DateFieldSelect<T>;
       };
   submitButtonLabel?: T;
   confirmationType?: T;
@@ -2025,9 +2334,79 @@ export interface FormsSelect<T extends boolean = true> {
         message?: T;
         id?: T;
       };
-  test?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Checkbox_select".
+ */
+export interface CheckboxSelect<T extends boolean = true> {
+  name?: T;
+  label?: T;
+  defaultValue?: T;
+  required?: T;
+  relatesTo?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Country_select".
+ */
+export interface CountrySelect<T extends boolean = true> {
+  name?: T;
+  label?: T;
+  required?: T;
+  relatesTo?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Number_select".
+ */
+export interface NumberSelect<T extends boolean = true> {
+  name?: T;
+  label?: T;
+  defaultValue?: T;
+  required?: T;
+  relatesTo?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Select_select".
+ */
+export interface SelectSelect<T extends boolean = true> {
+  name?: T;
+  label?: T;
+  defaultValue?: T;
+  options?:
+    | T
+    | {
+        label?: T;
+        value?: T;
+        id?: T;
+      };
+  required?: T;
+  relatesTo?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Text_select".
+ */
+export interface TextSelect<T extends boolean = true> {
+  name?: T;
+  label?: T;
+  defaultValue?: T;
+  required?: T;
+  relatesTo?: T;
+  id?: T;
+  blockName?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2050,6 +2429,7 @@ export interface PhoneSelect<T extends boolean = true> {
   name?: T;
   label?: T;
   required?: T;
+  relatesTo?: T;
   id?: T;
   blockName?: T;
 }
@@ -2062,6 +2442,43 @@ export interface MediaUploadSelect<T extends boolean = true> {
   label?: T;
   media?: T;
   required?: T;
+  relatesTo?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Address_select".
+ */
+export interface AddressSelect<T extends boolean = true> {
+  name?: T;
+  label?: T;
+  relatesTo?: T;
+  address?:
+    | T
+    | {
+        street?: T;
+        streetLabel?: T;
+        streetRequired?: T;
+        numberLabel?: T;
+        numberRequired?: T;
+        stateLabel?: T;
+        stateRequired?: T;
+        zipcodeLabel?: T;
+        zipRequired?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "DateField_select".
+ */
+export interface DateFieldSelect<T extends boolean = true> {
+  name?: T;
+  label?: T;
+  required?: T;
+  relatesTo?: T;
   id?: T;
   blockName?: T;
 }
