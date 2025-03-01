@@ -75,7 +75,7 @@ export const FormBlock: React.FC<
             relatesTo: getRelationalField({ fields, name }),
           }
         })
-        console.log('Data: ', dataToSend)
+
         if (isRegistrationForm) {
           const { error } = await createUser(dataToSend)
 
