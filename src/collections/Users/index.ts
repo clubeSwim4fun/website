@@ -169,6 +169,9 @@ export const Users: CollectionConfig = {
       type: 'date',
       admin: {
         position: 'sidebar',
+        date: {
+          displayFormat: 'dd/MM/yyyy',
+        },
       },
     },
     {
