@@ -10,7 +10,7 @@ import { ChevronDown, SearchIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import LogoutButton from '../Logout'
 
-export const HeaderNav: React.FC<{ data: HeaderType; user: User }> = ({ data, user }) => {
+export const HeaderNav: React.FC<{ data: HeaderType; user?: User }> = ({ data, user }) => {
   const navItems = data?.navItems || []
 
   return (

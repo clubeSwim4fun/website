@@ -14,7 +14,7 @@ const UserPage = async () => {
         <Image src={userObject.user.identityFile} height={400} width={400} alt="test" />
       )} */}
 
-      {userObject.user.profilePicture && (
+      {userObject?.user?.profilePicture && (
         <Image src={userObject.user.profilePicture as string} height={400} width={400} alt="test" />
       )}
     </section>

@@ -21,7 +21,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const { isEnabled } = await draftMode()
   const userObject = await getMeUser()
   const isEditorOrAdmin =
-    userObject.user?.role?.includes('editor') || userObject.user?.role?.includes('admin')
+    userObject?.user?.role?.includes('editor') || userObject.user?.role?.includes('admin')
 
   return (
     <html className={cn(GeistSans.variable, GeistMono.variable)} lang="en" suppressHydrationWarning>

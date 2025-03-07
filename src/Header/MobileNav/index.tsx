@@ -47,7 +47,7 @@ const getLinkHref = (link: LinkType) => {
   return href
 }
 
-const MobileHeaderNav: React.FC<{ data: HeaderType; user: User }> = ({ data, user }) => {
+const MobileHeaderNav: React.FC<{ data: HeaderType; user?: User }> = ({ data, user }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [subNavOpen, setSubNavOpen] = useState<string[]>([])
   const navItems = data?.navItems || []

@@ -12,7 +12,7 @@ import MobileHeaderNav from './MobileNav'
 
 interface HeaderClientProps {
   data: Header
-  user: User
+  user?: User
 }
 
 export const HeaderClient: React.FC<HeaderClientProps> = ({ data, user }) => {
