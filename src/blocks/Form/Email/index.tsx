@@ -12,8 +12,9 @@ export const Email: React.FC<
   EmailField & {
     errors: Partial<FieldErrorsImpl>
     register: UseFormRegister<FieldValues>
+    disabled: boolean
   }
-> = ({ name, defaultValue, errors, label, register, required, width }) => {
+> = ({ name, defaultValue, errors, label, register, required, width, disabled }) => {
   return (
     <Width width={width}>
       <Label htmlFor={name}>
@@ -29,6 +30,7 @@ export const Email: React.FC<
         defaultValue={defaultValue}
         id={name}
         type="text"
+        disabled={disabled}
         {...register(name, { pattern: /^\S[^\s@]*@\S+$/, required })}
       />
 

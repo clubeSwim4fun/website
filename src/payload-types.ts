@@ -975,15 +975,7 @@ export interface Form {
     | (
         | Checkbox
         | Country
-        | {
-            name: string;
-            label?: string | null;
-            width?: number | null;
-            required?: boolean | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'email';
-          }
+        | Email
         | {
             message?: {
               root: {
@@ -1111,6 +1103,7 @@ export interface Checkbox {
         | 'Address'
       )
     | null;
+  size?: ('full' | 'half' | 'one-third') | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'checkbox';
@@ -1143,9 +1136,24 @@ export interface Country {
         | 'Address'
       )
     | null;
+  size?: ('full' | 'half' | 'one-third') | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'country';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Email".
+ */
+export interface Email {
+  name: string;
+  label: string;
+  defaultValue?: string | null;
+  required?: boolean | null;
+  size?: ('full' | 'half' | 'one-third') | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'email';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1176,6 +1184,7 @@ export interface Number {
         | 'Address'
       )
     | null;
+  size?: ('full' | 'half' | 'one-third') | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'number';
@@ -1216,6 +1225,7 @@ export interface Select {
         | 'Address'
       )
     | null;
+  size?: ('full' | 'half' | 'one-third') | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'select';
@@ -1249,6 +1259,7 @@ export interface Text {
         | 'Address'
       )
     | null;
+  size?: ('full' | 'half' | 'one-third') | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'text';
@@ -1295,6 +1306,7 @@ export interface Phone {
         | 'Address'
       )
     | null;
+  size?: ('full' | 'half' | 'one-third') | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'phone';
@@ -1328,6 +1340,7 @@ export interface MediaUpload {
         | 'Address'
       )
     | null;
+  size?: ('full' | 'half' | 'one-third') | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'media';
@@ -1360,14 +1373,17 @@ export interface Address {
       )
     | null;
   address?: {
-    street?: string | null;
     streetLabel?: string | null;
+    streetSize?: ('full' | 'half' | 'one-third') | null;
     streetRequired?: boolean | null;
     numberLabel?: string | null;
+    numberSize?: ('full' | 'half' | 'one-third') | null;
     numberRequired?: boolean | null;
     stateLabel?: string | null;
+    stateSize?: ('full' | 'half' | 'one-third') | null;
     stateRequired?: boolean | null;
     zipcodeLabel?: string | null;
+    zipSize?: ('full' | 'half' | 'one-third') | null;
     zipRequired?: boolean | null;
   };
   id?: string | null;
@@ -1403,6 +1419,7 @@ export interface DateField {
         | 'Address'
       )
     | null;
+  size?: ('full' | 'half' | 'one-third') | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'datePicker';
@@ -2139,16 +2156,7 @@ export interface FormsSelect<T extends boolean = true> {
     | {
         checkbox?: T | CheckboxSelect<T>;
         country?: T | CountrySelect<T>;
-        email?:
-          | T
-          | {
-              name?: T;
-              label?: T;
-              width?: T;
-              required?: T;
-              id?: T;
-              blockName?: T;
-            };
+        email?: T | EmailSelect<T>;
         message?:
           | T
           | {
@@ -2209,6 +2217,7 @@ export interface CheckboxSelect<T extends boolean = true> {
   defaultValue?: T;
   required?: T;
   relatesTo?: T;
+  size?: T;
   id?: T;
   blockName?: T;
 }
@@ -2221,6 +2230,20 @@ export interface CountrySelect<T extends boolean = true> {
   label?: T;
   required?: T;
   relatesTo?: T;
+  size?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Email_select".
+ */
+export interface EmailSelect<T extends boolean = true> {
+  name?: T;
+  label?: T;
+  defaultValue?: T;
+  required?: T;
+  size?: T;
   id?: T;
   blockName?: T;
 }
@@ -2234,6 +2257,7 @@ export interface NumberSelect<T extends boolean = true> {
   defaultValue?: T;
   required?: T;
   relatesTo?: T;
+  size?: T;
   id?: T;
   blockName?: T;
 }
@@ -2254,6 +2278,7 @@ export interface SelectSelect<T extends boolean = true> {
       };
   required?: T;
   relatesTo?: T;
+  size?: T;
   id?: T;
   blockName?: T;
 }
@@ -2267,6 +2292,7 @@ export interface TextSelect<T extends boolean = true> {
   defaultValue?: T;
   required?: T;
   relatesTo?: T;
+  size?: T;
   id?: T;
   blockName?: T;
 }
@@ -2292,6 +2318,7 @@ export interface PhoneSelect<T extends boolean = true> {
   label?: T;
   required?: T;
   relatesTo?: T;
+  size?: T;
   id?: T;
   blockName?: T;
 }
@@ -2305,6 +2332,7 @@ export interface MediaUploadSelect<T extends boolean = true> {
   media?: T;
   required?: T;
   relatesTo?: T;
+  size?: T;
   id?: T;
   blockName?: T;
 }
@@ -2319,14 +2347,17 @@ export interface AddressSelect<T extends boolean = true> {
   address?:
     | T
     | {
-        street?: T;
         streetLabel?: T;
+        streetSize?: T;
         streetRequired?: T;
         numberLabel?: T;
+        numberSize?: T;
         numberRequired?: T;
         stateLabel?: T;
+        stateSize?: T;
         stateRequired?: T;
         zipcodeLabel?: T;
+        zipSize?: T;
         zipRequired?: T;
       };
   id?: T;
@@ -2342,6 +2373,7 @@ export interface DateFieldSelect<T extends boolean = true> {
   placeholder?: T;
   required?: T;
   relatesTo?: T;
+  size?: T;
   id?: T;
   blockName?: T;
 }

@@ -28,18 +28,26 @@ export const Address: Block = {
           type: 'row',
           fields: [
             {
-              name: 'street',
-              type: 'text',
-              required: false,
-              defaultValue: 'street',
-            },
-            {
               name: 'streetLabel',
               type: 'text',
               required: false,
               admin: {
                 width: '50%',
               },
+            },
+            {
+              name: 'streetSize',
+              label: 'tamanho',
+              type: 'select',
+              defaultValue: 'full',
+              admin: {
+                width: '25%',
+              },
+              options: [
+                { label: '100%', value: 'full' },
+                { label: '50%', value: 'half' },
+                { label: '1/3', value: 'one-third' },
+              ],
             },
             {
               name: 'streetRequired',
@@ -64,6 +72,20 @@ export const Address: Block = {
               },
             },
             {
+              name: 'numberSize',
+              label: 'tamanho',
+              type: 'select',
+              defaultValue: 'full',
+              admin: {
+                width: '25%',
+              },
+              options: [
+                { label: '100%', value: 'full' },
+                { label: '50%', value: 'half' },
+                { label: '1/3', value: 'one-third' },
+              ],
+            },
+            {
               name: 'numberRequired',
               type: 'checkbox',
               admin: {
@@ -86,6 +108,20 @@ export const Address: Block = {
               },
             },
             {
+              name: 'stateSize',
+              label: 'tamanho',
+              type: 'select',
+              defaultValue: 'full',
+              admin: {
+                width: '25%',
+              },
+              options: [
+                { label: '100%', value: 'full' },
+                { label: '50%', value: 'half' },
+                { label: '1/3', value: 'one-third' },
+              ],
+            },
+            {
               name: 'stateRequired',
               type: 'checkbox',
               admin: {
@@ -106,6 +142,20 @@ export const Address: Block = {
               admin: {
                 width: '50%',
               },
+            },
+            {
+              name: 'zipSize',
+              label: 'tamanho',
+              type: 'select',
+              defaultValue: 'full',
+              admin: {
+                width: '25%',
+              },
+              options: [
+                { label: '100%', value: 'full' },
+                { label: '50%', value: 'half' },
+                { label: '1/3', value: 'one-third' },
+              ],
             },
             {
               name: 'zipRequired',

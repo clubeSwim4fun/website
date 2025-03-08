@@ -235,6 +235,7 @@ export function FileUploader(props: FileUploaderProps) {
           <div className="flex max-h-48 flex-col gap-4">
             {files?.map((file, index) => (
               <FileCard
+                disabled={disabled}
                 key={index}
                 file={file}
                 onRemove={() => onRemove(index)}
@@ -252,9 +253,10 @@ interface FileCardProps {
   file: File
   onRemove: () => void
   progress?: number
+  disabled: boolean
 }
 
-function FileCard({ file, progress, onRemove }: FileCardProps) {
+function FileCard({ file, progress, onRemove, disabled }: FileCardProps) {
   return (
     <div className="relative flex items-center gap-2.5">
       <div className="flex flex-1 gap-2.5">
@@ -268,7 +270,14 @@ function FileCard({ file, progress, onRemove }: FileCardProps) {
         </div>
       </div>
       <div className="flex items-center gap-2">
-        <Button type="button" variant="outline" size="icon" className="size-7" onClick={onRemove}>
+        <Button
+          type="button"
+          variant="outline"
+          size="icon"
+          className="size-7"
+          onClick={onRemove}
+          disabled={disabled}
+        >
           <X className="size-4" aria-hidden="true" />
           <span className="sr-only">Remove file</span>
         </Button>

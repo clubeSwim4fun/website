@@ -20,8 +20,9 @@ export const Country: React.FC<
   CountryField & {
     control: Control
     errors: Partial<FieldErrorsImpl>
+    disabled: boolean
   }
-> = ({ name, control, errors, label, required, width }) => {
+> = ({ name, control, errors, label, required, width, disabled }) => {
   return (
     <Width width={width}>
       <Label className="" htmlFor={name}>
@@ -42,7 +43,7 @@ export const Country: React.FC<
 
           return (
             <Select onValueChange={(val) => onChange(val)} value={controlledValue?.name}>
-              <SelectTrigger className="w-full" id={name}>
+              <SelectTrigger className="w-full" id={name} disabled={disabled}>
                 <SelectValue placeholder={label} />
               </SelectTrigger>
               <SelectContent>

@@ -12,8 +12,9 @@ export const Text: React.FC<
   TextField & {
     errors: Partial<FieldErrorsImpl>
     register: UseFormRegister<FieldValues>
+    disabled: boolean
   }
-> = ({ name, defaultValue, errors, label, register, required, width }) => {
+> = ({ name, defaultValue, errors, label, register, required, width, disabled }) => {
   return (
     <Width width={width}>
       <Label htmlFor={name}>
@@ -24,7 +25,13 @@ export const Text: React.FC<
           </span>
         )}
       </Label>
-      <Input defaultValue={defaultValue} id={name} type="text" {...register(name, { required })} />
+      <Input
+        defaultValue={defaultValue}
+        id={name}
+        type="text"
+        disabled={disabled}
+        {...register(name, { required })}
+      />
       {errors[name] && <Error />}
     </Width>
   )

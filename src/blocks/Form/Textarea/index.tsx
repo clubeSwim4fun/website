@@ -13,8 +13,9 @@ export const Textarea: React.FC<
     errors: Partial<FieldErrorsImpl>
     register: UseFormRegister<FieldValues>
     rows?: number
+    disabled: boolean
   }
-> = ({ name, defaultValue, errors, label, register, required, rows = 3, width }) => {
+> = ({ name, defaultValue, errors, label, register, required, rows = 3, width, disabled }) => {
   return (
     <Width width={width}>
       <Label htmlFor={name}>
@@ -29,6 +30,7 @@ export const Textarea: React.FC<
 
       <TextAreaComponent
         defaultValue={defaultValue}
+        disabled={disabled}
         id={name}
         rows={rows}
         {...register(name, { required: required })}

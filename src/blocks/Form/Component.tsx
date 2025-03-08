@@ -2,7 +2,7 @@
 import type { Form as FormType } from '@payloadcms/plugin-form-builder/types'
 
 import { useRouter } from 'next/navigation'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useForm, FormProvider } from 'react-hook-form'
 import RichText from '@/components/RichText'
 import { Button } from '@/components/ui/button'
@@ -13,6 +13,9 @@ import { getClientSideURL } from '@/utilities/getURL'
 import { UserMedia } from '@/payload-types'
 import { createUser, CreateUserRequestType } from '@/actions/createUser'
 import { CustomFormFieldBlock, getRelationalField } from '@/utilities/getRelationalField'
+import { useToast } from '@/hooks/use-toast'
+import { LoaderCircle } from 'lucide-react'
+import { cn } from '@/utilities/ui'
 
 export type FormBlockType = {
   blockName?: string
@@ -60,10 +63,12 @@ export const FormBlock: React.FC<
   const [hasSubmitted, setHasSubmitted] = useState<boolean>()
   const [error, setError] = useState<{ message: string; status?: string } | undefined>()
   const router = useRouter()
+  const { toast } = useToast()
 
   const onSubmit = useCallback(
     (data: { [key: string]: any }[]) => {
-      let loadingTimerID: ReturnType<typeof setTimeout>
+      setIsLoading(true)
+
       const submitForm = async () => {
         setError(undefined)
         const fields = formFromProps.fields as CustomFormFieldBlock[]
@@ -91,11 +96,6 @@ export const FormBlock: React.FC<
           }
         }
 
-        // delay loading indicator by 1s
-        loadingTimerID = setTimeout(() => {
-          setIsLoading(true)
-        }, 1000)
-
         try {
           const req = await fetch(`${getClientSideURL()}/api/form-submissions`, {
             body: JSON.stringify({
@@ -109,8 +109,6 @@ export const FormBlock: React.FC<
           })
 
           const res = await req.json()
-
-          clearTimeout(loadingTimerID)
 
           if (req.status >= 400) {
             setIsLoading(false)
@@ -147,6 +145,17 @@ export const FormBlock: React.FC<
     [router, formID, redirect, confirmationType],
   )
 
+  useEffect(() => {
+    if (!error) {
+      return
+    }
+
+    toast({
+      variant: 'destructive',
+      description: error?.message || 'Um erro inesperado aconteceu, por favor tente novamente!',
+    })
+  }, [error])
+
   return (
     <div className="container lg:max-w-[48rem]">
       {enableIntro && introContent && !hasSubmitted && (
@@ -158,18 +167,27 @@ export const FormBlock: React.FC<
             <RichText data={confirmationMessage} />
           )}
           {isLoading && !hasSubmitted && <p>Loading, please wait...</p>}
-          {error && <div>{`${error.status || '500'}: ${error.message || ''}`}</div>}
           {!hasSubmitted && (
             <form id={formID} onSubmit={handleSubmit(onSubmit)}>
-              <div className="mb-4 last:mb-0">
+              <div className="mb-4 last:mb-0 grid grid-cols-6 gap-3">
                 {formFromProps &&
                   formFromProps.fields &&
-                  formFromProps.fields?.map((field, index) => {
+                  formFromProps.fields?.map((field: CustomFormFieldBlock, index) => {
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     const Field: React.FC<any> = fields?.[field.blockType as keyof typeof fields]
                     if (Field) {
                       return (
-                        <div className="mb-6 last:mb-0" key={index}>
+                        <div
+                          className={cn(
+                            'mb-6 last:mb-0',
+                            field.size === 'one-third'
+                              ? 'col-span-2'
+                              : field.size === 'half'
+                                ? 'col-span-3'
+                                : 'col-span-6',
+                          )}
+                          key={index}
+                        >
                           <Field
                             form={formFromProps}
                             {...field}
@@ -177,6 +195,7 @@ export const FormBlock: React.FC<
                             control={control}
                             errors={errors}
                             register={register}
+                            disabled={isLoading}
                           />
                         </div>
                       )
@@ -185,8 +204,14 @@ export const FormBlock: React.FC<
                   })}
               </div>
 
-              <Button form={formID} type="submit" variant="default">
-                {submitButtonLabel}
+              <Button form={formID} type="submit" variant="default" disabled={isLoading}>
+                {isLoading ? (
+                  <span>
+                    {submitButtonLabel} <LoaderCircle className="animate-spin inline ml-2" />
+                  </span>
+                ) : (
+                  submitButtonLabel
+                )}
               </Button>
             </form>
           )}

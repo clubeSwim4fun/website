@@ -13,20 +13,37 @@ export const Password: React.FC<
   PasswordField & {
     errors: Partial<FieldErrorsImpl>
     register: UseFormRegister<FieldValues>
+    disabled: boolean
   }
-> = ({ name, errors, label, register, hasConfirmPassword, confirmLabel, errorPassword }) => {
+> = ({
+  name,
+  errors,
+  label,
+  register,
+  hasConfirmPassword,
+  confirmLabel,
+  errorPassword,
+  disabled,
+}) => {
   return (
-    <Width width={'100%'}>
-      <Label htmlFor={name}>
-        {label}
-        <span className="required">
-          * <span className="sr-only">(required)</span>
-        </span>
-      </Label>
-      <Input id={name} type="password" {...register('password', { required: true })} />
+    <div className="grid grid-cols-6 gap-3">
+      <div className={hasConfirmPassword ? 'col-span-3' : 'col-span-6'}>
+        <Label htmlFor={name}>
+          {label}
+          <span className="required">
+            * <span className="sr-only">(required)</span>
+          </span>
+        </Label>
+        <Input
+          id={name}
+          type="password"
+          disabled={disabled}
+          {...register('password', { required: true })}
+        />
+      </div>
       {errors[name] && <Error />}
       {hasConfirmPassword && (
-        <div className="mt-6">
+        <div className="col-span-3">
           <Label htmlFor={`confirmPassword`}>
             {confirmLabel}
             <span className="required">
@@ -36,6 +53,7 @@ export const Password: React.FC<
           <Input
             id={`confirmPassword`}
             type="password"
+            disabled={disabled}
             {...register(`confirmPassword`, {
               validate: {
                 checkPasswordMatch: (confirmPassword, { password }) => {
@@ -51,6 +69,6 @@ export const Password: React.FC<
           )}
         </div>
       )}
-    </Width>
+    </div>
   )
 }

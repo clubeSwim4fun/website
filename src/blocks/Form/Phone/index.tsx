@@ -12,8 +12,9 @@ export const Phone: React.FC<
   PhoneBlock & {
     control: Control
     errors: Partial<FieldErrorsImpl>
+    disabled: boolean
   }
-> = ({ name, errors, label, required, control }) => {
+> = ({ name, errors, label, required, control, disabled }) => {
   return (
     <Width width={100}>
       <Label htmlFor={name}>
@@ -30,7 +31,15 @@ export const Phone: React.FC<
         name={name}
         rules={{ required: Boolean(required) }}
         render={({ field }) => {
-          return <PhoneInput id={name} type="phone" {...field} placeholder="Enter a phone number" />
+          return (
+            <PhoneInput
+              disabled={disabled}
+              id={name}
+              type="phone"
+              {...field}
+              placeholder="Enter a phone number"
+            />
+          )
         }}
       />
       {errors[name] && <Error />}

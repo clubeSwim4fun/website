@@ -1,8 +1,9 @@
 import { FormFieldBlock } from '@payloadcms/plugin-form-builder/types'
 
 export type CustomFormFieldBlock = FormFieldBlock & {
-  name: string
-  relatesTo: string
+  name?: string
+  size?: 'full' | 'half' | 'one-third'
+  relatesTo?: string
 }
 export const getRelationalField = ({
   fields,

@@ -14,8 +14,9 @@ export const Checkbox: React.FC<
   CheckboxField & {
     errors: Partial<FieldErrorsImpl>
     register: UseFormRegister<FieldValues>
+    disabled: boolean
   }
-> = ({ name, defaultValue, errors, label, register, required, width }) => {
+> = ({ name, defaultValue, errors, label, register, required, width, disabled }) => {
   const props = register(name, { required: required })
   const { setValue } = useFormContext()
 
@@ -24,6 +25,7 @@ export const Checkbox: React.FC<
       <div className="flex items-center gap-2">
         <CheckboxUi
           defaultChecked={defaultValue}
+          disabled={disabled}
           id={name}
           {...props}
           onCheckedChange={(checked) => {

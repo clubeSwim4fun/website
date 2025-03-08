@@ -23,6 +23,7 @@ import { Number } from '@/blocks/Form/Number/config'
 import { Select } from '@/blocks/Form/Select/config'
 import { Address } from '@/blocks/Form/Address/config'
 import { DatePicker } from '@/blocks/Form/Date/config'
+import { Email } from '@/blocks/Form/Email/config'
 
 const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
   return doc?.title ? `${doc.title} | Payload Website Template` : 'Payload Website Template'
@@ -77,6 +78,7 @@ export const plugins: Plugin[] = [
       select: Select,
       address: Address,
       date: DatePicker,
+      email: Email,
       state: false,
     },
     formOverrides: {

@@ -29,5 +29,16 @@ export const DatePicker: Block = {
       type: 'select',
       options: userCollectionFieldsName,
     },
+    {
+      name: 'size',
+      label: 'tamanho',
+      type: 'select',
+      defaultValue: 'full',
+      options: [
+        { label: '100%', value: 'full' },
+        { label: '50%', value: 'half' },
+        { label: '1/3', value: 'one-third' },
+      ],
+    },
   ],
 }

@@ -16,8 +16,9 @@ export const Address: React.FC<
       [key: string]: any
     }
     register: UseFormRegister<FieldValues>
+    disabled: boolean
   }
-> = ({ name, control, errors, label, register, address }) => {
+> = ({ name, control, label, errors, register, address, disabled }) => {
   if (!address) {
     return
   }
@@ -30,6 +31,10 @@ export const Address: React.FC<
     streetRequired,
     zipRequired,
     zipcodeLabel,
+    streetSize,
+    numberSize,
+    stateSize,
+    zipSize,
   } = address
   const AddressField = ({
     control,
@@ -41,12 +46,20 @@ export const Address: React.FC<
     register: UseFormRegister<FieldValues>
   }) => {
     return (
-      <div>
+      <div className="grid grid-cols-6 gap-3">
         <Controller
           control={control}
           name={`${name}.street`}
           render={() => (
-            <div>
+            <div
+              className={
+                streetSize === 'one-third'
+                  ? 'col-span-2'
+                  : streetSize === 'half'
+                    ? 'col-span-3'
+                    : 'col-span-6'
+              }
+            >
               <Label htmlFor={`${name}.street`}>
                 {streetLabel}
                 {streetRequired && (
@@ -58,6 +71,7 @@ export const Address: React.FC<
               <Input
                 id={`${name}.street`}
                 type="text"
+                disabled={disabled}
                 defaultValue={''}
                 {...register(`${name}.street`, { required: !!streetRequired })}
               />
@@ -69,7 +83,15 @@ export const Address: React.FC<
           control={control}
           name={`${name}.number`}
           render={() => (
-            <div>
+            <div
+              className={
+                numberSize === 'one-third'
+                  ? 'col-span-2'
+                  : numberSize === 'half'
+                    ? 'col-span-3'
+                    : 'col-span-6'
+              }
+            >
               <Label htmlFor={`${name}.number`}>
                 {numberLabel}
                 {numberRequired && (
@@ -81,6 +103,7 @@ export const Address: React.FC<
               <Input
                 id={`${name}.number`}
                 type="text"
+                disabled={disabled}
                 defaultValue={''}
                 {...register(`${name}.number`, { required: !!numberRequired })}
               />
@@ -92,7 +115,15 @@ export const Address: React.FC<
           control={control}
           name={`${name}.state`}
           render={() => (
-            <div>
+            <div
+              className={
+                stateSize === 'one-third'
+                  ? 'col-span-2'
+                  : stateSize === 'half'
+                    ? 'col-span-3'
+                    : 'col-span-6'
+              }
+            >
               <Label htmlFor={`${name}.state`}>
                 {stateLabel}
                 {stateRequired && (
@@ -104,6 +135,7 @@ export const Address: React.FC<
               <Input
                 id={`${name}.state`}
                 type="text"
+                disabled={disabled}
                 defaultValue={''}
                 {...register(`${name}.state`, { required: !!stateRequired })}
               />
@@ -115,7 +147,15 @@ export const Address: React.FC<
           control={control}
           name={`${name}.zipcode`}
           render={() => (
-            <div>
+            <div
+              className={
+                zipSize === 'one-third'
+                  ? 'col-span-2'
+                  : zipSize === 'half'
+                    ? 'col-span-3'
+                    : 'col-span-6'
+              }
+            >
               <Label htmlFor={`${name}.zipcode`}>
                 {zipcodeLabel}
                 {zipRequired && (
@@ -126,6 +166,7 @@ export const Address: React.FC<
               </Label>
               <Input
                 id={`${name}.zipcode`}
+                disabled={disabled}
                 type="text"
                 defaultValue={''}
                 {...register(`${name}.zipcode`, { required: !!zipRequired })}

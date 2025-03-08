@@ -10,8 +10,9 @@ export const Media: React.FC<
     errors: Partial<FieldErrorsImpl>
     register: UseFormRegister<FieldValues>
     control: Control
+    disabled: boolean
   }
-> = ({ name, label, required, control, errors }) => {
+> = ({ name, label, required, control, errors, disabled }) => {
   return (
     <Width width={100}>
       <Label htmlFor={label}>
@@ -29,6 +30,7 @@ export const Media: React.FC<
         render={({ field }) => {
           return (
             <FileUploader
+              disabled={disabled}
               value={field.value}
               onValueChange={field.onChange}
               accept={{ 'image/*': [], 'application/pdf': [] }}

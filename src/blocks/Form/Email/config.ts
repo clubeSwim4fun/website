@@ -1,9 +1,8 @@
-import userCollectionFieldsName from '@/utilities/getUsersFields'
-import { Block } from 'payload'
+import type { Block } from 'payload'
 
-export const Text: Block = {
-  slug: 'text',
-  interfaceName: 'Text',
+export const Email: Block = {
+  slug: 'email',
+  interfaceName: 'Email',
   fields: [
     {
       name: 'name',
@@ -22,11 +21,6 @@ export const Text: Block = {
     {
       name: 'required',
       type: 'checkbox',
-    },
-    {
-      name: 'relatesTo',
-      type: 'select',
-      options: userCollectionFieldsName,
     },
     {
       name: 'size',

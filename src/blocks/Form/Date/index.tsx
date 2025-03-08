@@ -20,8 +20,9 @@ export const DatePicker: React.FC<
   DateField & {
     control: Control
     errors: Partial<FieldErrorsImpl>
+    disabled: boolean
   }
-> = ({ name, control, errors, label, required, placeholder }) => {
+> = ({ name, control, errors, label, required, placeholder, disabled }) => {
   return (
     <Width width={'100%'}>
       <Label className="" htmlFor={name}>
@@ -40,6 +41,7 @@ export const DatePicker: React.FC<
           <Popover>
             <PopoverTrigger asChild>
               <Button
+                disabled={disabled}
                 variant={'outline'}
                 className={cn(
                   'w-[240px] pl-3 text-left font-normal',
