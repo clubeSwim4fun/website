@@ -54,9 +54,9 @@ export const Address: React.FC<
             <div
               className={
                 streetSize === 'one-third'
-                  ? 'col-span-2'
+                  ? 'col-span-6 md:col-span-2'
                   : streetSize === 'half'
-                    ? 'col-span-3'
+                    ? 'col-span-6 md:col-span-3'
                     : 'col-span-6'
               }
             >
@@ -86,9 +86,9 @@ export const Address: React.FC<
             <div
               className={
                 numberSize === 'one-third'
-                  ? 'col-span-2'
+                  ? 'col-span-6 md:col-span-2'
                   : numberSize === 'half'
-                    ? 'col-span-3'
+                    ? 'col-span-6 md:col-span-3'
                     : 'col-span-6'
               }
             >
@@ -118,9 +118,9 @@ export const Address: React.FC<
             <div
               className={
                 stateSize === 'one-third'
-                  ? 'col-span-2'
+                  ? 'col-span-6 md:col-span-2'
                   : stateSize === 'half'
-                    ? 'col-span-3'
+                    ? 'col-span-6 md:col-span-3'
                     : 'col-span-6'
               }
             >
@@ -150,9 +150,9 @@ export const Address: React.FC<
             <div
               className={
                 zipSize === 'one-third'
-                  ? 'col-span-2'
+                  ? 'col-span-6 md:col-span-2'
                   : zipSize === 'half'
-                    ? 'col-span-3'
+                    ? 'col-span-6 md:col-span-3'
                     : 'col-span-6'
               }
             >

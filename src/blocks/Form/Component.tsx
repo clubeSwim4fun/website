@@ -179,12 +179,12 @@ export const FormBlock: React.FC<
                       return (
                         <div
                           className={cn(
-                            'mb-6 last:mb-0',
+                            'mb-6 last:mb-0 col-span-6',
                             field.size === 'one-third'
-                              ? 'col-span-2'
+                              ? 'md:col-span-2'
                               : field.size === 'half'
-                                ? 'col-span-3'
-                                : 'col-span-6',
+                                ? 'md:col-span-3'
+                                : '',
                           )}
                           key={index}
                         >

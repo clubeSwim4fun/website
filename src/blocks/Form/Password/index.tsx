@@ -27,7 +27,7 @@ export const Password: React.FC<
 }) => {
   return (
     <div className="grid grid-cols-6 gap-3">
-      <div className={hasConfirmPassword ? 'col-span-3' : 'col-span-6'}>
+      <div className={hasConfirmPassword ? 'col-span-6 md:col-span-3' : 'col-span-6'}>
         <Label htmlFor={name}>
           {label}
           <span className="required">
@@ -41,9 +41,8 @@ export const Password: React.FC<
           {...register('password', { required: true })}
         />
       </div>
-      {errors[name] && <Error />}
       {hasConfirmPassword && (
-        <div className="col-span-3">
+        <div className="col-span-6 md:col-span-3">
           <Label htmlFor={`confirmPassword`}>
             {confirmLabel}
             <span className="required">
@@ -69,6 +68,7 @@ export const Password: React.FC<
           )}
         </div>
       )}
+      {errors[name] && <Error />}
     </div>
   )
 }
