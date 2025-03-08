@@ -61,8 +61,8 @@ export default async function Page({ params: paramsPromise }: Args) {
     <article className="pt-[104px] pb-24">
       <PageClient />
       <PayloadRedirects disableNotFound url={url} />
-      {/* {draft && <LivePreviewListener />}
-      <RenderHero {...hero} /> */}
+      {/* {draft && <LivePreviewListener />} */}
+      <RenderHero {...hero} />
       <RenderBlocks blocks={layout} />
       Test Content Page
     </article>
