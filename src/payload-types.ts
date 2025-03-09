@@ -74,6 +74,7 @@ export interface Config {
     groups: Group;
     'group-categories': GroupCategory;
     'user-media': UserMedia;
+    events: Event;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -93,6 +94,7 @@ export interface Config {
     groups: GroupsSelect<false> | GroupsSelect<true>;
     'group-categories': GroupCategoriesSelect<false> | GroupCategoriesSelect<true>;
     'user-media': UserMediaSelect<false> | UserMediaSelect<true>;
+    events: EventsSelect<false> | EventsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -207,7 +209,7 @@ export interface Page {
       | null;
     media?: (string | null) | Media;
   };
-  layout: (CallToActionBlock | ContentBlock | MediaBlock | ArchiveBlock | FormBlock)[];
+  layout: (CallToActionBlock | ContentBlock | MediaBlock | ArchiveBlock | FormBlock | Calendar)[];
   meta?: {
     title?: string | null;
     /**
@@ -1426,6 +1428,32 @@ export interface DateField {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Calendar".
+ */
+export interface Calendar {
+  defaultView?: ('day' | 'week' | 'month') | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'calendarBlock';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events".
+ */
+export interface Event {
+  id: string;
+  title: string;
+  description: string;
+  start: string;
+  end: string;
+  backgroundColor?: ('#B2E0B2' | '#AEC6E4' | '#FFD1DC') | null;
+  slug?: string | null;
+  slugLock?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -1630,6 +1658,10 @@ export interface PayloadLockedDocument {
         value: string | UserMedia;
       } | null)
     | ({
+        relationTo: 'events';
+        value: string | Event;
+      } | null)
+    | ({
         relationTo: 'redirects';
         value: string | Redirect;
       } | null)
@@ -1735,6 +1767,7 @@ export interface PagesSelect<T extends boolean = true> {
         mediaBlock?: T | MediaBlockSelect<T>;
         archive?: T | ArchiveBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
+        calendarBlock?: T | CalendarSelect<T>;
       };
   meta?:
     | T
@@ -1849,6 +1882,15 @@ export interface FormBlockSelect<T extends boolean = true> {
   isRegistrationForm?: T;
   enableIntro?: T;
   introContent?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Calendar_select".
+ */
+export interface CalendarSelect<T extends boolean = true> {
+  defaultView?: T;
   id?: T;
   blockName?: T;
 }
@@ -2128,6 +2170,21 @@ export interface UserMediaSelect<T extends boolean = true> {
               filename?: T;
             };
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events_select".
+ */
+export interface EventsSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  start?: T;
+  end?: T;
+  backgroundColor?: T;
+  slug?: T;
+  slugLock?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

@@ -20,6 +20,7 @@ import { getServerSideURL } from './utilities/getURL'
 import { Groups } from './collections/Groups'
 import { GroupCategories } from './collections/GroupCategories'
 import { UserMedia } from './collections/Users/Media'
+import { Events } from './collections/Events/Events'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -59,7 +60,7 @@ export default buildConfig({
   db: mongooseAdapter({
     url: process.env.DATABASE_URI || '',
   }),
-  collections: [Pages, Posts, Media, Categories, Users, Groups, GroupCategories, UserMedia],
+  collections: [Pages, Posts, Media, Categories, Users, Groups, GroupCategories, UserMedia, Events],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   plugins: [
