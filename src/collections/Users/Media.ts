@@ -11,6 +11,16 @@ const dirname = path.dirname(filename)
 
 export const UserMedia: CollectionConfig = {
   slug: 'user-media',
+  labels: {
+    plural: {
+      en: 'User Medias',
+      pt: 'Mídias do Utilizador',
+    },
+    singular: {
+      en: 'User Media',
+      pt: 'Mídia do Utilizador',
+    },
+  },
   access: {
     admin: isAdminOrEditor,
     create: anyone,
@@ -22,7 +32,7 @@ export const UserMedia: CollectionConfig = {
     {
       name: 'alt',
       type: 'text',
-      //required: true,
+      required: true,
     },
   ],
   upload: {

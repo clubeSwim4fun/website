@@ -29,6 +29,16 @@ import { isAdminOrSelfOrPublished } from '@/access/isAdminOrSelfOrPublished'
 
 export const Posts: CollectionConfig<'posts'> = {
   slug: 'posts',
+  labels: {
+    plural: {
+      en: 'Posts',
+      pt: 'Publicações',
+    },
+    singular: {
+      en: 'Post',
+      pt: 'Publicação',
+    },
+  },
   access: {
     create: authenticated,
     delete: isAdminOrSelfOrPublished,
@@ -73,6 +83,10 @@ export const Posts: CollectionConfig<'posts'> = {
       name: 'title',
       type: 'text',
       required: true,
+      label: {
+        en: 'title',
+        pt: 'título',
+      },
     },
     {
       type: 'tabs',
@@ -81,6 +95,10 @@ export const Posts: CollectionConfig<'posts'> = {
           fields: [
             {
               name: 'heroImage',
+              label: {
+                en: 'Hero image',
+                pt: 'Imagem principal',
+              },
               type: 'upload',
               relationTo: 'media',
             },
@@ -103,12 +121,19 @@ export const Posts: CollectionConfig<'posts'> = {
               required: true,
             },
           ],
-          label: 'Content',
+          label: {
+            en: 'Content',
+            pt: 'Conteúdo',
+          },
         },
         {
           fields: [
             {
               name: 'relatedPosts',
+              label: {
+                en: 'Related posts',
+                pt: 'Publicações relacionadas',
+              },
               type: 'relationship',
               admin: {
                 position: 'sidebar',
@@ -125,6 +150,10 @@ export const Posts: CollectionConfig<'posts'> = {
             },
             {
               name: 'categories',
+              label: {
+                en: 'categories',
+                pt: 'categorias',
+              },
               type: 'relationship',
               admin: {
                 position: 'sidebar',
@@ -166,6 +195,10 @@ export const Posts: CollectionConfig<'posts'> = {
     },
     {
       name: 'publishedAt',
+      label: {
+        en: 'published At:',
+        pt: 'publicado em:',
+      },
       type: 'date',
       admin: {
         date: {
@@ -186,6 +219,10 @@ export const Posts: CollectionConfig<'posts'> = {
     },
     {
       name: 'authors',
+      label: {
+        en: 'Authors',
+        pt: 'Autores',
+      },
       type: 'relationship',
       admin: {
         position: 'sidebar',

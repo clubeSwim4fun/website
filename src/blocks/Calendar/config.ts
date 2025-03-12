@@ -10,15 +10,15 @@ export const CalendarBlock: Block = {
       options: [
         {
           label: 'dia',
-          value: 'day',
+          value: 'timeGridDay',
         },
         {
           label: 'Semana',
-          value: 'week',
+          value: 'timeGridWeek',
         },
         {
           label: 'Mês',
-          value: 'month',
+          value: 'dayGridMonth',
         },
       ],
     },

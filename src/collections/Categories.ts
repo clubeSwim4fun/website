@@ -6,6 +6,16 @@ import { slugField } from '@/fields/slug'
 
 export const Categories: CollectionConfig = {
   slug: 'categories',
+  labels: {
+    plural: {
+      en: 'Categories',
+      pt: 'Categorias',
+    },
+    singular: {
+      en: 'Category',
+      pt: 'Categoria',
+    },
+  },
   access: {
     create: authenticated,
     delete: authenticated,
@@ -18,6 +28,10 @@ export const Categories: CollectionConfig = {
   fields: [
     {
       name: 'title',
+      label: {
+        en: 'title',
+        pt: 'título',
+      },
       type: 'text',
       required: true,
     },

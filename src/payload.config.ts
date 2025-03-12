@@ -5,6 +5,8 @@ import sharp from 'sharp' // sharp-import
 import path from 'path'
 import { buildConfig, PayloadRequest } from 'payload'
 import { fileURLToPath } from 'url'
+import { pt } from '@payloadcms/translations/languages/pt'
+import { en } from '@payloadcms/translations/languages/en'
 
 import { Categories } from './collections/Categories'
 import { Media } from './collections/Media'
@@ -26,6 +28,10 @@ const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
 export default buildConfig({
+  i18n: {
+    fallbackLanguage: 'pt',
+    supportedLanguages: { pt, en },
+  },
   admin: {
     suppressHydrationWarning: true,
     importMap: {

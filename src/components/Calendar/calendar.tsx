@@ -39,11 +39,11 @@ type DayRenderProps = {
   info: DayCellContentArg
 }
 
-export default function Calendar() {
+export const Calendar: React.FC<{ defaultView: string }> = ({ defaultView = 'dayGridMonth' }) => {
   const { events, setEventAddOpen, setEventEditOpen, setEventViewOpen } = useEvents()
 
   const calendarRef = useRef<FullCalendar | null>(null)
-  const [currentView, setCurrentView] = useState('timeGridWeek')
+  const [currentView, setCurrentView] = useState(defaultView)
   const [viewedDate, setViewedDate] = useState(new Date())
   const [selectedStart, setSelectedStart] = useState(new Date())
   const [selectedEnd, setSelectedEnd] = useState(new Date())
@@ -105,13 +105,13 @@ export default function Calendar() {
           >
             <p className="font-semibold text-gray-950 line-clamp-1 w-11/12">{event.title}</p>
 
-            <p className="text-gray-800">{left}</p>
-            <p className="text-gray-800">{right}</p>
+            {left && <p className="text-gray-800">{left}</p>}
+            {right && <p className="text-gray-800">{right}</p>}
           </div>
         ) : (
           <div className="flex flex-col space-y-0 text-[0.5rem] sm:text-[0.6rem] md:text-xs">
             <p className="font-semibold w-full text-gray-950 line-clamp-1">{event.title}</p>
-            <p className="text-gray-800 line-clamp-1">{`${left} - ${right}`}</p>
+            {left && right && <p className="text-gray-800 line-clamp-1">{`${left} - ${right}`}</p>}
           </div>
         )}
       </div>
@@ -183,13 +183,13 @@ export default function Calendar() {
 
   const calendarEarliestTime = `${earliestHour}:${earliestMin}`
   const calendarLatestTime = `${latestHour}:${latestMin}`
-  console.log('ref: ', calendarRef)
 
   return (
     <div className="space-y-5">
       <CalendarNav
         calendarRef={calendarRef}
         start={selectedStart}
+        defaultTab={defaultView}
         end={selectedEnd}
         viewedDate={viewedDate}
         currentView={currentView}
@@ -204,7 +204,7 @@ export default function Calendar() {
         )}
       >
         <FullCalendar
-          initialView="timeGridWeek"
+          initialView={defaultView}
           ref={calendarRef}
           timeZone="local"
           plugins={[dayGridPlugin, timeGridPlugin, multiMonthPlugin, interactionPlugin, listPlugin]}

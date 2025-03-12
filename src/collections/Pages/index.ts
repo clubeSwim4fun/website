@@ -24,6 +24,16 @@ import { CalendarBlock } from '@/blocks/Calendar/config'
 
 export const Pages: CollectionConfig<'pages'> = {
   slug: 'pages',
+  labels: {
+    plural: {
+      en: 'Pages',
+      pt: 'Páginas',
+    },
+    singular: {
+      en: 'Page',
+      pt: 'Página',
+    },
+  },
   access: {
     create: isAdminOrEditor,
     delete: isAdminOrEditor,
@@ -64,6 +74,10 @@ export const Pages: CollectionConfig<'pages'> = {
       name: 'title',
       type: 'text',
       required: true,
+      label: {
+        en: 'title',
+        pt: 'título',
+      },
     },
     {
       type: 'tabs',
@@ -84,7 +98,10 @@ export const Pages: CollectionConfig<'pages'> = {
               },
             },
           ],
-          label: 'Content',
+          label: {
+            en: 'Content',
+            pt: 'Conteúdo',
+          },
         },
         {
           name: 'meta',
@@ -117,6 +134,10 @@ export const Pages: CollectionConfig<'pages'> = {
     },
     {
       name: 'parentPage',
+      label: {
+        en: 'Parent Page',
+        pt: 'Página Superior',
+      },
       type: 'relationship',
       relationTo: 'pages',
       admin: {
@@ -125,6 +146,10 @@ export const Pages: CollectionConfig<'pages'> = {
     },
     {
       name: 'publishedAt',
+      label: {
+        en: 'published At:',
+        pt: 'publicado em:',
+      },
       type: 'date',
       admin: {
         position: 'sidebar',

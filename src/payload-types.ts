@@ -279,7 +279,7 @@ export interface Post {
  */
 export interface Media {
   id: string;
-  alt?: string | null;
+  alt: string;
   caption?: {
     root: {
       type: string;
@@ -393,7 +393,7 @@ export interface Category {
 export interface User {
   id: string;
   name: string;
-  surname?: string | null;
+  surname: string;
   nationality?:
     | (
         | 'Portugal'
@@ -668,7 +668,7 @@ export interface User {
     | null;
   birthDate?: string | null;
   disability?:
-    | ('Nenhuma' | 'Auditiva' | 'Intelectual' | 'Motora' | 'Paralisia Cerebral' | 'Visual' | 'Transplantado')
+    | ('Nenhuma' | 'Auditiva' | 'Intelectual' | 'Motora' | 'Paralisia Cerebral' | 'Visual' | 'Transplantado')[]
     | null;
   wantsToBeFederado?: boolean | null;
   heardAboutClub?: ('Internet' | 'Amigos' | 'Escola Swim4Fun' | 'Outros') | null;
@@ -695,7 +695,7 @@ export interface User {
  */
 export interface UserMedia {
   id: string;
-  alt?: string | null;
+  alt: string;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -1431,7 +1431,7 @@ export interface DateField {
  * via the `definition` "Calendar".
  */
 export interface Calendar {
-  defaultView?: ('day' | 'week' | 'month') | null;
+  defaultView?: ('timeGridDay' | 'timeGridWeek' | 'dayGridMonth') | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'calendarBlock';

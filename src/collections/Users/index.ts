@@ -10,6 +10,16 @@ import { anyone } from '@/access/anyone'
 
 export const Users: CollectionConfig = {
   slug: 'users',
+  labels: {
+    plural: {
+      en: 'Users',
+      pt: 'Utilizadores',
+    },
+    singular: {
+      en: 'User',
+      pt: 'Utilizadores',
+    },
+  },
   access: {
     admin: isAdminOrEditor,
     create: anyone,
@@ -28,7 +38,10 @@ export const Users: CollectionConfig = {
       fields: [
         {
           name: 'name',
-          label: 'Nome',
+          label: {
+            en: 'Name',
+            pt: 'Nome',
+          },
           type: 'text',
           required: true,
           admin: {
@@ -37,18 +50,23 @@ export const Users: CollectionConfig = {
         },
         {
           name: 'surname',
-          label: 'Apelido',
+          label: {
+            en: 'Surname',
+            pt: 'Apelido',
+          },
           type: 'text',
-          // required: true,
+          required: true,
           admin: {
             width: '30%',
           },
         },
         {
           name: 'nationality',
-          label: 'Nacionalidade',
+          label: {
+            en: 'Nationality',
+            pt: 'Nacionalidade',
+          },
           type: 'select',
-          // required: true,
           options: COUNTRY_LIST.map((c) => c.name),
           admin: {
             width: '40%',
@@ -61,27 +79,33 @@ export const Users: CollectionConfig = {
       fields: [
         {
           name: 'phone',
-          label: 'Telemóvel',
+          label: {
+            en: 'Phone',
+            pt: 'Telemóvel',
+          },
           type: 'text',
-          // required: true,
           admin: {
             width: '30%',
           },
         },
         {
           name: 'identity',
-          label: 'Documento Identificação',
+          label: {
+            en: 'identity card number',
+            pt: 'Nº Documento Identificação',
+          },
           type: 'text',
-          // required: true,
           admin: {
             width: '30%',
           },
         },
         {
           name: 'identityFile',
-          label: 'Fotocópia do Documento Identificação',
+          label: {
+            en: 'Identity card copy',
+            pt: 'Fotocópia do Documento Identificação',
+          },
           type: 'upload',
-          // required: true,
           relationTo: 'user-media',
           admin: {
             width: '40%',
@@ -91,9 +115,11 @@ export const Users: CollectionConfig = {
     },
     {
       name: 'profilePicture',
-      label: 'Foto do Perfil',
+      label: {
+        en: 'Profile picture',
+        pt: 'Foto do Perfil',
+      },
       type: 'upload',
-      // required: true,
       relationTo: 'media',
       admin: {
         position: 'sidebar',
@@ -101,7 +127,10 @@ export const Users: CollectionConfig = {
     },
     {
       name: 'role',
-      label: 'Perfil',
+      label: {
+        en: 'Role',
+        pt: 'Perfil',
+      },
       type: 'select',
       defaultValue: 'default',
       saveToJWT: true,
@@ -126,7 +155,6 @@ export const Users: CollectionConfig = {
     {
       name: 'nif',
       label: 'NIF',
-      // required: true,
       type: 'text',
       admin: {
         position: 'sidebar',
@@ -134,8 +162,10 @@ export const Users: CollectionConfig = {
     },
     {
       name: 'gender',
-      label: 'Genero',
-      // required: true,
+      label: {
+        en: 'Gender',
+        pt: 'Genero',
+      },
       type: 'radio',
       options: ['masculino', 'feminino'],
       admin: {
@@ -144,7 +174,10 @@ export const Users: CollectionConfig = {
     },
     {
       name: 'groups',
-      label: 'Grupos',
+      label: {
+        en: 'Groups',
+        pt: 'Grupos',
+      },
       type: 'relationship',
       relationTo: ['groups', 'group-categories'],
       hasMany: true,
@@ -164,8 +197,10 @@ export const Users: CollectionConfig = {
     },
     {
       name: 'birthDate',
-      label: 'Data de nascimento',
-      // required: true,
+      label: {
+        en: 'Birth date',
+        pt: 'Data de nascimento',
+      },
       type: 'date',
       admin: {
         position: 'sidebar',
@@ -176,9 +211,12 @@ export const Users: CollectionConfig = {
     },
     {
       name: 'disability',
-      label: 'Categoria Deficiência',
-      // required: true,
+      label: {
+        en: 'Disabilities',
+        pt: 'Categorias de Deficiência',
+      },
       type: 'select',
+      hasMany: true,
       defaultValue: 'Nenhuma',
       options: [
         'Nenhuma',
@@ -195,7 +233,10 @@ export const Users: CollectionConfig = {
     },
     {
       name: 'wantsToBeFederado',
-      label: 'Quer ser Federado?',
+      label: {
+        en: 'Wants to be Federated?',
+        pt: 'Quer ser Federado?',
+      },
       type: 'checkbox',
       admin: {
         position: 'sidebar',
@@ -203,7 +244,10 @@ export const Users: CollectionConfig = {
     },
     {
       name: 'heardAboutClub',
-      label: 'Ficou a saber do clube através:',
+      label: {
+        en: 'Header about the Club by:',
+        pt: 'Ficou a saber do clube através:',
+      },
       type: 'select',
       options: ['Internet', 'Amigos', 'Escola Swim4Fun', 'Outros'],
       admin: {
@@ -212,7 +256,10 @@ export const Users: CollectionConfig = {
     },
     {
       name: 'Address',
-      label: 'Morada',
+      label: {
+        en: 'Address',
+        pt: 'Morada',
+      },
       type: 'group',
       fields: [
         {
@@ -220,8 +267,10 @@ export const Users: CollectionConfig = {
           fields: [
             {
               name: 'street',
-              label: 'Rua',
-              // required: true,
+              label: {
+                en: 'street',
+                pt: 'Rua',
+              },
               type: 'text',
               admin: {
                 width: '45%',
@@ -229,8 +278,10 @@ export const Users: CollectionConfig = {
             },
             {
               name: 'number',
-              label: 'Nº Porta',
-              // required: true,
+              label: {
+                en: 'Number',
+                pt: 'Nº Porta',
+              },
               type: 'text',
               admin: {
                 width: '15%',
@@ -238,8 +289,10 @@ export const Users: CollectionConfig = {
             },
             {
               name: 'state',
-              label: 'Localidade',
-              // required: true,
+              label: {
+                en: 'State',
+                pt: 'Concelho',
+              },
               type: 'text',
               admin: {
                 width: '20%',
@@ -247,8 +300,10 @@ export const Users: CollectionConfig = {
             },
             {
               name: 'zipcode',
-              label: 'Código Postal',
-              // required: true,
+              label: {
+                en: 'Zipcode',
+                pt: 'Código Postal',
+              },
               type: 'text',
               admin: {
                 width: '20%',

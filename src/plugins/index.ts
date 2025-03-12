@@ -39,6 +39,16 @@ export const plugins: Plugin[] = [
   redirectsPlugin({
     collections: ['pages', 'posts'],
     overrides: {
+      labels: {
+        plural: {
+          en: 'Redirects',
+          pt: 'Redirecionamentos',
+        },
+        singular: {
+          en: 'Redirect',
+          pt: 'Redirecionamento',
+        },
+      },
       // @ts-expect-error - This is a valid override, mapped fields don't resolve to the same type
       fields: ({ defaultFields }) => {
         return defaultFields.map((field) => {
@@ -82,6 +92,16 @@ export const plugins: Plugin[] = [
       state: false,
     },
     formOverrides: {
+      labels: {
+        plural: {
+          en: 'Forms',
+          pt: 'Formulários',
+        },
+        singular: {
+          en: 'Form',
+          pt: 'Formulários',
+        },
+      },
       fields: ({ defaultFields }) => {
         return defaultFields.map((field: Field) => {
           if ('name' in field && field.name === 'confirmationMessage') {
@@ -103,6 +123,16 @@ export const plugins: Plugin[] = [
       },
     },
     formSubmissionOverrides: {
+      labels: {
+        plural: {
+          en: 'Form submissions',
+          pt: 'Formulários enviados',
+        },
+        singular: {
+          en: 'Form submission',
+          pt: 'Formulário enviado',
+        },
+      },
       fields: ({ defaultFields }) => {
         // Removes the submissionData as I want to override
         const customFields = [...defaultFields.filter((field) => field.type !== 'array')] as Field[]
@@ -143,6 +173,16 @@ export const plugins: Plugin[] = [
     collections: ['posts'],
     beforeSync: beforeSyncWithSearch,
     searchOverrides: {
+      labels: {
+        plural: {
+          en: 'Search Results',
+          pt: 'Resultado de pesquisas',
+        },
+        singular: {
+          en: 'Search Result',
+          pt: 'Resultado de pesquisa',
+        },
+      },
       fields: ({ defaultFields }) => {
         return [...defaultFields, ...searchFields]
       },

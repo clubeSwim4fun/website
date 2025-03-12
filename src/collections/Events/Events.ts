@@ -6,6 +6,16 @@ import { isAdminOrEditor } from '@/access/isAdminOrEditor'
 
 export const Events: CollectionConfig = {
   slug: 'events',
+  labels: {
+    plural: {
+      en: 'Events',
+      pt: 'Eventos',
+    },
+    singular: {
+      en: 'Event',
+      pt: 'Evento',
+    },
+  },
   access: {
     create: isAdminOrEditor,
     delete: isAdminOrEditor,
@@ -18,19 +28,28 @@ export const Events: CollectionConfig = {
   fields: [
     {
       name: 'title',
-      label: 'Título do Evento',
+      label: {
+        en: 'Event title',
+        pt: 'Título do Evento',
+      },
       type: 'text',
       required: true,
     },
     {
       name: 'description',
-      label: 'Descrição',
+      label: {
+        en: 'Description',
+        pt: 'Descrição',
+      },
       type: 'text',
       required: true,
     },
     {
       name: 'start',
-      label: 'Data de inicio',
+      label: {
+        en: 'Start date',
+        pt: 'Data de inicio',
+      },
       type: 'date',
       admin: {
         date: {
@@ -41,7 +60,10 @@ export const Events: CollectionConfig = {
     },
     {
       name: 'end',
-      label: 'Data de término',
+      label: {
+        en: 'End date',
+        pt: 'Data de término',
+      },
       type: 'date',
       admin: {
         date: {
@@ -52,7 +74,10 @@ export const Events: CollectionConfig = {
     },
     {
       name: 'backgroundColor',
-      label: 'Cor do evento',
+      label: {
+        en: 'Event color',
+        pt: 'Cor do evento',
+      },
       type: 'select',
       options: [
         {

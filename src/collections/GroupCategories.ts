@@ -7,8 +7,14 @@ import { isAdminOrEditor } from '@/access/isAdminOrEditor'
 export const GroupCategories: CollectionConfig = {
   slug: 'group-categories',
   labels: {
-    singular: 'Sub-grupo',
-    plural: 'Sub-grupos',
+    singular: {
+      en: 'Subgroup',
+      pt: 'Sub-grupo',
+    },
+    plural: {
+      en: 'Subgroups',
+      pt: 'Sub-grupos',
+    },
   },
   access: {
     create: isAdmin,
@@ -23,7 +29,10 @@ export const GroupCategories: CollectionConfig = {
   fields: [
     {
       name: 'title',
-      label: 'Nome',
+      label: {
+        en: 'title',
+        pt: 'título',
+      },
       type: 'text',
       required: true,
     },
@@ -32,7 +41,10 @@ export const GroupCategories: CollectionConfig = {
       name: 'parent',
       type: 'relationship',
       relationTo: 'groups',
-      label: 'Pertence à:',
+      label: {
+        en: 'Parent group:',
+        pt: 'Pertence ao grupo:',
+      },
     },
   ],
 }

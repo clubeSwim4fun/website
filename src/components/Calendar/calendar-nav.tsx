@@ -45,6 +45,7 @@ interface CalendarNavProps {
   viewedDate: Date
   currentView: string
   setCurrentView: Dispatch<SetStateAction<string>>
+  defaultTab: string
 }
 
 export default function CalendarNav({
@@ -54,6 +55,7 @@ export default function CalendarNav({
   viewedDate,
   currentView,
   setCurrentView,
+  defaultTab,
 }: CalendarNavProps) {
   const selectedMonth = viewedDate.getMonth() + 1
   const selectedDay = viewedDate.getDate()
@@ -216,7 +218,7 @@ export default function CalendarNav({
 
         {/* Change view with tabs */}
 
-        <Tabs defaultValue="timeGridWeek">
+        <Tabs defaultValue={defaultTab}>
           <TabsList className="flex w-44 md:w-64">
             <TabsTrigger
               value="timeGridDay"
