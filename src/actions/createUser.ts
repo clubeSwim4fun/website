@@ -60,11 +60,12 @@ export async function createUser(userData: CreateUserRequestType): Promise<Creat
       }
     }
 
-    const response = await payload.create({
+    await payload.create({
       collection: 'users',
       data: {
         ...userObject,
         name: userObject.name,
+        surname: userObject.surname,
         email: userObject.email,
       },
     })
