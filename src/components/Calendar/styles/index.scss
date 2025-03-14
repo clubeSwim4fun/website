@@ -107,3 +107,14 @@
   .fc-daygrid-day-top {
     pointer-events: none;
   }
+
+  .fc .fc-list-table td:not(.fc-list-event-graphic),
+  .fc .fc-list-table td.fc-list-event-time {
+    width: 100%;
+  }
+
+  .fc-list-event-title, 
+  .fc-list-event-graphic {
+    display: flex;
+    align-items: center;
+  }

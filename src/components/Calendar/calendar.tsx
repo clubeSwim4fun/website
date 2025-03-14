@@ -146,6 +146,11 @@ export const Calendar: React.FC<{ defaultView: string }> = ({ defaultView = 'day
               </div>
             )}
           </div>
+        ) : info.view.type === 'listMonth' ? (
+          <div className="flex flex-row justify-between w-full rounded-sm">
+            <p>{info.text}</p>
+            <p>{info.sideText}</p>
+          </div>
         ) : (
           <div className="flex flex-col rounded-sm">
             <p>{weekday}</p>
@@ -155,6 +160,7 @@ export const Calendar: React.FC<{ defaultView: string }> = ({ defaultView = 'day
     )
   }
 
+  // MAYBE IT?S HEEEEEERE
   const DayRender = ({ info }: DayRenderProps) => {
     return (
       <div className="flex">
@@ -205,8 +211,8 @@ export const Calendar: React.FC<{ defaultView: string }> = ({ defaultView = 'day
       >
         <FullCalendar
           initialView={defaultView}
+          locale={'pt'}
           ref={calendarRef}
-          timeZone="local"
           plugins={[dayGridPlugin, timeGridPlugin, multiMonthPlugin, interactionPlugin, listPlugin]}
           headerToolbar={false}
           slotMinTime={calendarEarliestTime}

@@ -7,51 +7,51 @@ export const latestTime = 1320
 export const months = [
   {
     value: '1',
-    label: 'January',
+    label: 'Janeiro',
   },
   {
     value: '2',
-    label: 'February',
+    label: 'Fevereiro',
   },
   {
     value: '3',
-    label: 'March',
+    label: 'Março',
   },
   {
     value: '4',
-    label: 'April',
+    label: 'Abril',
   },
   {
     value: '5',
-    label: 'May',
+    label: 'Maio',
   },
   {
     value: '6',
-    label: 'June',
+    label: 'Junho',
   },
   {
     value: '7',
-    label: 'July',
+    label: 'Julho',
   },
   {
     value: '8',
-    label: 'August',
+    label: 'Agosto',
   },
   {
     value: '9',
-    label: 'September',
+    label: 'Setembro',
   },
   {
     value: '10',
-    label: 'October',
+    label: 'Outubro',
   },
   {
     value: '11',
-    label: 'November',
+    label: 'Novembro',
   },
   {
     value: '12',
-    label: 'December',
+    label: 'Dezembro',
   },
 ]
 

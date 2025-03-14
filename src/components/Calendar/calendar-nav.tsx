@@ -20,6 +20,7 @@ import {
   ChevronRight,
   ChevronsUpDown,
   GalleryVertical,
+  List,
   Table,
   Tally3,
 } from 'lucide-react'
@@ -211,7 +212,7 @@ export default function CalendarNav({
             ? 'Today'
             : currentView === 'timeGridWeek'
               ? 'This Week'
-              : currentView === 'dayGridMonth'
+              : currentView === 'dayGridMonth' || currentView === 'listMonth'
                 ? 'This Month'
                 : null}
         </Button>
@@ -223,26 +224,50 @@ export default function CalendarNav({
             <TabsTrigger
               value="timeGridDay"
               onClick={() => setView(calendarRef, 'timeGridDay', setCurrentView)}
-              className={`space-x-1 ${currentView === 'timeGridDay' ? 'w-1/2' : 'w-1/4'}`}
+              className={`space-x-1 group ${currentView === 'timeGridDay' ? 'w-1/2' : 'w-1/4'}`}
             >
               <GalleryVertical className="h-5 w-5" />
-              {currentView === 'timeGridDay' && <p className="text-xs md:text-sm">Day</p>}
+              <p
+                className={`text-xs md:text-sm group-hover:block duration-1000 transition-all opacity-0 group-hover:opacity-100 ${currentView === 'timeGridDay' ? 'block opacity-100' : 'hidden'}`}
+              >
+                Dia
+              </p>
             </TabsTrigger>
             <TabsTrigger
               value="timeGridWeek"
               onClick={() => setView(calendarRef, 'timeGridWeek', setCurrentView)}
-              className={`space-x-1 ${currentView === 'timeGridWeek' ? 'w-1/2' : 'w-1/4'}`}
+              className={`space-x-1 group ${currentView === 'timeGridWeek' ? 'w-1/2' : 'w-1/4'}`}
             >
               <Tally3 className="h-5 w-5" />
-              {currentView === 'timeGridWeek' && <p className="text-xs md:text-sm">Week</p>}
+              <p
+                className={`text-xs md:text-sm group-hover:block duration-1000 transition-all opacity-0 group-hover:opacity-100 ${currentView === 'timeGridWeek' ? 'block opacity-100' : 'hidden'}`}
+              >
+                Semana
+              </p>
             </TabsTrigger>
             <TabsTrigger
               value="dayGridMonth"
               onClick={() => setView(calendarRef, 'dayGridMonth', setCurrentView)}
-              className={`space-x-1 ${currentView === 'dayGridMonth' ? 'w-1/2' : 'w-1/4'}`}
+              className={`space-x-1 group ${currentView === 'dayGridMonth' ? 'w-1/2' : 'w-1/4'}`}
             >
               <Table className="h-5 w-5 rotate-90" />
-              {currentView === 'dayGridMonth' && <p className="text-xs md:text-sm">Month</p>}
+              <p
+                className={`text-xs md:text-sm group-hover:block duration-1000 transition-all opacity-0 group-hover:opacity-100 ${currentView === 'dayGridMonth' ? 'block opacity-100' : 'hidden'}`}
+              >
+                Mês
+              </p>
+            </TabsTrigger>
+            <TabsTrigger
+              value="listMonth"
+              onClick={() => setView(calendarRef, 'listMonth', setCurrentView)}
+              className={`space-x-1 group ${currentView === 'listMonth' ? 'w-1/2' : 'w-1/4'}`}
+            >
+              <List className="h-5 w-5" />
+              <p
+                className={`text-xs md:text-sm group-hover:block duration-1000 transition-all opacity-0 group-hover:opacity-100 ${currentView === 'listMonth' ? 'block opacity-100' : 'hidden'}`}
+              >
+                Lista
+              </p>
             </TabsTrigger>
           </TabsList>
         </Tabs>
