@@ -21,7 +21,12 @@ export const CalendarBlock: React.FC<CalendarBlockProps> = async (props) => {
       description: true,
       start: true,
       end: true,
-      backgroundColor: true,
+      distance: true,
+      category: true,
+      address: {
+        street: true,
+        country: true,
+      },
     },
   })
 

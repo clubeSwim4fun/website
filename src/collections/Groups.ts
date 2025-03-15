@@ -7,8 +7,14 @@ import { isAdminOrEditor } from '@/access/isAdminOrEditor'
 export const Groups: CollectionConfig = {
   slug: 'groups',
   labels: {
-    singular: 'Grupo',
-    plural: 'Grupos',
+    singular: {
+      en: 'Group',
+      pt: 'Grupo',
+    },
+    plural: {
+      en: 'Groups',
+      pt: 'Grupos',
+    },
   },
   access: {
     admin: isAdmin,

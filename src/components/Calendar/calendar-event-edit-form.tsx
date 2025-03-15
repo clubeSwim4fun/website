@@ -81,7 +81,8 @@ export function EventEditForm({ oldEvent, event, isDrag, displayButton }: EventE
         description: oldEvent.description,
         start: oldEvent.start,
         end: oldEvent.end,
-        backgroundColor: oldEvent.backgroundColor!,
+        distance: oldEvent.distance,
+        category: oldEvent.category,
       }
 
       deleteEvent(oldEvent.id)
@@ -97,18 +98,20 @@ export function EventEditForm({ oldEvent, event, isDrag, displayButton }: EventE
       description: event?.description,
       start: event?.start as Date,
       end: event?.end as Date,
-      color: event?.backgroundColor,
+      color: (typeof event?.category === 'object' && event.category.color) || '',
     })
   }, [form, event])
 
   async function onSubmit(data: EventEditFormValues) {
+    // TODO - Refactor this whole logic to edit event instead of delete and add
     const newEvent: CalendarEvent = {
       id: data.id,
       title: data.title,
       description: data.description,
       start: data.start,
       end: data.end,
-      backgroundColor: data.color,
+      distance: 2000, // TODO grab from form
+      category: 'category', // TODO grab from form,
     }
     deleteEvent(data.id)
     addEvent(newEvent)
@@ -203,7 +206,7 @@ export function EventEditForm({ oldEvent, event, isDrag, displayButton }: EventE
                 </FormItem>
               )}
             />
-            <FormField
+            {/* <FormField
               control={form.control}
               name="color"
               render={({ field }) => (
@@ -232,7 +235,7 @@ export function EventEditForm({ oldEvent, event, isDrag, displayButton }: EventE
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
             <AlertDialogFooter className="pt-2">
               <AlertDialogCancel onClick={() => handleEditCancellation()}>Cancel</AlertDialogCancel>
               <AlertDialogAction type="submit">Save</AlertDialogAction>

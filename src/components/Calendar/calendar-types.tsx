@@ -1,4 +1,9 @@
 import { Event } from '@/payload-types'
+import {
+  DayCellContentArg,
+  DayHeaderContentArg,
+  EventContentArg,
+} from '@fullcalendar/core/index.js'
 
 // setting earliest / latest available time in minutes since Midnight
 export const earliestTime = 540
@@ -55,14 +60,22 @@ export const months = [
   },
 ]
 
-export type CalendarEvent = Omit<
-  Event,
-  'backgroundColor' | 'end' | 'start' | 'createdAt' | 'updatedAt'
-> & {
-  backgroundColor: string
+export type CalendarEvent = Omit<Event, 'end' | 'start' | 'createdAt' | 'updatedAt'> & {
   end: Date
   start: Date
 }
 
 export type TimePickerType = 'minutes' | 'seconds' | 'hours' | '12hours'
 export type Period = 'AM' | 'PM'
+
+export type EventItemProps = {
+  info: EventContentArg
+}
+
+export type DayHeaderProps = {
+  info: DayHeaderContentArg
+}
+
+export type DayRenderProps = {
+  info: DayCellContentArg
+}

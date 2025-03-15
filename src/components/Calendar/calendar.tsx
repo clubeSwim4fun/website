@@ -2,14 +2,7 @@
 
 import { useEvents } from './events-context'
 import './styles/index.scss'
-import {
-  DateSelectArg,
-  DayCellContentArg,
-  DayHeaderContentArg,
-  EventChangeArg,
-  EventClickArg,
-  EventContentArg,
-} from '@fullcalendar/core/index.js'
+import { DateSelectArg, EventChangeArg, EventClickArg } from '@fullcalendar/core/index.js'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import listPlugin from '@fullcalendar/list'
@@ -26,18 +19,9 @@ import CalendarNav from './calendar-nav'
 import { CalendarEvent, earliestTime, latestTime } from './calendar-types'
 import { getDateFromMinutes } from '@/utilities/calendar-utils'
 import { cn } from '@/utilities/ui'
-
-type EventItemProps = {
-  info: EventContentArg
-}
-
-type DayHeaderProps = {
-  info: DayHeaderContentArg
-}
-
-type DayRenderProps = {
-  info: DayCellContentArg
-}
+import CalendarEventItem from './calendar-event-item'
+import CalendarDayHeader from './calendar-day-header'
+import CalendarDayRender from './calendar-day-render'
 
 export const Calendar: React.FC<{ defaultView: string }> = ({ defaultView = 'dayGridMonth' }) => {
   const { events, setEventAddOpen, setEventEditOpen, setEventViewOpen } = useEvents()
@@ -56,9 +40,10 @@ export const Calendar: React.FC<{ defaultView: string }> = ({ defaultView = 'day
       id: info.event.id,
       title: info.event.title,
       description: info.event.extendedProps.description,
-      backgroundColor: info.event.backgroundColor,
       start: info.event.start!,
       end: info.event.end!,
+      distance: info.event.extendedProps.distance,
+      category: info.event.extendedProps.category,
     }
 
     setIsDrag(false)
@@ -72,109 +57,26 @@ export const Calendar: React.FC<{ defaultView: string }> = ({ defaultView = 'day
       id: info.event.id,
       title: info.event.title,
       description: info.event.extendedProps.description,
-      backgroundColor: info.event.backgroundColor,
       start: info.event.start!,
       end: info.event.end!,
+      distance: info.event.extendedProps.distance,
+      category: info.event.extendedProps.category,
     }
 
     const oldEvent: CalendarEvent = {
-      id: info.oldEvent.id,
-      title: info.oldEvent.title,
-      description: info.oldEvent.extendedProps.description,
-      backgroundColor: info.oldEvent.backgroundColor,
-      start: info.oldEvent.start!,
-      end: info.oldEvent.end!,
+      id: info.event.id,
+      title: info.event.title,
+      description: info.event.extendedProps.description,
+      start: info.event.start!,
+      end: info.event.end!,
+      distance: info.event.extendedProps.distance,
+      category: info.event.extendedProps.category,
     }
 
     setIsDrag(true)
     setSelectedOldEvent(oldEvent)
     setSelectedEvent(event)
     setEventEditOpen(true)
-  }
-
-  const EventItem = ({ info }: EventItemProps) => {
-    const { event } = info
-    const [left, right] = info.timeText.split(' - ')
-
-    return (
-      <div className="overflow-hidden w-full">
-        {info.view.type == 'dayGridMonth' ? (
-          <div
-            style={{ backgroundColor: info.backgroundColor }}
-            className={`flex flex-col rounded-md w-full px-2 py-1 line-clamp-1 text-[0.5rem] sm:text-[0.6rem] md:text-xs`}
-          >
-            <p className="font-semibold text-gray-950 line-clamp-1 w-11/12">{event.title}</p>
-
-            {left && <p className="text-gray-800">{left}</p>}
-            {right && <p className="text-gray-800">{right}</p>}
-          </div>
-        ) : (
-          <div className="flex flex-col space-y-0 text-[0.5rem] sm:text-[0.6rem] md:text-xs">
-            <p className="font-semibold w-full text-gray-950 line-clamp-1">{event.title}</p>
-            {left && right && <p className="text-gray-800 line-clamp-1">{`${left} - ${right}`}</p>}
-          </div>
-        )}
-      </div>
-    )
-  }
-
-  const DayHeader = ({ info }: DayHeaderProps) => {
-    const [weekday] = info.text.split(' ')
-
-    return (
-      <div className="flex items-center h-full overflow-hidden">
-        {info.view.type == 'timeGridDay' ? (
-          <div className="flex flex-col rounded-sm">
-            <p>
-              {info.date.toLocaleDateString('pt-PT', {
-                month: 'long',
-                day: 'numeric',
-                year: 'numeric',
-              })}
-            </p>
-          </div>
-        ) : info.view.type == 'timeGridWeek' ? (
-          <div className="flex flex-col space-y-0.5 rounded-sm items-center w-full text-xs sm:text-sm md:text-md">
-            <p className="flex font-semibold">{weekday}</p>
-            {info.isToday ? (
-              <div className="flex bg-black dark:bg-white h-6 w-6 rounded-full items-center justify-center text-xs sm:text-sm md:text-md">
-                <p className="font-light dark:text-black text-white">{info.date.getDate()}</p>
-              </div>
-            ) : (
-              <div className="h-6 w-6 rounded-full items-center justify-center">
-                <p className="font-light">{info.date.getDate()}</p>
-              </div>
-            )}
-          </div>
-        ) : info.view.type === 'listMonth' ? (
-          <div className="flex flex-row justify-between w-full rounded-sm">
-            <p>{info.text}</p>
-            <p>{info.sideText}</p>
-          </div>
-        ) : (
-          <div className="flex flex-col rounded-sm">
-            <p>{weekday}</p>
-          </div>
-        )}
-      </div>
-    )
-  }
-
-  // MAYBE IT?S HEEEEEERE
-  const DayRender = ({ info }: DayRenderProps) => {
-    return (
-      <div className="flex">
-        {info.view.type == 'dayGridMonth' && info.isToday ? (
-          <div className="flex h-7 w-7 rounded-full bg-black dark:bg-white items-center justify-center text-sm text-white dark:text-black">
-            {info.dayNumberText}
-          </div>
-        ) : (
-          <div className="flex h-7 w-7 rounded-full items-center justify-center text-sm">
-            {info.dayNumberText}
-          </div>
-        )}
-      </div>
-    )
   }
 
   const handleDateSelect = (info: DateSelectArg) => {
@@ -236,9 +138,9 @@ export const Calendar: React.FC<{ defaultView: string }> = ({ defaultView = 'day
           eventBorderColor={'black'}
           contentHeight={'auto'}
           expandRows={true}
-          dayCellContent={(dayInfo) => <DayRender info={dayInfo} />}
-          eventContent={(eventInfo) => <EventItem info={eventInfo} />}
-          dayHeaderContent={(headerInfo) => <DayHeader info={headerInfo} />}
+          dayCellContent={(dayInfo) => <CalendarDayRender info={dayInfo} />}
+          eventContent={(eventInfo) => <CalendarEventItem info={eventInfo} />}
+          dayHeaderContent={(headerInfo) => <CalendarDayHeader info={headerInfo} />}
           eventClick={(eventInfo) => handleEventClick(eventInfo)}
           eventChange={(eventInfo) => handleEventChange(eventInfo)}
           select={handleDateSelect}

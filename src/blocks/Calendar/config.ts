@@ -20,6 +20,10 @@ export const CalendarBlock: Block = {
           label: 'Mês',
           value: 'dayGridMonth',
         },
+        {
+          label: 'Lista',
+          value: 'listMonth',
+        },
       ],
     },
   ],

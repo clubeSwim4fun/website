@@ -35,6 +35,29 @@ export const Categories: CollectionConfig = {
       type: 'text',
       required: true,
     },
+    {
+      name: 'color',
+      label: {
+        en: 'Event color',
+        pt: 'Cor do evento',
+      },
+      type: 'select',
+      options: [
+        {
+          label: 'Verde',
+          value: '#B2E0B2',
+        },
+        {
+          label: 'Azul',
+          value: '#AEC6E4',
+        },
+        {
+          label: 'Vermelho',
+          value: '#FFD1DC',
+        },
+      ],
+      defaultValue: '#AEC6E4',
+    },
     ...slugField(),
   ],
 }

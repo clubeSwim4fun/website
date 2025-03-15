@@ -33,11 +33,13 @@ export const EventsProvider: React.FC<{ children: ReactNode; data: CalendarEvent
   data,
 }) => {
   const [events, setEvents] = useState<CalendarEvent[]>(
-    data.map((event) => ({
-      ...event,
-      id: String(event.id),
-      color: event.backgroundColor,
-    })),
+    data.map((event) => {
+      return {
+        ...event,
+        id: String(event.id),
+        color: typeof event.category === 'object' && event.category?.color,
+      }
+    }),
   )
   const [eventViewOpen, setEventViewOpen] = useState(false)
   const [eventAddOpen, setEventAddOpen] = useState(false)

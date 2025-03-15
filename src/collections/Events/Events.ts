@@ -3,6 +3,13 @@ import type { CollectionConfig } from 'payload'
 import { anyone } from '../../access/anyone'
 import { slugField } from '@/fields/slug'
 import { isAdminOrEditor } from '@/access/isAdminOrEditor'
+import COUNTRY_LIST from '@/utilities/countryList'
+import {
+  FixedToolbarFeature,
+  HeadingFeature,
+  InlineToolbarFeature,
+  lexicalEditor,
+} from '@payloadcms/richtext-lexical'
 
 export const Events: CollectionConfig = {
   slug: 'events',
@@ -41,8 +48,18 @@ export const Events: CollectionConfig = {
         en: 'Description',
         pt: 'Descrição',
       },
-      type: 'text',
+      type: 'richText',
       required: true,
+      editor: lexicalEditor({
+        features: ({ rootFeatures }) => {
+          return [
+            ...rootFeatures,
+            HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
+            FixedToolbarFeature(),
+            InlineToolbarFeature(),
+          ]
+        },
+      }),
     },
     {
       name: 'start',
@@ -52,6 +69,7 @@ export const Events: CollectionConfig = {
       },
       type: 'date',
       admin: {
+        position: 'sidebar',
         date: {
           pickerAppearance: 'dayAndTime',
         },
@@ -66,6 +84,7 @@ export const Events: CollectionConfig = {
       },
       type: 'date',
       admin: {
+        position: 'sidebar',
         date: {
           pickerAppearance: 'dayAndTime',
         },
@@ -73,27 +92,156 @@ export const Events: CollectionConfig = {
       required: true,
     },
     {
-      name: 'backgroundColor',
-      label: {
-        en: 'Event color',
-        pt: 'Cor do evento',
+      name: 'distance',
+      admin: {
+        position: 'sidebar',
       },
-      type: 'select',
-      options: [
+      label: {
+        en: 'Distance',
+        pt: 'Distância',
+      },
+      type: 'number',
+      required: true,
+      min: 0,
+    },
+    {
+      name: 'category',
+      label: {
+        en: 'Category',
+        pt: 'Categoria',
+      },
+      admin: {
+        position: 'sidebar',
+      },
+      type: 'relationship',
+      relationTo: 'categories',
+      required: true,
+    },
+    {
+      name: 'address',
+      label: {
+        en: 'Address',
+        pt: 'Morada',
+      },
+      type: 'group',
+      fields: [
         {
-          label: 'Verde',
-          value: '#B2E0B2', // TODO change to club colors
-        },
-        {
-          label: 'Azul',
-          value: '#AEC6E4', // TODO change to club colors
-        },
-        {
-          label: 'Vermelho',
-          value: '#FFD1DC', // TODO change to club colors
+          type: 'row',
+          fields: [
+            {
+              name: 'street',
+              label: {
+                en: 'street',
+                pt: 'Rua',
+              },
+              type: 'text',
+              admin: {
+                width: '45%',
+              },
+            },
+            {
+              name: 'number',
+              label: {
+                en: 'Number',
+                pt: 'Nº Porta',
+              },
+              type: 'text',
+              admin: {
+                width: '15%',
+              },
+            },
+            {
+              name: 'state',
+              label: {
+                en: 'State',
+                pt: 'Concelho',
+              },
+              type: 'text',
+              admin: {
+                width: '20%',
+              },
+            },
+            {
+              name: 'zipcode',
+              label: {
+                en: 'Zipcode',
+                pt: 'Código Postal',
+              },
+              type: 'text',
+              admin: {
+                width: '20%',
+              },
+            },
+            {
+              name: 'country',
+              label: {
+                en: 'Country',
+                pt: 'País',
+              },
+              type: 'select',
+              options: COUNTRY_LIST.map((c) => c.name),
+            },
+          ],
         },
       ],
-      defaultValue: '#AEC6E4',
+    },
+    {
+      name: 'tickets',
+      label: {
+        en: 'Tickets',
+        pt: 'Bilhetes',
+      },
+      type: 'group',
+      fields: [
+        {
+          name: 'ticket',
+          label: {
+            en: 'Ticket',
+            pt: 'Bilhete',
+          },
+          type: 'array',
+          fields: [
+            {
+              type: 'row',
+              fields: [
+                {
+                  name: 'name',
+                  label: {
+                    en: 'Name',
+                    pt: 'Nome',
+                  },
+                  type: 'text',
+                  admin: {
+                    width: '50%',
+                  },
+                },
+                {
+                  name: 'price',
+                  label: {
+                    en: 'price',
+                    pt: 'Preço',
+                  },
+                  type: 'number',
+                  min: 0,
+                  admin: {
+                    width: '50%',
+                  },
+                },
+              ],
+            },
+            {
+              name: 'canBePurchasedBy',
+              label: {
+                en: 'Can be purchased:',
+                pt: 'Pode ser comprado por:',
+              },
+              type: 'relationship',
+              relationTo: 'group-categories',
+              hasMany: true,
+            },
+          ],
+        },
+      ],
     },
     ...slugField(),
   ],
