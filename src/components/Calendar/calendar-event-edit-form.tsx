@@ -38,9 +38,7 @@ const eventEditFormSchema = z.object({
   title: z
     .string({ required_error: 'Please enter a title.' })
     .min(1, { message: 'Must provide a title for this event.' }),
-  description: z
-    .string({ required_error: 'Please enter a description.' })
-    .min(1, { message: 'Must provide a description for this event.' }),
+  description: z.any(), // TODO - Refactor to validate rich text
   start: z.date({
     required_error: 'Please select a start time',
     invalid_type_error: "That's not a date!",

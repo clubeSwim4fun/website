@@ -11,6 +11,7 @@ import { EventEditForm } from './calendar-event-edit-form'
 import { X } from 'lucide-react'
 import { CalendarEvent } from './calendar-types'
 import { useEvents } from './events-context'
+import RichText from '../RichText'
 
 interface EventViewProps {
   event?: CalendarEvent
@@ -35,16 +36,25 @@ export function EventView({ event }: EventViewProps) {
                 <th>Time:</th>
                 <td>{`${event?.start.toLocaleTimeString()} - ${event?.end.toLocaleTimeString()}`}</td>
               </tr>
-              <tr>
-                <th>Description:</th>
-                <td>{event?.description}</td>
-              </tr>
+              {event?.description && (
+                <tr>
+                  <th>Description:</th>
+                  <RichText
+                    className="max-w-[48rem] mx-auto"
+                    data={event.description}
+                    enableGutter={false}
+                  />
+                </tr>
+              )}
               <tr>
                 <th>Color:</th>
                 <td>
                   <div
                     className="rounded-full w-5 h-5"
-                    style={{ backgroundColor: event?.backgroundColor }}
+                    style={{
+                      backgroundColor:
+                        (typeof event?.category === 'object' && event.category.color) || '',
+                    }}
                   ></div>
                 </td>
               </tr>
