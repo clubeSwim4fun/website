@@ -22,6 +22,7 @@ import { cn } from '@/utilities/ui'
 import CalendarEventItem from './calendar-event-item'
 import CalendarDayHeader from './calendar-day-header'
 import CalendarDayRender from './calendar-day-render'
+import { redirect } from 'next/navigation'
 
 export const Calendar: React.FC<{ defaultView: string }> = ({ defaultView = 'dayGridMonth' }) => {
   const { events, setEventAddOpen, setEventEditOpen, setEventViewOpen } = useEvents()
@@ -46,10 +47,11 @@ export const Calendar: React.FC<{ defaultView: string }> = ({ defaultView = 'day
       category: info.event.extendedProps.category,
     }
 
-    setIsDrag(false)
-    setSelectedOldEvent(event)
-    setSelectedEvent(event)
-    setEventViewOpen(true)
+    redirect(`/event/${info.event.extendedProps.slug}`)
+    // setIsDrag(false)
+    // setSelectedOldEvent(event)
+    // setSelectedEvent(event)
+    // setEventViewOpen(true)
   }
 
   const handleEventChange = (info: EventChangeArg) => {

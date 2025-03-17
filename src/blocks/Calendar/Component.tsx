@@ -17,6 +17,7 @@ export const CalendarBlock: React.FC<CalendarBlockProps> = async (props) => {
     depth: 1,
     limit: 12,
     select: {
+      slug: true,
       title: true,
       description: true,
       start: true,
