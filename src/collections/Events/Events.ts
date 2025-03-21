@@ -65,7 +65,7 @@ export const Events: CollectionConfig = {
       name: 'start',
       label: {
         en: 'Start date',
-        pt: 'Data de inicio',
+        pt: 'Data de início',
       },
       type: 'date',
       admin: {
