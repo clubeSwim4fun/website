@@ -1463,6 +1463,7 @@ export interface Event {
   end: string;
   distance: number;
   category: string | Category;
+  isRiver?: boolean | null;
   address?: {
     street?: string | null;
     number?: string | null;
@@ -2468,6 +2469,7 @@ export interface EventsSelect<T extends boolean = true> {
   end?: T;
   distance?: T;
   category?: T;
+  isRiver?: T;
   address?:
     | T
     | {

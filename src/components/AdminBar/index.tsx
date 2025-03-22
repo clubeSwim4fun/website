@@ -57,7 +57,7 @@ export const AdminBar: React.FC<{
   const MenuButton = () => {
     return (
       <div
-        className={cn('absolute right-0 top-0 z-30', {
+        className={cn('absolute left-0 top-0 z-30', {
           hidden: !showAdminMenu,
           block: showAdminMenu,
         })}

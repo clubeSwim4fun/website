@@ -104,7 +104,7 @@ const MobileHeaderNav: React.FC<{ data: HeaderType; user?: User }> = ({ data, us
   return (
     <div className="flex md:hidden group relative">
       <Button
-        className={`w-6 h-6 relative group bg-transparent hover:bg-transparent ${isOpen && 'open'} absolute -top-9 right-2`}
+        className={`w-6 h-6 relative group bg-transparent hover:bg-transparent ${isOpen && 'open'} absolute -top-9 right-2 mt-4`}
         onClick={handleMenuClick}
         title="Menu"
       >

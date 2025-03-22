@@ -118,6 +118,17 @@ export const Events: CollectionConfig = {
       required: true,
     },
     {
+      name: 'isRiver',
+      label: {
+        en: 'Is river?',
+        pt: 'É em Rio?',
+      },
+      admin: {
+        position: 'sidebar',
+      },
+      type: 'checkbox',
+    },
+    {
       name: 'address',
       label: {
         en: 'Address',
