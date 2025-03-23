@@ -1,35 +1,22 @@
 import { DropdownMenuItem } from '@radix-ui/react-dropdown-menu'
-import Image from 'next/image'
-import GoogleIcon from 'public/common-icons/googlecalendar.svg'
-import AppleIcon from 'public/common-icons/apple.svg'
-import MsTeamsIcon from 'public/common-icons/teams.svg'
-import OutlookIcon from 'public/common-icons/outlook.svg'
-import Microsoft365Icon from 'public/common-icons/microsoft365.svg'
 import { CalendarEvent } from 'calendar-link'
 import * as calendarLink from 'calendar-link'
 import Link from 'next/link'
+import AppleIcon from '@/components/Icons/apple'
+import GoogleIcon from '@/components/Icons/google-calendar'
+import MsTeamsIcon from '@/components/Icons/ms-teams'
+import OutlookIcon from '@/components/Icons/outlook'
 
-export type CalendarOptionsType = 'google' | 'apple' | 'msTeams' | 'outlook' | 'microsoft365'
+export type CalendarOptionsType = 'google' | 'apple' | 'msTeams' | 'outlook'
 
-const iconMap: Record<CalendarOptionsType, string> = {
+const iconMap: Record<CalendarOptionsType, any> = {
   google: GoogleIcon,
   apple: AppleIcon,
   msTeams: MsTeamsIcon,
   outlook: OutlookIcon,
-  microsoft365: Microsoft365Icon,
 }
 
 type IconOption = keyof typeof iconMap
-
-interface IconProps {
-  option: IconOption
-}
-
-const DynamicIcon = ({ option }: IconProps) => {
-  const selectedIcon = iconMap[option]
-
-  return <Image src={selectedIcon} alt="" className="mr-2" />
-}
 
 export const AddToCalendarItemButton: React.FC<{
   title: string
@@ -64,16 +51,17 @@ export const AddToCalendarItemButton: React.FC<{
   }
 
   const googleUrl = createCalendarLink(option, event)
+  const IconToRender = iconMap[option]
 
   return (
     <DropdownMenuItem asChild>
       <Link
         href={googleUrl}
         target="_blank"
-        className="flex p-2 rounded hover:bg-gray-100 focus:outline-none"
+        className="flex p-2 rounded hover:bg-gray-100 focus:outline-none gap-2 group"
       >
-        <DynamicIcon option={option} />
-        <span className="capitalize">{option}</span>
+        <IconToRender className="h-6 w-6 dark:group-hover:fill-black" />
+        <span className="capitalize dark:group-hover:text-black">{option}</span>
       </Link>
     </DropdownMenuItem>
   )

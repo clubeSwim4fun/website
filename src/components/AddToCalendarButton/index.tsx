@@ -19,8 +19,6 @@ export const AddToCalendarButton: React.FC<{
 }> = (props) => {
   const { label, options, endDate } = props
 
-  console.log('date: ', endDate)
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

@@ -8,7 +8,7 @@ import { Calendar1, Clock, MapPin, Route } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { getClientSideURL } from '@/utilities/getURL'
 import { AddToCalendarButton } from '../AddToCalendarButton'
-import Swimmer from '../ui/swimmer'
+import Swimmer from '../Icons/swimmer'
 
 export const EventDetails: React.FC<{
   event: Event
@@ -45,26 +45,29 @@ export const EventDetails: React.FC<{
   const eventUrl = `${getClientSideURL()}/event/${slug}`
   const eventCalendarLocation = `${address?.street} ${address?.number} ${address?.zipcode}, ${address?.country}`
 
-  const startDate = formatDate(start, 'PPP', {
-    locale: pt,
-  })
-  const endDate = formatDate(end, 'PPP', {
-    locale: pt,
-  })
+  const initialDay = new Date(start).getDay()
+  const finalDay = new Date(end).getDay()
+  const isSameDay = initialDay === finalDay
 
+  const startDate = isSameDay
+    ? formatDate(start, 'PPP', {
+        locale: pt,
+      })
+    : formatDate(start, 'dd-MM-yyyy')
+
+  const endDate = formatDate(end, 'dd-MM-yyyy')
   const startTime = formatDate(start, 'hh:mm a')
-
   const endTime = formatDate(end, 'hh:mm a')
 
   return (
     <aside
-      className={`sticky ${topClass} transition-all duration-500 ease-in-out border rounded-xl shadow-md shadow-gray-400 border-blueSwim p-4 h-max w-full lg:w-1/3 flex flex-col bg-white`}
+      className={`sticky ${topClass} dark:bg-slate-900 transition-all duration-500 ease-in-out border rounded-xl shadow-md shadow-gray-400 border-blueSwim p-4 h-max w-full lg:w-1/3 flex flex-col bg-white`}
     >
       <div className="flex flex-col gap-1">
         <h3 className="font-extrabold text-2xl md:text-3xl">Detalhes</h3>
         <div className="flex gap-2">
           <Calendar1 />
-          <span>{startDate}</span>
+          {<span>{`${startDate}${isSameDay && `-${endDate}`}`}</span>}
         </div>
         {startTime && (
           <div className="flex gap-2">
@@ -103,7 +106,7 @@ export const EventDetails: React.FC<{
           startDate={start}
           endDate={end}
           url={eventUrl}
-          options={['google', 'apple', 'microsoft365', 'msTeams', 'outlook']}
+          options={['google', 'apple', 'msTeams', 'outlook']}
         />
       </div>
     </aside>
