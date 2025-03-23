@@ -1461,6 +1461,7 @@ export interface Event {
   };
   start: string;
   end: string;
+  timeToBeConfirmed?: boolean | null;
   distance: number;
   category: string | Category;
   isRiver?: boolean | null;
@@ -2467,6 +2468,7 @@ export interface EventsSelect<T extends boolean = true> {
   description?: T;
   start?: T;
   end?: T;
+  timeToBeConfirmed?: T;
   distance?: T;
   category?: T;
   isRiver?: T;

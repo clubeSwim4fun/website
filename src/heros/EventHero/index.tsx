@@ -15,7 +15,7 @@ export const EventHero: React.FC<{
   const image = Number(id) % 2 === 0 ? image2 : image1
 
   return (
-    <div className="relative -mt-[10.4rem] flex items-end">
+    <div className="relative flex items-end max-h-[50vh]">
       <div className="container z-10 relative lg:grid lg:grid-cols-[1fr_72rem_1fr] text-white pb-8">
         <div className="col-start-1 col-span-1 md:col-start-2 md:col-span-2">
           <div className="">

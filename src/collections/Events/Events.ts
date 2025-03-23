@@ -92,6 +92,17 @@ export const Events: CollectionConfig = {
       required: true,
     },
     {
+      name: 'timeToBeConfirmed',
+      label: {
+        en: 'Time to be confirmed?',
+        pt: 'Horário a confirmar?',
+      },
+      type: 'checkbox',
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
       name: 'distance',
       admin: {
         position: 'sidebar',

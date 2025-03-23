@@ -10,7 +10,6 @@ import RichText from '@/components/RichText'
 import { generateMeta } from '@/utilities/generateMeta'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { EventHero } from '@/heros/EventHero'
-import { Card } from '@/components/Card'
 import { EventDetails } from '@/components/EventDetails'
 
 export async function generateStaticParams() {
@@ -47,10 +46,10 @@ export default async function Event({ params: paramsPromise }: Args) {
 
   if (!event) return <PayloadRedirects url={url} />
 
-  const { category, description, distance, start, end, address } = event
+  const { category, description, distance, start, end, address, slug: eventSlug } = event
 
   return (
-    <main className="pt-[104px] pb-24">
+    <main className="pb-24">
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 
@@ -58,10 +57,10 @@ export default async function Event({ params: paramsPromise }: Args) {
 
       <EventHero event={event} />
 
-      <div className="container pt-8 max-w-5xl mx-auto">
-        <section className="flex gap-3">
+      <div className="container pt-8 max-w-6xl mx-auto">
+        <section className="flex flex-col-reverse lg:flex-row gap-3">
           <RichText data={description} enableGutter={false} />
-          <EventDetails event={event} />
+          <EventDetails event={event} slug={eventSlug} />
         </section>
       </div>
     </main>

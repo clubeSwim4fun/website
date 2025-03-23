@@ -1,7 +1,7 @@
 import { MapPin, Route } from 'lucide-react'
 import { EventItemProps } from './calendar-types'
 import Link from 'next/link'
-import RichText from '../RichText'
+import { convertMtoKm } from '@/utilities/util'
 
 const CalendarEventItem = ({ info }: EventItemProps) => {
   const { event } = info
@@ -42,10 +42,9 @@ const CalendarEventItem = ({ info }: EventItemProps) => {
                   <Route
                     className={`h-4 w-4 ${info.view.type === 'timeGridDay' ? 'ml-2' : 'mr-2'}`}
                   />{' '}
-                  {event.extendedProps.distance}
+                  {convertMtoKm(event.extendedProps.distance)}
                 </span>
               )}
-
               {location.street && location.country && (
                 <span className="flex text-black">
                   {location.street} - {location.country} <MapPin className="h-4 w-4 ml-2" />
