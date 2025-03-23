@@ -17,13 +17,6 @@ export const EventDetails: React.FC<{
   const [topClass, setTopClass] = useState('top-4')
   const { event, slug } = props
 
-  if (!event) return
-
-  const { distance, start, end, address, tickets, timeToBeConfirmed, category, title, id } = event
-
-  const eventUrl = `${getClientSideURL()}/event/${slug}`
-  const eventCalendarLocation = `${address?.street} ${address?.number} ${address?.zipcode}, ${address?.country}`
-
   useEffect(() => {
     let lastScrollY = window.scrollY
 
@@ -44,6 +37,13 @@ export const EventDetails: React.FC<{
       window.removeEventListener('scroll', handleScroll)
     }
   }, [])
+
+  if (!event) return
+
+  const { distance, start, end, address, tickets, timeToBeConfirmed, category, title, id } = event
+
+  const eventUrl = `${getClientSideURL()}/event/${slug}`
+  const eventCalendarLocation = `${address?.street} ${address?.number} ${address?.zipcode}, ${address?.country}`
 
   const startDate = formatDate(start, 'PPP', {
     locale: pt,
