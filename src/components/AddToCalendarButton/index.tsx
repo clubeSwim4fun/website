@@ -22,7 +22,9 @@ export const AddToCalendarButton: React.FC<{
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline">{label || 'Add ao Calendário'}</Button>
+        <Button variant="outline" className="mt-2">
+          {label || 'Add ao Calendário'}
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="start"

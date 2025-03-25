@@ -46,7 +46,7 @@ export default async function Event({ params: paramsPromise }: Args) {
 
   if (!event) return <PayloadRedirects url={url} />
 
-  const { category, description, distance, start, end, address, slug: eventSlug } = event
+  const { description, slug: eventSlug } = event
 
   return (
     <main className="pb-24">

@@ -1724,16 +1724,14 @@ export interface Event {
         )
       | null;
   };
-  tickets?: {
-    ticket?:
-      | {
-          name?: string | null;
-          price?: number | null;
-          canBePurchasedBy?: (string | GroupCategory)[] | null;
-          id?: string | null;
-        }[]
-      | null;
-  };
+  tickets?:
+    | {
+        name?: string | null;
+        price?: number | null;
+        canBePurchasedBy?: (string | GroupCategory)[] | null;
+        id?: string | null;
+      }[]
+    | null;
   slug?: string | null;
   slugLock?: boolean | null;
   updatedAt: string;
@@ -2484,14 +2482,10 @@ export interface EventsSelect<T extends boolean = true> {
   tickets?:
     | T
     | {
-        ticket?:
-          | T
-          | {
-              name?: T;
-              price?: T;
-              canBePurchasedBy?: T;
-              id?: T;
-            };
+        name?: T;
+        price?: T;
+        canBePurchasedBy?: T;
+        id?: T;
       };
   slug?: T;
   slugLock?: T;

@@ -9,6 +9,8 @@ import { useEffect, useState } from 'react'
 import { getClientSideURL } from '@/utilities/getURL'
 import { AddToCalendarButton } from '../AddToCalendarButton'
 import Swimmer from '../Icons/swimmer'
+import { Card } from '../ui/card'
+import { EventTickets } from '../EventTickets'
 
 export const EventDetails: React.FC<{
   event: Event
@@ -40,7 +42,7 @@ export const EventDetails: React.FC<{
 
   if (!event) return
 
-  const { distance, start, end, address, tickets, timeToBeConfirmed, category, title, id } = event
+  const { distance, start, end, address, tickets, timeToBeConfirmed, category, title } = event
 
   const eventUrl = `${getClientSideURL()}/event/${slug}`
   const eventCalendarLocation = `${address?.street} ${address?.number} ${address?.zipcode}, ${address?.country}`
@@ -61,13 +63,18 @@ export const EventDetails: React.FC<{
 
   return (
     <aside
-      className={`sticky ${topClass} dark:bg-slate-900 transition-all duration-500 ease-in-out border rounded-xl shadow-md shadow-gray-400 border-blueSwim p-4 h-max w-full lg:w-1/3 flex flex-col bg-white`}
+      className={`h-full md:sticky ${topClass} transition-all duration-500 ease-in-out w-full lg:w-1/3 flex flex-col`}
     >
-      <div className="flex flex-col gap-1">
+      <Card className="dark:bg-slate-900 border rounded-xl shadow-md shadow-gray-400 border-blueSwim p-4 h-max w-full flex flex-col bg-white gap-1 mb-4">
         <h3 className="font-extrabold text-2xl md:text-3xl">Detalhes</h3>
         <div className="flex gap-2">
           <Calendar1 />
-          {<span>{`${startDate}${isSameDay && `-${endDate}`}`}</span>}
+          {
+            <span>
+              {startDate}
+              {!isSameDay && `-${endDate}`}
+            </span>
+          }
         </div>
         {startTime && (
           <div className="flex gap-2">
@@ -108,7 +115,8 @@ export const EventDetails: React.FC<{
           url={eventUrl}
           options={['google', 'apple', 'msTeams', 'outlook']}
         />
-      </div>
+      </Card>
+      <EventTickets tickets={tickets} />
     </aside>
   )
 }
