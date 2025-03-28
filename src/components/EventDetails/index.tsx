@@ -1,6 +1,6 @@
 'use client'
 
-import { Event } from '@/payload-types'
+import { Cart, Event, Ticket } from '@/payload-types'
 import { convertMtoKm, isObjectNotEmpty } from '@/utilities/util'
 import { formatDate } from 'date-fns'
 import { pt } from 'date-fns/locale'
@@ -15,9 +15,10 @@ import { EventTickets } from '../EventTickets'
 export const EventDetails: React.FC<{
   event: Event
   slug?: string | null
+  cart?: Cart | null
 }> = (props) => {
   const [topClass, setTopClass] = useState('top-4')
-  const { event, slug } = props
+  const { event, slug, cart } = props
 
   useEffect(() => {
     let lastScrollY = window.scrollY
@@ -116,7 +117,7 @@ export const EventDetails: React.FC<{
           options={['google', 'apple', 'msTeams', 'outlook']}
         />
       </Card>
-      <EventTickets tickets={tickets} />
+      <EventTickets tickets={tickets as Ticket[]} cart={cart} />
     </aside>
   )
 }

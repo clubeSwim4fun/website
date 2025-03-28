@@ -17,7 +17,7 @@ export const Users: CollectionConfig = {
     },
     singular: {
       en: 'User',
-      pt: 'Utilizadores',
+      pt: 'Utilizador',
     },
   },
   access: {

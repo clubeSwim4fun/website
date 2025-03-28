@@ -75,6 +75,8 @@ export interface Config {
     'group-categories': GroupCategory;
     'user-media': UserMedia;
     events: Event;
+    carts: Cart;
+    tickets: Ticket;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -95,6 +97,8 @@ export interface Config {
     'group-categories': GroupCategoriesSelect<false> | GroupCategoriesSelect<true>;
     'user-media': UserMediaSelect<false> | UserMediaSelect<true>;
     events: EventsSelect<false> | EventsSelect<true>;
+    carts: CartsSelect<false> | CartsSelect<true>;
+    tickets: TicketsSelect<false> | TicketsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -1724,16 +1728,38 @@ export interface Event {
         )
       | null;
   };
-  tickets?:
+  tickets?: (string | Ticket)[] | null;
+  slug?: string | null;
+  slugLock?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tickets".
+ */
+export interface Ticket {
+  id: string;
+  name: string;
+  price: number;
+  eventFor: string | Event;
+  canBePurchasedBy?: (string | GroupCategory)[] | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "carts".
+ */
+export interface Cart {
+  id: string;
+  items?:
     | {
-        name?: string | null;
-        price?: number | null;
-        canBePurchasedBy?: (string | GroupCategory)[] | null;
+        selectedTicket?: (string | null) | Ticket;
         id?: string | null;
       }[]
     | null;
-  slug?: string | null;
-  slugLock?: boolean | null;
+  user: string | User;
   updatedAt: string;
   createdAt: string;
 }
@@ -1945,6 +1971,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'events';
         value: string | Event;
+      } | null)
+    | ({
+        relationTo: 'carts';
+        value: string | Cart;
+      } | null)
+    | ({
+        relationTo: 'tickets';
+        value: string | Ticket;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -2479,16 +2513,36 @@ export interface EventsSelect<T extends boolean = true> {
         zipcode?: T;
         country?: T;
       };
-  tickets?:
-    | T
-    | {
-        name?: T;
-        price?: T;
-        canBePurchasedBy?: T;
-        id?: T;
-      };
+  tickets?: T;
   slug?: T;
   slugLock?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "carts_select".
+ */
+export interface CartsSelect<T extends boolean = true> {
+  items?:
+    | T
+    | {
+        selectedTicket?: T;
+        id?: T;
+      };
+  user?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tickets_select".
+ */
+export interface TicketsSelect<T extends boolean = true> {
+  name?: T;
+  price?: T;
+  eventFor?: T;
+  canBePurchasedBy?: T;
   updatedAt?: T;
   createdAt?: T;
 }

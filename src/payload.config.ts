@@ -23,6 +23,8 @@ import { Groups } from './collections/Groups'
 import { GroupCategories } from './collections/GroupCategories'
 import { UserMedia } from './collections/Users/Media'
 import { Events } from './collections/Events/Events'
+import { Carts } from './collections/Ecommerce/Carts'
+import { Tickets } from './collections/Events/Tickets'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -66,7 +68,19 @@ export default buildConfig({
   db: mongooseAdapter({
     url: process.env.DATABASE_URI || '',
   }),
-  collections: [Pages, Posts, Media, Categories, Users, Groups, GroupCategories, UserMedia, Events],
+  collections: [
+    Pages,
+    Posts,
+    Media,
+    Categories,
+    Users,
+    Groups,
+    GroupCategories,
+    UserMedia,
+    Events,
+    Carts,
+    Tickets,
+  ],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   plugins: [

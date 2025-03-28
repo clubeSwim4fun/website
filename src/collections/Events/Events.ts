@@ -213,47 +213,16 @@ export const Events: CollectionConfig = {
         en: 'Tickets',
         pt: 'Bilhetes',
       },
-      type: 'array',
-      fields: [
-        {
-          type: 'row',
-          fields: [
-            {
-              name: 'name',
-              label: {
-                en: 'Name',
-                pt: 'Nome',
-              },
-              type: 'text',
-              admin: {
-                width: '50%',
-              },
-            },
-            {
-              name: 'price',
-              label: {
-                en: 'price',
-                pt: 'Preço',
-              },
-              type: 'number',
-              min: 0,
-              admin: {
-                width: '50%',
-              },
-            },
-          ],
-        },
-        {
-          name: 'canBePurchasedBy',
-          label: {
-            en: 'Can be purchased:',
-            pt: 'Pode ser comprado por:',
+      type: 'relationship',
+      relationTo: 'tickets',
+      hasMany: true,
+      filterOptions: ({ id }) => {
+        return {
+          eventFor: {
+            in: [id],
           },
-          type: 'relationship',
-          relationTo: 'group-categories',
-          hasMany: true,
-        },
-      ],
+        }
+      },
     },
     ...slugField(),
   ],

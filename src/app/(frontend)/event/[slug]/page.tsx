@@ -11,6 +11,7 @@ import { generateMeta } from '@/utilities/generateMeta'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { EventHero } from '@/heros/EventHero'
 import { EventDetails } from '@/components/EventDetails'
+import { getMyCart } from '@/helpers/cartHelper'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
@@ -45,6 +46,7 @@ export default async function Event({ params: paramsPromise }: Args) {
   const event = await queryEventBySlug({ slug })
 
   if (!event) return <PayloadRedirects url={url} />
+  const cart = await getMyCart()
 
   const { description, slug: eventSlug } = event
 
@@ -60,7 +62,8 @@ export default async function Event({ params: paramsPromise }: Args) {
       <div className="container pt-8 max-w-6xl mx-auto">
         <section className="flex flex-col-reverse lg:flex-row gap-3">
           <RichText data={description} enableGutter={false} />
-          <EventDetails event={event} slug={eventSlug} />
+          <EventDetails event={event} slug={eventSlug} cart={cart} />
+          {/* Refactor to move back the event Tickets here and aside so I can pass the action to get my cart and update cart from here */}
         </section>
       </div>
     </main>
