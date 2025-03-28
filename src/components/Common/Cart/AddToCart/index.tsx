@@ -11,10 +11,11 @@ import Link from 'next/link'
 
 export const AddToCart: React.FC<{
   ticket: Ticket
+  disabled: boolean
 }> = (props) => {
   const [isPending, startTransition] = useTransition()
   const { toast } = useToast()
-  const { ticket } = props
+  const { ticket, disabled } = props
 
   const onClickHandler = async () => {
     startTransition(async () => {
@@ -48,7 +49,7 @@ export const AddToCart: React.FC<{
       variant="outline"
       size="sm"
       onClick={onClickHandler}
-      disabled={isPending}
+      disabled={isPending || disabled}
       aria-label="Add to cart"
     >
       {isPending ? (

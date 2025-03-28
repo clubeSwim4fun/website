@@ -1,4 +1,4 @@
-import { Cart, Ticket } from '@/payload-types'
+import { Cart, Ticket, User } from '@/payload-types'
 import { Card } from '../ui/card'
 import { AddToCart } from '../Common/Cart/AddToCart'
 import { ShoppingCart } from 'lucide-react'
@@ -6,13 +6,31 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '.
 import { RemoveFromCart } from '../Common/Cart/RemoveFromCart'
 
 export const EventTickets: React.FC<{
+  user?: User
   tickets?: Ticket[] | null
   cart?: Cart | null
 }> = (props) => {
-  const { tickets, cart } = props
+  const { tickets, cart, user } = props
   const cartItems = cart && cart.items?.map((i) => i.selectedTicket as Ticket)
 
   if (tickets?.length === 0) return
+
+  const canAddToCart = (ticket: Ticket) => {
+    if (!ticket.canBePurchasedBy || ticket.canBePurchasedBy.length === 0) {
+      return true
+    }
+
+    const response =
+      (user &&
+        user.groups?.some((group) =>
+          typeof group.value === 'object'
+            ? ticket.canBePurchasedBy?.includes(group.value.id)
+            : ticket.canBePurchasedBy?.includes(group.value),
+        )) ||
+      false
+
+    return response
+  }
 
   return (
     <Card
@@ -39,7 +57,7 @@ export const EventTickets: React.FC<{
                   {cartItems?.some((ci) => ci.id === ticket.id) ? (
                     <RemoveFromCart ticket={ticket} />
                   ) : (
-                    <AddToCart ticket={ticket} />
+                    <AddToCart ticket={ticket} disabled={!canAddToCart(ticket)} />
                   )}
                 </TableCell>
               </TableRow>
