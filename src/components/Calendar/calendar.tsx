@@ -22,7 +22,7 @@ import { cn } from '@/utilities/ui'
 import CalendarEventItem from './calendar-event-item'
 import CalendarDayHeader from './calendar-day-header'
 import CalendarDayRender from './calendar-day-render'
-import { redirect } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
 export const Calendar: React.FC<{ defaultView: string }> = ({ defaultView = 'dayGridMonth' }) => {
   const { events, setEventAddOpen, setEventEditOpen, setEventViewOpen } = useEvents()
@@ -35,23 +35,10 @@ export const Calendar: React.FC<{ defaultView: string }> = ({ defaultView = 'day
   const [selectedOldEvent, setSelectedOldEvent] = useState<CalendarEvent | undefined>()
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | undefined>()
   const [isDrag, setIsDrag] = useState(false)
+  const router = useRouter()
 
   const handleEventClick = (info: EventClickArg) => {
-    const event: CalendarEvent = {
-      id: info.event.id,
-      title: info.event.title,
-      description: info.event.extendedProps.description,
-      start: info.event.start!,
-      end: info.event.end!,
-      distance: info.event.extendedProps.distance,
-      category: info.event.extendedProps.category,
-    }
-
-    redirect(`/event/${info.event.extendedProps.slug}`)
-    // setIsDrag(false)
-    // setSelectedOldEvent(event)
-    // setSelectedEvent(event)
-    // setEventViewOpen(true)
+    router.push(`/event/${info.event.extendedProps.slug}`)
   }
 
   const handleEventChange = (info: EventChangeArg) => {
