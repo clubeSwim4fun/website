@@ -6,13 +6,16 @@ import { removeFromCart } from '@/helpers/cartHelper'
 import { useTransition } from 'react'
 import { useToast } from '@/hooks/use-toast'
 import { CircleMinus, LoaderCircle } from 'lucide-react'
+import { useCart } from '@/providers/Cart'
 
 export const RemoveFromCart: React.FC<{
   ticket: Ticket
+  disabled?: boolean
 }> = (props) => {
   const [isPending, startTransition] = useTransition()
   const { toast } = useToast()
-  const { ticket } = props
+  const { ticket, disabled } = props
+  const { refreshCart } = useCart()
 
   const onClickHandler = async () => {
     startTransition(async () => {
@@ -24,6 +27,8 @@ export const RemoveFromCart: React.FC<{
           description: response.message,
           variant: 'destructive',
         })
+      } else {
+        await refreshCart()
       }
     })
   }
@@ -33,7 +38,7 @@ export const RemoveFromCart: React.FC<{
       variant="destructive"
       size="sm"
       onClick={onClickHandler}
-      disabled={isPending}
+      disabled={isPending || disabled}
       aria-label="Remove from cart"
     >
       {isPending ? (

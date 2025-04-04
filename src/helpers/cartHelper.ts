@@ -5,6 +5,8 @@ import config from '@payload-config'
 import { getMeUser } from '@/utilities/getMeUser'
 import { Cart, Ticket } from '@/payload-types'
 import { revalidatePath } from 'next/cache'
+import { se } from 'date-fns/locale'
+import { select } from 'node_modules/payload/dist/fields/validations'
 
 export type responseType = {
   success: boolean
@@ -28,10 +30,12 @@ async function revalidateEvent(ticket: Ticket, payload: Payload): Promise<void> 
   }
 }
 
-export const getMyCart = async (): Promise<Cart> => {
+export const getMyCart = async (): Promise<Cart | undefined> => {
   const userMe = await getMeUser()
 
-  if (!userMe || !userMe.user) throw new Error('user not found')
+  if (!userMe || !userMe.user) {
+    return
+  }
 
   const payload = await getPayload({ config })
 

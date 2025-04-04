@@ -46,7 +46,7 @@ export default async function Event({ params: paramsPromise }: Args) {
   const { slug = '' } = await paramsPromise
   const url = '/event/' + slug
   const event = await queryEventBySlug({ slug })
-  let cart: Cart | null = null
+  let cart: Cart | null | undefined = null
 
   if (!event) return <PayloadRedirects url={url} />
   const { user } = await getMeUser()

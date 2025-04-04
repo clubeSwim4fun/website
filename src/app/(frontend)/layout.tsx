@@ -17,6 +17,7 @@ import './globals.css'
 import { getServerSideURL } from '@/utilities/getURL'
 import { getMeUser } from '@/utilities/getMeUser'
 import { Toaster } from '@/components/ui/toaster'
+import { Cart } from '@/components/Cart'
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const { isEnabled } = await draftMode()
@@ -43,6 +44,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           )}
           <Header />
           {children}
+          <div className="fixed bottom-2 right-4 z-50 bg-white rounded-full p-4 md:hidden dark:bg-slate-800 shadow-xl border border-slate-300">
+            <Cart />
+          </div>
           <Footer />
         </Providers>
       </body>

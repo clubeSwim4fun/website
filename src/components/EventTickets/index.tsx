@@ -13,7 +13,7 @@ export const EventTickets: React.FC<{
   const { tickets, cart, user } = props
   const cartItems = cart && cart.items?.map((i) => i.selectedTicket as Ticket)
 
-  if (tickets?.length === 0) return
+  if (!tickets?.length) return
 
   const canAddToCart = (ticket: Ticket) => {
     if (!ticket.canBePurchasedBy || ticket.canBePurchasedBy.length === 0) {

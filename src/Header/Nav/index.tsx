@@ -9,6 +9,7 @@ import Link from 'next/link'
 import { ChevronDown, SearchIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import LogoutButton from '../Logout'
+import { Cart } from '@/components/Cart'
 
 export const HeaderNav: React.FC<{ data: HeaderType; user?: User }> = ({ data, user }) => {
   const navItems = data?.navItems || []
@@ -66,6 +67,7 @@ export const HeaderNav: React.FC<{ data: HeaderType; user?: User }> = ({ data, u
         <span className="sr-only">Search</span>
         <SearchIcon className="w-5 text-primary stroke-black dark:stroke-white" />
       </Link>
+      <Cart />
     </nav>
   )
 }

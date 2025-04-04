@@ -5,9 +5,9 @@ import { Button } from '@/components/ui/button'
 import { addToCart } from '@/helpers/cartHelper'
 import { useTransition } from 'react'
 import { useToast } from '@/hooks/use-toast'
-import { useRouter } from 'next/navigation'
 import { CirclePlus, LoaderCircle, ShoppingCart } from 'lucide-react'
 import Link from 'next/link'
+import { useCart } from '@/providers/Cart'
 
 export const AddToCart: React.FC<{
   ticket: Ticket
@@ -16,6 +16,7 @@ export const AddToCart: React.FC<{
   const [isPending, startTransition] = useTransition()
   const { toast } = useToast()
   const { ticket, disabled } = props
+  const { refreshCart } = useCart()
 
   const onClickHandler = async () => {
     startTransition(async () => {
@@ -28,6 +29,7 @@ export const AddToCart: React.FC<{
           variant: 'destructive',
         })
       } else {
+        await refreshCart()
         toast({
           title: 'Success', // TODO - Add translations
           description: response.message,
