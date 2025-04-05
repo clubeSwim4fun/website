@@ -15,6 +15,7 @@ export type eventTicket = {
   [key: string]: {
     slug?: string | null
     tickets: Ticket[]
+    hasTshirt?: boolean | null
   }
 }
 export default async function Cart() {
@@ -32,7 +33,11 @@ export default async function Cart() {
     const eventFor = ticket.eventFor as Event
 
     if (!eventsTickets[eventFor.title]) {
-      eventsTickets[eventFor.title] = { slug: eventFor.slug, tickets: [] }
+      eventsTickets[eventFor.title] = {
+        slug: eventFor.slug,
+        tickets: [],
+        hasTshirt: eventFor.hasTshirt,
+      }
     }
 
     eventsTickets[eventFor.title]?.tickets.push(ticket)

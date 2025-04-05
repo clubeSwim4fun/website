@@ -44,6 +44,14 @@ export const Carts: CollectionConfig = {
           type: 'relationship',
           relationTo: 'tickets',
         },
+        {
+          name: 'selectedTshirtSize',
+          label: {
+            en: 'T-Shirt Size',
+            pt: 'Tamanho T-Shirt',
+          },
+          type: 'text',
+        },
       ],
     },
     {

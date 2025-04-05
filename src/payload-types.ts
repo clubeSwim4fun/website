@@ -77,6 +77,7 @@ export interface Config {
     events: Event;
     carts: Cart;
     tickets: Ticket;
+    orders: Order;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -99,6 +100,7 @@ export interface Config {
     events: EventsSelect<false> | EventsSelect<true>;
     carts: CartsSelect<false> | CartsSelect<true>;
     tickets: TicketsSelect<false> | TicketsSelect<true>;
+    orders: OrdersSelect<false> | OrdersSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -1468,6 +1470,7 @@ export interface Event {
   timeToBeConfirmed?: boolean | null;
   distance: number;
   category: string | Category;
+  hasTshirt?: boolean | null;
   isRiver?: boolean | null;
   address?: {
     street?: string | null;
@@ -1756,10 +1759,36 @@ export interface Cart {
   items?:
     | {
         selectedTicket?: (string | null) | Ticket;
+        selectedTshirtSize?: string | null;
         id?: string | null;
       }[]
     | null;
   user: string | User;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "orders".
+ */
+export interface Order {
+  id: string;
+  user: string | User;
+  events?:
+    | {
+        event?: (string | null) | Event;
+        tickets?:
+          | {
+              ticket: string | Ticket;
+              tshirtSize?: string | null;
+              ticketPurchased?: boolean | null;
+              eventPurchaseId?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1979,6 +2008,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'tickets';
         value: string | Ticket;
+      } | null)
+    | ({
+        relationTo: 'orders';
+        value: string | Order;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -2503,6 +2536,7 @@ export interface EventsSelect<T extends boolean = true> {
   timeToBeConfirmed?: T;
   distance?: T;
   category?: T;
+  hasTshirt?: T;
   isRiver?: T;
   address?:
     | T
@@ -2528,6 +2562,7 @@ export interface CartsSelect<T extends boolean = true> {
     | T
     | {
         selectedTicket?: T;
+        selectedTshirtSize?: T;
         id?: T;
       };
   user?: T;
@@ -2543,6 +2578,30 @@ export interface TicketsSelect<T extends boolean = true> {
   price?: T;
   eventFor?: T;
   canBePurchasedBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "orders_select".
+ */
+export interface OrdersSelect<T extends boolean = true> {
+  user?: T;
+  events?:
+    | T
+    | {
+        event?: T;
+        tickets?:
+          | T
+          | {
+              ticket?: T;
+              tshirtSize?: T;
+              ticketPurchased?: T;
+              eventPurchaseId?: T;
+              id?: T;
+            };
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }

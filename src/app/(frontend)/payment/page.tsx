@@ -9,6 +9,7 @@ import { getMeUser } from '@/utilities/getMeUser'
 import { Cart as CartType } from '@/payload-types'
 
 import CheckoutSteps from '@/components/Common/CheckoutSteps'
+import { PaymentForm } from './payment-form'
 
 export default async function Payment() {
   const { isEnabled: draft } = await draftMode()
@@ -24,6 +25,7 @@ export default async function Payment() {
       <section className="container max-w-screen-xl mx-auto mt-4 h-full">
         <CheckoutSteps current={1} />
         <h1 className="font-bold text-3xl my-4">Método de Pagamento</h1>
+        <PaymentForm />
       </section>
     </main>
   )

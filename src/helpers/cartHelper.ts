@@ -162,3 +162,58 @@ export const addToCart = async ({ ticket }: { ticket: Ticket }): Promise<respons
     }
   }
 }
+
+export const updateCart = async (selectedTshirtSize?: string[]): Promise<responseType> => {
+  try {
+    const userMe = await getMeUser()
+
+    if (!userMe || !userMe.user) throw new Error('user not found')
+
+    const payload = await getPayload({ config })
+
+    const cart = await getMyCart()
+
+    if (!cart) throw new Error('cart not found')
+
+    selectedTshirtSize?.forEach((size) => {
+      const ticketKey = size.split('-')[0]
+      const tshirtSize = size.split('-')[1]
+
+      const ticketIndex = cart.items!.findIndex(
+        (item) =>
+          typeof item?.selectedTicket === 'object' && item?.selectedTicket?.id === ticketKey,
+      )
+
+      if (ticketIndex !== -1 && cart.items) {
+        cart.items[ticketIndex]!.selectedTshirtSize = tshirtSize
+      }
+    })
+
+    const response = await payload.update({
+      collection: 'carts',
+      data: cart,
+      where: {
+        _id: {
+          equals: cart.id,
+        },
+      },
+    })
+
+    if (response && response.errors && response.errors.length > 0) {
+      return {
+        message: response.errors[0]?.message ?? `Error updating cart ${cart.id}`, // todo improve error typing later
+        success: false,
+      }
+    }
+
+    return {
+      message: 'Cart updated',
+      success: true,
+    }
+  } catch (error) {
+    return {
+      message: (error as string) || 'Error updating cart', // todo improve error typing later
+      success: false,
+    }
+  }
+}

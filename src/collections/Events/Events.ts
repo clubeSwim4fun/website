@@ -129,6 +129,17 @@ export const Events: CollectionConfig = {
       required: true,
     },
     {
+      name: 'hasTshirt',
+      label: {
+        en: 'Has T-shirt?',
+        pt: 'Tem T-shirt?',
+      },
+      admin: {
+        position: 'sidebar',
+      },
+      type: 'checkbox',
+    },
+    {
       name: 'isRiver',
       label: {
         en: 'Is river?',
