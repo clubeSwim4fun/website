@@ -65,7 +65,7 @@ export const EventDetails: React.FC<{
 
   return (
     <aside
-      className={`h-full md:sticky ${topClass} transition-all duration-500 ease-in-out w-full lg:w-1/3 flex flex-col`}
+      className={`h-full lg:sticky ${topClass} transition-all duration-500 ease-in-out w-full lg:w-1/3 flex flex-col min-w-72`}
     >
       <Card className="dark:bg-slate-900 border rounded-xl shadow-md shadow-gray-400 border-blueSwim p-4 h-max w-full flex flex-col bg-white gap-1 mb-4">
         <h3 className="font-extrabold text-2xl md:text-3xl">Detalhes</h3>

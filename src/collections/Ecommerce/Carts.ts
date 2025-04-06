@@ -55,6 +55,34 @@ export const Carts: CollectionConfig = {
       ],
     },
     {
+      name: 'totalPrice',
+      label: {
+        en: 'Total Price',
+        pt: 'Preço Total',
+      },
+      type: 'number',
+      admin: {
+        readOnly: true,
+      },
+      required: true,
+    },
+    {
+      name: 'eventKey',
+      label: {
+        en: 'Event Key',
+        pt: 'Chave do Evento',
+      },
+      type: 'text',
+    },
+    {
+      name: 'hasTshirt',
+      label: {
+        en: 'Has T-Shirt?',
+        pt: 'Tem T-Shirt?',
+      },
+      type: 'checkbox',
+    },
+    {
       name: 'user',
       label: {
         en: 'User',

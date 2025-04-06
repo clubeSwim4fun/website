@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { login, LoginResponse } from '@/actions/login'
 import { Input } from '@/components/ui/input'
 import { useSearchParams } from 'next/navigation'
+import { Loader, LoaderCircle } from 'lucide-react'
 
 export default function LoginForm(): ReactElement {
   const [isPending, setIsPending] = useState(false)
@@ -28,8 +29,6 @@ export default function LoginForm(): ReactElement {
       // Display the error message
       setError(result.error || 'Login failed')
     }
-
-    setIsPending(false)
   }
 
   const callbackUrl = searchParams.get('callbackUrl') || '/'
@@ -61,7 +60,15 @@ export default function LoginForm(): ReactElement {
             />
           </div>
           {error && <div className="text-red-500">{error}</div>}
-          <Button>Login</Button>
+          <Button type="submit" disabled={isPending}>
+            {isPending ? (
+              <span className="flex items-center gap-2">
+                <LoaderCircle className="w-4 h-4 animate-spin" /> A entrar...
+              </span>
+            ) : (
+              'Entrar'
+            )}
+          </Button>
         </form>
         <p className="mt-10 text-center text-sm text-gray-400">
           Don&apos;t have an account?{' '}

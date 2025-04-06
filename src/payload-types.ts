@@ -1763,6 +1763,9 @@ export interface Cart {
         id?: string | null;
       }[]
     | null;
+  totalPrice: number;
+  eventKey?: string | null;
+  hasTshirt?: boolean | null;
   user: string | User;
   updatedAt: string;
   createdAt: string;
@@ -2565,6 +2568,9 @@ export interface CartsSelect<T extends boolean = true> {
         selectedTshirtSize?: T;
         id?: T;
       };
+  totalPrice?: T;
+  eventKey?: T;
+  hasTshirt?: T;
   user?: T;
   updatedAt?: T;
   createdAt?: T;

@@ -41,8 +41,8 @@ export const Cart: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-4 relative">
-      {cart?.items?.length && (
-        <span className="absolute -top-3 -right-3 rounded-full px-[6px] py-[2px] bg-red-600 text-white text-xs">
+      {cart?.items && cart.items.length > 0 && (
+        <span className="absolute -top-2 -right-2 rounded-full w-4 h-4 flex items-center justify-center bg-red-600 text-white text-xs">
           {cart?.items?.length}
         </span>
       )}

@@ -36,7 +36,7 @@ export const AddToCart: React.FC<{
           action: (
             <Button asChild variant={'outline'} size="sm" className="bg-gray-900 text-white">
               <Link href="/cart" className="flex gap-2 items-center">
-                <span>Go to Cart</span>
+                <span>Ir ao carrinho</span>
                 <ShoppingCart />
               </Link>
             </Button>

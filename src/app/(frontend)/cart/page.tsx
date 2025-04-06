@@ -49,7 +49,7 @@ export default async function Cart() {
       <section className="container max-w-screen-xl mx-auto mt-4 h-full">
         <CheckoutSteps current={0} />
         <h1 className="font-bold text-3xl my-4">Meu Carrinho</h1>
-        <CartTable eventsTickets={eventsTickets} />
+        <CartTable eventsTickets={eventsTickets} total={cart?.totalPrice} />
       </section>
     </main>
   )

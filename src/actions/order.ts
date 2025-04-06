@@ -89,6 +89,7 @@ export const createOrder = async () => {
       collection: 'carts',
       data: {
         items: [],
+        totalPrice: 0,
       },
       where: {
         id: {

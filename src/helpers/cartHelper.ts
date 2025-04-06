@@ -58,6 +58,7 @@ export const getMyCart = async (): Promise<Cart | undefined> => {
     data: {
       user: userMe.user,
       items: [],
+      totalPrice: 0,
     },
   })
 
@@ -83,6 +84,8 @@ export const removeFromCart = async ({ ticket }: { ticket: Ticket }): Promise<re
     if (ticketIndex === -1) throw new Error('ticket not found in cart')
 
     cart.items.splice(ticketIndex, 1)
+
+    cart.totalPrice -= ticket.price
 
     const response = await payload.update({
       collection: 'carts',
@@ -131,6 +134,8 @@ export const addToCart = async ({ ticket }: { ticket: Ticket }): Promise<respons
     cart.items.push({
       selectedTicket: ticket,
     })
+
+    cart.totalPrice += ticket.price
 
     const response = await payload.update({
       collection: 'carts',

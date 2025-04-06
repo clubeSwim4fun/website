@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { Fragment, useState, useTransition } from 'react'
+import { Fragment, useTransition } from 'react'
 import {
   Table,
   TableBody,
@@ -23,35 +23,37 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { updateCart } from '@/helpers/cartHelper'
-import { toast } from '@payloadcms/ui'
 import { useToast } from '@/hooks/use-toast'
+import { Controller, useForm } from 'react-hook-form'
+import { Error } from '@/blocks/Form/Error'
+import { cn } from '@/utilities/ui'
 
 const T_SHIRT_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL']
 
-export const CartTable: React.FC<{ eventsTickets: eventTicket }> = (props) => {
-  const { eventsTickets } = props
+export const CartTable: React.FC<{ eventsTickets: eventTicket; total?: number }> = (props) => {
+  const { eventsTickets, total } = props
   const [isPending, startTransition] = useTransition()
-  const [selectedTshirtsSize, setSelectedTshirtsSize] = useState<string[]>()
   const router = useRouter()
   const { toast } = useToast()
 
-  const onTshirtSizeChange = (value: string, ticketKey: string) => {
-    setSelectedTshirtsSize((prev) => {
-      const ticket = prev?.find((t) => t.includes(ticketKey))
+  const {
+    handleSubmit,
+    register,
+    control,
+    formState: { errors },
+  } = useForm<Record<string, string>>({
+    defaultValues: {},
+  })
 
-      if (ticket) {
-        const response = prev?.map((t) => (t.includes(ticketKey) ? `${ticketKey}-${value}` : t))
+  const submitCart = (data: Record<string, string>) => {
+    const selectedTshirts: string[] = []
 
-        return response
-      }
-
-      return [...(prev || []), `${ticketKey}-${value}`]
+    Object.entries(data).forEach(([key, value]) => {
+      selectedTshirts.push(`${key}-${value}`)
     })
-  }
 
-  const submitCart = () => {
     startTransition(async () => {
-      const response = await updateCart(selectedTshirtsSize)
+      const response = await updateCart(selectedTshirts)
 
       if (!response.success) {
         toast({
@@ -59,7 +61,6 @@ export const CartTable: React.FC<{ eventsTickets: eventTicket }> = (props) => {
           description:
             response.message || 'Um erro inesperado aconteceu, por favor tente novamente!',
         })
-
         return
       } else {
         router.push('/payment')
@@ -68,7 +69,7 @@ export const CartTable: React.FC<{ eventsTickets: eventTicket }> = (props) => {
   }
 
   return (
-    <>
+    <form onSubmit={handleSubmit(submitCart)}>
       {Object.keys(eventsTickets).map((eventKey) => (
         <Fragment key={eventKey}>
           <div className="flex justify-between w-full mt-4">
@@ -108,18 +109,40 @@ export const CartTable: React.FC<{ eventsTickets: eventTicket }> = (props) => {
                       </TableCell>
                       {eventsTickets[eventKey]?.hasTshirt && (
                         <TableCell className="flex justify-center">
-                          <Select onValueChange={(value) => onTshirtSizeChange(value, ticket.id)}>
-                            <SelectTrigger className="max-w-[120px]">
-                              <SelectValue placeholder="Tamanho" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {T_SHIRT_SIZES.map((size) => (
-                                <SelectItem key={size} value={size}>
-                                  {size}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                          <Controller
+                            control={control}
+                            defaultValue={''}
+                            name={ticket.id}
+                            rules={{ required: true }}
+                            render={({ field: { onChange, value } }) => {
+                              return (
+                                <div className="flex flex-col justify-center">
+                                  <Select
+                                    onValueChange={(value) => onChange(value)}
+                                    value={value}
+                                    {...register(ticket.id, { required: true })}
+                                  >
+                                    {/* <Label className="sr-only" htmlFor={ticket.id}> */}
+                                    <SelectTrigger
+                                      className={cn('max-w-[120px]', {
+                                        'border-destructive': errors[`${ticket.id}`],
+                                      })}
+                                    >
+                                      <SelectValue placeholder="Tamanho" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {T_SHIRT_SIZES.map((size) => (
+                                        <SelectItem key={size} value={size}>
+                                          {size}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                  {errors[`${ticket.id}`] && <Error />}
+                                </div>
+                              )
+                            }}
+                          />
                         </TableCell>
                       )}
                       <TableCell className="text-center max-w-[20%]">
@@ -133,8 +156,8 @@ export const CartTable: React.FC<{ eventsTickets: eventTicket }> = (props) => {
         </Fragment>
       ))}
       <div className="flex flex-col justify-end items-end mt-6 text-end">
-        <p className="font-bold text-lg">Total do carrinho: € 80.00</p>
-        <Button className="group w-fit mt-4" disabled={isPending} onClick={() => submitCart()}>
+        <p className="font-bold text-lg">Total do carrinho: € {total || 0}</p>
+        <Button className="group w-fit mt-4" disabled={isPending} type="submit">
           {isPending ? (
             <Loader className="w-4 h-4 animate-spin" />
           ) : (
@@ -145,6 +168,6 @@ export const CartTable: React.FC<{ eventsTickets: eventTicket }> = (props) => {
           )}
         </Button>
       </div>
-    </>
+    </form>
   )
 }
