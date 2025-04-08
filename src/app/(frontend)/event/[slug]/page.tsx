@@ -46,12 +46,40 @@ export default async function Event({ params: paramsPromise }: Args) {
   const { slug = '' } = await paramsPromise
   const url = '/event/' + slug
   const event = await queryEventBySlug({ slug })
+
+  const payload = await getPayload({ config: configPromise })
+
   let cart: Cart | null | undefined = null
 
   if (!event) return <PayloadRedirects url={url} />
   const { user } = await getMeUser()
 
   cart = user ? await getMyCart() : null
+
+  const eventOrders = await payload.find({
+    collection: 'orders',
+    limit: 1,
+    pagination: false,
+    where: {
+      user: {
+        equals: user?.id,
+      },
+      'events.event': {
+        equals: event.id,
+      },
+    },
+  })
+
+  // TODO - Move into context to avoid extra calls
+  const groups = await payload.find({
+    collection: 'group-categories',
+    limit: 100,
+    pagination: false,
+    select: {
+      id: true,
+      title: true,
+    },
+  })
 
   const { description, slug: eventSlug } = event
 
@@ -67,7 +95,14 @@ export default async function Event({ params: paramsPromise }: Args) {
       <div className="container pt-8 max-w-6xl mx-auto">
         <section className="flex flex-col-reverse lg:flex-row gap-3">
           <RichText data={description} enableGutter={false} />
-          <EventDetails user={user} event={event} slug={eventSlug} cart={cart} />
+          <EventDetails
+            user={user}
+            event={event}
+            slug={eventSlug}
+            cart={cart}
+            orderedEvent={eventOrders.docs?.[0]}
+            groups={groups.docs}
+          />
           {/* Refactor to move back the event Tickets here and aside so I can pass the action to get my cart and update cart from here */}
         </section>
       </div>

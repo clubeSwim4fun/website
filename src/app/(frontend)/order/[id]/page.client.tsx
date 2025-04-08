@@ -7,7 +7,6 @@ export const OrderPageClient = () => {
   const { refreshCart } = useCart()
 
   useEffect(() => {
-    console.log('updated')
     refreshCart()
   }, [])
 

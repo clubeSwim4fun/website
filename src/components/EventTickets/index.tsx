@@ -1,36 +1,20 @@
-import { Cart, Ticket, User } from '@/payload-types'
+import { Cart, GroupCategory, Order, Ticket, User } from '@/payload-types'
 import { Card } from '../ui/card'
-import { AddToCart } from '../Common/Cart/AddToCart'
 import { ShoppingCart } from 'lucide-react'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table'
-import { RemoveFromCart } from '../Common/Cart/RemoveFromCart'
+import { Table, TableBody, TableHead, TableHeader, TableRow } from '../ui/table'
+import { EventRow } from './event-row'
 
 export const EventTickets: React.FC<{
   user?: User
   tickets?: Ticket[] | null
   cart?: Cart | null
+  orderedEvent?: Order
+  groups?: GroupCategory[]
 }> = (props) => {
-  const { tickets, cart, user } = props
+  const { tickets, cart, user, orderedEvent } = props
   const cartItems = cart && cart.items?.map((i) => i.selectedTicket as Ticket)
 
   if (!tickets?.length) return
-
-  const canAddToCart = (ticket: Ticket) => {
-    if (!ticket.canBePurchasedBy || ticket.canBePurchasedBy.length === 0) {
-      return true
-    }
-
-    const response =
-      (user &&
-        user.groups?.some((group) =>
-          typeof group.value === 'object'
-            ? ticket.canBePurchasedBy?.includes(group.value.id)
-            : ticket.canBePurchasedBy?.includes(group.value),
-        )) ||
-      false
-
-    return response
-  }
 
   return (
     <Card
@@ -50,17 +34,14 @@ export const EventTickets: React.FC<{
           </TableHeader>
           <TableBody>
             {tickets?.map((ticket) => (
-              <TableRow className="border-b dark:border-slate-700" key={ticket.id}>
-                <TableCell className="text-left">{ticket.name}</TableCell>
-                <TableCell className="text-left">€ {ticket.price.toFixed(2)}</TableCell>
-                <TableCell className="text-left">
-                  {cartItems?.some((ci) => ci.id === ticket.id) ? (
-                    <RemoveFromCart ticket={ticket} />
-                  ) : (
-                    <AddToCart ticket={ticket} disabled={!canAddToCart(ticket)} />
-                  )}
-                </TableCell>
-              </TableRow>
+              <EventRow
+                ticket={ticket}
+                cartItems={cartItems}
+                user={user}
+                key={ticket.id}
+                orderedEvent={orderedEvent}
+                groups={props.groups}
+              />
             ))}
           </TableBody>
         </Table>
