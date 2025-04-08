@@ -8,11 +8,13 @@ import { login, LoginResponse } from '@/actions/login'
 import { Input } from '@/components/ui/input'
 import { useSearchParams } from 'next/navigation'
 import { Loader, LoaderCircle } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 export default function LoginForm(): ReactElement {
   const [isPending, setIsPending] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const searchParams = useSearchParams()
+  const t = useTranslations('Sign-in')
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -35,12 +37,12 @@ export default function LoginForm(): ReactElement {
 
   return (
     <div className="flex gap-8 min-h-full flex-col justify-center items-center">
-      <div className="text-3xl">Login</div>
+      <div className="text-3xl">{t('login')}</div>
       <div className="w-full mx-auto sm:max-w-lg">
         <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
           <input type="hidden" name="callbackUrl" value={callbackUrl} />
           <div className="flex flex-col gap-2">
-            <label htmlFor="email">Email</label>
+            <label htmlFor="email">{t('email')}</label>
             <Input
               className="w-full focus:outline-none"
               name="email"
@@ -50,7 +52,7 @@ export default function LoginForm(): ReactElement {
             />
           </div>
           <div className="flex flex-col gap-2 mb-8">
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password">{t('password')}</label>
             <Input
               className="w-full focus:outline-none"
               name="password"
@@ -63,20 +65,21 @@ export default function LoginForm(): ReactElement {
           <Button type="submit" disabled={isPending}>
             {isPending ? (
               <span className="flex items-center gap-2">
-                <LoaderCircle className="w-4 h-4 animate-spin" /> A entrar...
+                <LoaderCircle className="w-4 h-4 animate-spin" /> {t('loggingIn')}
               </span>
             ) : (
-              'Entrar'
+              t('login')
             )}
           </Button>
         </form>
         <p className="mt-10 text-center text-sm text-gray-400">
-          Don&apos;t have an account?{' '}
+          {t('dontHaveAccount')}
           <Link
             href="/sign-up"
             className="font-semibold leading-6 text-headBlue-500 hover:text-headBlue-400"
           >
-            Sign Up
+            {' '}
+            {t('register')}
           </Link>
         </p>
       </div>

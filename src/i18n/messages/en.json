@@ -1,0 +1,14 @@
+{
+  "Sign-in": {
+    "email": "Email",
+    "password": "Password",
+    "logginIn": "Logging in...",
+    "dontHaveAccount": "Don't have an account?",
+    "register": "Register",
+    "login": "Login"
+  },
+  "Metadata": {
+    "Club": "Club Swim4Fun",
+    "Cart": "Cart"
+  }
+}

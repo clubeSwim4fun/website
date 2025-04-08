@@ -10,6 +10,7 @@ import { Cart as CartType, Event, Ticket } from '@/payload-types'
 
 import CheckoutSteps from '@/components/Common/CheckoutSteps'
 import { CartTable } from './cart-table'
+import { getTranslations } from 'next-intl/server'
 
 export type eventTicket = {
   [key: string]: {
@@ -55,8 +56,15 @@ export default async function Cart() {
   )
 }
 
-export function generateMetadata(): Metadata {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'Metadata' })
+
   return {
-    title: `Clube Swim4Fun Carrinho de compras`,
+    title: `${t('Club')} - ${t('Cart')}`,
   }
 }
