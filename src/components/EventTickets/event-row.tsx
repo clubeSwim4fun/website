@@ -22,12 +22,11 @@ export const EventRow: React.FC<{
   const getGroupName = (groupId?: (string | GroupCategory)[]) => {
     const response: string[] = []
 
-    groups &&
-      groups.forEach((group) => {
-        if (groupId?.includes(group.id)) {
-          response.push(group.title)
-        }
-      })
+    groups?.forEach((group) => {
+      if (groupId?.includes(group.id)) {
+        response.push(group.title)
+      }
+    })
 
     return response.join(', ')
   }
