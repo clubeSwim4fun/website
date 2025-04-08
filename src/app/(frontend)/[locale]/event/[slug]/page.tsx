@@ -37,6 +37,7 @@ export async function generateStaticParams() {
 
 type Args = {
   params: Promise<{
+    locale: string
     slug?: string
   }>
 }
@@ -111,10 +112,10 @@ export default async function Event({ params: paramsPromise }: Args) {
 }
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
-  const { slug = '' } = await paramsPromise
+  const { slug = '', locale } = await paramsPromise
   const event = await queryEventBySlug({ slug })
 
-  return generateMeta({ doc: event })
+  return generateMeta({ doc: event, locale })
 }
 
 const queryEventBySlug = cache(async ({ slug }: { slug: string }) => {

@@ -7,6 +7,7 @@ import { useTransition } from 'react'
 import { useToast } from '@/hooks/use-toast'
 import { CircleMinus, LoaderCircle } from 'lucide-react'
 import { useCart } from '@/providers/Cart'
+import { useTranslations } from 'next-intl'
 
 export const RemoveFromCart: React.FC<{
   ticket: Ticket
@@ -16,6 +17,7 @@ export const RemoveFromCart: React.FC<{
   const { toast } = useToast()
   const { ticket, disabled } = props
   const { refreshCart } = useCart()
+  const t = useTranslations()
 
   const onClickHandler = async () => {
     startTransition(async () => {
@@ -23,7 +25,7 @@ export const RemoveFromCart: React.FC<{
 
       if (!response.success) {
         toast({
-          title: 'Error', // TODO - Add translations
+          title: t('Common.error'),
           description: response.message,
           variant: 'destructive',
         })
@@ -39,7 +41,7 @@ export const RemoveFromCart: React.FC<{
       size="sm"
       onClick={onClickHandler}
       disabled={isPending || disabled}
-      aria-label="Remove from cart"
+      aria-label={t('Cart.removeFromCart')}
     >
       {isPending ? (
         <span className="flex gap-2 items-center">

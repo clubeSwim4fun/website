@@ -8,6 +8,7 @@ import { useToast } from '@/hooks/use-toast'
 import { CirclePlus, LoaderCircle, ShoppingCart } from 'lucide-react'
 import Link from 'next/link'
 import { useCart } from '@/providers/Cart'
+import { useTranslations } from 'next-intl'
 
 export const AddToCart: React.FC<{
   ticket: Ticket
@@ -17,26 +18,26 @@ export const AddToCart: React.FC<{
   const { toast } = useToast()
   const { ticket, disabled } = props
   const { refreshCart } = useCart()
-
+  const t = useTranslations()
   const onClickHandler = async () => {
     startTransition(async () => {
       const response = await addToCart({ ticket })
 
       if (!response.success) {
         toast({
-          title: 'Error', // TODO - Add translations
+          title: t('Common.error'),
           description: response.message,
           variant: 'destructive',
         })
       } else {
         await refreshCart()
         toast({
-          title: 'Success', // TODO - Add translations
+          title: t('Common.success'),
           description: response.message,
           action: (
             <Button asChild variant={'outline'} size="sm" className="bg-gray-900 text-white">
               <Link href="/cart" className="flex gap-2 items-center">
-                <span>Ir ao carrinho</span>
+                <span>{t('Cart.goToCart')}</span>
                 <ShoppingCart />
               </Link>
             </Button>

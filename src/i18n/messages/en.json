@@ -9,6 +9,46 @@
   },
   "Metadata": {
     "Club": "Club Swim4Fun",
+    "Blog": "Blog",
     "Cart": "Cart"
+  },
+  "User": {
+    "userNotFound": "User not found"
+  },
+  "Common": {
+    "error": "Error",
+    "success": "Success",
+    "warning": "Warning",
+    "info": "Info",
+    "loading": "Loading...",
+    "ok": "OK",
+    "cancel": "Cancel",
+    "yes": "Yes",
+    "no": "No",
+    "remove": "Remove",
+    "close": "Close"
+  },
+  "Cart": {
+    "goToCart": "Go to cart",
+    "removeFromCart": "Remove from cart",
+    "cartUpdated": "Cart updated",
+    "errorUpdatingCart": "Error updating cart",
+    "ticket": "Ticket",
+    "eventTotalPrice": "Price (total: {price, number, currency})",
+    "totalPrice": "Cart total: {price, number, currency}",
+    "unexpectedError": "An unexpected error occurred, please try again!",
+    "removedFromCartSuccess": "Ticket removed from cart",
+    "errorRemovingTicket": "Error removing ticket from cart",
+    "addedToCartSuccess": "Ticket added to cart",
+    "errorAddingTicket": "Error adding ticket to cart",
+    "cartNotFound": "Cart not found",
+    "tShirtSize": "T-shirt size",
+    "proceedToPayment": "Proceed to payment",
+    "ticketNotFound": "Ticket not found in cart"
+  },
+  "CheckoutSteps": {
+    "cart": "Cart",
+    "payment": "Payment",
+    "receipt": "Receipt"
   }
 }

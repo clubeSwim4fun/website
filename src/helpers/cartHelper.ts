@@ -5,8 +5,8 @@ import config from '@payload-config'
 import { getMeUser } from '@/utilities/getMeUser'
 import { Cart, Ticket } from '@/payload-types'
 import { revalidatePath } from 'next/cache'
-import { se } from 'date-fns/locale'
-import { select } from 'node_modules/payload/dist/fields/validations'
+import { getTranslations } from 'next-intl/server'
+import { getLocale } from 'next-intl/server'
 
 export type responseType = {
   success: boolean
@@ -68,20 +68,22 @@ export const getMyCart = async (): Promise<Cart | undefined> => {
 export const removeFromCart = async ({ ticket }: { ticket: Ticket }): Promise<responseType> => {
   try {
     const userMe = await getMeUser()
+    const locale = await getLocale()
+    const t = await getTranslations({ locale })
 
-    if (!userMe || !userMe.user) throw new Error('user not found')
+    if (!userMe || !userMe.user) throw new Error(t('User.userNotFound'))
 
     const payload = await getPayload({ config })
 
     const cart = await getMyCart()
 
-    if (!cart || !cart.items) throw new Error('cart not found')
+    if (!cart || !cart.items) throw new Error(t('Cart.cartNotFound'))
 
     const ticketIndex = cart.items.findIndex(
       (item) => typeof item?.selectedTicket === 'object' && item?.selectedTicket?.id === ticket.id,
     )
 
-    if (ticketIndex === -1) throw new Error('ticket not found in cart')
+    if (ticketIndex === -1) throw new Error(t('Cart.ticketNotFound'))
 
     cart.items.splice(ticketIndex, 1)
 
@@ -99,7 +101,7 @@ export const removeFromCart = async ({ ticket }: { ticket: Ticket }): Promise<re
 
     if (response && response.errors && response.errors.length > 0) {
       return {
-        message: response.errors[0]?.message ?? `Error removing from cart ${cart.id}`, // todo improve error typing later
+        message: response.errors[0]?.message ?? `${t('Cart.errorRemovingTicket')} ${cart.id}`, // todo improve error typing later
         success: false,
       }
     }
@@ -107,12 +109,15 @@ export const removeFromCart = async ({ ticket }: { ticket: Ticket }): Promise<re
     await revalidateEvent(ticket, payload)
 
     return {
-      message: 'Ticket removed from cart', // TODO - Add translations
+      message: t('Cart.removedFromCartSuccess'),
       success: true,
     }
   } catch (error) {
+    const locale = await getLocale()
+    const t = await getTranslations({ locale })
+
     return {
-      message: (error as string) || 'Error removing from cart', // todo improve error typing later
+      message: (error as string) || t('Cart.errorRemovingTicket'), // todo improve error typing later
       success: false,
     }
   }
@@ -121,15 +126,17 @@ export const removeFromCart = async ({ ticket }: { ticket: Ticket }): Promise<re
 export const addToCart = async ({ ticket }: { ticket: Ticket }): Promise<responseType> => {
   try {
     const userMe = await getMeUser()
+    const locale = await getLocale()
+    const t = await getTranslations({ locale })
 
-    if (!userMe || !userMe.user) throw new Error('user not found')
+    if (!userMe || !userMe.user) throw new Error(t('User.userNotFound'))
 
     const payload = await getPayload({ config })
 
     const cart = await getMyCart()
 
     if (!cart || !cart.items) {
-      throw new Error('cart not found')
+      throw new Error(t('Cart.cartNotFound'))
     }
     cart.items.push({
       selectedTicket: ticket,
@@ -149,7 +156,7 @@ export const addToCart = async ({ ticket }: { ticket: Ticket }): Promise<respons
 
     if (response && response.errors && response.errors.length > 0) {
       return {
-        message: response.errors[0]?.message ?? `Error adding to cart ${cart.id}`, // todo improve error typing later
+        message: response.errors[0]?.message ?? `${t('Cart.errorAddingTicket')} ${cart.id}`, // todo improve error typing later
         success: false,
       }
     }
@@ -157,12 +164,15 @@ export const addToCart = async ({ ticket }: { ticket: Ticket }): Promise<respons
     await revalidateEvent(ticket, payload)
 
     return {
-      message: `${ticket.name} added to cart`,
+      message: `${ticket.name} ${t('Cart.addedToCartSuccess')}`,
       success: true,
     }
   } catch (error) {
+    const locale = await getLocale()
+    const t = await getTranslations({ locale })
+
     return {
-      message: (error as string) || 'Error adding to cart', // todo improve error typing later
+      message: (error as string) || t('Cart.errorAddingTicket'), // todo improve error typing later
       success: false,
     }
   }
@@ -171,14 +181,16 @@ export const addToCart = async ({ ticket }: { ticket: Ticket }): Promise<respons
 export const updateCart = async (selectedTshirtSize?: string[]): Promise<responseType> => {
   try {
     const userMe = await getMeUser()
+    const locale = await getLocale()
+    const t = await getTranslations({ locale })
 
-    if (!userMe || !userMe.user) throw new Error('user not found')
+    if (!userMe || !userMe.user) throw new Error(t('User.userNotFound'))
 
     const payload = await getPayload({ config })
 
     const cart = await getMyCart()
 
-    if (!cart) throw new Error('cart not found')
+    if (!cart) throw new Error(t('Cart.cartNotFound'))
 
     selectedTshirtSize?.forEach((size) => {
       const ticketKey = size.split('-')[0]
@@ -206,18 +218,21 @@ export const updateCart = async (selectedTshirtSize?: string[]): Promise<respons
 
     if (response && response.errors && response.errors.length > 0) {
       return {
-        message: response.errors[0]?.message ?? `Error updating cart ${cart.id}`, // todo improve error typing later
+        message: response.errors[0]?.message ?? `${t('Cart.errorUpdatingCart')} ${cart.id}`, // todo improve error typing later
         success: false,
       }
     }
 
     return {
-      message: 'Cart updated',
+      message: t('Cart.cartUpdated'),
       success: true,
     }
   } catch (error) {
+    const locale = await getLocale()
+    const t = await getTranslations({ locale })
+
     return {
-      message: (error as string) || 'Error updating cart', // todo improve error typing later
+      message: (error as string) || t('Cart.errorUpdatingCart'), // todo improve error typing later
       success: false,
     }
   }

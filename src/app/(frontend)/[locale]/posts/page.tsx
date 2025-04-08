@@ -7,6 +7,7 @@ import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import React from 'react'
 import PageClient from './page.client'
+import { getTranslations } from 'next-intl/server'
 
 export const dynamic = 'force-static'
 export const revalidate = 600
@@ -56,8 +57,15 @@ export default async function Page() {
   )
 }
 
-export function generateMetadata(): Metadata {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'Metadata' })
+
   return {
-    title: `Payload Website Template Posts`,
+    title: `${t('Club')} - ${t('Blog')}`,
   }
 }

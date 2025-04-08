@@ -9,6 +9,46 @@
   },
   "Metadata": {
     "Club": "Clube Swim4Fun",
+    "Blog": "Blog",
     "Cart": "Carrinho"
+  },
+  "User": {
+    "userNotFound": "Utilizador não encontrado"
+  },
+  "Common": {
+    "error": "Erro",
+    "success": "Sucesso",
+    "warning": "Aviso",
+    "info": "Informação",
+    "loading": "A carregar...",
+    "ok": "OK",
+    "cancel": "Cancelar",
+    "yes": "Sim",
+    "no": "Não",
+    "remove": "Remover",
+    "close": "Fechar"
+  },
+  "Cart": {
+    "goToCart": "Ir para o carrinho",
+    "removeFromCart": "Remover do carrinho",
+    "cartUpdated": "Carrinho atualizado",
+    "errorUpdatingCart": "Erro ao atualizar o carrinho",
+    "eventTotalPrice": "Preço (total: {price, number, currency})",
+    "totalPrice": "Total do carrinho: {price, number, currency}",
+    "ticket": "Bilhete",
+    "unexpectedError": "Um erro inesperado aconteceu, por favor tente novamente!",
+    "removedFromCartSuccess": "Bilhete removido do carrinho",
+    "errorRemovingTicket": "Erro ao remover bilhete do carrinho",
+    "addedToCartSuccess": "Bilhete adicionado ao carrinho",
+    "errorAddingTicket": "Erro ao adicionar bilhete ao carrinho",
+    "cartNotFound": "Carrinho não encontrado",
+    "tShirtSize": "Tamanho da T-shirt",
+    "proceedToPayment": "Ir para o pagamento",
+    "ticketNotFound": "Bilhete não encontrado no carrinho"
+  },
+  "CheckoutSteps": {
+    "cart": "Carrinho",
+    "payment": "Pagamento",
+    "receipt": "Recibo"
   }
 }

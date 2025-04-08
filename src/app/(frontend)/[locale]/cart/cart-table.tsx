@@ -27,6 +27,7 @@ import { useToast } from '@/hooks/use-toast'
 import { Controller, useForm } from 'react-hook-form'
 import { Error } from '@/blocks/Form/Error'
 import { cn } from '@/utilities/ui'
+import { useFormatter, useTranslations } from 'next-intl'
 
 const T_SHIRT_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL']
 
@@ -35,6 +36,8 @@ export const CartTable: React.FC<{ eventsTickets: eventTicket; total?: number }>
   const [isPending, startTransition] = useTransition()
   const router = useRouter()
   const { toast } = useToast()
+  const t = useTranslations()
+  const format = useFormatter()
 
   const {
     handleSubmit,
@@ -58,8 +61,7 @@ export const CartTable: React.FC<{ eventsTickets: eventTicket; total?: number }>
       if (!response.success) {
         toast({
           variant: 'destructive',
-          description:
-            response.message || 'Um erro inesperado aconteceu, por favor tente novamente!',
+          description: response.message || t('Cart.unexpectedError'),
         })
         return
       } else {
@@ -80,19 +82,27 @@ export const CartTable: React.FC<{ eventsTickets: eventTicket; total?: number }>
           <Table className="w-full">
             <TableHeader className="bg-gray-100 dark:bg-slate-900">
               <TableRow className="border-b dark:border-slate-700">
-                <TableHead className="text-left max-w-[50%]">Bilhete</TableHead>
+                <TableHead className="text-left max-w-[50%]">{t('Cart.ticket')}</TableHead>
                 <TableHead className="text-center max-w-[30%]">
-                  Preço (total: €{' '}
-                  {eventsTickets[eventKey] &&
-                    eventsTickets[eventKey].tickets
-                      .reduce((total, ticket) => total + (ticket.price || 0), 0)
-                      .toFixed(2)}
-                  )
+                  {/* TODO - add from nextitl currency formating */}
+                  {t(
+                    'Cart.eventTotalPrice',
+                    {
+                      price:
+                        (eventsTickets[eventKey] &&
+                          eventsTickets[eventKey].tickets.reduce(
+                            (total, ticket) => total + (ticket.price || 0),
+                            0,
+                          )) ||
+                        0,
+                    },
+                    { number: { currency: { style: 'currency', currency: 'EUR' } } },
+                  )}
                 </TableHead>
                 {eventsTickets[eventKey]?.hasTshirt && (
-                  <TableHead className="text-center max-w-[10%]">Tamanho T-Shirt</TableHead>
+                  <TableHead className="text-center max-w-[10%]">{t('Cart.tShirtSize')}</TableHead>
                 )}
-                <TableHead className="text-center max-w-[20%]">Remover</TableHead>
+                <TableHead className="text-center max-w-[20%]">{t('Common.remove')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -105,7 +115,10 @@ export const CartTable: React.FC<{ eventsTickets: eventTicket; total?: number }>
                     <TableRow className="border-b dark:border-slate-700" key={ticket.id}>
                       <TableCell className="text-left max-w-[50%]">{cartItemTicket.name}</TableCell>
                       <TableCell className="text-center max-w-[30%]">
-                        {`€ ${cartItemTicket.price.toFixed(2)}`}
+                        {`${format.number(cartItemTicket.price, {
+                          style: 'currency',
+                          currency: 'EUR',
+                        })}`}
                       </TableCell>
                       {eventsTickets[eventKey]?.hasTshirt && (
                         <TableCell className="flex justify-center">
@@ -156,13 +169,19 @@ export const CartTable: React.FC<{ eventsTickets: eventTicket; total?: number }>
         </Fragment>
       ))}
       <div className="flex flex-col justify-end items-end mt-6 text-end">
-        <p className="font-bold text-lg">Total do carrinho: € {total || 0}</p>
+        <p className="font-bold text-lg">
+          {t(
+            'Cart.totalPrice',
+            { price: total || 0 },
+            { number: { currency: { style: 'currency', currency: 'EUR' } } },
+          )}
+        </p>
         <Button className="group w-fit mt-4" disabled={isPending} type="submit">
           {isPending ? (
             <Loader className="w-4 h-4 animate-spin" />
           ) : (
             <>
-              Ir para o pagamento{' '}
+              {t('Cart.proceedToPayment')}{' '}
               <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-2 transition-all duration-500" />
             </>
           )}

@@ -4,6 +4,7 @@ import type { Media, Page, Post, Config } from '../payload-types'
 
 import { mergeOpenGraph } from './mergeOpenGraph'
 import { getServerSideURL } from './getURL'
+import { getTranslations } from 'next-intl/server'
 
 const getImageURL = (image?: Media | Config['db']['defaultIDType'] | null) => {
   const serverUrl = getServerSideURL()
@@ -21,14 +22,14 @@ const getImageURL = (image?: Media | Config['db']['defaultIDType'] | null) => {
 
 export const generateMeta = async (args: {
   doc: Partial<Page> | Partial<Post> | null
+  locale: string
 }): Promise<Metadata> => {
-  const { doc } = args
+  const { doc, locale } = args
 
   const ogImage = getImageURL(doc?.meta?.image)
+  const t = await getTranslations({ locale, namespace: 'Metadata' })
 
-  const title = doc?.meta?.title
-    ? doc?.meta?.title + ' | Payload Website Template'
-    : 'Payload Website Template'
+  const title = doc?.meta?.title ? doc?.meta?.title + t('Club') : t('Club')
 
   return {
     description: doc?.meta?.description,
