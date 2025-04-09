@@ -26,6 +26,7 @@ import { Events } from './collections/Events/Events'
 import { Carts } from './collections/Ecommerce/Carts'
 import { Tickets } from './collections/Events/Tickets'
 import { Orders } from './collections/Ecommerce/Orders'
+import localization from './i18n/localization'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -103,6 +104,7 @@ export default buildConfig({
       },
     }),
   ],
+  localization,
   secret: process.env.PAYLOAD_SECRET,
   sharp,
   typescript: {

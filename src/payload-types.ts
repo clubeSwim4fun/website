@@ -121,7 +121,7 @@ export interface Config {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
   };
-  locale: null;
+  locale: 'en' | 'pt';
   user: User & {
     collection: 'users';
   };
@@ -1471,6 +1471,7 @@ export interface Event {
   distance: number;
   category: string | Category;
   hasTshirt?: boolean | null;
+  tshirtSizes?: ('XS' | 'S' | 'M' | 'L' | 'XL' | 'XXL' | 'XXXL')[] | null;
   isRiver?: boolean | null;
   address?: {
     street?: string | null;
@@ -1745,6 +1746,7 @@ export interface Ticket {
   id: string;
   name: string;
   price: number;
+  distance: number;
   eventFor: string | Event;
   canBePurchasedBy?: (string | GroupCategory)[] | null;
   updatedAt: string;
@@ -2540,6 +2542,7 @@ export interface EventsSelect<T extends boolean = true> {
   distance?: T;
   category?: T;
   hasTshirt?: T;
+  tshirtSizes?: T;
   isRiver?: T;
   address?:
     | T
@@ -2582,6 +2585,7 @@ export interface CartsSelect<T extends boolean = true> {
 export interface TicketsSelect<T extends boolean = true> {
   name?: T;
   price?: T;
+  distance?: T;
   eventFor?: T;
   canBePurchasedBy?: T;
   updatedAt?: T;

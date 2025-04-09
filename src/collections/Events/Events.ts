@@ -140,6 +140,19 @@ export const Events: CollectionConfig = {
       type: 'checkbox',
     },
     {
+      name: 'tshirtSizes',
+      label: {
+        en: 'Sizes available',
+        pt: 'Tamanhos disponíveis',
+      },
+      admin: {
+        position: 'sidebar',
+      },
+      type: 'select',
+      hasMany: true,
+      options: ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
+    },
+    {
       name: 'isRiver',
       label: {
         en: 'Is river?',

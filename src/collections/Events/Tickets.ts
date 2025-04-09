@@ -37,7 +37,7 @@ export const Tickets: CollectionConfig = {
           },
           type: 'text',
           admin: {
-            width: '50%',
+            width: '40%',
           },
           required: true,
         },
@@ -50,7 +50,19 @@ export const Tickets: CollectionConfig = {
           type: 'number',
           min: 0,
           admin: {
-            width: '50%',
+            width: '30%',
+          },
+          required: true,
+        },
+        {
+          name: 'distance',
+          label: {
+            en: 'Distance',
+            pt: 'Distância',
+          },
+          type: 'number',
+          admin: {
+            width: '30%',
           },
           required: true,
         },

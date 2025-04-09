@@ -60,21 +60,21 @@ export const Posts: CollectionConfig<'posts'> = {
   admin: {
     defaultColumns: ['title', 'slug', 'updatedAt'],
     livePreview: {
-      url: ({ data, req }) => {
+      url: ({ data, locale }) => {
         const path = generatePreviewPath({
           slug: typeof data?.slug === 'string' ? data.slug : '',
           collection: 'posts',
-          req,
+          locale: locale.code,
         })
 
         return path
       },
     },
-    preview: (data, { req }) =>
+    preview: (data, { locale }) =>
       generatePreviewPath({
         slug: typeof data?.slug === 'string' ? data.slug : '',
         collection: 'posts',
-        req,
+        locale,
       }),
     useAsTitle: 'title',
   },

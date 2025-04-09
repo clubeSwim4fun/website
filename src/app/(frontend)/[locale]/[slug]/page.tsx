@@ -39,6 +39,7 @@ export async function generateStaticParams() {
 type Args = {
   params: Promise<{
     slug?: string
+    locale: string
   }>
 }
 
@@ -69,12 +70,12 @@ export default async function Page({ params: paramsPromise }: Args) {
 }
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
-  const { slug = 'home' } = await paramsPromise
+  const { slug = 'home', locale } = await paramsPromise
   const page = await queryPageBySlug({
     slug,
   })
 
-  return generateMeta({ doc: page })
+  return generateMeta({ doc: page, locale })
 }
 
 const queryPageBySlug = cache(async ({ slug }: { slug: string }) => {

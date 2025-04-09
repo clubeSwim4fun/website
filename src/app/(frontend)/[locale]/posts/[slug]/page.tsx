@@ -38,6 +38,7 @@ export async function generateStaticParams() {
 type Args = {
   params: Promise<{
     slug?: string
+    locale: string
   }>
 }
 
@@ -76,10 +77,10 @@ export default async function Post({ params: paramsPromise }: Args) {
 }
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
-  const { slug = '' } = await paramsPromise
+  const { slug = '', locale } = await paramsPromise
   const post = await queryPostBySlug({ slug })
 
-  return generateMeta({ doc: post })
+  return generateMeta({ doc: post, locale })
 }
 
 const queryPostBySlug = cache(async ({ slug }: { slug: string }) => {

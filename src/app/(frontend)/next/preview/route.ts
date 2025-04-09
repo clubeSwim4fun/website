@@ -1,6 +1,6 @@
 import { draftMode } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { getPayload, type PayloadRequest } from 'payload'
+import { getPayload, TypedLocale, type PayloadRequest } from 'payload'
 import configPromise from '@payload-config'
 import { CollectionSlug } from 'payload'
 
@@ -68,6 +68,7 @@ export async function GET(
         limit: 1,
         // pagination: false reduces overhead if you don't need totalDocs
         pagination: false,
+        locale: path.split('/')[0] as unknown as TypedLocale,
         depth: 0,
         select: {},
         where: {

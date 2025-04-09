@@ -23,6 +23,7 @@ import { getServerSideURL } from '@/utilities/getURL'
 import { getMeUser } from '@/utilities/getMeUser'
 import { Toaster } from '@/components/ui/toaster'
 import { Cart } from '@/components/Cart'
+import { TypedLocale } from 'payload'
 
 export default async function RootLayout({
   children,
@@ -66,12 +67,12 @@ export default async function RootLayout({
                 }}
               />
             )}
-            <Header />
+            <Header locale={locale as unknown as TypedLocale} />
             {children}
             <div className="fixed bottom-2 right-4 z-50 bg-white rounded-full p-4 md:hidden dark:bg-slate-800 shadow-xl border border-slate-300">
               <Cart />
             </div>
-            <Footer />
+            <Footer locale={locale as unknown as TypedLocale} />
           </Providers>
         </NextIntlClientProvider>
       </body>
