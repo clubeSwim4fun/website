@@ -31,13 +31,14 @@ export const Tickets: CollectionConfig = {
       fields: [
         {
           name: 'name',
+          localized: true,
           label: {
             en: 'Name',
             pt: 'Nome',
           },
           type: 'text',
           admin: {
-            width: '40%',
+            width: '20%',
           },
           required: true,
         },
@@ -50,19 +51,51 @@ export const Tickets: CollectionConfig = {
           type: 'number',
           min: 0,
           admin: {
-            width: '30%',
+            width: '20%',
           },
           required: true,
         },
         {
           name: 'distance',
           label: {
-            en: 'Distance',
-            pt: 'Distância',
+            en: 'Distance (In meters)',
+            pt: 'Distância (em metros)',
           },
           type: 'number',
+          min: 0,
+          max: 33000,
           admin: {
-            width: '30%',
+            width: '20%',
+          },
+          required: true,
+        },
+        {
+          name: 'start',
+          label: {
+            en: 'Purchase start date',
+            pt: 'Data de início de compra',
+          },
+          type: 'date',
+          admin: {
+            width: '20%',
+            date: {
+              pickerAppearance: 'dayAndTime',
+            },
+          },
+          required: true,
+        },
+        {
+          name: 'end',
+          label: {
+            en: 'Purchase end date',
+            pt: 'Data de término de compra',
+          },
+          type: 'date',
+          admin: {
+            width: '20%',
+            date: {
+              pickerAppearance: 'dayAndTime',
+            },
           },
           required: true,
         },

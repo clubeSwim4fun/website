@@ -10,8 +10,11 @@ import { Cart as CartType } from '@/payload-types'
 
 import CheckoutSteps from '@/components/Common/CheckoutSteps'
 import { PaymentForm } from './payment-form'
+import { getTranslations } from 'next-intl/server'
 
-export default async function Payment() {
+export default async function Payment({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'Payment' })
   const { isEnabled: draft } = await draftMode()
   let cart: CartType | null | undefined = null
 
@@ -24,15 +27,22 @@ export default async function Payment() {
       {draft && <LivePreviewListener />}
       <section className="container max-w-screen-xl mx-auto mt-4 h-full">
         <CheckoutSteps current={1} />
-        <h1 className="font-bold text-3xl my-4">Método de Pagamento</h1>
+        <h1 className="font-bold text-3xl my-4">{t('title')}</h1>
         <PaymentForm />
       </section>
     </main>
   )
 }
 
-export function generateMetadata(): Metadata {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'Metadata' })
+
   return {
-    title: `Clube Swim4Fun Pagamento`,
+    title: `${t('Club')} - ${t('Payment')}`,
   }
 }

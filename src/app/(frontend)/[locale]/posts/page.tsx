@@ -4,7 +4,7 @@ import { CollectionArchive } from '@/components/CollectionArchive'
 import { PageRange } from '@/components/PageRange'
 import { Pagination } from '@/components/Pagination'
 import configPromise from '@payload-config'
-import { getPayload } from 'payload'
+import { getPayload, TypedLocale } from 'payload'
 import React from 'react'
 import PageClient from './page.client'
 import { getTranslations } from 'next-intl/server'
@@ -12,13 +12,16 @@ import { getTranslations } from 'next-intl/server'
 export const dynamic = 'force-static'
 export const revalidate = 600
 
-export default async function Page() {
+export default async function Page({ params }: { params: Promise<{ locale: TypedLocale }> }) {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'Posts' })
   const payload = await getPayload({ config: configPromise })
 
   const posts = await payload.find({
     collection: 'posts',
     depth: 1,
     limit: 12,
+    locale,
     overrideAccess: false,
     select: {
       title: true,
@@ -33,7 +36,7 @@ export default async function Page() {
       <PageClient />
       <div className="container mb-16">
         <div className="prose dark:prose-invert max-w-none">
-          <h1>Posts</h1>
+          <h1>{t('title')}</h1>
         </div>
       </div>
 
@@ -42,6 +45,7 @@ export default async function Page() {
           collection="posts"
           currentPage={posts.page}
           limit={12}
+          t={t}
           totalDocs={posts.totalDocs}
         />
       </div>

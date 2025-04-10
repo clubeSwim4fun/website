@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 
 import { PayloadRedirects } from '@/components/PayloadRedirects'
 import configPromise from '@payload-config'
-import { getPayload } from 'payload'
+import { getPayload, TypedLocale } from 'payload'
 import { draftMode } from 'next/headers'
 import React, { cache } from 'react'
 
@@ -45,11 +45,12 @@ type Args = {
 
 export default async function Page({ params: paramsPromise }: Args) {
   const { isEnabled: draft } = await draftMode()
-  const { slug = 'home' } = await paramsPromise
+  const { slug = 'home', locale } = await paramsPromise
   const url = '/' + slug
 
   const page = await queryPageBySlug({
     slug,
+    locale,
   })
 
   if (!page) {
@@ -73,12 +74,13 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   const { slug = 'home', locale } = await paramsPromise
   const page = await queryPageBySlug({
     slug,
+    locale,
   })
 
   return generateMeta({ doc: page, locale })
 }
 
-const queryPageBySlug = cache(async ({ slug }: { slug: string }) => {
+const queryPageBySlug = cache(async ({ slug, locale }: { slug: string; locale: string }) => {
   const { isEnabled: draft } = await draftMode()
 
   const payload = await getPayload({ config: configPromise })
@@ -87,6 +89,7 @@ const queryPageBySlug = cache(async ({ slug }: { slug: string }) => {
     collection: 'pages',
     draft,
     limit: 1,
+    locale: locale as TypedLocale,
     pagination: false,
     overrideAccess: draft,
     where: {

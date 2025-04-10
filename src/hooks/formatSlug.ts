@@ -3,6 +3,12 @@ import type { FieldHook } from 'payload'
 const format = (val: string): string =>
   val
     .replace(/ /g, '-')
+    .replace(/[áàâãäå]/gi, 'a')
+    .replace(/[éèêë]/gi, 'e')
+    .replace(/[íìîï]/gi, 'i')
+    .replace(/[óòôõö]/gi, 'o')
+    .replace(/[úùûü]/gi, 'u')
+    .replace(/[ç]/gi, 'c')
     .replace(/[^\w-]+/g, '')
     .toLowerCase()
 
@@ -21,7 +27,7 @@ const formatSlug =
       }
     }
 
-    return value
+    return value ? format(value) : originalDoc.slug
   }
 
 export default formatSlug

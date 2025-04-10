@@ -22,6 +22,7 @@ export const PageRange: React.FC<{
   currentPage?: number
   limit?: number
   totalDocs?: number
+  t: (key: string, options?: Record<string, string | number>) => string
 }> = (props) => {
   const {
     className,
@@ -30,6 +31,7 @@ export const PageRange: React.FC<{
     currentPage,
     limit,
     totalDocs,
+    t,
   } = props
 
   let indexStart = (currentPage ? currentPage - 1 : 1) * (limit || 1) + 1
@@ -46,12 +48,15 @@ export const PageRange: React.FC<{
 
   return (
     <div className={[className, 'font-semibold'].filter(Boolean).join(' ')}>
-      {(typeof totalDocs === 'undefined' || totalDocs === 0) && 'Search produced no results.'}
+      {(typeof totalDocs === 'undefined' || totalDocs === 0) && t('noResults')}
       {typeof totalDocs !== 'undefined' &&
         totalDocs > 0 &&
-        `Showing ${indexStart}${indexStart > 0 ? ` - ${indexEnd}` : ''} of ${totalDocs} ${
-          totalDocs > 1 ? plural : singular
-        }`}
+        t('queryResults', {
+          indexStart,
+          indexEnd,
+          totalDocs,
+          docText: totalDocs > 1 ? plural || 'Docs' : singular || 'Doc',
+        })}
     </div>
   )
 }

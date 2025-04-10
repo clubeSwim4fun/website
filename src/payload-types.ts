@@ -1747,6 +1747,8 @@ export interface Ticket {
   name: string;
   price: number;
   distance: number;
+  start: string;
+  end: string;
   eventFor: string | Event;
   canBePurchasedBy?: (string | GroupCategory)[] | null;
   updatedAt: string;
@@ -2586,6 +2588,8 @@ export interface TicketsSelect<T extends boolean = true> {
   name?: T;
   price?: T;
   distance?: T;
+  start?: T;
+  end?: T;
   eventFor?: T;
   canBePurchasedBy?: T;
   updatedAt?: T;

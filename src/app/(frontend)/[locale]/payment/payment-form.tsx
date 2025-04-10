@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { useToast } from '@/hooks/use-toast'
 import { useCart } from '@/providers/Cart'
 import { Check, Loader } from 'lucide-react'
-import { revalidatePath } from 'next/cache'
+import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useTransition } from 'react'
 import { useFormStatus } from 'react-dom'
@@ -15,6 +15,8 @@ export const PaymentForm: React.FC = () => {
   const [isPending, startTransition] = useTransition()
   const { refreshCart } = useCart()
   const { toast } = useToast()
+  const t = useTranslations()
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
@@ -24,8 +26,7 @@ export const PaymentForm: React.FC = () => {
       if (!response.success) {
         toast({
           variant: 'destructive',
-          description:
-            response.message || 'Um erro inesperado aconteceu, por favor tente novamente!',
+          description: response.message || t('Payment.unexpectedError'),
         })
       } else {
         router.push(`/order/${response.orderId}`)
@@ -39,10 +40,12 @@ export const PaymentForm: React.FC = () => {
     return (
       <Button disabled={pending} className="w-full">
         {pending ? (
-          <Loader className="w-4 h-4 animate-spin" />
+          <div className="flex flex-col items-center justify-center gap-2">
+            <Loader className="w-4 h-4 animate-spin" /> {t('Payment.payButtonLoading')}
+          </div>
         ) : (
           <>
-            <Check className="w-4 h-4" /> Confirmar Pagamento
+            <Check className="w-4 h-4 mr-2" /> {t('Payment.payButton')}
           </>
         )}
       </Button>

@@ -76,7 +76,7 @@ export const CartTable: React.FC<{ eventsTickets: eventTicket; total?: number }>
         <Fragment key={eventKey}>
           <div className="flex justify-between w-full mt-4">
             <h2 className="text-2xl font-bold mb-3 capitalize">
-              <Link href={eventsTickets[eventKey]?.slug || '/'}>{eventKey}</Link>
+              <Link href={`/event/${eventsTickets[eventKey]?.slug}` || '/'}>{eventKey}</Link>
             </h2>
           </div>
           <Table className="w-full">

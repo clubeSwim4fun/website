@@ -1,11 +1,13 @@
 import { getServerSideSitemap } from 'next-sitemap'
-import { getPayload } from 'payload'
+import { getPayload, TypedLocale } from 'payload'
 import config from '@payload-config'
 import { unstable_cache } from 'next/cache'
+import { getLocale } from 'next-intl/server'
 
 const getPagesSitemap = unstable_cache(
-  async () => {
+  async (locale: string) => {
     const payload = await getPayload({ config })
+
     const SITE_URL =
       process.env.NEXT_PUBLIC_SERVER_URL ||
       process.env.VERCEL_PROJECT_PRODUCTION_URL ||
@@ -15,6 +17,7 @@ const getPagesSitemap = unstable_cache(
       collection: 'pages',
       overrideAccess: false,
       draft: false,
+      locale: locale as TypedLocale,
       depth: 0,
       limit: 1000,
       pagination: false,
@@ -33,11 +36,11 @@ const getPagesSitemap = unstable_cache(
 
     const defaultSitemap = [
       {
-        loc: `${SITE_URL}/search`,
+        loc: `${SITE_URL}/${locale}/search`,
         lastmod: dateFallback,
       },
       {
-        loc: `${SITE_URL}/posts`,
+        loc: `${SITE_URL}/${locale}/posts`,
         lastmod: dateFallback,
       },
     ]
@@ -47,7 +50,10 @@ const getPagesSitemap = unstable_cache(
           .filter((page) => Boolean(page?.slug))
           .map((page) => {
             return {
-              loc: page?.slug === 'home' ? `${SITE_URL}/` : `${SITE_URL}/${page?.slug}`,
+              loc:
+                page?.slug === 'home'
+                  ? `${SITE_URL}/${locale}`
+                  : `${SITE_URL}/${locale}/${page?.slug}`,
               lastmod: page.updatedAt || dateFallback,
             }
           })
@@ -61,8 +67,13 @@ const getPagesSitemap = unstable_cache(
   },
 )
 
-export async function GET() {
-  const sitemap = await getPagesSitemap()
+export async function GET(request: Request) {
+  const url = new URL(request.url)
+  const pathUrl = url.pathname
+
+  const locale = pathUrl.split('/')[1] || 'pt'
+
+  const sitemap = await getPagesSitemap(locale)
 
   return getServerSideSitemap(sitemap)
 }

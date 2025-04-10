@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 
 import { PayloadRedirects } from '@/components/PayloadRedirects'
 import configPromise from '@payload-config'
-import { getPayload } from 'payload'
+import { getPayload, TypedLocale } from 'payload'
 import { draftMode } from 'next/headers'
 import React, { cache } from 'react'
 import RichText from '@/components/RichText'
@@ -44,9 +44,9 @@ type Args = {
 
 export default async function Event({ params: paramsPromise }: Args) {
   const { isEnabled: draft } = await draftMode()
-  const { slug = '' } = await paramsPromise
+  const { slug = '', locale } = await paramsPromise
   const url = '/event/' + slug
-  const event = await queryEventBySlug({ slug })
+  const event = await queryEventBySlug({ slug, locale })
 
   const payload = await getPayload({ config: configPromise })
 
@@ -113,12 +113,12 @@ export default async function Event({ params: paramsPromise }: Args) {
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { slug = '', locale } = await paramsPromise
-  const event = await queryEventBySlug({ slug })
+  const event = await queryEventBySlug({ slug, locale })
 
   return generateMeta({ doc: event, locale })
 }
 
-const queryEventBySlug = cache(async ({ slug }: { slug: string }) => {
+const queryEventBySlug = cache(async ({ slug, locale }: { slug: string; locale: string }) => {
   const { isEnabled: draft } = await draftMode()
 
   const payload = await getPayload({ config: configPromise })
@@ -129,6 +129,7 @@ const queryEventBySlug = cache(async ({ slug }: { slug: string }) => {
     limit: 1,
     overrideAccess: draft,
     pagination: false,
+    locale: locale as TypedLocale,
     where: {
       slug: {
         equals: slug,

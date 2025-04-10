@@ -14,7 +14,7 @@ export const formatSlug = (val: string): string =>
 
 export const formatSlugHook =
   (fallback: string): FieldHook =>
-  ({ data, operation, value }) => {
+  ({ data, operation, value, originalDoc }) => {
     if (typeof value === 'string') {
       return formatSlug(value)
     }
@@ -27,5 +27,5 @@ export const formatSlugHook =
       }
     }
 
-    return value
+    return value ? formatSlug(value) : originalDoc.slug
   }

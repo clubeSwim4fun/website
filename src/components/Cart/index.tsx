@@ -2,15 +2,17 @@
 
 import { useCart } from '@/providers/Cart'
 import { ShoppingCart } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '../ui/hover-card'
 import Link from 'next/link'
 import { Ticket } from '@/payload-types'
 import { Button } from '../ui/button'
+import { useFormatter, useTranslations } from 'next-intl'
 
-// TODO add cart floating to bottom on mobile
 export const Cart: React.FC = () => {
   const { cart, refreshCart } = useCart()
+  const t = useTranslations('Cart')
+  const format = useFormatter()
 
   useEffect(() => {
     refreshCart()
@@ -33,7 +35,12 @@ export const Cart: React.FC = () => {
               {typeof cartItem.eventFor === 'object' ? cartItem.eventFor.title : cartItem.eventFor}
             </p>
           </div>
-          <p className="text-sm text-gray-500">€ {cartItem.price.toFixed(2)}</p>
+          <p className="text-sm text-gray-500">
+            {format.number(cartItem.price, {
+              currency: 'EUR',
+              style: 'currency',
+            })}
+          </p>
         </Link>
       </Button>
     )
@@ -58,7 +65,7 @@ export const Cart: React.FC = () => {
           </HoverCardTrigger>
           <HoverCardContent align="end" className="w-[300px] p-4">
             {!cart?.items?.length ? (
-              <p>Carrinho vazio</p>
+              <p>{t('emptyCart')}</p>
             ) : (
               <div className="flex flex-col gap-2">
                 {cart?.items?.map((item) => (

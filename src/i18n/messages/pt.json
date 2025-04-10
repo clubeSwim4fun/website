@@ -2,7 +2,7 @@
   "Sign-in": {
     "email": "E-mail",
     "password": "Palavra-passe",
-    "logginIn": "A entrar...",
+    "loggingIn": "A entrar...",
     "dontHaveAccount": "Não tem uma conta?",
     "register": "Registar",
     "login": "Entrar"
@@ -10,7 +10,10 @@
   "Metadata": {
     "Club": "Clube Swim4Fun",
     "Blog": "Blog",
-    "Cart": "Carrinho"
+    "Post": "Post",
+    "Cart": "Carrinho",
+    "Payment": "Pagamento",
+    "Search": "Search"
   },
   "User": {
     "userNotFound": "Utilizador não encontrado"
@@ -26,9 +29,12 @@
     "yes": "Sim",
     "no": "Não",
     "remove": "Remover",
-    "close": "Fechar"
+    "close": "Fechar",
+    "submit": "Submeter"
   },
   "Cart": {
+    "title": "Meu Carrinho",
+    "emptyCart": "Carrinho vazio",
     "goToCart": "Ir para o carrinho",
     "removeFromCart": "Remover do carrinho",
     "cartUpdated": "Carrinho atualizado",
@@ -50,5 +56,34 @@
     "cart": "Carrinho",
     "payment": "Pagamento",
     "receipt": "Recibo"
+  },
+  "Order": {
+    "title": "Confirmação de Encomenda",
+    "orderId": "ID da Encomenda {orderId}"
+  },
+  "Payment": {
+    "title": "Método de Pagamento",
+    "unexpectedError": "Um erro inesperado aconteceu, por favor tente novamente!",
+    "payButton": "Pagar",
+    "payButtonLoading": "A pagar..."
+  },
+  "Posts": {
+    "title": "Blog",
+    "noResults": "A pesquisa não produziu resultados.",
+    "queryResults": "A mostrar {indexStart} - {indexEnd} de {totalDocs} {docText}"
+  },
+  "Search": {
+    "title": "Pesquisar",
+    "label": "Pesquisar",
+    "searchPlaceholder": "Pesquisar...",
+    "searchResults": "Resultados da pesquisa: {indexStart} - {indexEnd} de {totalDocs} {docText}",
+    "noResults": "Nenhum resultado encontrado.",
+    "loading": "A pesquisar...",
+    "error": "Erro ao pesquisar"
+  },
+  "NotFound": {
+    "title": "404 - Página não encontrada",
+    "description": "Desculpe, a página que está à procura não existe.",
+    "goHome": "Voltar para a página inicial"
   }
 }

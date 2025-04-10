@@ -2,7 +2,7 @@
   "Sign-in": {
     "email": "Email",
     "password": "Password",
-    "logginIn": "Logging in...",
+    "loggingIn": "Logging in...",
     "dontHaveAccount": "Don't have an account?",
     "register": "Register",
     "login": "Login"
@@ -10,7 +10,10 @@
   "Metadata": {
     "Club": "Club Swim4Fun",
     "Blog": "Blog",
-    "Cart": "Cart"
+    "Cart": "Cart",
+    "Post": "Post",
+    "Payment": "Payment",
+    "Search": "Search"
   },
   "User": {
     "userNotFound": "User not found"
@@ -26,9 +29,12 @@
     "yes": "Yes",
     "no": "No",
     "remove": "Remove",
-    "close": "Close"
+    "close": "Close",
+    "submit": "Submit"
   },
   "Cart": {
+    "title": "My Cart",
+    "emptyCart": "Empty cart",
     "goToCart": "Go to cart",
     "removeFromCart": "Remove from cart",
     "cartUpdated": "Cart updated",
@@ -50,5 +56,34 @@
     "cart": "Cart",
     "payment": "Payment",
     "receipt": "Receipt"
+  },
+  "Order": {
+    "title": "Order Confirmation",
+    "orderId": "Order ID {orderId}"
+  },
+  "Payment": {
+    "title": "Payment Method",
+    "unexpectedError": "An unexpected error occurred, please try again!",
+    "payButton": "Pay",
+    "payButtonLoading": "Paying..."
+  },
+  "Posts": {
+    "title": "Blog",
+    "noResults": "Search produced no results.",
+    "queryResults": "Showing {indexStart} - {indexEnd} of {totalDocs} {docText}"
+  },
+  "Search": {
+    "title": "Search",
+    "label": "Search",
+    "searchPlaceholder": "Search...",
+    "searchResults": "Search results for '{query}'",
+    "noResults": "No results found for '{query}'",
+    "loading": "Loading...",
+    "error": "Error loading search results"
+  },
+  "NotFound": {
+    "title": "404 - Not Found",
+    "description": "The page you are looking for does not exist.",
+    "goHome": "Go to home page"
   }
 }

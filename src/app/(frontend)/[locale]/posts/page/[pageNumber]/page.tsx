@@ -4,22 +4,25 @@ import { CollectionArchive } from '@/components/CollectionArchive'
 import { PageRange } from '@/components/PageRange'
 import { Pagination } from '@/components/Pagination'
 import configPromise from '@payload-config'
-import { getPayload } from 'payload'
+import { getPayload, TypedLocale } from 'payload'
 import React from 'react'
 import PageClient from './page.client'
 import { notFound } from 'next/navigation'
+import { getTranslations } from 'next-intl/server'
 
 export const revalidate = 600
 
 type Args = {
   params: Promise<{
     pageNumber: string
+    locale: TypedLocale
   }>
 }
 
 export default async function Page({ params: paramsPromise }: Args) {
-  const { pageNumber } = await paramsPromise
+  const { pageNumber, locale } = await paramsPromise
   const payload = await getPayload({ config: configPromise })
+  const t = await getTranslations({ locale, namespace: 'Posts' })
 
   const sanitizedPageNumber = Number(pageNumber)
 
@@ -47,6 +50,7 @@ export default async function Page({ params: paramsPromise }: Args) {
           collection="posts"
           currentPage={posts.page}
           limit={12}
+          t={t}
           totalDocs={posts.totalDocs}
         />
       </div>
@@ -63,9 +67,11 @@ export default async function Page({ params: paramsPromise }: Args) {
 }
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
-  const { pageNumber } = await paramsPromise
+  const { pageNumber, locale } = await paramsPromise
+  const t = await getTranslations({ locale, namespace: 'Metadata' })
+
   return {
-    title: `Payload Website Template Posts Page ${pageNumber || ''}`,
+    title: `${t('Club')} - ${t('Post')} ${pageNumber || ''}`,
   }
 }
 

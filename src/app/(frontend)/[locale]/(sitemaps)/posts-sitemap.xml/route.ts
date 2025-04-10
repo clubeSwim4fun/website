@@ -1,11 +1,13 @@
 import { getServerSideSitemap } from 'next-sitemap'
-import { getPayload } from 'payload'
+import { getPayload, TypedLocale } from 'payload'
 import config from '@payload-config'
 import { unstable_cache } from 'next/cache'
+import { getLocale } from 'next-intl/server'
 
 const getPostsSitemap = unstable_cache(
-  async () => {
+  async (locale: string) => {
     const payload = await getPayload({ config })
+
     const SITE_URL =
       process.env.NEXT_PUBLIC_SERVER_URL ||
       process.env.VERCEL_PROJECT_PRODUCTION_URL ||
@@ -16,6 +18,7 @@ const getPostsSitemap = unstable_cache(
       overrideAccess: false,
       draft: false,
       depth: 0,
+      locale: locale as TypedLocale,
       limit: 1000,
       pagination: false,
       where: {
@@ -49,7 +52,8 @@ const getPostsSitemap = unstable_cache(
 )
 
 export async function GET() {
-  const sitemap = await getPostsSitemap()
+  const locale = await getLocale()
+  const sitemap = await getPostsSitemap(locale)
 
   return getServerSideSitemap(sitemap)
 }

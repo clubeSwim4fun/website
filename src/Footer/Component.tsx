@@ -8,6 +8,7 @@ import { ThemeSelector } from '@/providers/Theme/ThemeSelector'
 import { CMSLink } from '@/components/Link'
 import { Logo } from '@/components/Logo/Logo'
 import { TypedLocale } from 'payload'
+import { LanguageSwitch } from '@/components/LanguageSwitch'
 
 export async function Footer({ locale }: { locale: TypedLocale }) {
   const footerData: Footer = await getCachedGlobal('footer', 1, locale)()
@@ -22,7 +23,8 @@ export async function Footer({ locale }: { locale: TypedLocale }) {
         </Link>
 
         <div className="flex flex-col-reverse items-start md:flex-row gap-4 md:items-center">
-          <ThemeSelector />
+          {/* <ThemeSelector /> */}
+          <LanguageSwitch />
           <nav className="flex flex-col md:flex-row gap-4">
             {navItems.map(({ link }, i) => {
               return <CMSLink className="text-white" key={i} {...link} />

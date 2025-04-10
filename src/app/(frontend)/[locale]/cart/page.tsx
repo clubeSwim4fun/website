@@ -19,8 +19,10 @@ export type eventTicket = {
     hasTshirt?: boolean | null
   }
 }
-export default async function Cart() {
+export default async function Cart({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params
   const { isEnabled: draft } = await draftMode()
+  const t = await getTranslations({ locale, namespace: 'Cart' })
   let cart: CartType | null | undefined = null
 
   const { user } = await getMeUser()
@@ -49,7 +51,7 @@ export default async function Cart() {
       {draft && <LivePreviewListener />}
       <section className="container max-w-screen-xl mx-auto mt-4 h-full">
         <CheckoutSteps current={0} />
-        <h1 className="font-bold text-3xl my-4">Meu Carrinho</h1>
+        <h1 className="font-bold text-3xl my-4">{t('title')}</h1>
         <CartTable eventsTickets={eventsTickets} total={cart?.totalPrice} />
       </section>
     </main>

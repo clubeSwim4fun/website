@@ -44,6 +44,7 @@ export const Events: CollectionConfig = {
     },
     {
       name: 'description',
+      localized: true,
       label: {
         en: 'Description',
         pt: 'Descrição',
@@ -176,6 +177,7 @@ export const Events: CollectionConfig = {
           fields: [
             {
               name: 'street',
+              localized: true,
               label: {
                 en: 'street',
                 pt: 'Rua',
@@ -198,6 +200,7 @@ export const Events: CollectionConfig = {
             },
             {
               name: 'state',
+              localized: true,
               label: {
                 en: 'State',
                 pt: 'Concelho',
@@ -240,6 +243,11 @@ export const Events: CollectionConfig = {
       type: 'relationship',
       relationTo: 'tickets',
       hasMany: true,
+      admin: {
+        condition: (data, siblingData) => {
+          return !!siblingData.createdAt
+        },
+      },
       filterOptions: ({ id }) => {
         return {
           eventFor: {
@@ -248,6 +256,12 @@ export const Events: CollectionConfig = {
         }
       },
     },
-    ...slugField(),
+    ...slugField('title', {
+      slugOverrides: {
+        admin: {
+          hidden: true,
+        },
+      },
+    }),
   ],
 }
