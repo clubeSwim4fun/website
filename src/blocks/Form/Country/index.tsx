@@ -15,6 +15,7 @@ import { Controller } from 'react-hook-form'
 import { Error } from '../Error'
 import { Width } from '../Width'
 import COUNTRY_LIST from '@/utilities/countryList'
+import { useTranslations } from 'next-intl'
 
 export const Country: React.FC<
   CountryField & {
@@ -23,6 +24,8 @@ export const Country: React.FC<
     disabled: boolean
   }
 > = ({ name, control, errors, label, required, width, disabled }) => {
+  const t = useTranslations()
+
   return (
     <Width width={width}>
       <Label className="" htmlFor={name}>
@@ -30,7 +33,7 @@ export const Country: React.FC<
 
         {required && (
           <span className="required">
-            * <span className="sr-only">(required)</span>
+            * <span className="sr-only">({t('Common.required')})</span>
           </span>
         )}
       </Label>

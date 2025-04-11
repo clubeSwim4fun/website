@@ -40,17 +40,21 @@ export const SlugComponent: React.FC<SlugComponentProps> = ({
     return fields[fieldToUse]?.value as string
   })
 
+  const initialSugValue = useFormFields(([fields]) => {
+    return fields['slug']?.initialValue as string
+  })
+
   useEffect(() => {
     if (checkboxValue) {
-      if (targetFieldValue) {
+      if (targetFieldValue && !initialSugValue) {
         const formattedSlug = formatSlug(targetFieldValue)
 
         if (value !== formattedSlug) setValue(formattedSlug)
       } else {
-        if (value !== '') setValue('')
+        if (value !== '' && field.localized) setValue('')
       }
     }
-  }, [targetFieldValue, checkboxValue, setValue, value])
+  }, [targetFieldValue, checkboxValue, setValue, value, field.localized, initialSugValue])
 
   const handleLock = useCallback(
     (e: React.MouseEvent<Element>) => {

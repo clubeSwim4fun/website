@@ -61,7 +61,7 @@ export const CartTable: React.FC<{ eventsTickets: eventTicket; total?: number }>
       if (!response.success) {
         toast({
           variant: 'destructive',
-          description: response.message || t('Cart.unexpectedError'),
+          description: response.message || t('Common.unexpectedError'),
         })
         return
       } else {

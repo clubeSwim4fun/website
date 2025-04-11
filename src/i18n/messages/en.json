@@ -24,12 +24,18 @@
     "warning": "Warning",
     "info": "Info",
     "loading": "Loading...",
+    "save": "Save",
     "ok": "OK",
     "cancel": "Cancel",
     "yes": "Yes",
     "no": "No",
     "remove": "Remove",
+    "delete": "Delete",
     "close": "Close",
+    "start": "Start",
+    "end": "End",
+    "required": "Required",
+    "unexpectedError": "An unexpected error occurred, please try again!",
     "submit": "Submit"
   },
   "Cart": {
@@ -42,7 +48,6 @@
     "ticket": "Ticket",
     "eventTotalPrice": "Price (total: {price, number, currency})",
     "totalPrice": "Cart total: {price, number, currency}",
-    "unexpectedError": "An unexpected error occurred, please try again!",
     "removedFromCartSuccess": "Ticket removed from cart",
     "errorRemovingTicket": "Error removing ticket from cart",
     "addedToCartSuccess": "Ticket added to cart",
@@ -63,7 +68,6 @@
   },
   "Payment": {
     "title": "Payment Method",
-    "unexpectedError": "An unexpected error occurred, please try again!",
     "payButton": "Pay",
     "payButtonLoading": "Paying..."
   },
@@ -85,5 +89,29 @@
     "title": "404 - Not Found",
     "description": "The page you are looking for does not exist.",
     "goHome": "Go to home page"
+  },
+  "Calendar": {
+    "noDayFound": "No day found.",
+    "addEvent": "Add Event",
+    "editEvent": "Edit Event",
+    "deleteEvent": "Delete Event",
+    "eventDeleted": "Event deleted!",
+    "dismissNotification": "Dismiss notification.",
+    "noMonthFound": "No month found.",
+    "color": "color",
+    "day": "day",
+    "week": "week",
+    "month": "month",
+    "time": "Time:",
+    "today": "Today",
+    "thisWeek": "This Week",
+    "thisMonth": "This Month",
+    "selectMonth": "Select a month...",
+    "searchDay": "Search day...",
+    "searchMonth": "Search month...",
+    "title": "Title",
+    "description": "Description",
+    "deleteQuestion": "Are you sure you want to delete this event?",
+    "list": "list"
   }
 }

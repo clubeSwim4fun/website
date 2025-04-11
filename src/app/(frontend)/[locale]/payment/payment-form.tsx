@@ -26,7 +26,7 @@ export const PaymentForm: React.FC = () => {
       if (!response.success) {
         toast({
           variant: 'destructive',
-          description: response.message || t('Payment.unexpectedError'),
+          description: response.message || t('Common.unexpectedError'),
         })
       } else {
         router.push(`/order/${response.orderId}`)

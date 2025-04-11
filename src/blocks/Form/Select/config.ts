@@ -12,6 +12,7 @@ export const Select: Block = {
     },
     {
       name: 'label',
+      localized: true,
       type: 'text',
       required: true,
     },

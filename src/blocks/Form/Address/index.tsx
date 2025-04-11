@@ -8,6 +8,7 @@ import { Controller } from 'react-hook-form'
 import { Error } from '../Error'
 import { Input } from '@/components/ui/input'
 import { Address as AddressBlock } from '@/payload-types'
+import { useTranslations } from 'next-intl'
 
 export const Address: React.FC<
   AddressBlock & {
@@ -19,6 +20,8 @@ export const Address: React.FC<
     disabled: boolean
   }
 > = ({ name, control, label, errors, register, address, disabled }) => {
+  const t = useTranslations()
+
   if (!address) {
     return
   }
@@ -64,7 +67,7 @@ export const Address: React.FC<
                 {streetLabel}
                 {streetRequired && (
                   <span className="required">
-                    * <span className="sr-only">(required)</span>
+                    * <span className="sr-only">({t('Common.required')})</span>
                   </span>
                 )}
               </Label>
@@ -96,7 +99,7 @@ export const Address: React.FC<
                 {numberLabel}
                 {numberRequired && (
                   <span className="required">
-                    * <span className="sr-only">(required)</span>
+                    * <span className="sr-only">({t('Common.required')})</span>
                   </span>
                 )}
               </Label>
@@ -128,7 +131,7 @@ export const Address: React.FC<
                 {stateLabel}
                 {stateRequired && (
                   <span className="required">
-                    * <span className="sr-only">(required)</span>
+                    * <span className="sr-only">({t('Common.required')})</span>
                   </span>
                 )}
               </Label>
@@ -160,7 +163,7 @@ export const Address: React.FC<
                 {zipcodeLabel}
                 {zipRequired && (
                   <span className="required">
-                    * <span className="sr-only">(required)</span>
+                    * <span className="sr-only">({t('Common.required')})</span>
                   </span>
                 )}
               </Label>

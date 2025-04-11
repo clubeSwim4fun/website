@@ -36,8 +36,8 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { EventAddForm } from './calendar-event-add-form'
 import { cn } from '@/utilities/ui'
+import { useLocale, useTranslations } from 'next-intl'
 
 interface CalendarNavProps {
   calendarRef: calendarRef
@@ -61,6 +61,8 @@ export default function CalendarNav({
   const selectedMonth = viewedDate.getMonth() + 1
   const selectedDay = viewedDate.getDate()
   const selectedYear = viewedDate.getFullYear()
+  const t = useTranslations('Calendar')
+  const locale = useLocale() as 'en' | 'pt'
 
   const daysInMonth = new Date(selectedYear, selectedMonth, 0).getDate()
   const dayOptions = generateDaysInMonth(daysInMonth)
@@ -100,9 +102,9 @@ export default function CalendarNav({
             </PopoverTrigger>
             <PopoverContent className="w-[200px] p-0">
               <Command>
-                <CommandInput placeholder="Search day..." />
+                <CommandInput placeholder={t('searchDay')} />
                 <CommandList>
-                  <CommandEmpty>No day found.</CommandEmpty>
+                  <CommandEmpty>{t('noDayFound')}</CommandEmpty>
                   <CommandGroup>
                     {dayOptions.map((day) => (
                       <CommandItem
@@ -140,16 +142,16 @@ export default function CalendarNav({
               className="flex w-[105px] justify-between overflow-hidden p-2 text-xs font-semibold md:text-sm md:w-[120px]"
             >
               {selectedMonth
-                ? months.find((month) => month.value === String(selectedMonth))?.label
-                : 'Select month...'}
+                ? months.find((month) => month.value === String(selectedMonth))?.[locale]?.label
+                : t('selectMonth')}
               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-[200px] p-0">
             <Command>
-              <CommandInput placeholder="Search month..." />
+              <CommandInput placeholder={t('searchMonth')} />
               <CommandList>
-                <CommandEmpty>No month found.</CommandEmpty>
+                <CommandEmpty>{t('noMonthFound')}</CommandEmpty>
                 <CommandGroup>
                   {months.map((month) => (
                     <CommandItem
@@ -167,7 +169,7 @@ export default function CalendarNav({
                           String(selectedMonth) === month.value ? 'opacity-100' : 'opacity-0',
                         )}
                       />
-                      {month.label}
+                      {month[locale].label}
                     </CommandItem>
                   ))}
                 </CommandGroup>
@@ -209,11 +211,11 @@ export default function CalendarNav({
           }}
         >
           {currentView === 'timeGridDay'
-            ? 'Today'
+            ? t('today')
             : currentView === 'timeGridWeek'
-              ? 'This Week'
+              ? t('thisWeek')
               : currentView === 'dayGridMonth' || currentView === 'listMonth'
-                ? 'This Month'
+                ? t('thisMonth')
                 : null}
         </Button>
 
@@ -230,7 +232,7 @@ export default function CalendarNav({
               <p
                 className={`text-xs md:text-sm group-hover:block duration-1000 transition-all opacity-0 group-hover:opacity-100 ${currentView === 'timeGridDay' ? 'block opacity-100' : 'hidden'}`}
               >
-                Dia
+                {t('day')}
               </p>
             </TabsTrigger>
             <TabsTrigger
@@ -242,7 +244,7 @@ export default function CalendarNav({
               <p
                 className={`text-xs md:text-sm group-hover:block duration-1000 transition-all opacity-0 group-hover:opacity-100 ${currentView === 'timeGridWeek' ? 'block opacity-100' : 'hidden'}`}
               >
-                Semana
+                {t('week')}
               </p>
             </TabsTrigger>
             <TabsTrigger
@@ -254,7 +256,7 @@ export default function CalendarNav({
               <p
                 className={`text-xs md:text-sm group-hover:block duration-1000 transition-all opacity-0 group-hover:opacity-100 ${currentView === 'dayGridMonth' ? 'block opacity-100' : 'hidden'}`}
               >
-                Mês
+                {t('month')}
               </p>
             </TabsTrigger>
             <TabsTrigger
@@ -266,15 +268,14 @@ export default function CalendarNav({
               <p
                 className={`text-xs md:text-sm group-hover:block duration-1000 transition-all opacity-0 group-hover:opacity-100 ${currentView === 'listMonth' ? 'block opacity-100' : 'hidden'}`}
               >
-                Lista
+                {t('list')}
               </p>
             </TabsTrigger>
           </TabsList>
         </Tabs>
 
         {/* Add event button  */}
-
-        <EventAddForm start={start} end={end} />
+        {/* <EventAddForm start={start} end={end} /> */}
       </div>
     </div>
   )

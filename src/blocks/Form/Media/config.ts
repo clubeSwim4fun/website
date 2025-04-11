@@ -13,6 +13,7 @@ export const Media: Block = {
     {
       name: 'label',
       type: 'text',
+      localized: true,
       required: true,
     },
     {

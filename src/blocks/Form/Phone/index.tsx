@@ -7,6 +7,7 @@ import { Error } from '../Error'
 import { Width } from '../Width'
 import { PhoneInput } from '@/components/ui/phone-input'
 import { Phone as PhoneBlock } from '@/payload-types'
+import { useTranslations } from 'next-intl'
 
 export const Phone: React.FC<
   PhoneBlock & {
@@ -15,6 +16,8 @@ export const Phone: React.FC<
     disabled: boolean
   }
 > = ({ name, errors, label, required, control, disabled }) => {
+  const t = useTranslations()
+
   return (
     <Width width={100}>
       <Label htmlFor={name}>
@@ -22,7 +25,7 @@ export const Phone: React.FC<
 
         {required && (
           <span className="required">
-            * <span className="sr-only">(required)</span>
+            * <span className="sr-only">({t('Common.required')})</span>
           </span>
         )}
       </Label>

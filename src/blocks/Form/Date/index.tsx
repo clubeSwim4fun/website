@@ -15,6 +15,7 @@ import { Calendar } from '@/components/ui/calendar'
 import { format } from 'date-fns'
 import { DateField } from '@/payload-types'
 import { pt } from 'react-day-picker/locale'
+import { useTranslations } from 'next-intl'
 
 export const DatePicker: React.FC<
   DateField & {
@@ -23,6 +24,8 @@ export const DatePicker: React.FC<
     disabled: boolean
   }
 > = ({ name, control, errors, label, required, placeholder, disabled }) => {
+  const t = useTranslations()
+
   return (
     <Width width={'100%'}>
       <Label className="" htmlFor={name}>
@@ -30,7 +33,7 @@ export const DatePicker: React.FC<
 
         {required && (
           <span className="required">
-            * <span className="sr-only">(required)</span>
+            * <span className="sr-only">({t('Common.required')})</span>
           </span>
         )}
       </Label>

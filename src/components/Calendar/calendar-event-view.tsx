@@ -12,6 +12,7 @@ import { X } from 'lucide-react'
 import { CalendarEvent } from './calendar-types'
 import { useEvents } from './events-context'
 import RichText from '../RichText'
+import { useTranslations } from 'next-intl'
 
 interface EventViewProps {
   event?: CalendarEvent
@@ -19,6 +20,7 @@ interface EventViewProps {
 
 export function EventView({ event }: EventViewProps) {
   const { eventViewOpen, setEventViewOpen } = useEvents()
+  const t = useTranslations()
 
   return (
     <>
@@ -33,12 +35,12 @@ export function EventView({ event }: EventViewProps) {
             </AlertDialogTitle>
             <table>
               <tr>
-                <th>Time:</th>
+                <th>{t('Calendar.time')}</th>
                 <td>{`${event?.start.toLocaleTimeString()} - ${event?.end.toLocaleTimeString()}`}</td>
               </tr>
               {event?.description && (
                 <tr>
-                  <th>Description:</th>
+                  <th>{t('Calendar.description')}</th>
                   <RichText
                     className="max-w-[48rem] mx-auto"
                     data={event.description}
@@ -47,7 +49,7 @@ export function EventView({ event }: EventViewProps) {
                 </tr>
               )}
               <tr>
-                <th>Color:</th>
+                <th>{t('Calendar.color')}</th>
                 <td>
                   <div
                     className="rounded-full w-5 h-5"

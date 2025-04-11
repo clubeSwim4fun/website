@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { ToastAction } from '@/components/ui/toast'
 import { useEvents } from './events-context'
+import { useTranslations } from 'next-intl'
 
 interface EventDeleteFormProps {
   id?: string
@@ -23,6 +24,7 @@ interface EventDeleteFormProps {
 export function EventDeleteForm({ id, title }: EventDeleteFormProps) {
   const { deleteEvent } = useEvents()
   const { eventDeleteOpen, setEventDeleteOpen, setEventViewOpen } = useEvents()
+  const t = useTranslations()
 
   const { toast } = useToast()
 
@@ -31,8 +33,10 @@ export function EventDeleteForm({ id, title }: EventDeleteFormProps) {
     setEventDeleteOpen(false)
     setEventViewOpen(false)
     toast({
-      title: 'Event deleted!',
-      action: <ToastAction altText={'Dismiss notification.'}>Dismiss</ToastAction>,
+      title: t('Calendar.eventDeleted'),
+      action: (
+        <ToastAction altText={t('Calendar.dismissNotification')}>{t('Common.close')}</ToastAction>
+      ),
     })
   }
 
@@ -40,20 +44,24 @@ export function EventDeleteForm({ id, title }: EventDeleteFormProps) {
     <AlertDialog open={eventDeleteOpen}>
       <AlertDialogTrigger asChild>
         <Button variant="destructive" onClick={() => setEventDeleteOpen(true)}>
-          Delete Event
+          {t('Calendar.deleteEvent')}
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle className="flex flex-row justify-between items-center">
-            <h1>Delete {title}</h1>
+            <h1>
+              {t('Common.delete')} {title}
+            </h1>
           </AlertDialogTitle>
-          Are you sure you want to delete this event?
+          {t('Calendar.deleteQuestion')}
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={() => setEventDeleteOpen(false)}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel onClick={() => setEventDeleteOpen(false)}>
+            {t('Common.cancel')}
+          </AlertDialogCancel>
           <Button variant="destructive" onClick={() => onSubmit()}>
-            Delete
+            {t('Common.delete')}
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>

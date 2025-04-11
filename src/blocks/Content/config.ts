@@ -12,29 +12,34 @@ import { link } from '@/fields/link'
 const columnFields: Field[] = [
   {
     name: 'size',
+    label: {
+      en: 'Size',
+      pt: 'Tamanho',
+    },
     type: 'select',
     defaultValue: 'oneThird',
     options: [
       {
-        label: 'One Third',
+        label: '1/3',
         value: 'oneThird',
       },
       {
-        label: 'Half',
+        label: '1/2',
         value: 'half',
       },
       {
-        label: 'Two Thirds',
+        label: '2/3',
         value: 'twoThirds',
       },
       {
-        label: 'Full',
+        label: '100%',
         value: 'full',
       },
     ],
   },
   {
     name: 'richText',
+    localized: true,
     type: 'richText',
     editor: lexicalEditor({
       features: ({ rootFeatures }) => {
@@ -50,6 +55,10 @@ const columnFields: Field[] = [
   },
   {
     name: 'enableLink',
+    label: {
+      en: 'Enable Link?',
+      pt: 'Habilitar Link?',
+    },
     type: 'checkbox',
   },
   link({

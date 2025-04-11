@@ -7,6 +7,7 @@ import React from 'react'
 
 import { Error } from '../Error'
 import { Width } from '../Width'
+import { useTranslations } from 'next-intl'
 
 export const Text: React.FC<
   TextField & {
@@ -15,13 +16,15 @@ export const Text: React.FC<
     disabled: boolean
   }
 > = ({ name, defaultValue, errors, label, register, required, width, disabled }) => {
+  const t = useTranslations()
+
   return (
     <Width width={width}>
       <Label htmlFor={name}>
         {label}
         {required && (
           <span className="required">
-            * <span className="sr-only">(required)</span>
+            * <span className="sr-only">({t('Common.required')})</span>
           </span>
         )}
       </Label>

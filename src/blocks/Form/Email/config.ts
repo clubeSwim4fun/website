@@ -11,11 +11,13 @@ export const Email: Block = {
     },
     {
       name: 'label',
+      localized: true,
       type: 'text',
       required: true,
     },
     {
       name: 'defaultValue',
+      localized: true,
       type: 'text',
     },
     {

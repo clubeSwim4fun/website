@@ -17,6 +17,7 @@ export const Password: Block = {
         },
         {
           name: 'label',
+          localized: true,
           type: 'text',
           admin: {
             width: '50%',
@@ -34,6 +35,7 @@ export const Password: Block = {
     },
     {
       name: 'confirmLabel',
+      localized: true,
       type: 'text',
       admin: {
         condition: (_, siblingData) => siblingData.hasConfirmPassword,
@@ -41,6 +43,7 @@ export const Password: Block = {
     },
     {
       name: 'errorPassword',
+      localized: true,
       label: 'Mensagem de erro de validação',
       type: 'text',
       admin: {

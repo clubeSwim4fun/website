@@ -12,51 +12,111 @@ export const latestTime = 1320
 export const months = [
   {
     value: '1',
-    label: 'Janeiro',
+    en: {
+      label: 'January',
+    },
+    pt: {
+      label: 'Janeiro',
+    },
   },
   {
     value: '2',
-    label: 'Fevereiro',
+    en: {
+      label: 'February',
+    },
+    pt: {
+      label: 'Fevereiro',
+    },
   },
   {
     value: '3',
-    label: 'Março',
+    en: {
+      label: 'March',
+    },
+    pt: {
+      label: 'Março',
+    },
   },
   {
     value: '4',
-    label: 'Abril',
+    en: {
+      label: 'April',
+    },
+    pt: {
+      label: 'Abril',
+    },
   },
   {
     value: '5',
-    label: 'Maio',
+    en: {
+      label: 'May',
+    },
+    pt: {
+      label: 'Maio',
+    },
   },
   {
     value: '6',
-    label: 'Junho',
+    en: {
+      label: 'June',
+    },
+    pt: {
+      label: 'Junho',
+    },
   },
   {
     value: '7',
-    label: 'Julho',
+    en: {
+      label: 'July',
+    },
+    pt: {
+      label: 'Julho',
+    },
   },
   {
     value: '8',
-    label: 'Agosto',
+    en: {
+      label: 'August',
+    },
+    pt: {
+      label: 'Agosto',
+    },
   },
   {
     value: '9',
-    label: 'Setembro',
+    en: {
+      label: 'September',
+    },
+    pt: {
+      label: 'Setembro',
+    },
   },
   {
     value: '10',
-    label: 'Outubro',
+    en: {
+      label: 'October',
+    },
+    pt: {
+      label: 'Outubro',
+    },
   },
   {
     value: '11',
-    label: 'Novembro',
+    en: {
+      label: 'November',
+    },
+    pt: {
+      label: 'Novembro',
+    },
   },
   {
     value: '12',
-    label: 'Dezembro',
+    en: {
+      label: 'December',
+    },
+    pt: {
+      label: 'Dezembro',
+    },
   },
 ]
 

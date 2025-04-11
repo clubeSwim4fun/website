@@ -7,6 +7,7 @@ import React from 'react'
 import { Error } from '../Error'
 import { Width } from '../Width'
 import { Password as PasswordField } from '@/payload-types'
+import { useTranslations } from 'next-intl'
 
 // TODO Add password
 export const Password: React.FC<
@@ -25,13 +26,15 @@ export const Password: React.FC<
   errorPassword,
   disabled,
 }) => {
+  const t = useTranslations()
+
   return (
     <div className="grid grid-cols-6 gap-3">
       <div className={hasConfirmPassword ? 'col-span-6 md:col-span-3' : 'col-span-6'}>
         <Label htmlFor={name}>
           {label}
           <span className="required">
-            * <span className="sr-only">(required)</span>
+            * <span className="sr-only">({t('Common.required')})</span>
           </span>
         </Label>
         <Input
@@ -46,7 +49,7 @@ export const Password: React.FC<
           <Label htmlFor={`confirmPassword`}>
             {confirmLabel}
             <span className="required">
-              * <span className="sr-only">(required)</span>
+              * <span className="sr-only">({t('Common.required')})</span>
             </span>
           </Label>
           <Input

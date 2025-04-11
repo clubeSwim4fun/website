@@ -7,6 +7,7 @@ import React from 'react'
 
 import { Error } from '../Error'
 import { Width } from '../Width'
+import { useTranslations } from 'next-intl'
 
 export const Textarea: React.FC<
   TextField & {
@@ -16,6 +17,8 @@ export const Textarea: React.FC<
     disabled: boolean
   }
 > = ({ name, defaultValue, errors, label, register, required, rows = 3, width, disabled }) => {
+  const t = useTranslations()
+
   return (
     <Width width={width}>
       <Label htmlFor={name}>
@@ -23,7 +26,7 @@ export const Textarea: React.FC<
 
         {required && (
           <span className="required">
-            * <span className="sr-only">(required)</span>
+            * <span className="sr-only">({t('Common.required')})</span>
           </span>
         )}
       </Label>

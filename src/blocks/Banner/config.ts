@@ -14,15 +14,16 @@ export const Banner: Block = {
       type: 'select',
       defaultValue: 'info',
       options: [
-        { label: 'Info', value: 'info' },
-        { label: 'Warning', value: 'warning' },
-        { label: 'Error', value: 'error' },
-        { label: 'Success', value: 'success' },
+        { label: 'Informativo', value: 'info' },
+        { label: 'Aviso', value: 'warning' },
+        { label: 'Erro', value: 'error' },
+        { label: 'Sucesso', value: 'success' },
       ],
       required: true,
     },
     {
       name: 'content',
+      localized: true,
       type: 'richText',
       editor: lexicalEditor({
         features: ({ rootFeatures }) => {

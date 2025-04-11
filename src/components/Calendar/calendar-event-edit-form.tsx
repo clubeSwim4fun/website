@@ -15,8 +15,6 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { HexColorPicker } from 'react-colorful'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -32,6 +30,7 @@ import { ToastAction } from '@/components/ui/toast'
 import { Button } from '@/components/ui/button'
 import { useEvents } from './events-context'
 import { CalendarEvent } from './calendar-types'
+import { useTranslations } from 'next-intl'
 
 const eventEditFormSchema = z.object({
   id: z.string(),
@@ -64,6 +63,7 @@ interface EventEditFormProps {
 export function EventEditForm({ oldEvent, event, isDrag, displayButton }: EventEditFormProps) {
   const { addEvent, deleteEvent } = useEvents()
   const { eventEditOpen, setEventEditOpen } = useEvents()
+  const t = useTranslations()
 
   const { toast } = useToast()
 
@@ -130,14 +130,16 @@ export function EventEditForm({ oldEvent, event, isDrag, displayButton }: EventE
             variant="default"
             onClick={() => setEventEditOpen(true)}
           >
-            Edit Event
+            {t('Calendar.editEvent')}
           </Button>
         </AlertDialogTrigger>
       )}
 
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Edit {event?.title}</AlertDialogTitle>
+          <AlertDialogTitle>
+            {t('Calendar.editEvent')} {event?.title}
+          </AlertDialogTitle>
         </AlertDialogHeader>
 
         <Form {...form}>
@@ -147,7 +149,7 @@ export function EventEditForm({ oldEvent, event, isDrag, displayButton }: EventE
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Title</FormLabel>
+                  <FormLabel>{t('Calendar.title')}</FormLabel>
                   <FormControl>
                     <Input placeholder="Standup Meeting" {...field} />
                   </FormControl>
@@ -160,7 +162,7 @@ export function EventEditForm({ oldEvent, event, isDrag, displayButton }: EventE
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description</FormLabel>
+                  <FormLabel>{t('Calendar.description')}</FormLabel>
                   <FormControl>
                     <Textarea placeholder="Daily session" className="resize-none" {...field} />
                   </FormControl>
@@ -173,7 +175,7 @@ export function EventEditForm({ oldEvent, event, isDrag, displayButton }: EventE
               name="start"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel htmlFor="datetime">Start</FormLabel>
+                  <FormLabel htmlFor="datetime">{t('Common.start')}</FormLabel>
                   <FormControl>
                     <DateTimePicker
                       value={field.value}
@@ -191,7 +193,7 @@ export function EventEditForm({ oldEvent, event, isDrag, displayButton }: EventE
               name="end"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel htmlFor="datetime">End</FormLabel>
+                  <FormLabel htmlFor="datetime">{t('Common.end')}</FormLabel>
                   <FormControl>
                     <DateTimePicker
                       value={field.value}
@@ -235,8 +237,10 @@ export function EventEditForm({ oldEvent, event, isDrag, displayButton }: EventE
               )}
             /> */}
             <AlertDialogFooter className="pt-2">
-              <AlertDialogCancel onClick={() => handleEditCancellation()}>Cancel</AlertDialogCancel>
-              <AlertDialogAction type="submit">Save</AlertDialogAction>
+              <AlertDialogCancel onClick={() => handleEditCancellation()}>
+                {t('Common.cancel')}
+              </AlertDialogCancel>
+              <AlertDialogAction type="submit">{t('Common.save')}</AlertDialogAction>
             </AlertDialogFooter>
           </form>
         </Form>

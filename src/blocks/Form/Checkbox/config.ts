@@ -13,6 +13,7 @@ export const Checkbox: Block = {
     {
       name: 'label',
       type: 'text',
+      localized: true,
       required: true,
     },
     {

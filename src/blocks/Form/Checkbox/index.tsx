@@ -9,6 +9,7 @@ import React from 'react'
 
 import { Error } from '../Error'
 import { Width } from '../Width'
+import { useTranslations } from 'next-intl'
 
 export const Checkbox: React.FC<
   CheckboxField & {
@@ -19,6 +20,7 @@ export const Checkbox: React.FC<
 > = ({ name, defaultValue, errors, label, register, required, width, disabled }) => {
   const props = register(name, { required: required })
   const { setValue } = useFormContext()
+  const t = useTranslations()
 
   return (
     <Width width={width}>
@@ -35,7 +37,7 @@ export const Checkbox: React.FC<
         <Label htmlFor={name}>
           {required && (
             <span className="required">
-              * <span className="sr-only">(required)</span>
+              * <span className="sr-only">({t('Common.required')})</span>
             </span>
           )}
           {label}

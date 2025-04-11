@@ -7,11 +7,13 @@ export const Address: Block = {
   fields: [
     {
       name: 'name',
+      localized: true,
       type: 'text',
       required: true,
     },
     {
       name: 'label',
+      localized: true,
       type: 'text',
       required: true,
     },
@@ -29,6 +31,7 @@ export const Address: Block = {
           fields: [
             {
               name: 'streetLabel',
+              localized: true,
               type: 'text',
               required: false,
               admin: {
@@ -65,6 +68,7 @@ export const Address: Block = {
           fields: [
             {
               name: 'numberLabel',
+              localized: true,
               type: 'text',
               required: false,
               admin: {
@@ -101,6 +105,7 @@ export const Address: Block = {
           fields: [
             {
               name: 'stateLabel',
+              localized: true,
               type: 'text',
               required: false,
               admin: {
@@ -137,6 +142,7 @@ export const Address: Block = {
           fields: [
             {
               name: 'zipcodeLabel',
+              localized: true,
               type: 'text',
               required: false,
               admin: {

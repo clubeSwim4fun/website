@@ -26,6 +26,7 @@ import {
 import { slugField } from '@/fields/slug'
 import { isAdminEditorOrPublished } from '@/access/isAdminEditorOrPublished'
 import { isAdminOrSelfOrPublished } from '@/access/isAdminOrSelfOrPublished'
+import { formatSlugHook } from '@/fields/slug/formatSlug'
 
 export const Posts: CollectionConfig<'posts'> = {
   slug: 'posts',
@@ -81,6 +82,7 @@ export const Posts: CollectionConfig<'posts'> = {
   fields: [
     {
       name: 'title',
+      localized: true,
       type: 'text',
       required: true,
       label: {
@@ -104,6 +106,7 @@ export const Posts: CollectionConfig<'posts'> = {
             },
             {
               name: 'content',
+              localized: true,
               type: 'richText',
               editor: lexicalEditor({
                 features: ({ rootFeatures }) => {

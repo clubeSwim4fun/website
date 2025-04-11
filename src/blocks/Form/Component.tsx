@@ -16,6 +16,7 @@ import { CustomFormFieldBlock, getRelationalField } from '@/utilities/getRelatio
 import { useToast } from '@/hooks/use-toast'
 import { LoaderCircle } from 'lucide-react'
 import { cn } from '@/utilities/ui'
+import { useTranslations } from 'next-intl'
 
 export type FormBlockType = {
   blockName?: string
@@ -63,6 +64,7 @@ export const FormBlock: React.FC<
   const [hasSubmitted, setHasSubmitted] = useState<boolean>()
   const [error, setError] = useState<{ message: string; status?: string } | undefined>()
   const router = useRouter()
+  const t = useTranslations()
   const { toast } = useToast()
 
   const onSubmit = useCallback(
@@ -114,7 +116,7 @@ export const FormBlock: React.FC<
             setIsLoading(false)
 
             setError({
-              message: res.errors?.[0]?.message || 'Internal Server Error',
+              message: res.errors?.[0]?.message || t('Common.unexpectedError'),
               status: res.status,
             })
 
@@ -135,7 +137,7 @@ export const FormBlock: React.FC<
           console.warn(err)
           setIsLoading(false)
           setError({
-            message: 'Something went wrong.',
+            message: t('Common.unexpectedError'),
           })
         }
       }
@@ -152,7 +154,7 @@ export const FormBlock: React.FC<
 
     toast({
       variant: 'destructive',
-      description: error?.message || 'Um erro inesperado aconteceu, por favor tente novamente!',
+      description: error?.message || t('Common.unexpectedError'),
     })
   }, [error])
 

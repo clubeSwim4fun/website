@@ -24,12 +24,18 @@
     "warning": "Aviso",
     "info": "Informação",
     "loading": "A carregar...",
+    "save": "Guardar",
     "ok": "OK",
     "cancel": "Cancelar",
     "yes": "Sim",
     "no": "Não",
     "remove": "Remover",
+    "delete": "Deletar",
     "close": "Fechar",
+    "start": "Começo",
+    "end": "Fim",
+    "required": "Mandatório",
+    "unexpectedError": "Um erro inesperado aconteceu, por favor tente novamente!",
     "submit": "Submeter"
   },
   "Cart": {
@@ -42,7 +48,6 @@
     "eventTotalPrice": "Preço (total: {price, number, currency})",
     "totalPrice": "Total do carrinho: {price, number, currency}",
     "ticket": "Bilhete",
-    "unexpectedError": "Um erro inesperado aconteceu, por favor tente novamente!",
     "removedFromCartSuccess": "Bilhete removido do carrinho",
     "errorRemovingTicket": "Erro ao remover bilhete do carrinho",
     "addedToCartSuccess": "Bilhete adicionado ao carrinho",
@@ -63,7 +68,6 @@
   },
   "Payment": {
     "title": "Método de Pagamento",
-    "unexpectedError": "Um erro inesperado aconteceu, por favor tente novamente!",
     "payButton": "Pagar",
     "payButtonLoading": "A pagar..."
   },
@@ -85,5 +89,29 @@
     "title": "404 - Página não encontrada",
     "description": "Desculpe, a página que está à procura não existe.",
     "goHome": "Voltar para a página inicial"
+  },
+  "Calendar": {
+    "noDayFound": "Nenhum dia encontrado.",
+    "addEvent": "Add Evento",
+    "editEvent": "Editar Evento",
+    "deleteEvent": "Deletar Evento",
+    "eventDeleted": "Evento deletado!",
+    "dismissNotification": "Dispensar notificação.",
+    "noMonthFound": "Nenhum mês encontrado.",
+    "color": "cor",
+    "day": "dia",
+    "week": "semana",
+    "month": "mês",
+    "time": "Tempo:",
+    "today": "Hoje",
+    "thisWeek": "Esta Semana",
+    "thisMonth": "Este Mês",
+    "selectMonth": "Selecione um mês...",
+    "searchDay": "Pesquisar dia...",
+    "searchMonth": "Pesquisar mês...",
+    "title": "Título",
+    "description": "Descrição",
+    "deleteQuestion": "Tem certeza de que deseja deletar este evento?",
+    "list": "lista"
   }
 }

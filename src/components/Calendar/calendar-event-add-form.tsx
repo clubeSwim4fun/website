@@ -33,6 +33,7 @@ import { DateTimePicker } from './calendar-date-picker'
 import { useEvents } from './events-context'
 import { ToastAction } from '../ui/toast'
 import { CalendarEvent } from './calendar-types'
+import { useTranslations } from 'next-intl'
 
 const eventAddFormSchema = z.object({
   title: z
@@ -62,6 +63,7 @@ interface EventAddFormProps {
 export function EventAddForm({ start, end }: EventAddFormProps) {
   const { events, addEvent } = useEvents()
   const { eventAddOpen, setEventAddOpen } = useEvents()
+  const t = useTranslations()
 
   const { toast } = useToast()
 
@@ -95,7 +97,11 @@ export function EventAddForm({ start, end }: EventAddFormProps) {
     setEventAddOpen(false)
     toast({
       title: 'Event added!',
-      action: <ToastAction altText={'Click here to dismiss notification'}>Dismiss</ToastAction>,
+      action: (
+        <ToastAction altText={'Click here to dismiss notification'}>
+          {t('Common.close')}
+        </ToastAction>
+      ),
     })
   }
 
@@ -108,12 +114,12 @@ export function EventAddForm({ start, end }: EventAddFormProps) {
           onClick={() => setEventAddOpen(true)}
         >
           <PlusIcon className="md:h-5 md:w-5 h-3 w-3" />
-          <p>Add Event</p>
+          <p>{t('Calendar.addEvent')}</p>
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Add Event</AlertDialogTitle>
+          <AlertDialogTitle>{t('Calendar.addEvent')}</AlertDialogTitle>
         </AlertDialogHeader>
 
         <Form {...form}>
@@ -123,7 +129,7 @@ export function EventAddForm({ start, end }: EventAddFormProps) {
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Title</FormLabel>
+                  <FormLabel>{t('Calendar.title')}</FormLabel>
                   <FormControl>
                     <Input placeholder="Standup Meeting" {...field} />
                   </FormControl>
@@ -136,7 +142,7 @@ export function EventAddForm({ start, end }: EventAddFormProps) {
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description</FormLabel>
+                  <FormLabel>{t('Calendar.description')}</FormLabel>
                   <FormControl>
                     <Textarea placeholder="Daily session" className="max-h-36" {...field} />
                   </FormControl>
@@ -149,7 +155,7 @@ export function EventAddForm({ start, end }: EventAddFormProps) {
               name="start"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel htmlFor="datetime">Start</FormLabel>
+                  <FormLabel htmlFor="datetime">{t('Common.start')}</FormLabel>
                   <FormControl>
                     <DateTimePicker
                       value={field.value}
@@ -167,7 +173,7 @@ export function EventAddForm({ start, end }: EventAddFormProps) {
               name="end"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel htmlFor="datetime">End</FormLabel>
+                  <FormLabel htmlFor="datetime">{t('Common.end')}</FormLabel>
                   <FormControl>
                     <DateTimePicker
                       value={field.value}
@@ -180,7 +186,7 @@ export function EventAddForm({ start, end }: EventAddFormProps) {
                 </FormItem>
               )}
             />
-            <FormField
+            {/* <FormField
               control={form.control}
               name="color"
               render={({ field }) => (
@@ -209,10 +215,12 @@ export function EventAddForm({ start, end }: EventAddFormProps) {
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
             <AlertDialogFooter className="pt-2">
-              <AlertDialogCancel onClick={() => setEventAddOpen(false)}>Cancel</AlertDialogCancel>
-              <AlertDialogAction type="submit">Add Event</AlertDialogAction>
+              <AlertDialogCancel onClick={() => setEventAddOpen(false)}>
+                {t('Common.cancel')}
+              </AlertDialogCancel>
+              <AlertDialogAction type="submit">{t('Calendar.addEvent')}</AlertDialogAction>
             </AlertDialogFooter>
           </form>
         </Form>

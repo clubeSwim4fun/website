@@ -4,6 +4,7 @@ import { Label } from '@/components/ui/label'
 import { MediaUpload } from '@/payload-types'
 import { Error } from '../Error'
 import { FileUploader } from '@/components/FileUploader'
+import { useTranslations } from 'next-intl'
 
 export const Media: React.FC<
   MediaUpload & {
@@ -13,13 +14,15 @@ export const Media: React.FC<
     disabled: boolean
   }
 > = ({ name, label, required, control, errors, disabled }) => {
+  const t = useTranslations()
+
   return (
     <Width width={100}>
       <Label htmlFor={label}>
         {label}
         {required && (
           <span className="required">
-            * <span className="sr-only">(required)</span>
+            * <span className="sr-only">({t('Common.required')})</span>
           </span>
         )}
       </Label>

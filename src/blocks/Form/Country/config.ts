@@ -12,6 +12,7 @@ export const Country: Block = {
     },
     {
       name: 'label',
+      localized: true,
       type: 'text',
       required: true,
     },
