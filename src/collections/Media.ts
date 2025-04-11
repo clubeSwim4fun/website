@@ -35,11 +35,13 @@ export const Media: CollectionConfig = {
   fields: [
     {
       name: 'alt',
+      localized: true,
       type: 'text',
       required: true,
     },
     {
       name: 'caption',
+      localized: true,
       label: {
         en: 'caption',
         pt: 'legenda',

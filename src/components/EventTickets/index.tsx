@@ -3,6 +3,7 @@ import { Card } from '../ui/card'
 import { ShoppingCart } from 'lucide-react'
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '../ui/table'
 import { EventRow } from './event-row'
+import { useTranslations } from 'next-intl'
 
 export const EventTickets: React.FC<{
   user?: User
@@ -13,6 +14,7 @@ export const EventTickets: React.FC<{
 }> = (props) => {
   const { tickets, cart, user, orderedEvent } = props
   const cartItems = cart && cart.items?.map((i) => i.selectedTicket as Ticket)
+  const t = useTranslations('Event')
 
   if (!tickets?.length) return
 
@@ -20,13 +22,13 @@ export const EventTickets: React.FC<{
     <Card
       className={`dark:bg-slate-900 transition-all duration-500 ease-in-out border rounded-xl shadow-md shadow-gray-400 border-blueSwim p-4 h-max w-full flex flex-col bg-white gap-1`}
     >
-      <h3 className="font-extrabold text-2xl md:text-3xl">Tickets</h3>
+      <h3 className="font-extrabold text-2xl md:text-3xl">{t('tickets')}</h3>
       <div className="mt-2 flex flex-col gap-3">
         <Table className="w-full">
           <TableHeader className="bg-gray-100 dark:bg-slate-900">
             <TableRow className="border-b dark:border-slate-700">
-              <TableHead className="text-left">Distância</TableHead>
-              <TableHead className="text-left">Preço</TableHead>
+              <TableHead className="text-left">{t('distance')}</TableHead>
+              <TableHead className="text-left">{t('price')}</TableHead>
               <TableHead className="text-left">
                 <ShoppingCart />
               </TableHead>

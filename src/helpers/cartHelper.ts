@@ -1,6 +1,6 @@
 'use server'
 
-import { getPayload, Payload } from 'payload'
+import { getPayload, Payload, TypedLocale } from 'payload'
 import config from '@payload-config'
 import { getMeUser } from '@/utilities/getMeUser'
 import { Cart, Ticket } from '@/payload-types'
@@ -13,7 +13,11 @@ export type responseType = {
   message: string
 }
 
-async function revalidateEvent(ticket: Ticket, payload: Payload): Promise<void> {
+async function revalidateEvent(
+  ticket: Ticket,
+  payload: Payload,
+  locale: TypedLocale,
+): Promise<void> {
   const eventFor = ticket.eventFor
   if (typeof eventFor === 'string') {
     const event = await payload.findByID({
@@ -23,10 +27,10 @@ async function revalidateEvent(ticket: Ticket, payload: Payload): Promise<void> 
     })
 
     if (event && event.slug) {
-      revalidatePath(`/event/${event.slug}`)
+      revalidatePath(`/${locale}/event/${event.slug}`)
     }
   } else if (typeof eventFor === 'object' && eventFor !== null) {
-    revalidatePath(`/event/${eventFor.slug}`)
+    revalidatePath(`/${locale}/event/${eventFor.slug}`)
   }
 }
 
@@ -106,7 +110,7 @@ export const removeFromCart = async ({ ticket }: { ticket: Ticket }): Promise<re
       }
     }
 
-    await revalidateEvent(ticket, payload)
+    await revalidateEvent(ticket, payload, locale as TypedLocale)
 
     return {
       message: t('Cart.removedFromCartSuccess'),
@@ -161,7 +165,7 @@ export const addToCart = async ({ ticket }: { ticket: Ticket }): Promise<respons
       }
     }
 
-    await revalidateEvent(ticket, payload)
+    await revalidateEvent(ticket, payload, locale as TypedLocale)
 
     return {
       message: `${ticket.name} ${t('Cart.addedToCartSuccess')}`,

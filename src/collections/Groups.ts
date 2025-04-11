@@ -30,6 +30,7 @@ export const Groups: CollectionConfig = {
   fields: [
     {
       name: 'title',
+      localized: true,
       label: 'Nome',
       type: 'text',
       required: true,

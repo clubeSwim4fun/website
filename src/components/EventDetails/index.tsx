@@ -11,6 +11,7 @@ import { AddToCalendarButton } from '../AddToCalendarButton'
 import Swimmer from '../Icons/swimmer'
 import { Card } from '../ui/card'
 import { EventTickets } from '../EventTickets'
+import { useTranslations } from 'next-intl'
 
 export const EventDetails: React.FC<{
   user?: User
@@ -64,13 +65,14 @@ export const EventDetails: React.FC<{
   const endDate = formatDate(end, 'dd-MM-yyyy')
   const startTime = formatDate(start, 'hh:mm a')
   const endTime = formatDate(end, 'hh:mm a')
+  const t = useTranslations()
 
   return (
     <aside
       className={`h-full lg:sticky ${topClass} transition-all duration-500 ease-in-out w-full lg:w-1/3 flex flex-col min-w-72`}
     >
       <Card className="dark:bg-slate-900 border rounded-xl shadow-md shadow-gray-400 border-blueSwim p-4 h-max w-full flex flex-col bg-white gap-1 mb-4">
-        <h3 className="font-extrabold text-2xl md:text-3xl">Detalhes</h3>
+        <h3 className="font-extrabold text-2xl md:text-3xl">{t('Event.details')}</h3>
         <div className="flex gap-2">
           <Calendar1 />
           {
@@ -86,7 +88,9 @@ export const EventDetails: React.FC<{
             <span>{startTime}</span>
             {endTime && <span> - {endTime}</span>}
             {timeToBeConfirmed && (
-              <span className="text-xs text-gray-600 italic flex items-center">(A confirmar)</span>
+              <span className="text-xs text-gray-600 italic flex items-center">
+                ({t('Event.toBeConfirmed')})
+              </span>
             )}
           </div>
         )}
@@ -112,7 +116,7 @@ export const EventDetails: React.FC<{
         <AddToCalendarButton
           title={title}
           description={eventUrl}
-          label="Adicionar ao calendário"
+          label={t('Event.addToCalendar')}
           location={eventCalendarLocation}
           startDate={start}
           endDate={end}

@@ -53,7 +53,7 @@ export const AddToCart: React.FC<{
       size="sm"
       onClick={onClickHandler}
       disabled={isPending || disabled}
-      aria-label="Add to cart"
+      aria-label={t('Cart.addToCart')}
     >
       {isPending ? (
         <span className="flex gap-2 items-center">

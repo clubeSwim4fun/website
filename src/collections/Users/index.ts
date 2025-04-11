@@ -181,13 +181,16 @@ export const Users: CollectionConfig = {
       type: 'relationship',
       relationTo: ['groups', 'group-categories'],
       hasMany: true,
-      filterOptions: ({ siblingData, relationTo }) => {
+      filterOptions: async ({ siblingData, relationTo, data }) => {
         const parentGroup = siblingData as User
 
         if (relationTo === 'group-categories') {
-          return {
-            parent: { in: parentGroup?.groups?.map((g) => g.value) },
+          if (parentGroup!.groups!.length > 0) {
+            return {
+              parent: { in: parentGroup?.groups?.map((g) => g.value) },
+            }
           }
+          return false
         }
         return true
       },

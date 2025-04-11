@@ -5,8 +5,9 @@ import { Button } from '@/components/ui/button'
 import { useToast } from '@/hooks/use-toast'
 import { useCart } from '@/providers/Cart'
 import { Check, Loader } from 'lucide-react'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
+import { TypedLocale } from 'payload'
 import { useTransition } from 'react'
 import { useFormStatus } from 'react-dom'
 
@@ -16,12 +17,13 @@ export const PaymentForm: React.FC = () => {
   const { refreshCart } = useCart()
   const { toast } = useToast()
   const t = useTranslations()
+  const locale = useLocale() as TypedLocale
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
     startTransition(async () => {
-      const response = await createOrder()
+      const response = await createOrder(locale)
 
       if (!response.success) {
         toast({

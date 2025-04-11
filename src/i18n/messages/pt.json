@@ -55,6 +55,7 @@
     "cartNotFound": "Carrinho não encontrado",
     "tShirtSize": "Tamanho da T-shirt",
     "proceedToPayment": "Ir para o pagamento",
+    "addToCart": "Adicionar ao carrinho",
     "ticketNotFound": "Bilhete não encontrado no carrinho"
   },
   "CheckoutSteps": {
@@ -113,5 +114,28 @@
     "description": "Descrição",
     "deleteQuestion": "Tem certeza de que deseja deletar este evento?",
     "list": "lista"
+  },
+  "Event": {
+    "details": "Detalhes",
+    "toBeConfirmed": "A confirmar",
+    "distance": "Distância",
+    "price": "Preço",
+    "tickets": "Bilhetes",
+    "ticketAlreadyPurchased": "Bilhete já comprado",
+    "ticketOnlyForMembersOf": "Bilhete só pode ser comprado por membros do {groups}",
+    "addToCalendar": "Adicionar ao calendário"
+  },
+  "FileUploader": {
+    "uploading": "A carregar {target}...",
+    "successMessage": "{target} carregado",
+    "errorMessage": "Falha ao carregar {target}",
+    "dropFileHere": "Solte os ficheiros aqui",
+    "dragAndDropFiles": "Arraste e solte ficheiros aqui, ou clique para selecionar ficheiros",
+    "errorMaxUniqueFile": "Não é possível carregar mais de 1 ficheiro de cada vez",
+    "errorMaxFiles": "Não é possível carregar mais de {maxFileCount} ficheiros",
+    "userMaxFiles": "Pode carregar {maxFileAllowed} ficheiros (até {maxSize} cada)",
+    "userMaxFileSize": "Pode carregar um ficheiro com {maxSize}",
+    "removeFile": "Remover ficheiro",
+    "rejectedFile": "O ficheiro {fileName} foi rejeitado"
   }
 }

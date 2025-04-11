@@ -35,6 +35,7 @@ export const Events: CollectionConfig = {
   fields: [
     {
       name: 'title',
+      localized: true,
       label: {
         en: 'Event title',
         pt: 'Título do Evento',
@@ -256,12 +257,6 @@ export const Events: CollectionConfig = {
         }
       },
     },
-    ...slugField('title', {
-      slugOverrides: {
-        admin: {
-          hidden: true,
-        },
-      },
-    }),
+    ...slugField(),
   ],
 }

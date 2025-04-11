@@ -3,6 +3,7 @@ import { TableCell, TableRow } from '../ui/table'
 import { RemoveFromCart } from '../Common/Cart/RemoveFromCart'
 import { AddToCart } from '../Common/Cart/AddToCart'
 import { useEffect, useState } from 'react'
+import { useFormatter, useTranslations } from 'next-intl'
 
 export const EventRow: React.FC<{
   ticket: Ticket
@@ -13,6 +14,8 @@ export const EventRow: React.FC<{
 }> = ({ ticket, cartItems, user, orderedEvent, groups }) => {
   const [canBeAddedToCart, setCanBeAddedToCart] = useState<boolean>(true)
   const [ticketMessage, setTicketMessage] = useState<string | null>(null)
+  const t = useTranslations()
+  const format = useFormatter()
 
   useEffect(() => {
     setCanBeAddedToCart(canAddToCart(ticket))
@@ -47,7 +50,9 @@ export const EventRow: React.FC<{
 
     if (!response) {
       setTicketMessage(
-        `Bilhete só pode ser comprado por membros do ${getGroupName(ticket?.canBePurchasedBy)}`,
+        t('Event.ticketOnlyForMembersOf', {
+          groups: getGroupName(ticket?.canBePurchasedBy),
+        }),
       )
       return false
     }
@@ -76,7 +81,7 @@ export const EventRow: React.FC<{
     })
 
     if (isTicketPurchased) {
-      setTicketMessage(`Bilhete já comprado`)
+      setTicketMessage(t('Event.ticketAlreadyPurchased'))
       setCanBeAddedToCart(false)
     }
 
@@ -89,7 +94,12 @@ export const EventRow: React.FC<{
         {ticket.name}
         {!!ticketMessage && <span className="text-destructive text-sm">{ticketMessage}</span>}
       </TableCell>
-      <TableCell className="text-left">€ {ticket.price.toFixed(2)}</TableCell>
+      <TableCell className="text-left">
+        {format.number(ticket.price, {
+          currency: 'EUR',
+          style: 'currency',
+        })}
+      </TableCell>
       <TableCell className="text-left">
         {cartItems?.some((ci) => ci.id === ticket.id) ? (
           <RemoveFromCart ticket={ticket} />

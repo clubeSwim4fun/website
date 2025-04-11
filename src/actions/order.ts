@@ -1,7 +1,7 @@
 'use server'
 
 import { getMyCart } from '@/helpers/cartHelper'
-import { getPayload } from 'payload'
+import { getPayload, TypedLocale } from 'payload'
 import config from '@payload-config'
 import { Event, Order, Ticket } from '@/payload-types'
 import payload from 'payload'
@@ -14,7 +14,7 @@ type eventTicket = {
   }
 }
 
-export const createOrder = async () => {
+export const createOrder = async (locale: TypedLocale) => {
   // TODO integrate with payment gateway
 
   const cart = await getMyCart()
@@ -101,7 +101,7 @@ export const createOrder = async () => {
 
     await payload.db.commitTransaction(transactionID)
 
-    revalidatePath(`/payment`)
+    revalidatePath(`/${locale}/payment`)
 
     if (!response || !cartResponse) {
       return {

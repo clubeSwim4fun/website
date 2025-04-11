@@ -28,6 +28,7 @@ export const Categories: CollectionConfig = {
   fields: [
     {
       name: 'title',
+      localized: true,
       label: {
         en: 'title',
         pt: 'título',

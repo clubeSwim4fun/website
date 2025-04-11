@@ -55,6 +55,7 @@
     "cartNotFound": "Cart not found",
     "tShirtSize": "T-shirt size",
     "proceedToPayment": "Proceed to payment",
+    "addToCart": "Adicionar ao carrinho",
     "ticketNotFound": "Ticket not found in cart"
   },
   "CheckoutSteps": {
@@ -113,5 +114,28 @@
     "description": "Description",
     "deleteQuestion": "Are you sure you want to delete this event?",
     "list": "list"
+  },
+  "Event": {
+    "details": "Details",
+    "toBeConfirmed": "To be confirmed",
+    "distance": "Distance",
+    "price": "Price",
+    "tickets": "Tickets",
+    "ticketAlreadyPurchased": "Ticket already purchased",
+    "ticketOnlyForMembersOf": "Ticket can only be purchased by members of {groups}",
+    "addToCalendar": "Add to calendar"
+  },
+  "FileUploader": {
+    "uploading": "Uploading {target}...",
+    "successMessage": "{target} uploaded",
+    "errorMessage": "Failed to upload {target}",
+    "dropFileHere": "Drop the files here",
+    "dragAndDropFiles": "Drag 'n drop files here, or click to select files",
+    "errorMaxUniqueFile": "Cannot upload more than 1 file at a time",
+    "errorMaxFiles": "Cannot upload more than {maxFileCount} files",
+    "userMaxFiles": "You can upload {maxFileAllowed} files (up to {maxSize} each)",
+    "userMaxFileSize": "You can upload a file with {maxSize}",
+    "removeFile": "Remove file",
+    "rejectedFile": "File {fileName} was rejected"
   }
 }

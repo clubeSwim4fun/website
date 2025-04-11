@@ -11,6 +11,7 @@ import { Progress } from '../ui/progress'
 import { ScrollArea } from '../ui/scroll-area'
 import { useControllableState } from '@/hooks/use-controllable-state'
 import { toast } from '@payloadcms/ui'
+import { useTranslations } from 'next-intl'
 
 interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
@@ -110,16 +111,17 @@ export function FileUploader(props: FileUploaderProps) {
     prop: valueProp,
     onChange: onValueChange,
   })
+  const t = useTranslations('FileUploader')
 
   const onDrop = React.useCallback(
     (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
       if (!multiple && maxFileCount === 1 && acceptedFiles.length > 1) {
-        toast.error('Cannot upload more than 1 file at a time')
+        toast.error(t('errorMaxUniqueFile'))
         return
       }
 
       if ((files?.length ?? 0) + acceptedFiles.length > maxFileCount) {
-        toast.error(`Cannot upload more than ${maxFileCount} files`)
+        toast.error(t('errorMaxFiles', { maxFileCount }))
         return
       }
 
@@ -135,7 +137,7 @@ export function FileUploader(props: FileUploaderProps) {
 
       if (rejectedFiles.length > 0) {
         rejectedFiles.forEach(({ file }) => {
-          toast.error(`File ${file.name} was rejected`)
+          toast.error(t(`rejectedFile`, { fileName: file.name }))
         })
       }
 
@@ -143,12 +145,12 @@ export function FileUploader(props: FileUploaderProps) {
         const target = updatedFiles.length > 0 ? `${updatedFiles.length} files` : `file`
 
         toast.promise(onUpload(updatedFiles), {
-          loading: `Uploading ${target}...`,
+          loading: t('uploading', { target }),
           success: () => {
             setFiles([])
-            return `${target} uploaded`
+            return t('successMessage', { target })
           },
-          error: `Failed to upload ${target}`,
+          error: t('errorMessage', { target }),
         })
       }
     },
@@ -206,7 +208,7 @@ export function FileUploader(props: FileUploaderProps) {
                 <div className="rounded-full border border-dashed p-3">
                   <Upload className="size-7 text-muted-foreground" aria-hidden="true" />
                 </div>
-                <p className="font-medium text-muted-foreground">Drop the files here</p>
+                <p className="font-medium text-muted-foreground">{t('dropFileHere')}</p>
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center gap-4 sm:px-5">
@@ -214,15 +216,14 @@ export function FileUploader(props: FileUploaderProps) {
                   <Upload className="size-7 text-muted-foreground" aria-hidden="true" />
                 </div>
                 <div className="flex flex-col gap-px">
-                  <p className="font-medium text-muted-foreground">
-                    Drag {`'n'`} drop files here, or click to select files
-                  </p>
+                  <p className="font-medium text-muted-foreground">{t('dragAndDropFiles')}</p>
                   <p className="text-sm text-muted-foreground/70">
-                    You can upload
                     {maxFileCount > 1
-                      ? ` ${maxFileCount === Infinity ? 'multiple' : maxFileCount}
-                      files (up to ${formatBytes(maxSize)} each)`
-                      : ` a file with ${formatBytes(maxSize)}`}
+                      ? t('userMaxFiles', {
+                          maxFileAllowed: maxFileCount,
+                          maxSize: formatBytes(maxSize),
+                        })
+                      : t('userMaxFileSize', { maxSize: formatBytes(maxSize) })}
                   </p>
                 </div>
               </div>
@@ -257,6 +258,7 @@ interface FileCardProps {
 }
 
 function FileCard({ file, progress, onRemove, disabled }: FileCardProps) {
+  const t = useTranslations()
   return (
     <div className="relative flex items-center gap-2.5">
       <div className="flex flex-1 gap-2.5">
@@ -279,7 +281,7 @@ function FileCard({ file, progress, onRemove, disabled }: FileCardProps) {
           disabled={disabled}
         >
           <X className="size-4" aria-hidden="true" />
-          <span className="sr-only">Remove file</span>
+          <span className="sr-only">{t('removeFile')}</span>
         </Button>
       </div>
     </div>
