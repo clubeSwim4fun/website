@@ -67,6 +67,7 @@ export const FormBlock: React.FC<
   const t = useTranslations()
   const { toast } = useToast()
 
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   const onSubmit = useCallback(
     (data: { [key: string]: any }[]) => {
       setIsLoading(true)

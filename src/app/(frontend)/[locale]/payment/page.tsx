@@ -4,9 +4,6 @@ import { draftMode } from 'next/headers'
 import React from 'react'
 
 import { LivePreviewListener } from '@/components/LivePreviewListener'
-import { getMyCart } from '@/helpers/cartHelper'
-import { getMeUser } from '@/utilities/getMeUser'
-import { Cart as CartType } from '@/payload-types'
 
 import CheckoutSteps from '@/components/Common/CheckoutSteps'
 import { PaymentForm } from './payment-form'
@@ -16,11 +13,6 @@ export default async function Payment({ params }: { params: Promise<{ locale: st
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'Payment' })
   const { isEnabled: draft } = await draftMode()
-  let cart: CartType | null | undefined = null
-
-  const { user } = await getMeUser()
-
-  cart = user ? await getMyCart() : null
 
   return (
     <main className="pt-[104px] pb-24">

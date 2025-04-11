@@ -14,6 +14,7 @@ export const Cart: React.FC = () => {
   const t = useTranslations('Cart')
   const format = useFormatter()
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     refreshCart()
   }, [])

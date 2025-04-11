@@ -17,6 +17,7 @@ export const EventRow: React.FC<{
   const t = useTranslations()
   const format = useFormatter()
 
+  /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
     setCanBeAddedToCart(canAddToCart(ticket))
     getOrderedTicket(ticket)

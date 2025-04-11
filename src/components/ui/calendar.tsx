@@ -81,7 +81,7 @@ function Calendar({
     }, [yearRange]),
   )
 
-  const { onNextClick, onPrevClick, startMonth, endMonth } = props
+  const { onPrevClick, startMonth, endMonth } = props
 
   const columnsDisplayed = navView === 'years' ? 1 : numberOfMonths
 
@@ -270,6 +270,7 @@ function Nav({
     return !nextMonth
   })()
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handlePreviousClick = React.useCallback(() => {
     if (!previousMonth) return
     if (navView === 'years') {
@@ -284,6 +285,7 @@ function Nav({
     onPrevClick?.(previousMonth)
   }, [previousMonth, goToMonth])
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleNextClick = React.useCallback(() => {
     if (!nextMonth) return
     if (navView === 'years') {

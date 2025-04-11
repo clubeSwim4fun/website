@@ -10,8 +10,8 @@ import { Button } from '../ui/button'
 import { Progress } from '../ui/progress'
 import { ScrollArea } from '../ui/scroll-area'
 import { useControllableState } from '@/hooks/use-controllable-state'
-import { toast } from '@payloadcms/ui'
 import { useTranslations } from 'next-intl'
+import { useToast } from '@/hooks/use-toast'
 
 interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
@@ -112,16 +112,24 @@ export function FileUploader(props: FileUploaderProps) {
     onChange: onValueChange,
   })
   const t = useTranslations('FileUploader')
+  const { toast } = useToast()
 
+  /* eslint-disable react-hooks/exhaustive-deps */
   const onDrop = React.useCallback(
     (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
       if (!multiple && maxFileCount === 1 && acceptedFiles.length > 1) {
-        toast.error(t('errorMaxUniqueFile'))
+        toast({
+          variant: 'destructive',
+          description: t('errorMaxUniqueFile'),
+        })
         return
       }
 
       if ((files?.length ?? 0) + acceptedFiles.length > maxFileCount) {
-        toast.error(t('errorMaxFiles', { maxFileCount }))
+        toast({
+          variant: 'destructive',
+          description: t('errorMaxFiles', { maxFileCount }),
+        })
         return
       }
 
@@ -137,21 +145,29 @@ export function FileUploader(props: FileUploaderProps) {
 
       if (rejectedFiles.length > 0) {
         rejectedFiles.forEach(({ file }) => {
-          toast.error(t(`rejectedFile`, { fileName: file.name }))
+          toast({
+            variant: 'destructive',
+            description: t('rejectedFile', { fileName: file.name }),
+          })
         })
       }
 
       if (onUpload && updatedFiles.length > 0 && updatedFiles.length <= maxFileCount) {
         const target = updatedFiles.length > 0 ? `${updatedFiles.length} files` : `file`
 
-        toast.promise(onUpload(updatedFiles), {
-          loading: t('uploading', { target }),
-          success: () => {
+        onUpload(updatedFiles)
+          .then(() => {
             setFiles([])
-            return t('successMessage', { target })
-          },
-          error: t('errorMessage', { target }),
-        })
+            toast({
+              description: t('successMessage', { target }),
+            })
+          })
+          .catch(() => {
+            toast({
+              variant: 'destructive',
+              description: t('errorMessage', { target }),
+            })
+          })
       }
     },
 
@@ -166,6 +182,7 @@ export function FileUploader(props: FileUploaderProps) {
   }
 
   // Revoke preview url when component unmounts
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   React.useEffect(() => {
     return () => {
       if (!files) return
@@ -175,7 +192,6 @@ export function FileUploader(props: FileUploaderProps) {
         }
       })
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const isDisabled = disabled || (files?.length ?? 0) >= maxFileCount

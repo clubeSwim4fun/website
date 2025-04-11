@@ -26,7 +26,6 @@ import {
 import { slugField } from '@/fields/slug'
 import { isAdminEditorOrPublished } from '@/access/isAdminEditorOrPublished'
 import { isAdminOrSelfOrPublished } from '@/access/isAdminOrSelfOrPublished'
-import { formatSlugHook } from '@/fields/slug/formatSlug'
 
 export const Posts: CollectionConfig<'posts'> = {
   slug: 'posts',

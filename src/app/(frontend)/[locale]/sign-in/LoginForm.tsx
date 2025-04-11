@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { login, LoginResponse } from '@/actions/login'
 import { Input } from '@/components/ui/input'
 import { useSearchParams } from 'next/navigation'
-import { Loader, LoaderCircle } from 'lucide-react'
+import { LoaderCircle } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
 export default function LoginForm(): ReactElement {

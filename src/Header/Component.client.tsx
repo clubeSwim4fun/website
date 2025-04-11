@@ -32,6 +32,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, user }) => {
     setLastScrollY(window.scrollY)
   }
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     window.addEventListener('scroll', handleScroll)
 
@@ -61,7 +62,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, user }) => {
         <Link href="/" className="w-fit">
           <Logo media={data.logo} />
         </Link>
-        <MobileHeaderNav data={data} user={user} />
+        <MobileHeaderNav data={data} />
         <HeaderNav data={data} user={user} />
       </div>
     </header>

@@ -3,7 +3,6 @@
 import { createOrder } from '@/actions/order'
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/hooks/use-toast'
-import { useCart } from '@/providers/Cart'
 import { Check, Loader } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
@@ -13,8 +12,7 @@ import { useFormStatus } from 'react-dom'
 
 export const PaymentForm: React.FC = () => {
   const router = useRouter()
-  const [isPending, startTransition] = useTransition()
-  const { refreshCart } = useCart()
+  const [, startTransition] = useTransition()
   const { toast } = useToast()
   const t = useTranslations()
   const locale = useLocale() as TypedLocale

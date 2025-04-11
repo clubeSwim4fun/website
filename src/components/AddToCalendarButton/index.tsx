@@ -17,7 +17,7 @@ export const AddToCalendarButton: React.FC<{
   url?: string
   options?: CalendarOptionsType[]
 }> = (props) => {
-  const { label, options, endDate } = props
+  const { label, options } = props
 
   return (
     <DropdownMenu>

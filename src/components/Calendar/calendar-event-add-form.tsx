@@ -16,9 +16,6 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { PlusIcon } from 'lucide-react'
-import { HexColorPicker } from 'react-colorful'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -34,6 +31,7 @@ import { useEvents } from './events-context'
 import { ToastAction } from '../ui/toast'
 import { CalendarEvent } from './calendar-types'
 import { useTranslations } from 'next-intl'
+import { PlusIcon } from 'lucide-react'
 
 const eventAddFormSchema = z.object({
   title: z

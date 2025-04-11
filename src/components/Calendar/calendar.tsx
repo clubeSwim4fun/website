@@ -25,7 +25,7 @@ import CalendarDayRender from './calendar-day-render'
 import { useRouter } from 'next/navigation'
 
 export const Calendar: React.FC<{ defaultView: string }> = ({ defaultView = 'dayGridMonth' }) => {
-  const { events, setEventAddOpen, setEventEditOpen, setEventViewOpen } = useEvents()
+  const { events, setEventAddOpen, setEventEditOpen } = useEvents()
 
   const calendarRef = useRef<FullCalendar | null>(null)
   const [currentView, setCurrentView] = useState(defaultView)

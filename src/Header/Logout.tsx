@@ -8,7 +8,7 @@ import { useState } from 'react'
 
 export default function LogoutButton() {
   const [isPending, setIsPending] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [, setError] = useState<string | null>(null)
   const router = useRouter()
 
   async function handleLogout() {

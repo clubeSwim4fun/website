@@ -1,6 +1,6 @@
 import React from 'react'
 
-import type { Event, Media as MediaType } from '@/payload-types'
+import type { Event } from '@/payload-types'
 
 import image1 from 'public/static-images/event-image-1.webp'
 import image2 from 'public/static-images/event-image-3.webp'

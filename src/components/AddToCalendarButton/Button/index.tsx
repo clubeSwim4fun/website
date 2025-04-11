@@ -9,14 +9,13 @@ import OutlookIcon from '@/components/Icons/outlook'
 
 export type CalendarOptionsType = 'google' | 'apple' | 'msTeams' | 'outlook'
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 const iconMap: Record<CalendarOptionsType, any> = {
   google: GoogleIcon,
   apple: AppleIcon,
   msTeams: MsTeamsIcon,
   outlook: OutlookIcon,
 }
-
-type IconOption = keyof typeof iconMap
 
 export const AddToCalendarItemButton: React.FC<{
   title: string
@@ -37,6 +36,7 @@ export const AddToCalendarItemButton: React.FC<{
 
       return link
     } catch (e) {
+      console.error(e)
       return `error while generating link for: ${option}`
     }
   }

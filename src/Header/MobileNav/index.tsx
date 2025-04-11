@@ -1,7 +1,7 @@
 'use client'
 
 import React, { Fragment, useState } from 'react'
-import type { Header as HeaderType, Page, Post, User } from '@/payload-types'
+import type { Header as HeaderType, Page, Post } from '@/payload-types'
 import { Button } from '@/components/ui/button'
 import { CMSLink } from '@/components/Link'
 import { ChevronDown } from 'lucide-react'
@@ -47,7 +47,7 @@ const getLinkHref = (link: LinkType) => {
   return href
 }
 
-const MobileHeaderNav: React.FC<{ data: HeaderType; user?: User }> = ({ data, user }) => {
+const MobileHeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [subNavOpen, setSubNavOpen] = useState<string[]>([])
   const navItems = data?.navItems || []

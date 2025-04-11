@@ -23,6 +23,7 @@ export const EventDetails: React.FC<{
 }> = (props) => {
   const [topClass, setTopClass] = useState('top-4')
   const { event, slug, cart, user, orderedEvent } = props
+  const t = useTranslations()
 
   useEffect(() => {
     let lastScrollY = window.scrollY
@@ -65,7 +66,6 @@ export const EventDetails: React.FC<{
   const endDate = formatDate(end, 'dd-MM-yyyy')
   const startTime = formatDate(start, 'hh:mm a')
   const endTime = formatDate(end, 'hh:mm a')
-  const t = useTranslations()
 
   return (
     <aside

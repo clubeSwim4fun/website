@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Address as AddressBlock } from '@/payload-types'
 import { useTranslations } from 'next-intl'
 
+/* eslint-disable */
 export const Address: React.FC<
   AddressBlock & {
     control: Control

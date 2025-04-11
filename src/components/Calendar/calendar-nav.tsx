@@ -51,8 +51,6 @@ interface CalendarNavProps {
 
 export default function CalendarNav({
   calendarRef,
-  start,
-  end,
   viewedDate,
   currentView,
   setCurrentView,

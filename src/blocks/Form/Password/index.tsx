@@ -5,7 +5,6 @@ import { Label } from '@/components/ui/label'
 import React from 'react'
 
 import { Error } from '../Error'
-import { Width } from '../Width'
 import { Password as PasswordField } from '@/payload-types'
 import { useTranslations } from 'next-intl'
 

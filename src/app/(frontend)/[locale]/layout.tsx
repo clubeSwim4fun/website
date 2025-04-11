@@ -38,7 +38,7 @@ export default async function RootLayout({
     userObject?.user?.role?.includes('editor') || userObject.user?.role?.includes('admin')
 
   const { locale } = await params
-  if (!routing.locales.includes(locale as any)) {
+  if (!routing.locales.includes(locale as string)) {
     notFound()
   }
   setRequestLocale(locale)

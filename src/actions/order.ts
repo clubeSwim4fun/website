@@ -1,9 +1,9 @@
 'use server'
 
 import { getMyCart } from '@/helpers/cartHelper'
-import { getPayload, TypedLocale } from 'payload'
+import { TypedLocale } from 'payload'
 import config from '@payload-config'
-import { Event, Order, Ticket } from '@/payload-types'
+import { Event, Ticket } from '@/payload-types'
 import payload from 'payload'
 import { revalidatePath } from 'next/cache'
 
