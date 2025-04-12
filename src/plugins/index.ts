@@ -7,7 +7,6 @@ import { searchPlugin } from '@payloadcms/plugin-search'
 import { Field, Plugin } from 'payload'
 import { revalidateRedirects } from '@/hooks/revalidateRedirects'
 import { GenerateTitle, GenerateURL } from '@payloadcms/plugin-seo/types'
-import { FixedToolbarFeature, HeadingFeature, lexicalEditor } from '@payloadcms/richtext-lexical'
 import { searchFields } from '@/search/fieldOverrides'
 import { beforeSyncWithSearch } from '@/search/beforeSync'
 
@@ -24,6 +23,7 @@ import { Select } from '@/blocks/Form/Select/config'
 import { Address } from '@/blocks/Form/Address/config'
 import { DatePicker } from '@/blocks/Form/Date/config'
 import { Email } from '@/blocks/Form/Email/config'
+import { defaultLexical } from '@/fields/defaultLexical'
 
 const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
   return doc?.title ? `${doc.title} | Payload Website Template` : 'Payload Website Template'
@@ -107,15 +107,7 @@ export const plugins: Plugin[] = [
           if ('name' in field && field.name === 'confirmationMessage') {
             return {
               ...field,
-              editor: lexicalEditor({
-                features: ({ rootFeatures }) => {
-                  return [
-                    ...rootFeatures,
-                    FixedToolbarFeature(),
-                    HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
-                  ]
-                },
-              }),
+              editor: defaultLexical,
             }
           }
           return field

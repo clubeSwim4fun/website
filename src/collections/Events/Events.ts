@@ -4,12 +4,7 @@ import { anyone } from '../../access/anyone'
 import { slugField } from '@/fields/slug'
 import { isAdminOrEditor } from '@/access/isAdminOrEditor'
 import COUNTRY_LIST from '@/utilities/countryList'
-import {
-  FixedToolbarFeature,
-  HeadingFeature,
-  InlineToolbarFeature,
-  lexicalEditor,
-} from '@payloadcms/richtext-lexical'
+import { defaultLexical } from '@/fields/defaultLexical'
 
 export const Events: CollectionConfig = {
   slug: 'events',
@@ -52,16 +47,7 @@ export const Events: CollectionConfig = {
       },
       type: 'richText',
       required: true,
-      editor: lexicalEditor({
-        features: ({ rootFeatures }) => {
-          return [
-            ...rootFeatures,
-            HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
-            FixedToolbarFeature(),
-            InlineToolbarFeature(),
-          ]
-        },
-      }),
+      editor: defaultLexical,
     },
     {
       name: 'start',
