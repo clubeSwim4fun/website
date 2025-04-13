@@ -29,8 +29,6 @@ import { Error } from '@/blocks/Form/Error'
 import { cn } from '@/utilities/ui'
 import { useFormatter, useTranslations } from 'next-intl'
 
-const T_SHIRT_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL']
-
 export const CartTable: React.FC<{ eventsTickets: eventTicket; total?: number }> = (props) => {
   const { eventsTickets, total } = props
   const [isPending, startTransition] = useTransition()
@@ -83,6 +81,7 @@ export const CartTable: React.FC<{ eventsTickets: eventTicket; total?: number }>
             <TableHeader className="bg-gray-100 dark:bg-slate-900">
               <TableRow className="border-b dark:border-slate-700">
                 <TableHead className="text-left max-w-[50%]">{t('Cart.ticket')}</TableHead>
+                <TableHead className="text-left max-w-[50%]">{t('Event.distance')}</TableHead>
                 <TableHead className="text-center max-w-[30%]">
                   {/* TODO - add from nextitl currency formating */}
                   {t(
@@ -114,6 +113,9 @@ export const CartTable: React.FC<{ eventsTickets: eventTicket; total?: number }>
                   return (
                     <TableRow className="border-b dark:border-slate-700" key={ticket.id}>
                       <TableCell className="text-left max-w-[50%]">{cartItemTicket.name}</TableCell>
+                      <TableCell className="text-left max-w-[50%]">
+                        {cartItemTicket.distance}
+                      </TableCell>
                       <TableCell className="text-center max-w-[30%]">
                         {`${format.number(cartItemTicket.price, {
                           style: 'currency',
@@ -133,9 +135,9 @@ export const CartTable: React.FC<{ eventsTickets: eventTicket; total?: number }>
                                   <Select
                                     onValueChange={(value) => onChange(value)}
                                     value={value}
+                                    disabled={isPending}
                                     {...register(ticket.id, { required: true })}
                                   >
-                                    {/* <Label className="sr-only" htmlFor={ticket.id}> */}
                                     <SelectTrigger
                                       className={cn('max-w-[120px]', {
                                         'border-destructive': errors[`${ticket.id}`],
@@ -144,7 +146,7 @@ export const CartTable: React.FC<{ eventsTickets: eventTicket; total?: number }>
                                       <SelectValue placeholder="Tamanho" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                      {T_SHIRT_SIZES.map((size) => (
+                                      {eventsTickets[eventKey]?.tshirtSizes?.map((size) => (
                                         <SelectItem key={size} value={size}>
                                           {size}
                                         </SelectItem>

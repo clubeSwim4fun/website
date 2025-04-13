@@ -29,6 +29,7 @@ export const EventTickets: React.FC<{
         <Table className="w-full">
           <TableHeader className="bg-gray-100 dark:bg-slate-900">
             <TableRow className="border-b dark:border-slate-700">
+              <TableHead className="text-left">{t('name')}</TableHead>
               <TableHead className="text-left">{t('distance')}</TableHead>
               <TableHead className="text-left">{t('price')}</TableHead>
               <TableHead className="text-left">

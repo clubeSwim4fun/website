@@ -18,6 +18,7 @@ export type eventTicket = {
     slug?: string | null
     tickets: Ticket[]
     hasTshirt?: boolean | null
+    tshirtSizes?: string[] | null
   }
 }
 export default async function Cart({ params }: { params: Promise<{ locale: string }> }) {
@@ -41,6 +42,7 @@ export default async function Cart({ params }: { params: Promise<{ locale: strin
         slug: eventFor.slug,
         tickets: [],
         hasTshirt: eventFor.hasTshirt,
+        tshirtSizes: eventFor.tshirtSizes,
       }
     }
 

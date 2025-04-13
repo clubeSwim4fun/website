@@ -107,19 +107,22 @@ export const getMyCart = async (): Promise<Cart | undefined> => {
   })
 
   if (cartCollection?.docs?.length !== 0 && cartCollection.docs[0]) {
-    const { cart: updatedCart } = await removeExpiredTickets(cartCollection.docs[0])
+    const { cart: updatedCart, removedTickets } = await removeExpiredTickets(cartCollection.docs[0])
 
-    await payload.update({
-      collection: 'carts',
-      data: updatedCart,
-      where: {
-        id: {
-          equals: updatedCart.id,
+    if (removedTickets.length > 0) {
+      await payload.update({
+        collection: 'carts',
+        data: updatedCart,
+        where: {
+          id: {
+            equals: updatedCart.id,
+          },
         },
-      },
-    })
+      })
 
-    return updatedCart
+      return updatedCart
+    }
+    return cartCollection.docs[0]
   }
 
   const newCart = await payload.create({

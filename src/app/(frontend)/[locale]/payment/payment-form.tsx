@@ -40,7 +40,7 @@ export const PaymentForm: React.FC = () => {
     return (
       <Button disabled={pending} className="w-full">
         {pending ? (
-          <div className="flex flex-col items-center justify-center gap-2">
+          <div className="flex flex-row items-center justify-center gap-2">
             <Loader className="w-4 h-4 animate-spin" /> {t('Payment.payButtonLoading')}
           </div>
         ) : (

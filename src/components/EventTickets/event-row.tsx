@@ -4,6 +4,10 @@ import { RemoveFromCart } from '../Common/Cart/RemoveFromCart'
 import { AddToCart } from '../Common/Cart/AddToCart'
 import { useEffect, useState } from 'react'
 import { useFormatter, useTranslations } from 'next-intl'
+import { convertMtoKm } from '@/utilities/util'
+import { HoverCard, HoverCardContent } from '@radix-ui/react-hover-card'
+import { HoverCardTrigger } from '../ui/hover-card'
+import { TriangleAlert } from 'lucide-react'
 
 export const EventRow: React.FC<{
   ticket: Ticket
@@ -91,15 +95,32 @@ export const EventRow: React.FC<{
 
   return (
     <TableRow className="border-b dark:border-slate-700 h-20" key={ticket.id}>
-      <TableCell className="text-left flex flex-col gap-1 h-20 justify-center">
-        {ticket.name}
-        {!!ticketMessage && <span className="text-destructive text-sm">{ticketMessage}</span>}
-      </TableCell>
+      <TableCell className="text-left">{ticket.name}</TableCell>
+      <TableCell className="text-left">{convertMtoKm(ticket.distance)}</TableCell>
       <TableCell className="text-left">
-        {format.number(ticket.price, {
-          currency: 'EUR',
-          style: 'currency',
-        })}
+        {ticketMessage ? (
+          <>
+            <HoverCard openDelay={0}>
+              <HoverCardTrigger asChild>
+                <button onClick={(e) => e.stopPropagation()}>
+                  <TriangleAlert className="w-4 h-4 fill-yellow-500" />
+                </button>
+              </HoverCardTrigger>
+              <HoverCardContent
+                align="center"
+                side="top"
+                className="w-auto container mx-auto text-center bg-white shadow-xl p-4 z-10"
+              >
+                {ticketMessage}
+              </HoverCardContent>
+            </HoverCard>
+          </>
+        ) : (
+          format.number(ticket.price, {
+            currency: 'EUR',
+            style: 'currency',
+          })
+        )}
       </TableCell>
       <TableCell className="text-left">
         {cartItems?.some((ci) => ci.id === ticket.id) ? (

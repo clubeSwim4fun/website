@@ -118,6 +118,7 @@
   "Event": {
     "details": "Detalhes",
     "toBeConfirmed": "A confirmar",
+    "name": "Nome",
     "distance": "Distância",
     "price": "Preço",
     "tickets": "Bilhetes",

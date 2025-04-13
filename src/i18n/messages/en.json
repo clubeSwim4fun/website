@@ -118,6 +118,7 @@
   "Event": {
     "details": "Details",
     "toBeConfirmed": "To be confirmed",
+    "name": "Name",
     "distance": "Distance",
     "price": "Price",
     "tickets": "Tickets",
