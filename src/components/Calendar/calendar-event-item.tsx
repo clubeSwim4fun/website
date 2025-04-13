@@ -39,6 +39,7 @@ const CalendarEventItem = ({ info }: EventItemProps) => {
                 event.extendedProps.distances &&
                 event.extendedProps.distances.map((d: { id: string; distance: number }) => (
                   <span
+                    key={d.id}
                     className={`flex text-black ${info.view.type === 'timeGridDay' && 'flex-row-reverse'}`}
                   >
                     <Route

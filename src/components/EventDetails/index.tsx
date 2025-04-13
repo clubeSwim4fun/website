@@ -102,8 +102,8 @@ export const EventDetails: React.FC<{
           </div>
         )}
         {distances &&
-          distances.map((d) => (
-            <div className="flex gap-2">
+          distances.map((d, idx) => (
+            <div className="flex gap-2" key={idx}>
               <Route />
               <span>{convertMtoKm(d.distance)}</span>
             </div>
