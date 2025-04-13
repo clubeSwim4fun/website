@@ -18,12 +18,11 @@ export const EventDetails: React.FC<{
   user?: User
   event: Event
   slug?: string | null
-  cart?: Cart | null
   orderedEvent?: Order
   groups?: GroupCategory[]
 }> = (props) => {
   const [topClass, setTopClass] = useState('top-4')
-  const { event, slug, cart, user, orderedEvent } = props
+  const { event, slug, user, orderedEvent } = props
   const t = useTranslations()
 
   useEffect(() => {
@@ -129,7 +128,6 @@ export const EventDetails: React.FC<{
       {user && canBuyTickets(event) && (
         <EventTickets
           tickets={tickets as Ticket[]}
-          cart={cart}
           user={user}
           orderedEvent={orderedEvent}
           groups={props.groups}

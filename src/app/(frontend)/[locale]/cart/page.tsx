@@ -11,6 +11,7 @@ import { Cart as CartType, Event, Ticket } from '@/payload-types'
 import CheckoutSteps from '@/components/Common/CheckoutSteps'
 import { CartTable } from './cart-table'
 import { getTranslations } from 'next-intl/server'
+import { CartPageClient } from './page.client'
 
 export type eventTicket = {
   [key: string]: {
@@ -48,6 +49,7 @@ export default async function Cart({ params }: { params: Promise<{ locale: strin
 
   return (
     <main className="pt-[104px] pb-24">
+      <CartPageClient />
       {draft && <LivePreviewListener />}
       <section className="container max-w-screen-xl mx-auto mt-4 h-full">
         <CheckoutSteps current={0} />

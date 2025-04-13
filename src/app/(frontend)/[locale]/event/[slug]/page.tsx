@@ -11,9 +11,7 @@ import { generateMeta } from '@/utilities/generateMeta'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { EventHero } from '@/heros/EventHero'
 import { EventDetails } from '@/components/EventDetails'
-import { getMyCart } from '@/helpers/cartHelper'
 import { getMeUser } from '@/utilities/getMeUser'
-import { Cart } from '@/payload-types'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
@@ -50,12 +48,8 @@ export default async function Event({ params: paramsPromise }: Args) {
 
   const payload = await getPayload({ config: configPromise })
 
-  let cart: Cart | null | undefined = null
-
   if (!event) return <PayloadRedirects url={url} />
   const { user } = await getMeUser()
-
-  cart = user ? await getMyCart() : null
 
   const eventOrders = await payload.find({
     collection: 'orders',
@@ -100,11 +94,9 @@ export default async function Event({ params: paramsPromise }: Args) {
             user={user}
             event={event}
             slug={eventSlug}
-            cart={cart}
             orderedEvent={eventOrders.docs?.[0]}
             groups={groups.docs}
           />
-          {/* Refactor to move back the event Tickets here and aside so I can pass the action to get my cart and update cart from here */}
         </section>
       </div>
     </main>

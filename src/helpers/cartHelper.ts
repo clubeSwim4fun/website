@@ -7,8 +7,10 @@ import { Cart, Ticket } from '@/payload-types'
 import { revalidatePath } from 'next/cache'
 import { getTranslations } from 'next-intl/server'
 import { getLocale } from 'next-intl/server'
+import { isTicketAvailable } from './eventHelper'
 
 export type responseType = {
+  cart?: Cart
   success: boolean
   message: string
 }
@@ -34,6 +36,56 @@ async function revalidateEvent(
   }
 }
 
+export type cartItems = {
+  selectedTicket?: (string | null) | Ticket
+  selectedTshirtSize?: string | null
+  id?: string | null
+}
+
+async function removeExpiredTickets(cart: Cart) {
+  const removedTickets: Ticket[] = []
+  const failedTickets: Ticket[] = []
+  const payload = await getPayload({ config })
+  const locale = await getLocale()
+  const t = await getTranslations({ locale })
+
+  if (!cart || !cart.items) throw new Error(t('Cart.cartNotFound'))
+
+  for (const item of cart.items) {
+    const ticket = item.selectedTicket as Ticket
+    const udpatedTicket = await payload.findByID({
+      collection: 'tickets',
+      id: ticket.id,
+      select: {
+        start: true,
+        end: true,
+      },
+    })
+
+    ticket.start = udpatedTicket.start
+    ticket.end = udpatedTicket.end
+
+    if (!isTicketAvailable(ticket)) {
+      removedTickets.push(ticket)
+      const ticketIndex = cart.items.findIndex(
+        (item) =>
+          typeof item?.selectedTicket === 'object' && item?.selectedTicket?.id === ticket.id,
+      )
+
+      cart.items.splice(ticketIndex, 1)
+
+      cart.totalPrice -= ticket.price
+    }
+  }
+
+  return {
+    cart: cart,
+    success: removedTickets.length > 0,
+    removedTickets,
+    failedTickets,
+  }
+}
+
 export const getMyCart = async (): Promise<Cart | undefined> => {
   const userMe = await getMeUser()
 
@@ -42,6 +94,7 @@ export const getMyCart = async (): Promise<Cart | undefined> => {
   }
 
   const payload = await getPayload({ config })
+  const locale = await getLocale()
 
   const cartCollection = await payload.find({
     collection: 'carts',
@@ -54,7 +107,19 @@ export const getMyCart = async (): Promise<Cart | undefined> => {
   })
 
   if (cartCollection?.docs?.length !== 0 && cartCollection.docs[0]) {
-    return cartCollection.docs[0]
+    const { cart: updatedCart } = await removeExpiredTickets(cartCollection.docs[0])
+
+    await payload.update({
+      collection: 'carts',
+      data: updatedCart,
+      where: {
+        id: {
+          equals: updatedCart.id,
+        },
+      },
+    })
+
+    return updatedCart
   }
 
   const newCart = await payload.create({

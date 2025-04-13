@@ -1,19 +1,20 @@
-import { Cart, GroupCategory, Order, Ticket, User } from '@/payload-types'
+import { GroupCategory, Order, Ticket, User } from '@/payload-types'
 import { Card } from '../ui/card'
 import { ShoppingCart } from 'lucide-react'
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '../ui/table'
 import { EventRow } from './event-row'
 import { useTranslations } from 'next-intl'
 import { isTicketAvailable } from '@/helpers/eventHelper'
+import { useCart } from '@/providers/Cart'
 
 export const EventTickets: React.FC<{
   user?: User
   tickets?: Ticket[] | null
-  cart?: Cart | null
   orderedEvent?: Order
   groups?: GroupCategory[]
 }> = (props) => {
-  const { tickets, cart, user, orderedEvent } = props
+  const { tickets, user, orderedEvent } = props
+  const { cart } = useCart()
   const cartItems = cart && cart.items?.map((i) => i.selectedTicket as Ticket)
   const t = useTranslations('Event')
 
