@@ -15,6 +15,17 @@ export type responseType = {
   message: string
 }
 
+export async function testEmail() {
+  const payload = await getPayload({ config })
+  const email = await payload.sendEmail({
+    subject: 'test website',
+    to: 'geral@clube-swim4fun.pt',
+    text: 'test email',
+  })
+
+  console.log('email', email)
+}
+
 async function revalidateEvent(
   ticket: Ticket,
   payload: Payload,
@@ -94,7 +105,6 @@ export const getMyCart = async (): Promise<Cart | undefined> => {
   }
 
   const payload = await getPayload({ config })
-  const locale = await getLocale()
 
   const cartCollection = await payload.find({
     collection: 'carts',

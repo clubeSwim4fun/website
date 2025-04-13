@@ -27,6 +27,8 @@ import { Carts } from './collections/Ecommerce/Carts'
 import { Tickets } from './collections/Events/Tickets'
 import { Orders } from './collections/Ecommerce/Orders'
 import localization from './i18n/localization'
+import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
+import nodemailer from 'nodemailer'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -125,4 +127,17 @@ export default buildConfig({
     },
     tasks: [],
   },
+  email: nodemailerAdapter({
+    defaultFromAddress: 'noreply@clube-swim4fun.pt',
+    defaultFromName: 'Clube Swim4Fun',
+    // Any Nodemailer transport
+    transport: await nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: 465,
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    }),
+  }),
 })

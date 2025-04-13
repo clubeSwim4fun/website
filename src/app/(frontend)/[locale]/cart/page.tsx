@@ -12,6 +12,9 @@ import CheckoutSteps from '@/components/Common/CheckoutSteps'
 import { CartTable } from './cart-table'
 import { getTranslations } from 'next-intl/server'
 import { CartPageClient } from './page.client'
+import { Button } from '@/components/ui/button'
+import { getPayload } from 'payload'
+import config from '@payload-config'
 
 export type eventTicket = {
   [key: string]: {
@@ -30,6 +33,7 @@ export default async function Cart({ params }: { params: Promise<{ locale: strin
   const { user } = await getMeUser()
 
   cart = user ? await getMyCart() : null
+  const payload = await getPayload({ config })
 
   const eventsTickets: eventTicket = {}
 
