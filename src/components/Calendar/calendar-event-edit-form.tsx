@@ -79,7 +79,7 @@ export function EventEditForm({ oldEvent, event, isDrag, displayButton }: EventE
         description: oldEvent.description,
         start: oldEvent.start,
         end: oldEvent.end,
-        distance: oldEvent.distance,
+        distances: oldEvent.distances,
         category: oldEvent.category,
       }
 
@@ -108,7 +108,7 @@ export function EventEditForm({ oldEvent, event, isDrag, displayButton }: EventE
       description: data.description,
       start: data.start,
       end: data.end,
-      distance: 2000, // TODO grab from form
+      distances: [], // TODO grab from form
       category: 'category', // TODO grab from form,
     }
     deleteEvent(data.id)
@@ -117,7 +117,11 @@ export function EventEditForm({ oldEvent, event, isDrag, displayButton }: EventE
 
     toast({
       title: 'Event edited!',
-      action: <ToastAction altText={'Click here to dismiss notification'}>Dismiss</ToastAction>,
+      action: (
+        <ToastAction altText={'Click here to dismiss notification'}>
+          {t('Common.close')}
+        </ToastAction>
+      ),
     })
   }
 

@@ -48,7 +48,7 @@ export const Calendar: React.FC<{ defaultView: string }> = ({ defaultView = 'day
       description: info.event.extendedProps.description,
       start: info.event.start!,
       end: info.event.end!,
-      distance: info.event.extendedProps.distance,
+      distances: info.event.extendedProps.distances,
       category: info.event.extendedProps.category,
     }
 
@@ -58,7 +58,7 @@ export const Calendar: React.FC<{ defaultView: string }> = ({ defaultView = 'day
       description: info.event.extendedProps.description,
       start: info.event.start!,
       end: info.event.end!,
-      distance: info.event.extendedProps.distance,
+      distances: info.event.extendedProps.distances,
       category: info.event.extendedProps.category,
     }
 

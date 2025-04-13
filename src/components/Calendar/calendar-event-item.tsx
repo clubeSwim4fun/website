@@ -9,6 +9,8 @@ const CalendarEventItem = ({ info }: EventItemProps) => {
 
   const location = event.extendedProps.address
 
+  console.log('event.extendedProps.distances', event.extendedProps)
+
   return (
     <Link className="w-full" href={`/event/${event.extendedProps.slug}`}>
       <div className="overflow-hidden h-full w-full">
@@ -32,19 +34,19 @@ const CalendarEventItem = ({ info }: EventItemProps) => {
                 <p className="text-gray-800 line-clamp-1">{`${left} - ${right}`}</p>
               )}{' '}
             </div>
-            <div
-              className={`flex space-x-2 mt-0 justify-between ${info.view.type === 'timeGridDay' ? 'flex-col' : 'flex-row'}`}
-            >
-              {event.extendedProps.distance && (
-                <span
-                  className={`flex text-black ${info.view.type === 'timeGridDay' && 'flex-row-reverse'}`}
-                >
-                  <Route
-                    className={`h-4 w-4 ${info.view.type === 'timeGridDay' ? 'ml-2' : 'mr-2'}`}
-                  />{' '}
-                  {convertMtoKm(event.extendedProps.distance)}
-                </span>
-              )}
+            <div className={`flex mt-0 justify-start flex-col`}>
+              {event.extendedProps &&
+                event.extendedProps.distances &&
+                event.extendedProps.distances.map((d: { id: string; distance: number }) => (
+                  <span
+                    className={`flex text-black ${info.view.type === 'timeGridDay' && 'flex-row-reverse'}`}
+                  >
+                    <Route
+                      className={`h-4 w-4 ${info.view.type === 'timeGridDay' ? 'ml-2' : 'mr-2'}`}
+                    />{' '}
+                    {convertMtoKm(d.distance)}
+                  </span>
+                ))}
               {location.street && location.country && (
                 <span className="flex text-black">
                   {location.street} - {location.country} <MapPin className="h-4 w-4 ml-2" />

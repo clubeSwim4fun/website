@@ -4,6 +4,7 @@ import { ShoppingCart } from 'lucide-react'
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '../ui/table'
 import { EventRow } from './event-row'
 import { useTranslations } from 'next-intl'
+import { isTicketAvailable } from '@/helpers/eventHelper'
 
 export const EventTickets: React.FC<{
   user?: User
@@ -35,16 +36,20 @@ export const EventTickets: React.FC<{
             </TableRow>
           </TableHeader>
           <TableBody>
-            {tickets?.map((ticket) => (
-              <EventRow
-                ticket={ticket}
-                cartItems={cartItems}
-                user={user}
-                key={ticket.id}
-                orderedEvent={orderedEvent}
-                groups={props.groups}
-              />
-            ))}
+            {tickets?.map((ticket) => {
+              return (
+                isTicketAvailable(ticket) && (
+                  <EventRow
+                    ticket={ticket}
+                    cartItems={cartItems}
+                    user={user}
+                    key={ticket.id}
+                    orderedEvent={orderedEvent}
+                    groups={props.groups}
+                  />
+                )
+              )
+            })}
           </TableBody>
         </Table>
       </div>

@@ -57,7 +57,7 @@ export default async function RootLayout({
         <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
       </head>
       <body>
-        <NextIntlClientProvider messages={messages} locale={locale}>
+        <NextIntlClientProvider messages={messages} locale={locale} timeZone="Europe/Lisbon">
           <Toaster />
           <Providers>
             {isEditorOrAdmin && (

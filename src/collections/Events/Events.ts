@@ -91,17 +91,23 @@ export const Events: CollectionConfig = {
       },
     },
     {
-      name: 'distance',
-      admin: {
-        position: 'sidebar',
-      },
-      label: {
-        en: 'Distance',
-        pt: 'Distância',
-      },
-      type: 'number',
-      required: true,
-      min: 0,
+      name: 'distances',
+      type: 'array',
+      fields: [
+        {
+          name: 'distance',
+          admin: {
+            position: 'sidebar',
+          },
+          label: {
+            en: 'Distance (in meters)',
+            pt: 'Distância (em metros)',
+          },
+          type: 'number',
+          required: true,
+          min: 0,
+        },
+      ],
     },
     {
       name: 'category',

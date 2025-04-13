@@ -12,6 +12,7 @@ import Swimmer from '../Icons/swimmer'
 import { Card } from '../ui/card'
 import { EventTickets } from '../EventTickets'
 import { useTranslations } from 'next-intl'
+import { canBuyTickets } from '@/helpers/eventHelper'
 
 export const EventDetails: React.FC<{
   user?: User
@@ -48,7 +49,7 @@ export const EventDetails: React.FC<{
 
   if (!event) return
 
-  const { distance, start, end, address, tickets, timeToBeConfirmed, category, title } = event
+  const { distances, start, end, address, tickets, timeToBeConfirmed, category, title } = event
 
   const eventUrl = `${getClientSideURL()}/event/${slug}`
   const eventCalendarLocation = `${address?.street} ${address?.number} ${address?.zipcode}, ${address?.country}`
@@ -101,12 +102,13 @@ export const EventDetails: React.FC<{
             {address?.country && <span>- {address?.country}</span>}
           </div>
         )}
-        {!!distance && (
-          <div className="flex gap-2">
-            <Route />
-            <span>{convertMtoKm(distance)}</span>
-          </div>
-        )}
+        {distances &&
+          distances.map((d) => (
+            <div className="flex gap-2">
+              <Route />
+              <span>{convertMtoKm(d.distance)}</span>
+            </div>
+          ))}
         {!!category && (
           <div className="flex gap-2">
             <Swimmer />
@@ -124,7 +126,7 @@ export const EventDetails: React.FC<{
           options={['google', 'apple', 'msTeams', 'outlook']}
         />
       </Card>
-      {user && (
+      {user && canBuyTickets(event) && (
         <EventTickets
           tickets={tickets as Ticket[]}
           cart={cart}

@@ -87,7 +87,7 @@ export function EventAddForm({ start, end }: EventAddFormProps) {
       description: data.description,
       start: data.start,
       end: data.end,
-      distance: 2000, // TODO grab from form
+      distances: [], // TODO grab from form
       category: 'category', // TODO grab from form,
     }
 

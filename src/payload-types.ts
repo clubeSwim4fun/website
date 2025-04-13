@@ -1469,7 +1469,12 @@ export interface Event {
   start: string;
   end: string;
   timeToBeConfirmed?: boolean | null;
-  distance: number;
+  distances?:
+    | {
+        distance: number;
+        id?: string | null;
+      }[]
+    | null;
   category: string | Category;
   hasTshirt?: boolean | null;
   tshirtSizes?: ('XS' | 'S' | 'M' | 'L' | 'XL' | 'XXL' | 'XXXL')[] | null;
@@ -2542,7 +2547,12 @@ export interface EventsSelect<T extends boolean = true> {
   start?: T;
   end?: T;
   timeToBeConfirmed?: T;
-  distance?: T;
+  distances?:
+    | T
+    | {
+        distance?: T;
+        id?: T;
+      };
   category?: T;
   hasTshirt?: T;
   tshirtSizes?: T;
