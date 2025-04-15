@@ -77,6 +77,7 @@ export const createOrder = async (locale: TypedLocale) => {
           }),
         }
       }),
+      total: cart.totalPrice,
     }
 
     const response = await payload.create({

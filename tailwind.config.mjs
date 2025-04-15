@@ -116,7 +116,27 @@ const config = {
               '--tw-prose-headings': 'var(--text)',
               h1: {
                 fontWeight: 'normal',
+                marginTop: 'unset',
                 marginBottom: '0.25em',
+                fontSize: '2.5rem',
+              },
+              h2: {
+                marginTop: 'unset',
+                marginBottom: 'unset',
+              },
+              h3: {
+                marginBottom: 'unset',
+                marginTop: 'unset',
+              },
+              h4: {
+                h2: {
+                  marginTop: 'unset',
+                  marginBottom: 'unset',
+                },
+              },
+              p: {
+                // marginBottom: 'unset',
+                // marginTop: 'unset',
               },
             },
           ],

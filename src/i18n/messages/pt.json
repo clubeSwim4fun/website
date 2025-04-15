@@ -65,7 +65,11 @@
   },
   "Order": {
     "title": "Confirmação de Encomenda",
-    "orderId": "ID da Encomenda {orderId}"
+    "orderId": "(ID da Encomenda {orderId})",
+    "totalSpent": "Total gasto: {price, number, currency}",
+    "description": "Obrigado pela sua compra! Aqui estão os detalhes da sua encomenda:",
+    "questionsText": "Se tiver alguma dúvida, não hesite em contactar-nos através do",
+    "contactEmail": "geral@clube-swim4fun.pt"
   },
   "Payment": {
     "title": "Método de Pagamento",

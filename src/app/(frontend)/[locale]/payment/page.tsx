@@ -17,9 +17,9 @@ export default async function Payment({ params }: { params: Promise<{ locale: st
   return (
     <main className="pt-[104px] pb-24">
       {draft && <LivePreviewListener />}
-      <section className="container max-w-screen-xl mx-auto mt-4 h-full">
+      <section className="prose container max-w-screen-xl mx-auto mt-4 h-full">
         <CheckoutSteps current={1} />
-        <h1 className="font-bold text-3xl my-4">{t('title')}</h1>
+        <h1 className="my-4">{t('title')}</h1>
         <PaymentForm />
       </section>
     </main>

@@ -12,9 +12,6 @@ import CheckoutSteps from '@/components/Common/CheckoutSteps'
 import { CartTable } from './cart-table'
 import { getTranslations } from 'next-intl/server'
 import { CartPageClient } from './page.client'
-import { Button } from '@/components/ui/button'
-import { getPayload } from 'payload'
-import config from '@payload-config'
 
 export type eventTicket = {
   [key: string]: {
@@ -28,12 +25,10 @@ export default async function Cart({ params }: { params: Promise<{ locale: strin
   const { locale } = await params
   const { isEnabled: draft } = await draftMode()
   const t = await getTranslations({ locale, namespace: 'Cart' })
-  let cart: CartType | null | undefined = null
 
   const { user } = await getMeUser()
 
-  cart = user ? await getMyCart() : null
-  const payload = await getPayload({ config })
+  const cart = user ? await getMyCart() : null
 
   const eventsTickets: eventTicket = {}
 
@@ -57,9 +52,9 @@ export default async function Cart({ params }: { params: Promise<{ locale: strin
     <main className="pt-[104px] pb-24">
       <CartPageClient />
       {draft && <LivePreviewListener />}
-      <section className="container max-w-screen-xl mx-auto mt-4 h-full">
+      <section className="prose container max-w-screen-xl mx-auto mt-4 h-full">
         <CheckoutSteps current={0} />
-        <h1 className="font-bold text-3xl my-4">{t('title')}</h1>
+        <h1 className="my-4">{t('title')}</h1>
         <CartTable eventsTickets={eventsTickets} total={cart?.totalPrice} />
       </section>
     </main>

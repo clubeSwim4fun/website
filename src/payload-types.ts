@@ -1802,6 +1802,7 @@ export interface Order {
         id?: string | null;
       }[]
     | null;
+  total: number;
   updatedAt: string;
   createdAt: string;
 }
@@ -2627,6 +2628,7 @@ export interface OrdersSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  total?: T;
   updatedAt?: T;
   createdAt?: T;
 }

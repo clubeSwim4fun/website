@@ -140,5 +140,17 @@ export const Orders: CollectionConfig = {
         readOnly: true,
       },
     },
+    {
+      name: 'total',
+      label: {
+        en: 'Total',
+        pt: 'Total',
+      },
+      type: 'number',
+      required: true,
+      admin: {
+        readOnly: true,
+      },
+    },
   ],
 }
