@@ -6,6 +6,10 @@ import config from '@payload-config'
 import { Event, Ticket } from '@/payload-types'
 import payload from 'payload'
 import { revalidatePath } from 'next/cache'
+import { render } from '@react-email/components'
+import { OrderConfirmationEmail } from '@/email/orderConfirmationEmail'
+import { sendEmail } from '@/helpers/emailHelper'
+import React from 'react'
 
 type eventTicket = {
   [key: string]: {
@@ -101,6 +105,15 @@ export const createOrder = async (locale: TypedLocale) => {
     })
 
     await payload.db.commitTransaction(transactionID)
+    // TODO test this
+    const emailHtml = await render(React.createElement(OrderConfirmationEmail, { order: response }))
+
+    await sendEmail({
+      emailHtml,
+      subject: 'test Order confirmation',
+      to: 'lgperez.gustavo@gmail.com',
+      cc: 'mayskip@gmail.com',
+    })
 
     revalidatePath(`/${locale}/payment`)
 

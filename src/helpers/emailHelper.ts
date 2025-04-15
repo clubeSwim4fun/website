@@ -40,6 +40,7 @@ export const generateBase64Image = async (relativePath: string): Promise<string>
 export async function sendEmail({
   emailHtml,
   to,
+  cc,
   subject,
   attachments,
 }: {
@@ -47,6 +48,7 @@ export async function sendEmail({
   to: string | string[]
   subject: string
   attachments?: Mail.Attachment[]
+  cc?: string | string[]
 }) {
   const payload = await getPayload({ config })
   const logo = (await getLogo()) as Media
@@ -54,6 +56,7 @@ export async function sendEmail({
   const email = await payload.sendEmail({
     subject,
     to,
+    cc,
     html: emailHtml,
     attachments: [
       {
