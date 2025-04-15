@@ -63,6 +63,10 @@
     "payment": "Pagamento",
     "receipt": "Recibo"
   },
+  "Email": {
+    "dearUser": "Prezado(a) {name} {surname}",
+    "thankYouMessage": "Obrigado por comprar conosco!"
+  },
   "Order": {
     "title": "Confirmação de Encomenda",
     "orderId": "(ID da Encomenda {orderId})",

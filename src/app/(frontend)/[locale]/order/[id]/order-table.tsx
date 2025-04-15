@@ -12,7 +12,7 @@ import { Event, Order, Ticket } from '@/payload-types'
 import { getFormatter, getLocale, getTranslations } from 'next-intl/server'
 import { convertMtoKm } from '@/utilities/util'
 
-type OrderEventTicket = {
+export type OrderEventTicket = {
   ticket: Ticket
   tshirtSize?: string | null
   ticketPurchased?: boolean | null
@@ -20,7 +20,7 @@ type OrderEventTicket = {
   id?: string | null
 }
 
-type OrderEvent = {
+export type OrderEvent = {
   event?: Event
   tickets?: OrderEventTicket[] | null
   id?: string | null

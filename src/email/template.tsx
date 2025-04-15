@@ -2,10 +2,11 @@ import { getLogo } from '@/helpers/emailHelper'
 import React from 'react'
 
 type Args = {
+  title: string
   children: React.ReactNode
 }
 
-export async function TemplateEmail({ children }: Args) {
+export async function TemplateEmail({ children, title }: Args) {
   const logo = await getLogo()
 
   return (
@@ -32,9 +33,9 @@ export async function TemplateEmail({ children }: Args) {
             justifyContent: 'space-between',
           }}
         >
-          <h1 style={{ fontSize: '20px', color: '#4caf50' }}>Order Confirmation</h1>
+          <h1 style={{ fontSize: '26px', fontWeight: 'bold', color: '#2D6CB3' }}>{title}</h1>
           <img
-            src={typeof logo === 'string' ? logo : logo?.thumbnailURL || ''}
+            src={'cid:logo'}
             alt={typeof logo === 'string' ? logo : logo?.alt || ''}
             style={{ display: 'block', marginLeft: 'auto', width: '60px', height: '60px' }}
           />

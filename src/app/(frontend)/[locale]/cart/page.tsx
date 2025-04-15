@@ -6,7 +6,7 @@ import React from 'react'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { getMyCart } from '@/helpers/cartHelper'
 import { getMeUser } from '@/utilities/getMeUser'
-import { Cart as CartType, Event, Ticket } from '@/payload-types'
+import { Event, Ticket } from '@/payload-types'
 
 import CheckoutSteps from '@/components/Common/CheckoutSteps'
 import { CartTable } from './cart-table'
