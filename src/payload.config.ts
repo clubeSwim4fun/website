@@ -94,6 +94,7 @@ export default buildConfig({
     s3Storage({
       collections: {
         'user-media': true,
+        media: true,
       },
       bucket: process.env.S3_BUCKET || '',
       config: {
