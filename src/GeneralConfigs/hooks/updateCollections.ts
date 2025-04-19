@@ -1,16 +1,9 @@
 import type { BasePayload, Payload, TypedLocale } from 'payload'
 import { GlobalBeforeChangeHook } from 'payload'
 
-type GenderData = {
+type CollectionData = {
   id: string
-  genderId: string
-  label: string
-  value: string
-}
-
-type DisabilityData = {
-  id: string
-  disabilityId: string
+  collectionId: string
   label: string
   value: string
 }
@@ -24,9 +17,10 @@ const updateRelatedCollection = async ({
   payload: BasePayload
   locale?: 'en' | 'pt' | 'all'
   data: any
-  collection: 'gender' | 'disability'
+  collection: 'gender' | 'disability' | 'aboutClub'
 }) => {
-  const dataProperty = collection === 'gender' ? 'genders' : 'disabilities'
+  const dataProperty =
+    collection === 'gender' ? 'genders' : collection === 'disability' ? 'disabilities' : collection
   const { userData } = data
 
   for (const [index, dataObj] of (userData[dataProperty] ?? []).entries()) {
@@ -62,11 +56,7 @@ const updateRelatedCollection = async ({
             },
           })
 
-          if (collection === 'gender') {
-            data.userData.genders[index].genderId = response.docs[0]?.id
-          } else if (collection === 'disability') {
-            data.userData.genders[index].disabilityId = response.docs[0]?.id
-          }
+          data.userData.genders[index].collectionId = response.docs[0]?.id
         }
       } else {
         const response = await payload.create({
@@ -79,17 +69,17 @@ const updateRelatedCollection = async ({
           },
         })
 
-        console.log('created', response)
-
         if (collection === 'gender') {
-          console.log('if here', userData.genders[index])
           if (userData.genders[index]) {
-            userData.genders[index].genderId = response.id
+            userData.genders[index].collectionId = response.id
           }
-          console.log('after if here', userData.genders[index])
         } else if (collection === 'disability') {
           if (userData.disabilities[index]) {
-            userData.disabilities[index].disabilityId = response.id
+            userData.disabilities[index].collectionId = response.id
+          }
+        } else if (collection === 'aboutClub') {
+          if (userData.aboutClub[index]) {
+            userData.aboutClub[index].collectionId = response.id
           }
         }
       }
@@ -101,14 +91,9 @@ const updateRelatedCollection = async ({
   return data
 }
 
-const wasDeleted = (
-  original: (GenderData | DisabilityData)[],
-  updated: (GenderData | DisabilityData)[],
-) => {
-  const originalIds = original.map((item) =>
-    'genderId' in item ? item.genderId : item.disabilityId,
-  )
-  const updatedIds = updated.map((item) => ('genderId' in item ? item.genderId : item.disabilityId))
+const wasDeleted = (original: CollectionData[], updated: CollectionData[]) => {
+  const originalIds = original.map((item) => item.collectionId)
+  const updatedIds = updated.map((item) => item.collectionId)
   return originalIds.filter((id) => !updatedIds.includes(id))
 }
 
@@ -129,12 +114,20 @@ export const updateCollections: GlobalBeforeChangeHook = async ({
     data = await updateRelatedCollection({ payload, locale, data, collection: 'disability' })
   }
 
+  if (userData && userData.aboutClub?.length > 0) {
+    data = await updateRelatedCollection({ payload, locale, data, collection: 'aboutClub' })
+  }
+
   // Check for original user Data to delete deleted files
   if (
     originalUserData &&
     (originalUserData.genders?.length > 0 || originalUserData.disabilities?.length > 0)
   ) {
     const deletedGenders = wasDeleted(originalUserData?.genders || [], userData?.genders || [])
+    const deletedAboutClub = wasDeleted(
+      originalUserData?.aboutClub || [],
+      userData?.aboutClub || [],
+    )
     const deletedDisabilities = wasDeleted(
       originalUserData?.disabilities || [],
       userData?.disabilities || [],
@@ -145,6 +138,15 @@ export const updateCollections: GlobalBeforeChangeHook = async ({
         await payload.delete({
           collection: 'gender',
           id: genderToDelete,
+        })
+      }
+    }
+
+    if (deletedAboutClub.length > 0) {
+      for (const aboutToDelete of deletedAboutClub) {
+        await payload.delete({
+          collection: 'aboutClub',
+          id: aboutToDelete,
         })
       }
     }

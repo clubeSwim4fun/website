@@ -247,39 +247,12 @@ export const Users: CollectionConfig = {
         en: 'Heard about the Club through:',
         pt: 'Ficou a saber do clube através:',
       },
-      type: 'select',
-      options: [
-        {
-          label: {
-            en: 'Internet',
-            pt: 'Internet',
-          },
-          value: 'internet',
-        },
-        {
-          label: {
-            en: 'Friends',
-            pt: 'Amigos',
-          },
-          value: 'amigos',
-        },
-        {
-          label: {
-            en: 'Swim4Fun school',
-            pt: 'Escola Swim4Fun',
-          },
-          value: 'escola',
-        },
-        {
-          label: {
-            en: 'Others',
-            pt: 'Outros',
-          },
-          value: 'outros',
-        },
-      ],
+      type: 'relationship',
+      relationTo: 'aboutClub',
       admin: {
         position: 'sidebar',
+        allowCreate: false,
+        allowEdit: false,
       },
     },
     {

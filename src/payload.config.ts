@@ -32,6 +32,7 @@ import nodemailer from 'nodemailer'
 import { Gender } from './collections/Users/Genders'
 import { GeneralConfigs } from './GeneralConfigs'
 import { Disability } from './collections/Users/Disability'
+import { AboutClub } from './collections/Users/HeardAboutClub'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -90,6 +91,7 @@ export default buildConfig({
     Orders,
     Gender,
     Disability,
+    AboutClub,
   ],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer, GeneralConfigs],

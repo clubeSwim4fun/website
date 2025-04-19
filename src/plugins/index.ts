@@ -19,13 +19,11 @@ import { Text } from '@/blocks/Form/Text/config'
 import { Checkbox } from '@/blocks/Form/Checkbox/config'
 import { Country } from '@/blocks/Form/Country/config'
 import { Number } from '@/blocks/Form/Number/config'
-import { Gender } from '@/blocks/Form/Gender/config'
 import { Select } from '@/blocks/Form/Select/config'
 import { Address } from '@/blocks/Form/Address/config'
 import { DatePicker } from '@/blocks/Form/Date/config'
 import { Email } from '@/blocks/Form/Email/config'
 import { defaultLexical } from '@/fields/defaultLexical'
-import { Disability } from '@/blocks/Form/Disability/config'
 
 const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
   return doc?.title ? `${doc.title} | Payload Website Template` : 'Payload Website Template'
@@ -92,8 +90,6 @@ export const plugins: Plugin[] = [
       date: DatePicker,
       email: Email,
       state: false,
-      gender: Gender,
-      disability: Disability,
     },
     formOverrides: {
       labels: {

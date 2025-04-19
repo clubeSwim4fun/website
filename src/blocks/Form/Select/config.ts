@@ -17,8 +17,44 @@ export const Select: Block = {
       required: true,
     },
     {
+      name: 'type',
+      type: 'radio',
+      defaultValue: 'default',
+      options: [
+        {
+          label: {
+            en: 'Default',
+            pt: 'Padrão',
+          },
+          value: 'default',
+        },
+        {
+          label: {
+            en: 'Relates to Global Config',
+            pt: 'Relacionado ao Configuração Global',
+          },
+          value: 'globalConfig',
+        },
+      ],
+    },
+    {
+      name: 'globalConfigCollection',
+      type: 'select',
+      options: [
+        { value: 'genders', label: { en: 'Gender', pt: 'Gênero' } },
+        { value: 'disabilities', label: { en: 'Disability', pt: 'Deficiência' } },
+        { value: 'aboutClub', label: { en: 'Heard About Club', pt: 'Soube do Clube' } },
+      ],
+      admin: {
+        condition: (_, siblingData) => siblingData.type === 'globalConfig',
+      },
+    },
+    {
       name: 'defaultValue',
       type: 'text',
+      admin: {
+        condition: (_, siblingData) => siblingData.type === 'default',
+      },
     },
     {
       name: 'options',
@@ -53,6 +89,9 @@ export const Select: Block = {
       labels: {
         plural: 'Options',
         singular: 'Option',
+      },
+      admin: {
+        condition: (_, siblingData) => siblingData.type === 'default',
       },
     },
     {

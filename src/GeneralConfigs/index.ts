@@ -35,7 +35,7 @@ export const GeneralConfigs: GlobalConfig = {
                   required: true,
                 },
                 {
-                  name: 'genderId',
+                  name: 'collectionId',
                   type: 'text',
                   admin: {
                     hidden: true,
@@ -59,7 +59,31 @@ export const GeneralConfigs: GlobalConfig = {
                   required: true,
                 },
                 {
-                  name: 'disabilityId',
+                  name: 'collectionId',
+                  type: 'text',
+                  admin: {
+                    hidden: true,
+                  },
+                },
+              ],
+            },
+            {
+              name: 'aboutClub',
+              type: 'array',
+              fields: [
+                {
+                  name: 'label',
+                  localized: true,
+                  type: 'text',
+                  required: true,
+                },
+                {
+                  name: 'value',
+                  type: 'text',
+                  required: true,
+                },
+                {
+                  name: 'collectionId',
                   type: 'text',
                   admin: {
                     hidden: true,
