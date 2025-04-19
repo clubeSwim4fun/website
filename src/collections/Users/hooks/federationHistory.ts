@@ -30,7 +30,6 @@ const saveFederationHistory: CollectionBeforeChangeHook = async ({
     })
 
     if (historyCollection.totalDocs > 0) {
-      console.log('aaaaaaaa')
       const error: ValidationFieldError = {
         message:
           i18n.language === 'pt'

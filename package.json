@@ -59,6 +59,7 @@
     "@react-email/components": "^0.0.36",
     "@upstash/ratelimit": "^2.0.5",
     "@upstash/redis": "^1.34.4",
+    "aws-sdk": "^2.1692.0",
     "calendar-link": "^2.8.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",

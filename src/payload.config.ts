@@ -102,8 +102,12 @@ export default buildConfig({
     // storage-adapter-placeholder
     s3Storage({
       collections: {
-        'user-media': true,
-        media: true,
+        'user-media': {
+          prefix: `user_media`,
+        },
+        media: {
+          prefix: 'site',
+        },
       },
       bucket: process.env.S3_BUCKET || '',
       config: {

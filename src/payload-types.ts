@@ -312,6 +312,7 @@ export interface Media {
     };
     [k: string]: unknown;
   } | null;
+  prefix?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -670,7 +671,7 @@ export interface User {
   identityFile?: (string | null) | UserMedia;
   associateId?: number | null;
   federationId?: number | null;
-  profilePicture?: (string | null) | Media;
+  profilePicture?: (string | null) | UserMedia;
   role?: ('admin' | 'editor' | 'default') | null;
   nif?: string | null;
   gender?: (string | null) | Gender;
@@ -714,6 +715,8 @@ export interface User {
 export interface UserMedia {
   id: string;
   alt: string;
+  user: string | User;
+  prefix?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -726,39 +729,7 @@ export interface UserMedia {
   focalX?: number | null;
   focalY?: number | null;
   sizes?: {
-    thumbnail?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
     square?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    small?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    medium?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    large?: {
       url?: string | null;
       width?: number | null;
       height?: number | null;
@@ -2392,6 +2363,7 @@ export interface PostsSelect<T extends boolean = true> {
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   caption?: T;
+  prefix?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -2545,6 +2517,8 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface UserMediaSelect<T extends boolean = true> {
   alt?: T;
+  user?: T;
+  prefix?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -2559,47 +2533,7 @@ export interface UserMediaSelect<T extends boolean = true> {
   sizes?:
     | T
     | {
-        thumbnail?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
         square?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        small?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        medium?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        large?:
           | T
           | {
               url?: T;

@@ -145,7 +145,7 @@ export const Users: CollectionConfig = {
         pt: 'Foto do Perfil',
       },
       type: 'upload',
-      relationTo: 'media',
+      relationTo: 'user-media',
       admin: {
         position: 'sidebar',
       },

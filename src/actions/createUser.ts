@@ -2,6 +2,7 @@
 
 import { getPayload, User } from 'payload'
 import config from '@payload-config'
+import AWS from 'aws-sdk'
 
 interface CreateUserResponse {
   success: boolean
@@ -18,15 +19,58 @@ export type CreateUserRequestType = {
 
 export type CreateuserType = Omit<User, 'id' | 'createdAt' | 'updatedAt'>
 
+const s3 = new AWS.S3({
+  accessKeyId: process.env.S3_ACCESS_KEY_ID,
+  secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+  region: process.env.S3_REGION,
+})
+
+const deleteS3Files = async (files: string[]) => {
+  const deletePromises = files.map((fileKey) =>
+    s3
+      .deleteObject({
+        Bucket: process.env.S3_BUCKET || 'clube-swim-4fun-bucket',
+        Key: fileKey,
+      })
+      .promise(),
+  )
+
+  await Promise.all(deletePromises)
+}
+
 export async function createUser(userData: CreateUserRequestType): Promise<CreateUserResponse> {
   const payload = await getPayload({ config })
-  const tempFilesToDelete = []
+  const tempFilesToDelete: string[] = []
+  const transactionID = await payload.db.beginTransaction()
+
+  if (!transactionID) {
+    return {
+      success: false,
+      message: 'Error creating transaction',
+    }
+  }
 
   try {
     const userObject: CreateuserType = {}
 
     for (const [name, data] of Object.entries(userData)) {
-      const uploadedFiles = []
+      if (!Array.isArray(data.value)) {
+        userObject[data.relatesTo] = data.value
+      }
+    }
+
+    const createdUser = await payload.create({
+      collection: 'users',
+      data: {
+        ...userObject,
+        name: userObject.name,
+        surname: userObject.surname,
+        email: userObject.email,
+      },
+      req: { transactionID },
+    })
+
+    for (const [name, data] of Object.entries(userData)) {
       // If data value is an array, we need to treat all files to first upload,
       //  then add as reference to user object
       if (Array.isArray(data.value)) {
@@ -37,9 +81,11 @@ export async function createUser(userData: CreateUserRequestType): Promise<Creat
 
           if (fileBuffer) {
             const mediaToUpload = await payload.create({
+              req: { transactionID },
               collection: 'user-media',
               data: {
                 alt: `${name}_image`,
+                user: createdUser.id,
               },
               file: {
                 data: Buffer.from(fileBuffer),
@@ -49,38 +95,40 @@ export async function createUser(userData: CreateUserRequestType): Promise<Creat
               },
             })
 
-            uploadedFiles.push(mediaToUpload)
-            tempFilesToDelete.push(mediaToUpload)
+            // user_media/6803f94b94457162676e537a_event-image-3 - Copy-500x500.webp
+            tempFilesToDelete.push(`user_media/${mediaToUpload.filename}`)
+            if (mediaToUpload.sizes?.square) {
+              tempFilesToDelete.push(`user_media/${mediaToUpload.sizes.square.filename}`)
+            }
+
+            await payload.update({
+              req: { transactionID },
+              collection: 'users',
+              data: {
+                [data.relatesTo]: mediaToUpload.id,
+              },
+              where: {
+                id: {
+                  equals: createdUser.id,
+                },
+              },
+            })
           }
         }
-
-        userObject[data.relatesTo] = uploadedFiles
-      } else {
-        userObject[data.relatesTo] = data.value
       }
     }
 
-    await payload.create({
-      collection: 'users',
-      data: {
-        ...userObject,
-        name: userObject.name,
-        surname: userObject.surname,
-        email: userObject.email,
-      },
-    })
+    await payload.db.commitTransaction(transactionID)
 
     return {
       success: true,
       message: 'user created successfully',
     }
   } catch (err) {
-    tempFilesToDelete.forEach((file) => {
-      payload.delete({
-        collection: 'user-media',
-        id: file.id,
-      })
-    })
+    await payload.db.rollbackTransaction(transactionID)
+
+    await deleteS3Files(tempFilesToDelete)
+
     return {
       success: false,
       error: err instanceof Error ? err.message : String(err),
