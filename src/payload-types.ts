@@ -72,9 +72,10 @@ export interface Config {
     media: Media;
     categories: Category;
     users: User;
+    'user-media': UserMedia;
+    federationHistory: FederationHistory;
     groups: Group;
     'group-categories': GroupCategory;
-    'user-media': UserMedia;
     events: Event;
     carts: Cart;
     tickets: Ticket;
@@ -98,9 +99,10 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
+    'user-media': UserMediaSelect<false> | UserMediaSelect<true>;
+    federationHistory: FederationHistorySelect<false> | FederationHistorySelect<true>;
     groups: GroupsSelect<false> | GroupsSelect<true>;
     'group-categories': GroupCategoriesSelect<false> | GroupCategoriesSelect<true>;
-    'user-media': UserMediaSelect<false> | UserMediaSelect<true>;
     events: EventsSelect<false> | EventsSelect<true>;
     carts: CartsSelect<false> | CartsSelect<true>;
     tickets: TicketsSelect<false> | TicketsSelect<true>;
@@ -666,6 +668,8 @@ export interface User {
   phone?: string | null;
   identity?: string | null;
   identityFile?: (string | null) | UserMedia;
+  associateId?: number | null;
+  federationId?: number | null;
   profilePicture?: (string | null) | Media;
   role?: ('admin' | 'editor' | 'default') | null;
   nif?: string | null;
@@ -1143,6 +1147,8 @@ export interface Checkbox {
         | 'phone'
         | 'identity'
         | 'identityFile'
+        | 'associateId'
+        | 'federationId'
         | 'profilePicture'
         | 'role'
         | 'nif'
@@ -1176,6 +1182,8 @@ export interface Country {
         | 'phone'
         | 'identity'
         | 'identityFile'
+        | 'associateId'
+        | 'federationId'
         | 'profilePicture'
         | 'role'
         | 'nif'
@@ -1224,6 +1232,8 @@ export interface Number {
         | 'phone'
         | 'identity'
         | 'identityFile'
+        | 'associateId'
+        | 'federationId'
         | 'profilePicture'
         | 'role'
         | 'nif'
@@ -1267,6 +1277,8 @@ export interface Select {
         | 'phone'
         | 'identity'
         | 'identityFile'
+        | 'associateId'
+        | 'federationId'
         | 'profilePicture'
         | 'role'
         | 'nif'
@@ -1301,6 +1313,8 @@ export interface Text {
         | 'phone'
         | 'identity'
         | 'identityFile'
+        | 'associateId'
+        | 'federationId'
         | 'profilePicture'
         | 'role'
         | 'nif'
@@ -1348,6 +1362,8 @@ export interface Phone {
         | 'phone'
         | 'identity'
         | 'identityFile'
+        | 'associateId'
+        | 'federationId'
         | 'profilePicture'
         | 'role'
         | 'nif'
@@ -1382,6 +1398,8 @@ export interface MediaUpload {
         | 'phone'
         | 'identity'
         | 'identityFile'
+        | 'associateId'
+        | 'federationId'
         | 'profilePicture'
         | 'role'
         | 'nif'
@@ -1414,6 +1432,8 @@ export interface Address {
         | 'phone'
         | 'identity'
         | 'identityFile'
+        | 'associateId'
+        | 'federationId'
         | 'profilePicture'
         | 'role'
         | 'nif'
@@ -1461,6 +1481,8 @@ export interface DateField {
         | 'phone'
         | 'identity'
         | 'identityFile'
+        | 'associateId'
+        | 'federationId'
         | 'profilePicture'
         | 'role'
         | 'nif'
@@ -1487,6 +1509,18 @@ export interface Calendar {
   id?: string | null;
   blockName?: string | null;
   blockType: 'calendarBlock';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "federationHistory".
+ */
+export interface FederationHistory {
+  id: string;
+  user?: (string | null) | User;
+  federationId?: number | null;
+  season?: string | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2044,16 +2078,20 @@ export interface PayloadLockedDocument {
         value: string | User;
       } | null)
     | ({
+        relationTo: 'user-media';
+        value: string | UserMedia;
+      } | null)
+    | ({
+        relationTo: 'federationHistory';
+        value: string | FederationHistory;
+      } | null)
+    | ({
         relationTo: 'groups';
         value: string | Group;
       } | null)
     | ({
         relationTo: 'group-categories';
         value: string | GroupCategory;
-      } | null)
-    | ({
-        relationTo: 'user-media';
-        value: string | UserMedia;
       } | null)
     | ({
         relationTo: 'events';
@@ -2472,6 +2510,8 @@ export interface UsersSelect<T extends boolean = true> {
   phone?: T;
   identity?: T;
   identityFile?: T;
+  associateId?: T;
+  federationId?: T;
   profilePicture?: T;
   role?: T;
   nif?: T;
@@ -2498,29 +2538,6 @@ export interface UsersSelect<T extends boolean = true> {
   hash?: T;
   loginAttempts?: T;
   lockUntil?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "groups_select".
- */
-export interface GroupsSelect<T extends boolean = true> {
-  title?: T;
-  slug?: T;
-  slugLock?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "group-categories_select".
- */
-export interface GroupCategoriesSelect<T extends boolean = true> {
-  title?: T;
-  slug?: T;
-  slugLock?: T;
-  parent?: T;
-  updatedAt?: T;
-  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2593,6 +2610,40 @@ export interface UserMediaSelect<T extends boolean = true> {
               filename?: T;
             };
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "federationHistory_select".
+ */
+export interface FederationHistorySelect<T extends boolean = true> {
+  user?: T;
+  federationId?: T;
+  season?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "groups_select".
+ */
+export interface GroupsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  slugLock?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "group-categories_select".
+ */
+export interface GroupCategoriesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  slugLock?: T;
+  parent?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

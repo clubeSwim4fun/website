@@ -33,6 +33,7 @@ import { Gender } from './collections/Users/Genders'
 import { GeneralConfigs } from './GeneralConfigs'
 import { Disability } from './collections/Users/Disability'
 import { AboutClub } from './collections/Users/HeardAboutClub'
+import { FederationHistory } from './collections/Users/FederationHistory'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -82,9 +83,10 @@ export default buildConfig({
     Media,
     Categories,
     Users,
+    UserMedia,
+    FederationHistory,
     Groups,
     GroupCategories,
-    UserMedia,
     Events,
     Carts,
     Tickets,

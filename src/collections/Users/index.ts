@@ -7,6 +7,8 @@ import { isAdminOrEditor } from '@/access/isAdminOrEditor'
 
 import { User } from '@/payload-types'
 import { anyone } from '@/access/anyone'
+import autoIncrement from './hooks/autoIncrement'
+import saveFederationHistory from './hooks/federationHistory'
 
 export const Users: CollectionConfig = {
   slug: 'users',
@@ -112,6 +114,29 @@ export const Users: CollectionConfig = {
           },
         },
       ],
+    },
+    {
+      name: 'associateId',
+      label: {
+        en: 'Associate ID',
+        pt: 'Sócio ID',
+      },
+      type: 'number',
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+      },
+    },
+    {
+      name: 'federationId',
+      label: {
+        en: 'Federation ID',
+        pt: 'ID da Federação',
+      },
+      type: 'number',
+      admin: {
+        position: 'sidebar',
+      },
     },
     {
       name: 'profilePicture',
@@ -315,5 +340,8 @@ export const Users: CollectionConfig = {
       ],
     },
   ],
+  hooks: {
+    beforeChange: [autoIncrement, saveFederationHistory],
+  },
   timestamps: true,
 }

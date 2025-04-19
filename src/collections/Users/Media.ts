@@ -13,12 +13,12 @@ export const UserMedia: CollectionConfig = {
   slug: 'user-media',
   labels: {
     plural: {
-      en: 'User Medias',
-      pt: 'Mídias do Utilizador',
+      en: 'User-Medias',
+      pt: 'Utilizador-Mídias',
     },
     singular: {
-      en: 'User Media',
-      pt: 'Mídia do Utilizador',
+      en: 'User-Media',
+      pt: 'Utilizador-Mídia',
     },
   },
   access: {
