@@ -166,10 +166,13 @@ export const Users: CollectionConfig = {
         en: 'Gender',
         pt: 'Genero',
       },
-      type: 'radio',
-      options: ['masculino', 'feminino'],
+      type: 'relationship',
+      relationTo: 'gender',
+      hasMany: false,
       admin: {
         position: 'sidebar',
+        allowCreate: false,
+        allowEdit: false,
       },
     },
     {
@@ -185,7 +188,7 @@ export const Users: CollectionConfig = {
         const parentGroup = siblingData as User
 
         if (relationTo === 'group-categories') {
-          if (parentGroup!.groups!.length > 0) {
+          if (parentGroup && parentGroup.groups && parentGroup.groups.length > 0) {
             return {
               parent: { in: parentGroup?.groups?.map((g) => g.value) },
             }
@@ -248,11 +251,40 @@ export const Users: CollectionConfig = {
     {
       name: 'heardAboutClub',
       label: {
-        en: 'Header about the Club by:',
+        en: 'Heard about the Club through:',
         pt: 'Ficou a saber do clube através:',
       },
       type: 'select',
-      options: ['Internet', 'Amigos', 'Escola Swim4Fun', 'Outros'],
+      options: [
+        {
+          label: {
+            en: 'Internet',
+            pt: 'Internet',
+          },
+          value: 'internet',
+        },
+        {
+          label: {
+            en: 'Friends',
+            pt: 'Amigos',
+          },
+          value: 'amigos',
+        },
+        {
+          label: {
+            en: 'Swim4Fun school',
+            pt: 'Escola Swim4Fun',
+          },
+          value: 'escola',
+        },
+        {
+          label: {
+            en: 'Others',
+            pt: 'Outros',
+          },
+          value: 'outros',
+        },
+      ],
       admin: {
         position: 'sidebar',
       },

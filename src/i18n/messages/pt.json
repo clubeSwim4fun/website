@@ -144,7 +144,7 @@
     "errorMaxFiles": "Não é possível carregar mais de {maxFileCount} ficheiros",
     "userMaxFiles": "Pode carregar {maxFileAllowed} ficheiros (até {maxSize} cada)",
     "userMaxFileSize": "Pode carregar um ficheiro com {maxSize}",
-    "removeFile": "Remover ficheiro",
+    "removeFile": "Remover o ficheiro",
     "rejectedFile": "O ficheiro {fileName} foi rejeitado"
   }
 }

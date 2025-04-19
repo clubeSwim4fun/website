@@ -9,8 +9,6 @@ const CalendarEventItem = ({ info }: EventItemProps) => {
 
   const location = event.extendedProps.address
 
-  console.log('event.extendedProps.distances', event.extendedProps)
-
   return (
     <Link className="w-full" href={`/event/${event.extendedProps.slug}`}>
       <div className="overflow-hidden h-full w-full">

@@ -79,6 +79,7 @@ export interface Config {
     carts: Cart;
     tickets: Ticket;
     orders: Order;
+    gender: Gender;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -102,6 +103,7 @@ export interface Config {
     carts: CartsSelect<false> | CartsSelect<true>;
     tickets: TicketsSelect<false> | TicketsSelect<true>;
     orders: OrdersSelect<false> | OrdersSelect<true>;
+    gender: GenderSelect<false> | GenderSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -117,10 +119,12 @@ export interface Config {
   globals: {
     header: Header;
     footer: Footer;
+    generalConfigs: GeneralConfig;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
+    generalConfigs: GeneralConfigsSelect<false> | GeneralConfigsSelect<true>;
   };
   locale: 'en' | 'pt';
   user: User & {
@@ -661,7 +665,7 @@ export interface User {
   profilePicture?: (string | null) | Media;
   role?: ('admin' | 'editor' | 'default') | null;
   nif?: string | null;
-  gender?: ('masculino' | 'feminino') | null;
+  gender?: (string | null) | Gender;
   groups?:
     | (
         | {
@@ -679,7 +683,7 @@ export interface User {
     | ('Nenhuma' | 'Auditiva' | 'Intelectual' | 'Motora' | 'Paralisia Cerebral' | 'Visual' | 'Transplantado')[]
     | null;
   wantsToBeFederado?: boolean | null;
-  heardAboutClub?: ('Internet' | 'Amigos' | 'Escola Swim4Fun' | 'Outros') | null;
+  heardAboutClub?: ('internet' | 'amigos' | 'escola' | 'outros') | null;
   Address?: {
     street?: string | null;
     number?: string | null;
@@ -757,6 +761,18 @@ export interface UserMedia {
       filename?: string | null;
     };
   };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "gender".
+ */
+export interface Gender {
+  id: string;
+  label: string;
+  value: string;
+  hiddenId?: string | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1024,6 +1040,7 @@ export interface Form {
         | MediaUpload
         | Address
         | DateField
+        | GenderField
       )[]
     | null;
   submitButtonLabel?: string | null;
@@ -1433,6 +1450,39 @@ export interface DateField {
   id?: string | null;
   blockName?: string | null;
   blockType: 'datePicker';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GenderField".
+ */
+export interface GenderField {
+  name: string;
+  label: string;
+  required?: boolean | null;
+  relatesTo?:
+    | (
+        | 'name'
+        | 'surname'
+        | 'nationality'
+        | 'phone'
+        | 'identity'
+        | 'identityFile'
+        | 'profilePicture'
+        | 'role'
+        | 'nif'
+        | 'gender'
+        | 'groups'
+        | 'birthDate'
+        | 'disability'
+        | 'wantsToBeFederado'
+        | 'heardAboutClub'
+        | 'Address'
+      )
+    | null;
+  size?: ('full' | 'half' | 'one-third') | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'genderBlock';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2026,6 +2076,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'orders';
         value: string | Order;
+      } | null)
+    | ({
+        relationTo: 'gender';
+        value: string | Gender;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -2634,6 +2688,17 @@ export interface OrdersSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "gender_select".
+ */
+export interface GenderSelect<T extends boolean = true> {
+  label?: T;
+  value?: T;
+  hiddenId?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects_select".
  */
 export interface RedirectsSelect<T extends boolean = true> {
@@ -2686,6 +2751,7 @@ export interface FormsSelect<T extends boolean = true> {
         media?: T | MediaUploadSelect<T>;
         address?: T | AddressSelect<T>;
         datePicker?: T | DateFieldSelect<T>;
+        genderBlock?: T | GenderFieldSelect<T>;
       };
   submitButtonLabel?: T;
   confirmationType?: T;
@@ -2882,6 +2948,19 @@ export interface DateFieldSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GenderField_select".
+ */
+export interface GenderFieldSelect<T extends boolean = true> {
+  name?: T;
+  label?: T;
+  required?: T;
+  relatesTo?: T;
+  size?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "form-submissions_select".
  */
 export interface FormSubmissionsSelect<T extends boolean = true> {
@@ -3069,6 +3148,25 @@ export interface Footer {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "generalConfigs".
+ */
+export interface GeneralConfig {
+  id: string;
+  userData?: {
+    genders?:
+      | {
+          label: string;
+          value: string;
+          genderId?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
@@ -3125,6 +3223,27 @@ export interface FooterSelect<T extends boolean = true> {
                   };
             };
         id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "generalConfigs_select".
+ */
+export interface GeneralConfigsSelect<T extends boolean = true> {
+  userData?:
+    | T
+    | {
+        genders?:
+          | T
+          | {
+              label?: T;
+              value?: T;
+              genderId?: T;
+              id?: T;
+            };
       };
   updatedAt?: T;
   createdAt?: T;

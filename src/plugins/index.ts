@@ -19,6 +19,7 @@ import { Text } from '@/blocks/Form/Text/config'
 import { Checkbox } from '@/blocks/Form/Checkbox/config'
 import { Country } from '@/blocks/Form/Country/config'
 import { Number } from '@/blocks/Form/Number/config'
+import { Gender } from '@/blocks/Form/Gender/config'
 import { Select } from '@/blocks/Form/Select/config'
 import { Address } from '@/blocks/Form/Address/config'
 import { DatePicker } from '@/blocks/Form/Date/config'
@@ -90,6 +91,7 @@ export const plugins: Plugin[] = [
       date: DatePicker,
       email: Email,
       state: false,
+      gender: Gender,
     },
     formOverrides: {
       labels: {

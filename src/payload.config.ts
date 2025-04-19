@@ -29,6 +29,8 @@ import { Orders } from './collections/Ecommerce/Orders'
 import localization from './i18n/localization'
 import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 import nodemailer from 'nodemailer'
+import { Gender } from './collections/Users/Genders'
+import { GeneralConfigs } from './GeneralConfigs'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -85,9 +87,10 @@ export default buildConfig({
     Carts,
     Tickets,
     Orders,
+    Gender,
   ],
   cors: [getServerSideURL()].filter(Boolean),
-  globals: [Header, Footer],
+  globals: [Header, Footer, GeneralConfigs],
   plugins: [
     ...plugins,
     // storage-adapter-placeholder
