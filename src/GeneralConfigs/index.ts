@@ -43,6 +43,30 @@ export const GeneralConfigs: GlobalConfig = {
                 },
               ],
             },
+            {
+              name: 'disabilities',
+              type: 'array',
+              fields: [
+                {
+                  name: 'label',
+                  localized: true,
+                  type: 'text',
+                  required: true,
+                },
+                {
+                  name: 'value',
+                  type: 'text',
+                  required: true,
+                },
+                {
+                  name: 'disabilityId',
+                  type: 'text',
+                  admin: {
+                    hidden: true,
+                  },
+                },
+              ],
+            },
           ],
         },
       ],

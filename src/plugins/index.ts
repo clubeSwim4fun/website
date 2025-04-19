@@ -25,6 +25,7 @@ import { Address } from '@/blocks/Form/Address/config'
 import { DatePicker } from '@/blocks/Form/Date/config'
 import { Email } from '@/blocks/Form/Email/config'
 import { defaultLexical } from '@/fields/defaultLexical'
+import { Disability } from '@/blocks/Form/Disability/config'
 
 const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
   return doc?.title ? `${doc.title} | Payload Website Template` : 'Payload Website Template'
@@ -92,6 +93,7 @@ export const plugins: Plugin[] = [
       email: Email,
       state: false,
       gender: Gender,
+      disability: Disability,
     },
     formOverrides: {
       labels: {

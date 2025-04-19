@@ -31,6 +31,7 @@ import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 import nodemailer from 'nodemailer'
 import { Gender } from './collections/Users/Genders'
 import { GeneralConfigs } from './GeneralConfigs'
+import { Disability } from './collections/Users/Disability'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -88,6 +89,7 @@ export default buildConfig({
     Tickets,
     Orders,
     Gender,
+    Disability,
   ],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer, GeneralConfigs],

@@ -80,6 +80,7 @@ export interface Config {
     tickets: Ticket;
     orders: Order;
     gender: Gender;
+    disability: Disability;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -104,6 +105,7 @@ export interface Config {
     tickets: TicketsSelect<false> | TicketsSelect<true>;
     orders: OrdersSelect<false> | OrdersSelect<true>;
     gender: GenderSelect<false> | GenderSelect<true>;
+    disability: DisabilitySelect<false> | DisabilitySelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -679,9 +681,7 @@ export interface User {
       )[]
     | null;
   birthDate?: string | null;
-  disability?:
-    | ('Nenhuma' | 'Auditiva' | 'Intelectual' | 'Motora' | 'Paralisia Cerebral' | 'Visual' | 'Transplantado')[]
-    | null;
+  disability?: (string | Disability)[] | null;
   wantsToBeFederado?: boolean | null;
   heardAboutClub?: ('internet' | 'amigos' | 'escola' | 'outros') | null;
   Address?: {
@@ -796,6 +796,18 @@ export interface GroupCategory {
   slug?: string | null;
   slugLock?: boolean | null;
   parent?: (string | null) | Group;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "disability".
+ */
+export interface Disability {
+  id: string;
+  label: string;
+  value: string;
+  hiddenId?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1041,6 +1053,7 @@ export interface Form {
         | Address
         | DateField
         | GenderField
+        | DisabilityField
       )[]
     | null;
   submitButtonLabel?: string | null;
@@ -1483,6 +1496,39 @@ export interface GenderField {
   id?: string | null;
   blockName?: string | null;
   blockType: 'genderBlock';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "DisabilityField".
+ */
+export interface DisabilityField {
+  name: string;
+  label: string;
+  required?: boolean | null;
+  relatesTo?:
+    | (
+        | 'name'
+        | 'surname'
+        | 'nationality'
+        | 'phone'
+        | 'identity'
+        | 'identityFile'
+        | 'profilePicture'
+        | 'role'
+        | 'nif'
+        | 'gender'
+        | 'groups'
+        | 'birthDate'
+        | 'disability'
+        | 'wantsToBeFederado'
+        | 'heardAboutClub'
+        | 'Address'
+      )
+    | null;
+  size?: ('full' | 'half' | 'one-third') | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'disabilityBlock';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2080,6 +2126,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'gender';
         value: string | Gender;
+      } | null)
+    | ({
+        relationTo: 'disability';
+        value: string | Disability;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -2699,6 +2749,17 @@ export interface GenderSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "disability_select".
+ */
+export interface DisabilitySelect<T extends boolean = true> {
+  label?: T;
+  value?: T;
+  hiddenId?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects_select".
  */
 export interface RedirectsSelect<T extends boolean = true> {
@@ -2752,6 +2813,7 @@ export interface FormsSelect<T extends boolean = true> {
         address?: T | AddressSelect<T>;
         datePicker?: T | DateFieldSelect<T>;
         genderBlock?: T | GenderFieldSelect<T>;
+        disabilityBlock?: T | DisabilityFieldSelect<T>;
       };
   submitButtonLabel?: T;
   confirmationType?: T;
@@ -2951,6 +3013,19 @@ export interface DateFieldSelect<T extends boolean = true> {
  * via the `definition` "GenderField_select".
  */
 export interface GenderFieldSelect<T extends boolean = true> {
+  name?: T;
+  label?: T;
+  required?: T;
+  relatesTo?: T;
+  size?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "DisabilityField_select".
+ */
+export interface DisabilityFieldSelect<T extends boolean = true> {
   name?: T;
   label?: T;
   required?: T;
@@ -3161,6 +3236,14 @@ export interface GeneralConfig {
           id?: string | null;
         }[]
       | null;
+    disabilities?:
+      | {
+          label: string;
+          value: string;
+          disabilityId?: string | null;
+          id?: string | null;
+        }[]
+      | null;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -3242,6 +3325,14 @@ export interface GeneralConfigsSelect<T extends boolean = true> {
               label?: T;
               value?: T;
               genderId?: T;
+              id?: T;
+            };
+        disabilities?:
+          | T
+          | {
+              label?: T;
+              value?: T;
+              disabilityId?: T;
               id?: T;
             };
       };
