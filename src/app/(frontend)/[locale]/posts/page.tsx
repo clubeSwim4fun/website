@@ -8,6 +8,8 @@ import { getPayload, TypedLocale } from 'payload'
 import React from 'react'
 import PageClient from './page.client'
 import { getTranslations } from 'next-intl/server'
+import { GeneralConfig } from '@/payload-types'
+import { getCachedGlobal } from '@/utilities/getGlobals'
 
 export const dynamic = 'force-static'
 export const revalidate = 600
@@ -68,8 +70,18 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'Metadata' })
+  const globalConfig = (await getCachedGlobal(
+    'generalConfigs',
+    1,
+    locale as TypedLocale,
+  )()) as GeneralConfig
+
+  const clubTitle = globalConfig?.clubName || t('Club')
+  const blog = globalConfig?.settings?.fixedPages?.blog
+
+  const blogTitle = blog?.title || t('Blog')
 
   return {
-    title: `${t('Club')} - ${t('Blog')}`,
+    title: `${clubTitle} - ${blogTitle}`,
   }
 }

@@ -8,6 +8,9 @@ import { LivePreviewListener } from '@/components/LivePreviewListener'
 import CheckoutSteps from '@/components/Common/CheckoutSteps'
 import { PaymentForm } from './payment-form'
 import { getTranslations } from 'next-intl/server'
+import { GeneralConfig } from '@/payload-types'
+import { getCachedGlobal } from '@/utilities/getGlobals'
+import { TypedLocale } from 'payload'
 
 export default async function Payment({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
@@ -33,8 +36,18 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'Metadata' })
+  const globalConfig = (await getCachedGlobal(
+    'generalConfigs',
+    1,
+    locale as TypedLocale,
+  )()) as GeneralConfig
+
+  const clubTitle = globalConfig?.clubName || t('Club')
+  const payment = globalConfig?.settings?.fixedPages?.payment
+
+  const paymentTitle = payment?.title || t('Payment')
 
   return {
-    title: `${t('Club')} - ${t('Payment')}`,
+    title: `${clubTitle} - ${paymentTitle}`,
   }
 }

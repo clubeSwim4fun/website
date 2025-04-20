@@ -9,6 +9,8 @@ import React from 'react'
 import PageClient from './page.client'
 import { notFound } from 'next/navigation'
 import { getTranslations } from 'next-intl/server'
+import { GeneralConfig } from '@/payload-types'
+import { getCachedGlobal } from '@/utilities/getGlobals'
 
 export const revalidate = 600
 
@@ -69,9 +71,15 @@ export default async function Page({ params: paramsPromise }: Args) {
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { pageNumber, locale } = await paramsPromise
   const t = await getTranslations({ locale, namespace: 'Metadata' })
+  const globalConfig = (await getCachedGlobal(
+    'generalConfigs',
+    1,
+    locale as TypedLocale,
+  )()) as GeneralConfig
+  const clubTitle = globalConfig?.clubName || t('Club')
 
   return {
-    title: `${t('Club')} - ${t('Post')} ${pageNumber || ''}`,
+    title: `${clubTitle} - ${t('Post')} ${pageNumber || ''}`,
   }
 }
 

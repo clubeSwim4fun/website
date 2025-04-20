@@ -8,6 +8,8 @@ import { Search } from '@/search/Component'
 import PageClient from './page.client'
 import { CardPostData } from '@/components/Card'
 import { getTranslations } from 'next-intl/server'
+import { GeneralConfig } from '@/payload-types'
+import { getCachedGlobal } from '@/utilities/getGlobals'
 
 type Args = {
   searchParams: Promise<{
@@ -99,8 +101,15 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'Metadata' })
+  const globalConfig = (await getCachedGlobal(
+    'generalConfigs',
+    1,
+    locale as TypedLocale,
+  )()) as GeneralConfig
+
+  const clubTitle = globalConfig?.clubName || t('Club')
 
   return {
-    title: `${t('Club')} - ${t('Search')}`,
+    title: `${clubTitle} - ${t('Search')}`,
   }
 }

@@ -6,12 +6,14 @@ import React from 'react'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { getMyCart } from '@/helpers/cartHelper'
 import { getMeUser } from '@/utilities/getMeUser'
-import { Event, Ticket } from '@/payload-types'
+import { Event, GeneralConfig, Ticket } from '@/payload-types'
 
 import CheckoutSteps from '@/components/Common/CheckoutSteps'
 import { CartTable } from './cart-table'
 import { getTranslations } from 'next-intl/server'
 import { CartPageClient } from './page.client'
+import { getCachedGlobal } from '@/utilities/getGlobals'
+import { TypedLocale } from 'payload'
 
 export type eventTicket = {
   [key: string]: {
@@ -68,8 +70,18 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'Metadata' })
+  const globalConfig = (await getCachedGlobal(
+    'generalConfigs',
+    1,
+    locale as TypedLocale,
+  )()) as GeneralConfig
+
+  const clubTitle = globalConfig?.clubName || t('Club')
+  const cart = globalConfig?.settings?.fixedPages?.cart
+
+  const cartTitle = cart?.title || t('Cart')
 
   return {
-    title: `${t('Club')} - ${t('Cart')}`,
+    title: `${clubTitle} - ${cartTitle}`,
   }
 }

@@ -9,12 +9,21 @@ import { Input } from '@/components/ui/input'
 import { useSearchParams } from 'next/navigation'
 import { LoaderCircle } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { Page } from '@/payload-types'
 
-export default function LoginForm(): ReactElement {
+export default function LoginForm({
+  loginSettings,
+}: {
+  loginSettings?: { registerUrl?: (string | null) | Page }
+}): ReactElement {
   const [isPending, setIsPending] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const searchParams = useSearchParams()
   const t = useTranslations('Sign-in')
+  const registerUrl =
+    typeof loginSettings?.registerUrl === 'string'
+      ? loginSettings?.registerUrl
+      : loginSettings?.registerUrl?.slug || 'sign-up'
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -76,7 +85,7 @@ export default function LoginForm(): ReactElement {
         <p className="mt-10 text-center text-sm text-gray-400">
           {t('dontHaveAccount')}
           <Link
-            href="/sign-up"
+            href={registerUrl}
             className="font-semibold leading-6 text-headBlue-500 hover:text-headBlue-400"
           >
             {' '}

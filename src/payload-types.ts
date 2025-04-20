@@ -3149,6 +3149,10 @@ export interface Footer {
  */
 export interface GeneralConfig {
   id: string;
+  /**
+   * This name will be used across the website as Title prefix of all pages for better SEO
+   */
+  clubName?: string | null;
   userData?: {
     genders?:
       | {
@@ -3174,6 +3178,25 @@ export interface GeneralConfig {
           id?: string | null;
         }[]
       | null;
+  };
+  settings?: {
+    login?: {
+      registerUrl?: (string | null) | Page;
+    };
+    fixedPages?: {
+      cart?: {
+        title?: string | null;
+      };
+      myProfile?: {
+        title?: string | null;
+      };
+      payment?: {
+        title?: string | null;
+      };
+      blog?: {
+        title?: string | null;
+      };
+    };
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -3246,6 +3269,7 @@ export interface FooterSelect<T extends boolean = true> {
  * via the `definition` "generalConfigs_select".
  */
 export interface GeneralConfigsSelect<T extends boolean = true> {
+  clubName?: T;
   userData?:
     | T
     | {
@@ -3272,6 +3296,39 @@ export interface GeneralConfigsSelect<T extends boolean = true> {
               value?: T;
               collectionId?: T;
               id?: T;
+            };
+      };
+  settings?:
+    | T
+    | {
+        login?:
+          | T
+          | {
+              registerUrl?: T;
+            };
+        fixedPages?:
+          | T
+          | {
+              cart?:
+                | T
+                | {
+                    title?: T;
+                  };
+              myProfile?:
+                | T
+                | {
+                    title?: T;
+                  };
+              payment?:
+                | T
+                | {
+                    title?: T;
+                  };
+              blog?:
+                | T
+                | {
+                    title?: T;
+                  };
             };
       };
   updatedAt?: T;

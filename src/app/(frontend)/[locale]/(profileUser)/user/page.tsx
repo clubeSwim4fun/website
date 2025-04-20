@@ -1,6 +1,11 @@
+import { GeneralConfig } from '@/payload-types'
+import { getCachedGlobal } from '@/utilities/getGlobals'
 import { getMeUser } from '@/utilities/getMeUser'
+import { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
+import { TypedLocale } from 'payload'
 
 const UserPage = async () => {
   const userObject = await getMeUser()
@@ -22,3 +27,26 @@ const UserPage = async () => {
 }
 
 export default UserPage
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'Metadata' })
+  const globalConfig = (await getCachedGlobal(
+    'generalConfigs',
+    1,
+    locale as TypedLocale,
+  )()) as GeneralConfig
+
+  const myProfile = globalConfig?.settings?.fixedPages?.myProfile
+
+  const clubTitle = globalConfig?.clubName || t('Club')
+  const myProfileTitle = myProfile?.title || t('MyProfile')
+
+  return {
+    title: `${clubTitle} - ${myProfileTitle}`,
+  }
+}
