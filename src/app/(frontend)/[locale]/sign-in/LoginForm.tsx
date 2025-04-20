@@ -30,6 +30,7 @@ export default function LoginForm(): ReactElement {
     if (!result.success) {
       // Display the error message
       setError(result.error || 'Login failed')
+      setIsPending(false)
     }
   }
 

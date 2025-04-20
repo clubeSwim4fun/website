@@ -1,9 +1,10 @@
 'use server'
 
-import { getPayload } from 'payload'
+import { AuthenticationError, getPayload } from 'payload'
 import config from '@payload-config'
 import { cookies } from 'next/headers'
 import { User } from '@/payload-types'
+import { getTranslations } from 'next-intl/server'
 
 interface LoginParams {
   email: string
@@ -23,11 +24,14 @@ export type Result = {
 
 export async function login({ email, password }: LoginParams): Promise<LoginResponse> {
   const payload = await getPayload({ config })
+  const t = await getTranslations()
   try {
     const result: Result = await payload.login({
       collection: 'users',
       data: { email, password },
     })
+
+    console.log('result', result)
 
     if (result.token) {
       const cookieStore = await cookies()
@@ -39,10 +43,19 @@ export async function login({ email, password }: LoginParams): Promise<LoginResp
 
       return { success: true }
     } else {
-      return { success: false, error: 'Invalid email or password' }
+      return { success: false, error: t('Common.loginError') }
     }
   } catch (error) {
-    console.error('Login error', error)
-    return { success: false, error: 'An error occurred' }
+    if (error instanceof Error && 'status' in error) {
+      if (error && error.status === 401) {
+        payload.logger.info(error)
+        return { success: false, error: t('Common.loginAuthenticationError') }
+      }
+
+      payload.logger.error(error)
+      return { success: false, error: t('Common.unexpectedError') }
+    }
+    payload.logger.error(error)
+    return { success: false, error: t('Common.unexpectedError') }
   }
 }

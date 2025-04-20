@@ -36,6 +36,8 @@
     "end": "Fim",
     "required": "Mandatório",
     "unexpectedError": "Um erro inesperado aconteceu, por favor tente novamente!",
+    "transactionError": "Erro interno ao criar transação, por favor informe o admin",
+    "loginAuthenticationError": "Utilizador ou senha inválidos",
     "submit": "Submeter"
   },
   "Cart": {

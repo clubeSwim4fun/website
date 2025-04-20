@@ -3,6 +3,7 @@
 import { getPayload, User } from 'payload'
 import config from '@payload-config'
 import AWS from 'aws-sdk'
+import { getTranslations } from 'next-intl/server'
 
 interface CreateUserResponse {
   success: boolean
@@ -42,11 +43,12 @@ export async function createUser(userData: CreateUserRequestType): Promise<Creat
   const payload = await getPayload({ config })
   const tempFilesToDelete: string[] = []
   const transactionID = await payload.db.beginTransaction()
+  const t = await getTranslations()
 
   if (!transactionID) {
     return {
       success: false,
-      message: 'Error creating transaction',
+      error: t('Common.transactionError'),
     }
   }
 
