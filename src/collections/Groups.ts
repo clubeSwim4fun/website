@@ -31,9 +31,21 @@ export const Groups: CollectionConfig = {
     {
       name: 'title',
       localized: true,
-      label: 'Nome',
+      label: {
+        en: 'Title',
+        pt: 'Título',
+      },
       type: 'text',
       required: true,
+    },
+    {
+      name: 'badge',
+      label: {
+        en: 'Badge',
+        pt: 'Distintivo',
+      },
+      type: 'upload',
+      relationTo: 'media',
     },
     ...slugField(),
   ],

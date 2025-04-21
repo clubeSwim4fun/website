@@ -1,27 +1,41 @@
+import { UserAvatar } from '@/components/Avatar'
+import { UserDetails } from '@/components/User/user-details'
+import { UserEvents } from '@/components/User/user-events'
+import { UserProfile } from '@/components/User/user-profile'
 import { GeneralConfig } from '@/payload-types'
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import { getMeUser } from '@/utilities/getMeUser'
 import { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
-import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { TypedLocale } from 'payload'
 
 const UserPage = async () => {
   const userObject = await getMeUser()
 
-  if (!userObject) notFound()
+  if (!userObject || !userObject.user) notFound()
+
+  const user = userObject.user
+  const initials = user.name.charAt(0) + user.surname.charAt(0)
 
   return (
-    <section className="pt-[104px] pb-24">
-      <div className="container">{userObject.user?.name}</div>
-      {/* {userObject.user.identity && (
-        <Image src={userObject.user.identityFile} height={400} width={400} alt="test" />
-      )} */}
-
-      {userObject?.user?.profilePicture && (
-        <Image src={userObject.user.profilePicture as string} height={400} width={400} alt="test" />
-      )}
+    <section className="pt-[104px] pb-24 container mx-auto max-w-5xl">
+      {/* User Section */}
+      <div className="flex flex-col lg:flex-row gap-8">
+        <UserAvatar className="w-full lg:w-1/3 mt-2" fallbackText={initials} />
+        <div className="flex w-full lg:w-2/3">
+          <UserDetails user={user} />
+        </div>
+      </div>
+      {/* Table and calendar */}
+      <div className="flex flex-col md:flex-row mt-6 gap-8">
+        <div className="w-full lg:w-1/3">
+          <UserProfile user={user} />
+        </div>
+        <div className="w-full lg:w-2/3">
+          <UserEvents userId={user.id} />
+        </div>
+      </div>
     </section>
   )
 }

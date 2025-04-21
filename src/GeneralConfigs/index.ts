@@ -163,6 +163,7 @@ export const GeneralConfigs: GlobalConfig = {
                   fields: [
                     {
                       name: 'title',
+                      localized: true,
                       label: {
                         en: 'Title',
                         pt: 'Título',
@@ -181,11 +182,30 @@ export const GeneralConfigs: GlobalConfig = {
                   fields: [
                     {
                       name: 'title',
+                      localized: true,
                       label: {
                         en: 'Title',
                         pt: 'Título',
                       },
                       type: 'text',
+                    },
+                    {
+                      name: 'useBadges',
+                      localized: true,
+                      label: {
+                        en: 'Show Badges',
+                        pt: 'Mostrar Distintivos',
+                      },
+                      type: 'checkbox',
+                    },
+                    {
+                      name: 'avatar',
+                      label: {
+                        en: 'Default user Image',
+                        pt: 'Imagem padrão do utilizador',
+                      },
+                      type: 'upload',
+                      relationTo: 'media',
                     },
                   ],
                 },
@@ -199,6 +219,7 @@ export const GeneralConfigs: GlobalConfig = {
                   fields: [
                     {
                       name: 'title',
+                      localized: true,
                       label: {
                         en: 'Title',
                         pt: 'Título',
@@ -217,6 +238,7 @@ export const GeneralConfigs: GlobalConfig = {
                   fields: [
                     {
                       name: 'title',
+                      localized: true,
                       label: {
                         en: 'Title',
                         pt: 'Título',

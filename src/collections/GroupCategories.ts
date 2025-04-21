@@ -37,6 +37,15 @@ export const GroupCategories: CollectionConfig = {
       type: 'text',
       required: true,
     },
+    {
+      name: 'badge',
+      label: {
+        en: 'Badge',
+        pt: 'Distintivo',
+      },
+      type: 'upload',
+      relationTo: 'media',
+    },
     ...slugField(),
     {
       name: 'parent',

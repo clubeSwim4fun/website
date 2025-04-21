@@ -17,7 +17,31 @@
     "Search": "Search"
   },
   "User": {
-    "userNotFound": "Utilizador não encontrado"
+    "userNotFound": "Utilizador não encontrado",
+    "Details": {
+      "myData": "Meus Dados Pessoais",
+      "myAddress": "Minha Morada",
+      "identity": "Doc. Identificação:",
+      "nif": "NIF:",
+      "nationality": "Nacionalidade:",
+      "phone": "Telefone:",
+      "gender": "Gênero:",
+      "street": "Rua:",
+      "number": "Número da Porta:",
+      "state": "Concelho:",
+      "zipcode": "Código Postal:",
+      "birthday": "Data de Nascimento:"
+    },
+    "Profile": {
+      "profileTitle": "Perfil do Utilizador",
+      "associateId": "ID de Sócio: {id}",
+      "federationId": "ID da federação: {id}",
+      "groups": "Grupos"
+    },
+    "Events": {
+      "name": "Nome",
+      "distance": "Distância"
+    }
   },
   "Common": {
     "error": "Erro",

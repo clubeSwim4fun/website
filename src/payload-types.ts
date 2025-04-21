@@ -758,6 +758,7 @@ export interface Gender {
 export interface Group {
   id: string;
   title: string;
+  badge?: (string | null) | Media;
   slug?: string | null;
   slugLock?: boolean | null;
   updatedAt: string;
@@ -770,6 +771,7 @@ export interface Group {
 export interface GroupCategory {
   id: string;
   title: string;
+  badge?: (string | null) | Media;
   slug?: string | null;
   slugLock?: boolean | null;
   parent?: (string | null) | Group;
@@ -2562,6 +2564,7 @@ export interface FederationHistorySelect<T extends boolean = true> {
  */
 export interface GroupsSelect<T extends boolean = true> {
   title?: T;
+  badge?: T;
   slug?: T;
   slugLock?: T;
   updatedAt?: T;
@@ -2573,6 +2576,7 @@ export interface GroupsSelect<T extends boolean = true> {
  */
 export interface GroupCategoriesSelect<T extends boolean = true> {
   title?: T;
+  badge?: T;
   slug?: T;
   slugLock?: T;
   parent?: T;
@@ -3189,6 +3193,8 @@ export interface GeneralConfig {
       };
       myProfile?: {
         title?: string | null;
+        useBadges?: boolean | null;
+        avatar?: (string | null) | Media;
       };
       payment?: {
         title?: string | null;
@@ -3318,6 +3324,8 @@ export interface GeneralConfigsSelect<T extends boolean = true> {
                 | T
                 | {
                     title?: T;
+                    useBadges?: T;
+                    avatar?: T;
                   };
               payment?:
                 | T

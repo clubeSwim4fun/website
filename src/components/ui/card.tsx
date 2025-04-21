@@ -18,14 +18,23 @@ const CardHeader: React.FC<
 )
 
 const CardTitle: React.FC<
-  { ref?: React.Ref<HTMLHeadingElement> } & React.HTMLAttributes<HTMLHeadingElement>
-> = ({ className, ref, ...props }) => (
-  <h3
-    className={cn('text-2xl font-semibold leading-none tracking-tight', className)}
-    ref={ref}
-    {...props}
-  />
-)
+  { ref?: React.Ref<HTMLHeadingElement> } & React.HTMLAttributes<HTMLHeadingElement> & {
+      heading?: 'h2' | 'h3'
+    }
+> = ({ heading = 'h2', className, ref, ...props }) =>
+  heading === 'h2' ? (
+    <h2
+      className={cn('text-2xl font-semibold leading-none tracking-tight', className)}
+      ref={ref}
+      {...props}
+    />
+  ) : (
+    <h3
+      className={cn('text-xl font-semibold leading-none tracking-tight', className)}
+      ref={ref}
+      {...props}
+    />
+  )
 
 const CardDescription: React.FC<
   { ref?: React.Ref<HTMLParagraphElement> } & React.HTMLAttributes<HTMLParagraphElement>
