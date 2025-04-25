@@ -1,5 +1,5 @@
 import { User } from '@/payload-types'
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import FpnIcon from '../Icons/fpn'
 import { getTranslations } from 'next-intl/server'
 import { SquareUserRound } from 'lucide-react'

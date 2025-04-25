@@ -1,5 +1,5 @@
 import { User } from '@/payload-types'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import flags from 'react-phone-number-input/flags'
 import { getFormatter, getLocale, getTranslations } from 'next-intl/server'
 import { getCountryCode } from '@/helpers/userHelper'

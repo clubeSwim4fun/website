@@ -3,10 +3,10 @@
 import { useCart } from '@/providers/Cart'
 import { ShoppingCart } from 'lucide-react'
 import React, { useEffect } from 'react'
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '../ui/hover-card'
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 import Link from 'next/link'
 import { Ticket } from '@/payload-types'
-import { Button } from '../ui/button'
+import { Button } from '@/components/ui/button'
 import { useFormatter, useTranslations } from 'next-intl'
 
 export const Cart: React.FC = () => {

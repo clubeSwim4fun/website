@@ -1,6 +1,13 @@
 'use client'
 
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { convertMtoKm } from '@/utilities/util'
 import Link from 'next/link'
 import { useEffect, useState, useTransition } from 'react'

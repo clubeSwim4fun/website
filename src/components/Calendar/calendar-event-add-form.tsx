@@ -28,7 +28,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { DateTimePicker } from './calendar-date-picker'
 import { useEvents } from './events-context'
-import { ToastAction } from '../ui/toast'
+import { ToastAction } from '@/components/ui/toast'
 import { CalendarEvent } from './calendar-types'
 import { useTranslations } from 'next-intl'
 import { PlusIcon } from 'lucide-react'

@@ -1,12 +1,12 @@
 import { GroupCategory, Order, Ticket, User } from '@/payload-types'
-import { TableCell, TableRow } from '../ui/table'
+import { TableCell, TableRow } from '@/components/ui/table'
 import { RemoveFromCart } from '../Common/Cart/RemoveFromCart'
 import { AddToCart } from '../Common/Cart/AddToCart'
 import { useEffect, useState } from 'react'
 import { useFormatter, useTranslations } from 'next-intl'
 import { convertMtoKm } from '@/utilities/util'
 import { HoverCard, HoverCardContent } from '@radix-ui/react-hover-card'
-import { HoverCardTrigger } from '../ui/hover-card'
+import { HoverCardTrigger } from '@/components/ui/hover-card'
 import { TriangleAlert } from 'lucide-react'
 
 export const EventRow: React.FC<{

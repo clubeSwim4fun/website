@@ -1,6 +1,6 @@
 import { cn } from '@/utilities/ui'
 import defaultAvatar from 'public/static-images/default-avatar.png'
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 export const UserAvatar: React.FC<{
   avatarUrl?: string

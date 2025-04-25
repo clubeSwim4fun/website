@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation'
 import './index.scss'
 
 import { getClientSideURL } from '@/utilities/getURL'
-import { Button } from '../ui/button'
+import { Button } from '@/components/ui/button'
 import { CircleX, UserRoundCog } from 'lucide-react'
 
 const baseClass = 'admin-bar'
