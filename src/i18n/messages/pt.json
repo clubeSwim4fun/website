@@ -30,6 +30,7 @@
       "number": "Número da Porta:",
       "state": "Concelho:",
       "zipcode": "Código Postal:",
+      "editProfile": "Editar Meu Perfil",
       "birthday": "Data de Nascimento:"
     },
     "Profile": {

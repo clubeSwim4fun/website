@@ -83,7 +83,6 @@ export const CartTable: React.FC<{ eventsTickets: eventTicket; total?: number }>
                 <TableHead className="text-left max-w-[50%]">{t('Cart.ticket')}</TableHead>
                 <TableHead className="text-left max-w-[50%]">{t('Event.distance')}</TableHead>
                 <TableHead className="text-center max-w-[30%]">
-                  {/* TODO - add from nextitl currency formating */}
                   {t(
                     'Cart.eventTotalPrice',
                     {

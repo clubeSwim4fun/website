@@ -3,6 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
 import flags from 'react-phone-number-input/flags'
 import { getFormatter, getLocale, getTranslations } from 'next-intl/server'
 import { getCountryCode } from '@/helpers/userHelper'
+import { UserUpdateForm } from './user-update-form'
 
 const FlagComponent = ({ country, countryName }: { country: string; countryName: string }) => {
   const Flag = flags[country as keyof typeof flags]
@@ -27,9 +28,12 @@ export const UserDetails: React.FC<{ user: User }> = async (props) => {
       <h1 className="text-center lg:text-left text-2xl md:text-4xl lg:text-7xl text-blueSwim font-bold font-serif uppercase">{`${user.name} ${user.surname}`}</h1>
 
       <Tabs defaultValue="myData" className="w-auto lg:w-full">
-        <TabsList className="w-full bg-transparent items-start gap-6 justify-start">
-          <TabsTrigger value="myData">{t('myData')}</TabsTrigger>
-          {user.Address && <TabsTrigger value="myAddress">{t('myAddress')}</TabsTrigger>}
+        <TabsList className="w-full bg-transparent gap-6 justify-between items-center">
+          <div className="flex justify-start items-start">
+            <TabsTrigger value="myData">{t('myData')}</TabsTrigger>
+            {user.Address && <TabsTrigger value="myAddress">{t('myAddress')}</TabsTrigger>}
+          </div>
+          <UserUpdateForm user={user} />
         </TabsList>
         <TabsContent value="myData" className="grid grid-flow-col lg:grid-flow-row gap-4 text-sm">
           <div className="grid lg:grid-cols-12 gap-4">

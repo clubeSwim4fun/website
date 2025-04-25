@@ -13,7 +13,7 @@ import { TypedLocale } from 'payload'
 
 const UserPage = async ({ params }: { params: Promise<{ locale: string }> }) => {
   const { locale } = await params
-  const userObject = await getMeUser()
+  const userObject = await getMeUser({ invalidateCache: true })
 
   const globalConfig = (await getCachedGlobal(
     'generalConfigs',

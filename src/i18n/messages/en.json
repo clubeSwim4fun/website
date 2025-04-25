@@ -30,6 +30,7 @@
       "number": "Door Number:",
       "state": "State:",
       "zipcode": "Postal Code:",
+      "editProfile": "Edit My Profile",
       "birthday": "Birthday:"
     },
     "Profile": {

@@ -4,6 +4,8 @@ import { Event, Ticket } from '@/payload-types'
 import COUNTRY_LIST from '@/utilities/countryList'
 import config from '@/payload.config'
 import { getPayload } from 'payload'
+import { UserFormData } from '@/components/User/user-update-form'
+import { revalidatePath } from 'next/cache'
 
 export type UserEvents = {
   eventDate?: Date | null
@@ -70,4 +72,24 @@ export const getUserFutureEvents = async ({
   })
 
   return { events: userEvents, totalPages: ordersCollection.totalPages }
+}
+
+export const updateUserData = async ({ user, userId }: { user: UserFormData; userId: string }) => {
+  const payload = await getPayload({ config })
+
+  const response = await payload.update({
+    collection: 'users',
+    data: {
+      identity: user.identityCardNumber,
+      phone: user.phoneNumber,
+      Address: user.address,
+    },
+    where: {
+      id: {
+        equals: userId,
+      },
+    },
+  })
+
+  revalidatePath('/pt/my-profle')
 }

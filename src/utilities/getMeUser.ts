@@ -10,12 +10,13 @@ const CACHE_EXPIRATION_MS = 5 * 60 * 1000 // Cache expires in 5 minutes
 export const getMeUser = async (args?: {
   nullUserRedirect?: string
   validUserRedirect?: string
+  invalidateCache?: boolean
 }): Promise<{
   token?: string
   user?: User
   error?: string
 }> => {
-  const { nullUserRedirect, validUserRedirect } = args || {}
+  const { nullUserRedirect, validUserRedirect, invalidateCache } = args || {}
   const cookieStore = await cookies()
   const token = cookieStore.get('payload-token')?.value
 
@@ -30,6 +31,7 @@ export const getMeUser = async (args?: {
 
   // Check if the cached user is still valid
   if (
+    !invalidateCache &&
     cachedUser &&
     cachedUser.token === token &&
     Date.now() - cachedUser.timestamp < CACHE_EXPIRATION_MS
