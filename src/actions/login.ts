@@ -31,8 +31,6 @@ export async function login({ email, password }: LoginParams): Promise<LoginResp
       data: { email, password },
     })
 
-    console.log('result', result)
-
     if (result.token) {
       const cookieStore = await cookies()
       cookieStore.set('payload-token', result.token, {
