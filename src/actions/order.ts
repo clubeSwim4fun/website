@@ -111,8 +111,7 @@ export const createOrder = async (locale: TypedLocale) => {
     await sendEmail({
       emailHtml,
       subject: 'test Order confirmation',
-      to: 'lgperez.gustavo@gmail.com',
-      cc: 'mayskip@gmail.com',
+      to: '',
     })
 
     revalidatePath(`/${locale}/payment`)
