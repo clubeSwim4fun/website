@@ -26,6 +26,7 @@ const PaginationItem: React.FC<
 
 type PaginationLinkProps = {
   isActive?: boolean
+  label?: string
 } & Pick<ButtonProps, 'size'> &
   React.ComponentProps<'button'>
 
@@ -45,6 +46,7 @@ const PaginationLink = ({ className, isActive, size = 'icon', ...props }: Pagina
 
 const PaginationPrevious = ({
   className,
+  label,
   ...props
 }: React.ComponentProps<typeof PaginationLink>) => (
   <PaginationLink
@@ -54,18 +56,22 @@ const PaginationPrevious = ({
     {...props}
   >
     <ChevronLeft className="h-4 w-4" />
-    <span>Previous</span>
+    <span>{label || 'Previous'}</span>
   </PaginationLink>
 )
 
-const PaginationNext = ({ className, ...props }: React.ComponentProps<typeof PaginationLink>) => (
+const PaginationNext = ({
+  className,
+  label,
+  ...props
+}: React.ComponentProps<typeof PaginationLink>) => (
   <PaginationLink
     aria-label="Go to next page"
     className={cn('gap-1 pr-2.5', className)}
     size="default"
     {...props}
   >
-    <span>Next</span>
+    <span>{label || 'Next'}</span>
     <ChevronRight className="h-4 w-4" />
   </PaginationLink>
 )

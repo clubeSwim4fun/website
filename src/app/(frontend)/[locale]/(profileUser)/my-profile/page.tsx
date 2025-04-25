@@ -1,6 +1,6 @@
 import { UserAvatar } from '@/components/Avatar'
 import { UserDetails } from '@/components/User/user-details'
-import { UserEvents } from '@/components/User/user-events'
+import { UserFutureEvents } from '@/components/User/user-future-events'
 import { UserProfile } from '@/components/User/user-profile'
 import { GeneralConfig } from '@/payload-types'
 import { getCachedGlobal } from '@/utilities/getGlobals'
@@ -33,7 +33,7 @@ const UserPage = async () => {
           <UserProfile user={user} />
         </div>
         <div className="w-full lg:w-2/3">
-          <UserEvents userId={user.id} />
+          <UserFutureEvents userId={user.id} />
         </div>
       </div>
     </section>

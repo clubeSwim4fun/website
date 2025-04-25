@@ -39,7 +39,12 @@
       "groups": "Grupos"
     },
     "Events": {
-      "name": "Nome",
+      "title": "Meus próximos eventos",
+      "date": "Data",
+      "ticketName": "Bilhete",
+      "event": "Nome do evento",
+      "noDate": "Sem data",
+      "dorsal": "Nº Dorsal",
       "distance": "Distância"
     }
   },
@@ -59,6 +64,8 @@
     "close": "Fechar",
     "start": "Começo",
     "end": "Fim",
+    "previous": "Anterior",
+    "next": "Próxima",
     "required": "Mandatório",
     "unexpectedError": "Um erro inesperado aconteceu, por favor tente novamente!",
     "transactionError": "Erro interno ao criar transação, por favor informe o admin",

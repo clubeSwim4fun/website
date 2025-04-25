@@ -39,7 +39,12 @@
       "groups": "Groups"
     },
     "Events": {
-      "name": "Name",
+      "title": "My next events",
+      "date": "Date",
+      "ticketName": "Ticket",
+      "event": "Event name",
+      "noDate": "No date",
+      "dorsal": "Dorsal Number",
       "distance": "Distance"
     }
   },
@@ -59,6 +64,8 @@
     "close": "Close",
     "start": "Start",
     "end": "End",
+    "previous": "Previous",
+    "next": "Next",
     "required": "Required",
     "unexpectedError": "An unexpected error occurred, please try again!",
     "transactionError": "Internal Error while creating transaction, please contact an admin",

@@ -20,6 +20,7 @@ export const UserDetails: React.FC<{ user: User }> = async (props) => {
   const locale = await getLocale()
   const format = await getFormatter({ locale })
   const nationality = user.nationality as string
+  const countryCode = (await getCountryCode(nationality)) || 'PT'
 
   return (
     <article className="flex flex-col gap-4 w-full justify-center items-center lg:items-start">
@@ -42,10 +43,7 @@ export const UserDetails: React.FC<{ user: User }> = async (props) => {
             </div>
             <div className="col-span-4 flex flex-col">
               <strong className="capitalize">{t('nationality')}</strong>
-              <FlagComponent
-                country={getCountryCode(nationality) || 'PT'}
-                countryName={nationality}
-              />
+              <FlagComponent country={countryCode} countryName={nationality} />
             </div>
           </div>
           {/* Second line */}
