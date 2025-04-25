@@ -28,7 +28,7 @@ const UserPage = async ({ params }: { params: Promise<{ locale: string }> }) => 
   const user = userObject.user
   const initials = user.name.charAt(0) + user.surname.charAt(0)
   const profilePictureUrl = `${getClientSideURL()}/${
-    typeof user.profilePicture === 'object' ? user.profilePicture?.url : defaultAvatar.thumbnailURL
+    typeof user.profilePicture === 'object' ? user.profilePicture?.url : defaultAvatar?.thumbnailURL
   }`
 
   return (
