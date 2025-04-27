@@ -172,11 +172,14 @@ export const plugins: Plugin[] = [
         emailsToSend.map(async (email) => {
           const sanitinizedHtml = await replaceFields(email.html, submissionData)
           const renderedHtml = await render(
-            React.createElement(TemplateEmail, {
-              title: email.subject,
-              children: sanitinizedHtml,
-              hideLogo: true,
-            }),
+            React.createElement(
+              TemplateEmail,
+              {
+                title: email.subject,
+                hideLogo: true,
+              },
+              sanitinizedHtml,
+            ),
           )
           return {
             ...email,

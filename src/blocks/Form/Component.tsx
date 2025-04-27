@@ -8,7 +8,11 @@ import { getLocale } from 'next-intl/server'
 
 export async function FormBlock(props: { id?: string } & FormBlockType) {
   const locale = (await getLocale()) as TypedLocale
-  const generalConfigData: GeneralConfig = await getCachedGlobal('generalConfigs', 1, locale)()
+  const generalConfigData: GeneralConfig = (await getCachedGlobal(
+    'generalConfigs',
+    1,
+    locale,
+  )()) as GeneralConfig
 
   return <FormBlockClient {...props} generalConfigData={generalConfigData} />
 }
