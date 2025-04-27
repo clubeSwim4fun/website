@@ -3,7 +3,7 @@ import React from 'react'
 
 type Args = {
   title: string
-  children: React.ReactNode
+  children?: React.ReactNode
   hideLogo?: boolean
 }
 
