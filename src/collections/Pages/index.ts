@@ -21,6 +21,8 @@ import {
 import { isAdminOrEditor } from '@/access/isAdminOrEditor'
 import { isAdminEditorOrPublished } from '@/access/isAdminEditorOrPublished'
 import { CalendarBlock } from '@/blocks/Calendar/config'
+import { defaultLexical } from '@/fields/defaultLexical'
+import { link } from '@/fields/link'
 
 export const Pages: CollectionConfig<'pages'> = {
   slug: 'pages',
@@ -131,6 +133,60 @@ export const Pages: CollectionConfig<'pages'> = {
               titlePath: 'meta.title',
               descriptionPath: 'meta.description',
             }),
+          ],
+        },
+        {
+          name: 'visibility',
+          label: {
+            en: 'Page visibility',
+            pt: 'Visibilidade da página',
+          },
+          fields: [
+            {
+              type: 'row',
+              fields: [
+                {
+                  name: 'visibleFor',
+                  label: {
+                    en: 'Visible For:',
+                    pt: 'Visível Para:',
+                  },
+                  type: 'relationship',
+                  relationTo: ['groups', 'group-categories'],
+                  hasMany: true,
+                  admin: {
+                    width: '25%',
+                  },
+                },
+                {
+                  name: 'errorMessage',
+                  label: {
+                    en: 'Error message',
+                    pt: 'Mensagem de erro',
+                  },
+                  type: 'richText',
+                  editor: defaultLexical,
+                  admin: {
+                    width: '50%',
+                  },
+                },
+                {
+                  name: 'enableLink',
+                  label: {
+                    en: 'Enable Link?',
+                    pt: 'Habilitar Link?',
+                  },
+                  type: 'checkbox',
+                },
+                link({
+                  overrides: {
+                    admin: {
+                      condition: (_, { enableLink }) => Boolean(enableLink),
+                    },
+                  },
+                }),
+              ],
+            },
           ],
         },
       ],

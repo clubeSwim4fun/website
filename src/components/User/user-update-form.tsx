@@ -74,7 +74,7 @@ export const UserUpdateForm: React.FC<{ user: User }> = (props) => {
             render={({ field }) => (
               <div className="flex flex-col gap-2">
                 <Label htmlFor={`identityCardNumber`} className="capitalize text-sm font-semibold">
-                  {t('User.Details.phone')}
+                  {t('User.Details.identity')}
                 </Label>
                 <Input
                   {...field}
@@ -92,7 +92,7 @@ export const UserUpdateForm: React.FC<{ user: User }> = (props) => {
             render={({ field }) => (
               <div className="flex flex-col gap-2">
                 <Label htmlFor={`phoneNumber`} className="capitalize text-sm font-semibold">
-                  {t('User.Details.identity')}
+                  {t('User.Details.phone')}
                 </Label>
                 <Input
                   {...field}

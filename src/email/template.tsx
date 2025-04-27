@@ -4,9 +4,10 @@ import React from 'react'
 type Args = {
   title: string
   children: React.ReactNode
+  hideLogo?: boolean
 }
 
-export async function TemplateEmail({ children, title }: Args) {
+export async function TemplateEmail({ children, title, hideLogo }: Args) {
   const logo = await getLogo()
 
   return (
@@ -34,13 +35,19 @@ export async function TemplateEmail({ children, title }: Args) {
           }}
         >
           <h1 style={{ fontSize: '26px', fontWeight: 'bold', color: '#2D6CB3' }}>{title}</h1>
-          <img
-            src={'cid:logo'}
-            alt={typeof logo === 'string' ? logo : logo?.alt || ''}
-            style={{ display: 'block', marginLeft: 'auto', width: '60px', height: '60px' }}
-          />
+          {!hideLogo && (
+            <img
+              src={'cid:logo'}
+              alt={typeof logo === 'string' ? logo : logo?.alt || ''}
+              style={{ display: 'block', marginLeft: 'auto', width: '60px', height: '60px' }}
+            />
+          )}
         </div>
-        {children}
+        {typeof children === 'string' ? (
+          <main dangerouslySetInnerHTML={{ __html: children }} />
+        ) : (
+          children
+        )}
       </div>
     </div>
   )

@@ -9,6 +9,8 @@ import { revalidateRedirects } from '@/hooks/revalidateRedirects'
 import { GenerateTitle, GenerateURL } from '@payloadcms/plugin-seo/types'
 import { searchFields } from '@/search/fieldOverrides'
 import { beforeSyncWithSearch } from '@/search/beforeSync'
+import { render } from '@react-email/components'
+import React from 'react'
 
 import { Page, Post } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
@@ -24,6 +26,8 @@ import { Address } from '@/blocks/Form/Address/config'
 import { DatePicker } from '@/blocks/Form/Date/config'
 import { Email } from '@/blocks/Form/Email/config'
 import { defaultLexical } from '@/fields/defaultLexical'
+import { TemplateEmail } from '@/email/template'
+import { replaceFields } from '@/helpers/emailHelper'
 
 const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
   return doc?.title ? `${doc.title} | Payload Website Template` : 'Payload Website Template'
@@ -159,6 +163,37 @@ export const plugins: Plugin[] = [
           },
         ]
       },
+    },
+    beforeEmail: (emailsToSend, beforeChangeParams) => {
+      const {
+        data: { submissionData },
+      } = beforeChangeParams
+      const emailsToSendWithHtmlPromise = Promise.all(
+        emailsToSend.map(async (email) => {
+          const sanitinizedHtml = await replaceFields(email.html, submissionData)
+          const renderedHtml = await render(
+            React.createElement(TemplateEmail, {
+              title: email.subject,
+              children: sanitinizedHtml,
+              hideLogo: true,
+            }),
+          )
+          return {
+            ...email,
+            html: renderedHtml,
+          }
+        }),
+      )
+
+      emailsToSendWithHtmlPromise
+        .then(() => {
+          console.info('e-mails generated successfully')
+        })
+        .catch((error) => {
+          console.error('Error during email processing:', error)
+        })
+
+      return emailsToSendWithHtmlPromise
     },
   }),
   searchPlugin({

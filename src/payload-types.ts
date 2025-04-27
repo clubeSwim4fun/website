@@ -235,6 +235,66 @@ export interface Page {
     image?: (string | null) | Media;
     description?: string | null;
   };
+  visibility?: {
+    visibleFor?:
+      | (
+          | {
+              relationTo: 'groups';
+              value: string | Group;
+            }
+          | {
+              relationTo: 'group-categories';
+              value: string | GroupCategory;
+            }
+        )[]
+      | null;
+    errorMessage?: {
+      root: {
+        type: string;
+        children: {
+          type: string;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+    enableLink?: boolean | null;
+    link?: {
+      type?: ('reference' | 'custom') | null;
+      newTab?: boolean | null;
+      reference?:
+        | ({
+            relationTo: 'pages';
+            value: string | Page;
+          } | null)
+        | ({
+            relationTo: 'posts';
+            value: string | Post;
+          } | null);
+      url?: string | null;
+      label: string;
+      hasChildren?: boolean | null;
+      childrenPages?:
+        | {
+            reference: {
+              relationTo: 'pages';
+              value: string | Page;
+            };
+            label: string;
+            id?: string | null;
+          }[]
+        | null;
+      /**
+       * Choose how the link should be rendered.
+       */
+      appearance?: ('default' | 'outline') | null;
+    };
+  };
   parentPage?: (string | null) | Page;
   publishedAt?: string | null;
   slug?: string | null;
@@ -691,6 +751,7 @@ export interface User {
   disability?: (string | Disability)[] | null;
   wantsToBeFederado?: boolean | null;
   heardAboutClub?: (string | null) | AboutClub;
+  status?: ('active' | 'pendingPayment' | 'expired') | null;
   Address?: {
     street?: string | null;
     number?: string | null;
@@ -1131,6 +1192,7 @@ export interface Checkbox {
         | 'disability'
         | 'wantsToBeFederado'
         | 'heardAboutClub'
+        | 'status'
         | 'Address'
       )
     | null;
@@ -1166,6 +1228,7 @@ export interface Country {
         | 'disability'
         | 'wantsToBeFederado'
         | 'heardAboutClub'
+        | 'status'
         | 'Address'
       )
     | null;
@@ -1216,6 +1279,7 @@ export interface Number {
         | 'disability'
         | 'wantsToBeFederado'
         | 'heardAboutClub'
+        | 'status'
         | 'Address'
       )
     | null;
@@ -1261,6 +1325,7 @@ export interface Select {
         | 'disability'
         | 'wantsToBeFederado'
         | 'heardAboutClub'
+        | 'status'
         | 'Address'
       )
     | null;
@@ -1297,6 +1362,7 @@ export interface Text {
         | 'disability'
         | 'wantsToBeFederado'
         | 'heardAboutClub'
+        | 'status'
         | 'Address'
       )
     | null;
@@ -1346,6 +1412,7 @@ export interface Phone {
         | 'disability'
         | 'wantsToBeFederado'
         | 'heardAboutClub'
+        | 'status'
         | 'Address'
       )
     | null;
@@ -1382,6 +1449,7 @@ export interface MediaUpload {
         | 'disability'
         | 'wantsToBeFederado'
         | 'heardAboutClub'
+        | 'status'
         | 'Address'
       )
     | null;
@@ -1416,6 +1484,7 @@ export interface Address {
         | 'disability'
         | 'wantsToBeFederado'
         | 'heardAboutClub'
+        | 'status'
         | 'Address'
       )
     | null;
@@ -1465,6 +1534,7 @@ export interface DateField {
         | 'disability'
         | 'wantsToBeFederado'
         | 'heardAboutClub'
+        | 'status'
         | 'Address'
       )
     | null;
@@ -2209,6 +2279,31 @@ export interface PagesSelect<T extends boolean = true> {
         image?: T;
         description?: T;
       };
+  visibility?:
+    | T
+    | {
+        visibleFor?: T;
+        errorMessage?: T;
+        enableLink?: T;
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+              hasChildren?: T;
+              childrenPages?:
+                | T
+                | {
+                    reference?: T;
+                    label?: T;
+                    id?: T;
+                  };
+              appearance?: T;
+            };
+      };
   parentPage?: T;
   publishedAt?: T;
   slug?: T;
@@ -2495,6 +2590,7 @@ export interface UsersSelect<T extends boolean = true> {
   disability?: T;
   wantsToBeFederado?: T;
   heardAboutClub?: T;
+  status?: T;
   Address?:
     | T
     | {
@@ -3204,6 +3300,15 @@ export interface GeneralConfig {
       };
     };
   };
+  associationFees: {
+    registrationFee?: number | null;
+    monthlyFee: number;
+    /**
+     * This will be the max date that a user can pay the current month, if he/she is registering after this date, the payment will be calculated for the following month
+     */
+    limitDate: number;
+    periodicity: '1' | '3' | '12';
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -3338,6 +3443,14 @@ export interface GeneralConfigsSelect<T extends boolean = true> {
                     title?: T;
                   };
             };
+      };
+  associationFees?:
+    | T
+    | {
+        registrationFee?: T;
+        monthlyFee?: T;
+        limitDate?: T;
+        periodicity?: T;
       };
   updatedAt?: T;
   createdAt?: T;

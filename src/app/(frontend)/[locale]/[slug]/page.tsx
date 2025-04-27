@@ -11,6 +11,10 @@ import { RenderHero } from '@/heros/RenderHero'
 import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
+import { getMeUser } from '@/utilities/getMeUser'
+import { checkPageVisibility, PageVisibilityResponse } from '@/utilities/pageValidations'
+import { redirect } from 'next/navigation'
+import { RenderPermissionError } from '@/blocks/RenderPermissionError'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
@@ -47,6 +51,7 @@ export default async function Page({ params: paramsPromise }: Args) {
   const { isEnabled: draft } = await draftMode()
   const { slug = 'home', locale } = await paramsPromise
   const url = '/' + slug
+  const userObject = (await getMeUser()).user
 
   const page = await queryPageBySlug({
     slug,
@@ -57,15 +62,29 @@ export default async function Page({ params: paramsPromise }: Args) {
     return <PayloadRedirects url={url} />
   }
 
+  const canSeePage: PageVisibilityResponse = await checkPageVisibility({ user: userObject, page })
+
+  if (!canSeePage.success) {
+    if (canSeePage.message?.code === 401) {
+      redirect(`sign-in?callbackUrl=/${page.slug}`)
+    }
+  }
+
   const { hero, layout } = page
 
   return (
     <article className="pt-[104px] pb-24">
       <PageClient />
-      <PayloadRedirects disableNotFound url={url} />
-      {draft && <LivePreviewListener />}
-      <RenderHero {...hero} />
-      <RenderBlocks blocks={layout} />
+      {canSeePage.success ? (
+        <>
+          <PayloadRedirects disableNotFound url={url} />
+          {draft && <LivePreviewListener />}
+          <RenderHero {...hero} />
+          <RenderBlocks blocks={layout} />
+        </>
+      ) : (
+        <RenderPermissionError data={canSeePage} content={page.visibility} />
+      )}
     </article>
   )
 }

@@ -71,6 +71,7 @@
     "unexpectedError": "Um erro inesperado aconteceu, por favor tente novamente!",
     "transactionError": "Erro interno ao criar transação, por favor informe o admin",
     "loginAuthenticationError": "Utilizador ou senha inválidos",
+    "notAuthorized": "Utilizador não autorizado",
     "submit": "Submeter"
   },
   "Cart": {

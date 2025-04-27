@@ -61,7 +61,7 @@ export async function sendEmail({
     attachments: [
       {
         filename: 'logo.png', // File name as it should appear in the email
-        content: await generateBase64Image(logo.thumbnailURL || ''), // Attach the buffer data
+        content: await generateBase64Image(logo?.thumbnailURL || ''), // Attach the buffer data
         encoding: 'base64',
         cid: 'logo', // Content ID (matches the "cid" in the email HTML)
       },
@@ -71,4 +71,16 @@ export async function sendEmail({
 
   // TODO - add treatment to handle failed delivere envelops
   console.log('email', email)
+}
+
+export async function replaceFields(
+  input: string,
+  submissionData: Record<string, { value: string }>,
+): Promise<string> {
+  const fieldRegex = /\{(\w+)\}/g // Regular expression to find {field}
+
+  return input.replace(fieldRegex, (match, fieldName) => {
+    const field = submissionData[fieldName]
+    return field ? field.value : match
+  })
 }

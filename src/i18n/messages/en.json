@@ -71,6 +71,7 @@
     "unexpectedError": "An unexpected error occurred, please try again!",
     "transactionError": "Internal Error while creating transaction, please contact an admin",
     "loginAuthenticationError": "User or Password invalid",
+    "notAuthorized": "User not allowed",
     "submit": "Submit"
   },
   "Cart": {
