@@ -281,6 +281,42 @@ export const Users: CollectionConfig = {
       },
     },
     {
+      name: 'status',
+      label: {
+        en: 'Account status',
+        pt: 'Estado da conta',
+      },
+      type: 'select',
+      defaultValue: 'pendingPayment',
+      options: [
+        {
+          label: {
+            en: 'Active',
+            pt: 'Ativo',
+          },
+          value: 'active',
+        },
+        {
+          label: {
+            en: 'Pending payment',
+            pt: 'Pagamento pendente',
+          },
+          value: 'pendingPayment',
+        },
+        {
+          label: {
+            en: 'Expired',
+            pt: 'Expirado',
+          },
+          value: 'expired',
+        },
+      ],
+      admin: {
+        position: 'sidebar',
+        // readOnly: true,
+      },
+    },
+    {
       name: 'Address',
       label: {
         en: 'Address',

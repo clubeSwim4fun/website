@@ -13,6 +13,7 @@
     "Post": "Post",
     "Cart": "Carrinho",
     "MyProfile": "My Profile",
+    "Subscription": "My Profile - Payment",
     "Payment": "Pagamento",
     "Search": "Search"
   },
@@ -47,7 +48,9 @@
       "noDate": "Sem data",
       "dorsal": "Nº Dorsal",
       "distance": "Distância"
-    }
+    },
+    "pendingPayment": "Pagamento de inscrição pendente",
+    "paymentExpired": "Renove sua inscrição"
   },
   "Common": {
     "error": "Erro",

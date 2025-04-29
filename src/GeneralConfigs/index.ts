@@ -210,6 +210,25 @@ export const GeneralConfigs: GlobalConfig = {
                   ],
                 },
                 {
+                  name: 'subscription',
+                  label: {
+                    en: 'Subscription page',
+                    pt: 'Página pagamento do utilizador',
+                  },
+                  type: 'group',
+                  fields: [
+                    {
+                      name: 'title',
+                      localized: true,
+                      label: {
+                        en: 'Title',
+                        pt: 'Título',
+                      },
+                      type: 'text',
+                    },
+                  ],
+                },
+                {
                   name: 'payment',
                   label: {
                     en: 'Payment',

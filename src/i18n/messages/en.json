@@ -14,6 +14,7 @@
     "Post": "Post",
     "Payment": "Payment",
     "MyProfile": "My Profile",
+    "Subscription": "My Profile - Payment",
     "Search": "Search"
   },
   "User": {
@@ -47,7 +48,9 @@
       "noDate": "No date",
       "dorsal": "Dorsal Number",
       "distance": "Distance"
-    }
+    },
+    "pendingPayment": "Pending registration payment",
+    "paymentExpired": "Renove sua inscrição"
   },
   "Common": {
     "error": "Error",

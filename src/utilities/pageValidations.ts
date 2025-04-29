@@ -64,9 +64,22 @@ export const checkPageVisibility = async ({
       return visibilityGroupIds.includes(group.id)
     })
 
-  if (userHasValidyGroup) {
+  const userStatus = user.status
+
+  if (userHasValidyGroup && userStatus === 'active') {
     return {
       success: true,
+    }
+  }
+
+  if (userStatus !== 'active') {
+    return {
+      success: false,
+      message: {
+        code: 402,
+        message:
+          userStatus === 'pendingPayment' ? t('User.pendingPayment') : t('User.paymentExpired'),
+      },
     }
   }
 

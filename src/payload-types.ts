@@ -3292,6 +3292,9 @@ export interface GeneralConfig {
         useBadges?: boolean | null;
         avatar?: (string | null) | Media;
       };
+      subscription?: {
+        title?: string | null;
+      };
       payment?: {
         title?: string | null;
       };
@@ -3431,6 +3434,11 @@ export interface GeneralConfigsSelect<T extends boolean = true> {
                     title?: T;
                     useBadges?: T;
                     avatar?: T;
+                  };
+              subscription?:
+                | T
+                | {
+                    title?: T;
                   };
               payment?:
                 | T
