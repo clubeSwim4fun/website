@@ -97,7 +97,6 @@ export async function createUser(userData: CreateUserRequestType): Promise<Creat
               },
             })
 
-            // user_media/6803f94b94457162676e537a_event-image-3 - Copy-500x500.webp
             tempFilesToDelete.push(`user_media/${mediaToUpload.filename}`)
             if (mediaToUpload.sizes?.square) {
               tempFilesToDelete.push(`user_media/${mediaToUpload.sizes.square.filename}`)

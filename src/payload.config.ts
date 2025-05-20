@@ -34,6 +34,7 @@ import { GeneralConfigs } from './GeneralConfigs'
 import { Disability } from './collections/Users/Disability'
 import { AboutClub } from './collections/Users/HeardAboutClub'
 import { FederationHistory } from './collections/Users/FederationHistory'
+import { Subscription } from './collections/Users/Subscription'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -94,6 +95,7 @@ export default buildConfig({
     Gender,
     Disability,
     AboutClub,
+    Subscription,
   ],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer, GeneralConfigs],

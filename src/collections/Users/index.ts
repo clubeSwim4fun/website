@@ -30,7 +30,7 @@ export const Users: CollectionConfig = {
     update: authenticated,
   },
   admin: {
-    defaultColumns: ['name', 'email', 'role', 'groups', 'createdAt', 'updatedAt'],
+    defaultColumns: ['name', 'status', 'email', 'role', 'groups', 'createdAt', 'updatedAt'],
     useAsTitle: 'name',
   },
   auth: true,

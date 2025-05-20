@@ -200,12 +200,57 @@ export const getUserPaymentAmount = async ({
   }
 
   if (user?.status === 'expired') {
-    // TODO add logic to renew
+    const monthlyData = await getMonthlyData({
+      monthlyFee,
+      periodicityNumber,
+      limitDate,
+      payForCurrentMonth,
+    })
+
+    return {
+      amount: monthlyData.amount,
+      startDate: monthlyData.startDate,
+      endDate: monthlyData.endDate,
+    }
   }
 
   return {
     amount: 0,
     startDate: new Date(Date.UTC(new Date().getFullYear(), 0, 1)),
     endDate: new Date(Date.UTC(new Date().getFullYear(), 11, 31)),
+  }
+}
+
+export const verifyUserStatus = async (user?: User) => {
+  const payload = await getPayload({ config })
+
+  if (user && user.status === 'active') {
+    const today = new Date()
+    const result = await payload.find({
+      collection: 'subscription',
+      sort: '-endDate',
+      limit: 1,
+      where: {
+        user: {
+          equals: user.id,
+        },
+      },
+    })
+
+    const lastPaidFee = result.docs[0]
+    const lastSubscriptionDay = lastPaidFee?.endDate ? new Date(lastPaidFee.endDate) : undefined
+    if (!lastSubscriptionDay || today > lastSubscriptionDay) {
+      await payload.update({
+        collection: 'users',
+        data: {
+          status: 'expired',
+        },
+        where: {
+          id: {
+            equals: user.id,
+          },
+        },
+      })
+    }
   }
 }

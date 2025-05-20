@@ -1,10 +1,11 @@
 'use server'
 
-import { AuthenticationError, getPayload } from 'payload'
+import { getPayload } from 'payload'
 import config from '@payload-config'
 import { cookies } from 'next/headers'
 import { User } from '@/payload-types'
 import { getTranslations } from 'next-intl/server'
+import { verifyUserStatus } from '@/helpers/userHelper'
 
 interface LoginParams {
   email: string
@@ -38,6 +39,8 @@ export async function login({ email, password }: LoginParams): Promise<LoginResp
         secure: process.env.NODE_ENV === 'production',
         path: '/',
       })
+
+      await verifyUserStatus(result.user)
 
       return { success: true }
     } else {

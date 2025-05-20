@@ -138,6 +138,14 @@
     "description": "The page you are looking for does not exist.",
     "goHome": "Go to home page"
   },
+  "Subscription": {
+    "title": "Subscription Payment",
+    "userTitle": "Hello {username},",
+    "description": "you have to pay: {price, number, currency}",
+    "descriptionDate": "corresponding to: {dateRange}",
+    "payForCurrentMonth": "I want to pay current month.",
+    "allRightText": "That is all for now, thank you!"
+  },
   "Calendar": {
     "noDayFound": "No day found.",
     "addEvent": "Add Event",

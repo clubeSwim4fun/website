@@ -83,6 +83,7 @@ export interface Config {
     gender: Gender;
     disability: Disability;
     aboutClub: AboutClub;
+    subscription: Subscription;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -110,6 +111,7 @@ export interface Config {
     gender: GenderSelect<false> | GenderSelect<true>;
     disability: DisabilitySelect<false> | DisabilitySelect<true>;
     aboutClub: AboutClubSelect<false> | AboutClubSelect<true>;
+    subscription: SubscriptionSelect<false> | SubscriptionSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -1929,6 +1931,20 @@ export interface Order {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "subscription".
+ */
+export interface Subscription {
+  id: string;
+  user?: (string | null) | User;
+  type: 'memberFee' | 'pool';
+  amount: number;
+  startDate: string;
+  endDate: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -2163,6 +2179,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'aboutClub';
         value: string | AboutClub;
+      } | null)
+    | ({
+        relationTo: 'subscription';
+        value: string | Subscription;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -2803,6 +2823,19 @@ export interface AboutClubSelect<T extends boolean = true> {
   label?: T;
   value?: T;
   hiddenId?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "subscription_select".
+ */
+export interface SubscriptionSelect<T extends boolean = true> {
+  user?: T;
+  type?: T;
+  amount?: T;
+  startDate?: T;
+  endDate?: T;
   updatedAt?: T;
   createdAt?: T;
 }

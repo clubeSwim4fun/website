@@ -138,6 +138,14 @@
     "description": "Desculpe, a página que está à procura não existe.",
     "goHome": "Voltar para a página inicial"
   },
+  "Subscription": {
+    "title": "Pagamento de Subscrição",
+    "userTitle": "Olá {username},",
+    "description": "você tem que pagar: {price, number, currency}",
+    "descriptionDate": "referente ao período de: {dateRange}",
+    "payForCurrentMonth": "Eu quero pagar o mês atual.",
+    "allRightText": "Isso é tudo por agora, obrigado!"
+  },
   "Calendar": {
     "noDayFound": "Nenhum dia encontrado.",
     "addEvent": "Add Evento",
