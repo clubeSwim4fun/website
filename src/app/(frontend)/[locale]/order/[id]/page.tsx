@@ -58,7 +58,7 @@ export default async function Event({ params: paramsPromise }: Args) {
         <p className="w-full text-right text-bold">
           {t(
             'totalSpent',
-            { price: order.docs[0]?.total || 10 },
+            { price: order.docs[0]?.total || 0 },
             { number: { currency: { style: 'currency', currency: 'EUR' } } },
           )}
         </p>

@@ -41,20 +41,20 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, user }) => {
     }
   }, [lastScrollY])
 
-  useEffect(() => {
-    setHeaderTheme(null)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname])
+  // useEffect(() => {
+  //   setHeaderTheme('light')
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [pathname])
 
-  useEffect(() => {
-    if (headerTheme && headerTheme !== theme) setTheme(headerTheme)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [headerTheme])
+  // useEffect(() => {
+  //   if (headerTheme && headerTheme !== theme) setTheme(headerTheme)
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [headerTheme])
 
   return (
     <header
       className={`${showMenu ? 'transform translate-y-0' : 'transform -translate-y-full'}
-         fixed duration-500 z-20 w-full bg-white dark:bg-blue-950
+         fixed duration-500 z-20 w-full bg-white
         `}
       {...(theme ? { 'data-theme': theme } : {})}
     >

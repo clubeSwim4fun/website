@@ -15,15 +15,18 @@ export const InitTheme: React.FC = () => {
       var mql = window.matchMedia(mediaQuery)
       var hasImplicitPreference = typeof mql.matches === 'boolean'
 
+    // In the future to add theme back just do: || theme === 'dark'
       if (hasImplicitPreference) {
-        return mql.matches ? 'dark' : 'light'
+        // return mql.matches ? 'dark' : 'light'
+        return theme === 'light'
       }
 
       return null
     }
 
+    // In the future to add theme back just do: || theme === 'dark'
     function themeIsValid(theme) {
-      return theme === 'light' || theme === 'dark'
+      return theme === 'light'
     }
 
     var themeToSet = '${defaultTheme}'

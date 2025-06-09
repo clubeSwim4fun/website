@@ -50,7 +50,7 @@
     --blue-swim: 193, 51%, 46%;
   }
 
-  [data-theme='dark'] {
+  [data-theme='dark-old'] {
     --background: 0 0% 0%;
     --foreground: 210 40% 98%;
 
