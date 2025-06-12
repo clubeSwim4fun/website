@@ -170,6 +170,9 @@ export const plugins: Plugin[] = [
       } = beforeChangeParams
       const emailsToSendWithHtmlPromise = Promise.all(
         emailsToSend.map(async (email) => {
+          if (email.to.includes('{email}')) {
+            email.to = email.to.replace('{email}', submissionData.email.value || '')
+          }
           const sanitinizedHtml = await replaceFields(email.html, submissionData)
           const renderedHtml = await render(
             React.createElement(
@@ -181,6 +184,7 @@ export const plugins: Plugin[] = [
               sanitinizedHtml,
             ),
           )
+
           return {
             ...email,
             html: renderedHtml,
