@@ -110,7 +110,19 @@
   },
   "Email": {
     "dearUser": "Dear {name} {surname}",
-    "thankYouMessage": "Thank you for shopping with us!"
+    "thankYouMessage": "Thank you for shopping with us!",
+    "FixRegistration": {
+      "subject": "Update your registration",
+      "title": "Please update your registration",
+      "description": "We found some issues with your registration, please update your profile.",
+      "button": "Update Profile"
+    },
+    "RegistrationPayment": {
+      "subject": "Your account is approved",
+      "title": "Your account is approved",
+      "description": "Your account has been approved, you can now proceed to payment.",
+      "button": "Pay Now"
+    }
   },
   "Order": {
     "title": "Order Confirmation",

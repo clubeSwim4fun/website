@@ -110,7 +110,19 @@
   },
   "Email": {
     "dearUser": "Prezado(a) {name} {surname}",
-    "thankYouMessage": "Obrigado por comprar conosco!"
+    "thankYouMessage": "Obrigado por comprar conosco!",
+    "FixRegistration": {
+      "subject": "Atualize seu registo",
+      "title": "Por favor, atualize seu registo",
+      "description": "Encontramos alguns problemas com o seu registo, por favor atualize o seu perfil.",
+      "button": "Atualizar Perfil"
+    },
+    "RegistrationPayment": {
+      "subject": "Sua conta está aprovada",
+      "title": "Sua conta está aprovada",
+      "description": "Obrigado por se inscrever! Por favor, efetue o pagamento para completar a sua inscrição.",
+      "button": "Pagar agora"
+    }
   },
   "Order": {
     "title": "Confirmação de Encomenda",

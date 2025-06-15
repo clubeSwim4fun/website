@@ -9,6 +9,11 @@ import { User } from '@/payload-types'
 import { anyone } from '@/access/anyone'
 import autoIncrement from './hooks/autoIncrement'
 import saveFederationHistory from './hooks/federationHistory'
+import { sendEmail } from '@/helpers/emailHelper'
+import React from 'react'
+import { render } from '@react-email/components'
+import { UserRegistration } from '@/email/userRegistration'
+import { getTranslations } from 'next-intl/server'
 
 export const Users: CollectionConfig = {
   slug: 'users',
@@ -493,22 +498,25 @@ export const Users: CollectionConfig = {
   ],
   hooks: {
     beforeChange: [autoIncrement, saveFederationHistory],
-    // TODO - Use this hook to trigger the email based on user status
-    // afterChange: [
-    //   async ({doc, previousDoc, operation, req}) => {
-    //     console.log('doc:', doc);
-    //     if (operation === 'update' && doc.status !== previousDoc?.status) {
-    //       const payload = req.payload;
-    //       await payload.update({
-    //         collection: 'users',
-    //         id: doc.id,
-    //         data: {
-    //           status: doc.status,
-    //         },
-    //       })
-    //     }
-    //   }
-    // ]
+    afterChange: [
+      async ({ doc, previousDoc, operation }) => {
+        const t = await getTranslations({ locale: 'pt', namespace: 'Email' })
+        if (operation === 'update' && doc.status !== previousDoc?.status) {
+          if (doc.status === 'pendingUpdate' || doc.status === 'pendingPayment') {
+            // Send email to user to update their information
+            const emailHtml = await render(React.createElement(UserRegistration, { user: doc }))
+
+            await sendEmail({
+              emailHtml,
+              subject: t(
+                `${doc.status === 'pendingUpdate' ? 'FixRegistration' : 'RegistrationPayment'}.subject`,
+              ),
+              to: doc.email,
+            })
+          }
+        }
+      },
+    ],
   },
   timestamps: true,
 }
