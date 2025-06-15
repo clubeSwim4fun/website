@@ -501,6 +501,7 @@ export const Users: CollectionConfig = {
     afterChange: [
       async ({ doc, previousDoc, operation }) => {
         const t = await getTranslations({ locale: 'pt', namespace: 'Email' })
+
         if (operation === 'update' && doc.status !== previousDoc?.status) {
           if (doc.status === 'pendingUpdate' || doc.status === 'pendingPayment') {
             // Send email to user to update their information
