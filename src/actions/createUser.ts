@@ -4,6 +4,7 @@ import { getPayload, User } from 'payload'
 import config from '@payload-config'
 import AWS from 'aws-sdk'
 import { getTranslations } from 'next-intl/server'
+import { uploadUserFiles } from '@/helpers/userHelper'
 
 interface CreateUserResponse {
   success: boolean
@@ -26,7 +27,7 @@ const s3 = new AWS.S3({
   region: process.env.S3_REGION,
 })
 
-const deleteS3Files = async (files: string[]) => {
+export const deleteS3Files = async (files: string[]) => {
   const deletePromises = files.map((fileKey) =>
     s3
       .deleteObject({
@@ -41,7 +42,7 @@ const deleteS3Files = async (files: string[]) => {
 
 export async function createUser(userData: CreateUserRequestType): Promise<CreateUserResponse> {
   const payload = await getPayload({ config })
-  const tempFilesToDelete: string[] = []
+  let tempFilesToDelete: string[] = []
   const transactionID = await payload.db.beginTransaction()
   const t = await getTranslations()
 
@@ -78,44 +79,12 @@ export async function createUser(userData: CreateUserRequestType): Promise<Creat
       if (Array.isArray(data.value)) {
         const files = data.value
 
-        for (const file of files) {
-          const fileBuffer = await file?.arrayBuffer()
-
-          if (fileBuffer) {
-            const mediaToUpload = await payload.create({
-              req: { transactionID },
-              collection: 'user-media',
-              data: {
-                alt: `${name}_image`,
-                user: createdUser.id,
-              },
-              file: {
-                data: Buffer.from(fileBuffer),
-                name: file.name,
-                mimetype: file.type,
-                size: file.size,
-              },
-            })
-
-            tempFilesToDelete.push(`user_media/${mediaToUpload.filename}`)
-            if (mediaToUpload.sizes?.square) {
-              tempFilesToDelete.push(`user_media/${mediaToUpload.sizes.square.filename}`)
-            }
-
-            await payload.update({
-              req: { transactionID },
-              collection: 'users',
-              data: {
-                [data.relatesTo]: mediaToUpload.id,
-              },
-              where: {
-                id: {
-                  equals: createdUser.id,
-                },
-              },
-            })
-          }
-        }
+        tempFilesToDelete = await uploadUserFiles({
+          transactionID,
+          files,
+          user: createdUser,
+          dataRelatesTo: data.relatesTo,
+        })
       }
     }
 

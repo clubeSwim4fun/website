@@ -23,6 +23,8 @@
       "myData": "My Personal information",
       "myAddress": "My Address",
       "identity": "Identity card:",
+      "profilePicture": "Profile Picture:",
+      "disability": "Disability:",
       "nif": "NIF:",
       "nationality": "Nationality:",
       "phone": "Phone Number:",
@@ -50,6 +52,7 @@
       "distance": "Distance"
     },
     "pendingPayment": "Pending registration payment",
+    "pendingAnalysis": "Our team is reviewing your registration, please wait for confirmation.",
     "paymentExpired": "Renove sua inscrição"
   },
   "Common": {
@@ -58,9 +61,12 @@
     "warning": "Warning",
     "info": "Info",
     "loading": "Loading...",
+    "update": "Update",
     "save": "Save",
     "ok": "OK",
     "cancel": "Cancel",
+    "approve": "Approve",
+    "reject": "Reject",
     "yes": "Yes",
     "no": "No",
     "remove": "Remove",
@@ -144,7 +150,9 @@
     "description": "you have to pay: {price, number, currency}",
     "descriptionDate": "corresponding to: {dateRange}",
     "payForCurrentMonth": "I want to pay current month.",
-    "allRightText": "That is all for now, thank you!"
+    "allRightText": "That is all for now, thank you!",
+    "pendingUpdate": "We found some issues with your registration, please update your profile.",
+    "pendingAnalysis": "Our team is reviewing your registration, please wait for confirmation."
   },
   "Calendar": {
     "noDayFound": "No day found.",

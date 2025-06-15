@@ -14,7 +14,7 @@ const SignInPage = async (props: { searchParams: Promise<{ callbackUrl: string }
 
   const login = globalConfig?.settings?.login
 
-  if (session.token) {
+  if (session.token && session.user) {
     return redirect(callbackUrl || '/')
   }
 

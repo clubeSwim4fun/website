@@ -18,7 +18,7 @@ export const InitTheme: React.FC = () => {
     // In the future to add theme back just do: || theme === 'dark'
       if (hasImplicitPreference) {
         // return mql.matches ? 'dark' : 'light'
-        return theme === 'light'
+        return 'light'
       }
 
       return null

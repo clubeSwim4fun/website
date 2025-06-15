@@ -22,7 +22,9 @@
     "Details": {
       "myData": "Meus Dados Pessoais",
       "myAddress": "Minha Morada",
+      "profilePicture": "Foto de Perfil:",
       "identity": "Doc. Identificação:",
+      "disability": "Deficiência:",
       "nif": "NIF:",
       "nationality": "Nacionalidade:",
       "phone": "Telefone:",
@@ -50,6 +52,7 @@
       "distance": "Distância"
     },
     "pendingPayment": "Pagamento de inscrição pendente",
+    "pendingAnalysis": "Nossa equipe está analisando seu registo, por favor aguarde a confirmação.",
     "paymentExpired": "Renove sua inscrição"
   },
   "Common": {
@@ -58,11 +61,14 @@
     "warning": "Aviso",
     "info": "Informação",
     "loading": "A carregar...",
+    "update": "Atualizar",
     "save": "Guardar",
     "ok": "OK",
     "cancel": "Cancelar",
     "yes": "Sim",
     "no": "Não",
+    "approve": "Aprovar",
+    "reject": "Reprovar ",
     "remove": "Remover",
     "delete": "Deletar",
     "close": "Fechar",
@@ -144,7 +150,9 @@
     "description": "você tem que pagar: {price, number, currency}",
     "descriptionDate": "referente ao período de: {dateRange}",
     "payForCurrentMonth": "Eu quero pagar o mês atual.",
-    "allRightText": "Isso é tudo por agora, obrigado!"
+    "allRightText": "Isso é tudo por agora, obrigado!",
+    "pendingAnalysis": "Nossa equipa está a analisar seu registo, por favor aguarde a confirmação.",
+    "pendingUpdate": "Encontramos alguns problemas com o seu registo, por favor atualize o seu perfil."
   },
   "Calendar": {
     "noDayFound": "Nenhum dia encontrado.",

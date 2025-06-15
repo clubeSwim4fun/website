@@ -1,11 +1,12 @@
 'use server'
 
-import { Event, Ticket, User } from '@/payload-types'
+import { Event, Gender, Ticket, User } from '@/payload-types'
 import COUNTRY_LIST from '@/utilities/countryList'
 import config from '@/payload.config'
 import { getPayload } from 'payload'
-import { UserFormData } from '@/components/User/user-update-form'
 import { revalidatePath } from 'next/cache'
+import { deleteS3Files } from '@/actions/createUser'
+import { getLocale, getTranslations } from 'next-intl/server'
 
 export type UserEvents = {
   eventDate?: Date | null
@@ -81,24 +82,114 @@ export const getUserFutureEvents = async ({
   return { events: userEvents, totalPages: ordersCollection.totalPages }
 }
 
-export const updateUserData = async ({ user, userId }: { user: UserFormData; userId: string }) => {
+type UserData = {
+  nif?: string | null
+  identityCardNumber?: string | null
+  identityCardFile?: File[] | null
+  profilePicture?: File[] | null
+  disability?: string | null
+  nationality?: string | null
+  birthDate?: Date
+  phoneNumber?: string | null
+  gender?: string | Gender | null
+  address: {
+    street?: string | null
+    number?: string | null
+    state?: string | null
+    zipcode?: string | null
+  }
+}
+
+export const updateUserData = async ({
+  user,
+  data,
+  isRegistrationFix,
+}: {
+  user: User
+  data: UserData
+  isRegistrationFix?: boolean
+}) => {
   const payload = await getPayload({ config })
+  let tempFilesToDelete: string[] = []
+  const transactionID = await payload.db.beginTransaction()
+  const t = await getTranslations()
+  const locale = await getLocale()
 
-  await payload.update({
-    collection: 'users',
-    data: {
-      identity: user.identityCardNumber,
-      phone: user.phoneNumber,
-      Address: user.address,
-    },
-    where: {
-      id: {
-        equals: userId,
+  if (!transactionID) {
+    return {
+      success: false,
+      error: t('Common.transactionError'),
+    }
+  }
+
+  try {
+    // Ensure nationality is one of the allowed values or undefined/null
+    const allowedNationalities = COUNTRY_LIST.map((c) => c.name)
+    const nationalityValue =
+      data.nationality && allowedNationalities.includes(data.nationality)
+        ? (data.nationality as User['nationality'])
+        : undefined
+
+    const dataToUpdate = isRegistrationFix
+      ? {
+          status: 'pendingAnalysis' as User['status'],
+          fieldsToUpdate: [],
+          nif: data.nif,
+          identity: data.identityCardNumber,
+          disability: data.disability
+            ? Array.isArray(data.disability)
+              ? data.disability
+              : [data.disability]
+            : undefined,
+          nationality: nationalityValue,
+          phoneNumber: data.phoneNumber,
+          gender: data.gender,
+          Address: data.address,
+        }
+      : {
+          identity: data.identityCardNumber,
+          phone: data.phoneNumber,
+          Address: data.address,
+        }
+
+    await payload.update({
+      collection: 'users',
+      req: { transactionID },
+      data: dataToUpdate,
+      where: {
+        id: {
+          equals: user.id,
+        },
       },
-    },
-  })
+    })
 
-  revalidatePath('/pt/my-profle')
+    if (data.identityCardFile) {
+      tempFilesToDelete = await uploadUserFiles({
+        transactionID,
+        files: data.identityCardFile,
+        user,
+        dataRelatesTo: 'identityFile',
+      })
+    }
+
+    if (data.profilePicture) {
+      tempFilesToDelete = await uploadUserFiles({
+        transactionID,
+        files: data.profilePicture,
+        user,
+        dataRelatesTo: 'profilePicture',
+      })
+    }
+
+    await payload.db.commitTransaction(transactionID)
+
+    revalidatePath(`/${locale}/${isRegistrationFix ? 'subscription' : 'my-profle'}`)
+  } catch (error) {
+    console.error('Error updating user data:', error)
+    await payload.db.rollbackTransaction(transactionID)
+
+    await deleteS3Files(tempFilesToDelete)
+  }
 }
 
 export type FeeDataResponse = { amount: number; startDate: Date; endDate: Date }
@@ -253,4 +344,64 @@ export const verifyUserStatus = async (user?: User) => {
       })
     }
   }
+}
+
+export const uploadUserFiles = async ({
+  transactionID,
+  files,
+  user,
+  dataRelatesTo,
+}: {
+  transactionID: string | number
+  files: File[]
+  user: User
+  dataRelatesTo: string
+}): Promise<string[]> => {
+  const payload = await getPayload({ config })
+
+  const tempFilesToDelete: string[] = []
+  const mediaToUploadIds: string[] = []
+
+  for (const file of files) {
+    const fileBuffer = await file?.arrayBuffer()
+
+    if (fileBuffer) {
+      const mediaToUpload = await payload.create({
+        req: { transactionID },
+        collection: 'user-media',
+        data: {
+          alt: `${user.name}_image`,
+          user: user.id,
+        },
+        file: {
+          data: Buffer.from(fileBuffer),
+          name: file.name,
+          mimetype: file.type,
+          size: file.size,
+        },
+      })
+
+      tempFilesToDelete.push(`user_media/${mediaToUpload.filename}`)
+      if (mediaToUpload.sizes?.square) {
+        tempFilesToDelete.push(`user_media/${mediaToUpload.sizes.square.filename}`)
+      }
+
+      mediaToUploadIds.push(mediaToUpload.id)
+    }
+  }
+
+  await payload.update({
+    req: { transactionID },
+    collection: 'users',
+    data: {
+      [dataRelatesTo]: dataRelatesTo === 'profilePicture' ? mediaToUploadIds[0] : mediaToUploadIds,
+    },
+    where: {
+      id: {
+        equals: user.id,
+      },
+    },
+  })
+
+  return tempFilesToDelete
 }

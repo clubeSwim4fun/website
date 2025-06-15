@@ -730,7 +730,7 @@ export interface User {
     | null;
   phone?: string | null;
   identity?: string | null;
-  identityFile?: (string | null) | UserMedia;
+  identityFile?: (string | UserMedia)[] | null;
   associateId?: number | null;
   federationId?: number | null;
   profilePicture?: (string | null) | UserMedia;
@@ -753,7 +753,21 @@ export interface User {
   disability?: (string | Disability)[] | null;
   wantsToBeFederado?: boolean | null;
   heardAboutClub?: (string | null) | AboutClub;
-  status?: ('active' | 'pendingPayment' | 'expired') | null;
+  status?: ('active' | 'pendingAnalysis' | 'pendingUpdate' | 'pendingPayment' | 'expired') | null;
+  fieldsToUpdate?:
+    | (
+        | 'nationality'
+        | 'phoneNumber'
+        | 'identityCardNumber'
+        | 'identityCardFile'
+        | 'profilePicture'
+        | 'nif'
+        | 'disability'
+        | 'phoneNumber'
+        | 'gender'
+        | 'address'
+      )[]
+    | null;
   Address?: {
     street?: string | null;
     number?: string | null;
@@ -1195,6 +1209,8 @@ export interface Checkbox {
         | 'wantsToBeFederado'
         | 'heardAboutClub'
         | 'status'
+        | 'validated'
+        | 'fieldsToUpdate'
         | 'Address'
       )
     | null;
@@ -1231,6 +1247,8 @@ export interface Country {
         | 'wantsToBeFederado'
         | 'heardAboutClub'
         | 'status'
+        | 'validated'
+        | 'fieldsToUpdate'
         | 'Address'
       )
     | null;
@@ -1282,6 +1300,8 @@ export interface Number {
         | 'wantsToBeFederado'
         | 'heardAboutClub'
         | 'status'
+        | 'validated'
+        | 'fieldsToUpdate'
         | 'Address'
       )
     | null;
@@ -1328,6 +1348,8 @@ export interface Select {
         | 'wantsToBeFederado'
         | 'heardAboutClub'
         | 'status'
+        | 'validated'
+        | 'fieldsToUpdate'
         | 'Address'
       )
     | null;
@@ -1365,6 +1387,8 @@ export interface Text {
         | 'wantsToBeFederado'
         | 'heardAboutClub'
         | 'status'
+        | 'validated'
+        | 'fieldsToUpdate'
         | 'Address'
       )
     | null;
@@ -1415,6 +1439,8 @@ export interface Phone {
         | 'wantsToBeFederado'
         | 'heardAboutClub'
         | 'status'
+        | 'validated'
+        | 'fieldsToUpdate'
         | 'Address'
       )
     | null;
@@ -1452,6 +1478,8 @@ export interface MediaUpload {
         | 'wantsToBeFederado'
         | 'heardAboutClub'
         | 'status'
+        | 'validated'
+        | 'fieldsToUpdate'
         | 'Address'
       )
     | null;
@@ -1487,6 +1515,8 @@ export interface Address {
         | 'wantsToBeFederado'
         | 'heardAboutClub'
         | 'status'
+        | 'validated'
+        | 'fieldsToUpdate'
         | 'Address'
       )
     | null;
@@ -1537,6 +1567,8 @@ export interface DateField {
         | 'wantsToBeFederado'
         | 'heardAboutClub'
         | 'status'
+        | 'validated'
+        | 'fieldsToUpdate'
         | 'Address'
       )
     | null;
@@ -2611,6 +2643,7 @@ export interface UsersSelect<T extends boolean = true> {
   wantsToBeFederado?: T;
   heardAboutClub?: T;
   status?: T;
+  fieldsToUpdate?: T;
   Address?:
     | T
     | {

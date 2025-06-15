@@ -27,8 +27,8 @@ export const Country: React.FC<
   const t = useTranslations()
 
   return (
-    <Width width={width}>
-      <Label className="" htmlFor={name}>
+    <Width width={width} className="gap-2 flex flex-col">
+      <Label className="capitalize" htmlFor={name}>
         {label}
 
         {required && (

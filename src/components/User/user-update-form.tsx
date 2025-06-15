@@ -51,7 +51,7 @@ export const UserUpdateForm: React.FC<{ user: User }> = (props) => {
   })
 
   const onSubmit: SubmitHandler<UserFormData> = async (data) => {
-    await updateUserData({ user: data, userId: user.id })
+    await updateUserData({ data, user: user })
     setOpen(false)
   }
 

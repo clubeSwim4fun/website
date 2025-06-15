@@ -297,7 +297,7 @@ function FileCard({ file, progress, onRemove, disabled }: FileCardProps) {
           disabled={disabled}
         >
           <X className="size-4" aria-hidden="true" />
-          <span className="sr-only">{t('removeFile')}</span>
+          <span className="sr-only">{t('FileUploader.removeFile')}</span>
         </Button>
       </div>
     </div>

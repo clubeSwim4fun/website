@@ -68,7 +68,7 @@ type Args = {
 }
 
 export const RenderPermissionError: React.FC<Args> = (props) => {
-  const { data, content } = props
+  const { content } = props
 
   const errorMessage = content?.errorMessage
   const enableLink = content?.enableLink

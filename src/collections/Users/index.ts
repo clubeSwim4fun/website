@@ -1,4 +1,4 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig, Payload, PayloadComponent } from 'payload'
 
 import { authenticated } from '../../access/authenticated'
 import COUNTRY_LIST from '@/utilities/countryList'
@@ -109,6 +109,7 @@ export const Users: CollectionConfig = {
           },
           type: 'upload',
           relationTo: 'user-media',
+          hasMany: true,
           admin: {
             width: '40%',
           },
@@ -287,7 +288,7 @@ export const Users: CollectionConfig = {
         pt: 'Estado da conta',
       },
       type: 'select',
-      defaultValue: 'pendingPayment',
+      defaultValue: 'pendingAnalysis',
       options: [
         {
           label: {
@@ -295,6 +296,20 @@ export const Users: CollectionConfig = {
             pt: 'Ativo',
           },
           value: 'active',
+        },
+        {
+          label: {
+            en: 'Pending analysis',
+            pt: 'Análise pendente',
+          },
+          value: 'pendingAnalysis',
+        },
+        {
+          label: {
+            en: 'Pending user update',
+            pt: 'Pendente com utilizador',
+          },
+          value: 'pendingUpdate',
         },
         {
           label: {
@@ -314,6 +329,106 @@ export const Users: CollectionConfig = {
       admin: {
         position: 'sidebar',
         // readOnly: true,
+      },
+    },
+    {
+      name: 'validated',
+      type: 'ui',
+      label: {
+        en: 'Validate User',
+        pt: 'Valide Utilizador',
+      },
+      admin: {
+        position: 'sidebar',
+        condition: (_, siblingData) => {
+          return siblingData.status === 'pendingAnalysis'
+        },
+        components: {
+          Field: 'src/components/admin/ValidateUser/ValidationControls',
+        },
+      },
+    },
+    {
+      name: 'fieldsToUpdate',
+      type: 'select',
+      options: [
+        {
+          value: 'nationality',
+          label: {
+            en: 'Nationality',
+            pt: 'Nacionalidade',
+          },
+        },
+        {
+          value: 'phoneNumber',
+          label: {
+            en: 'Phone',
+            pt: 'Telemóvel',
+          },
+        },
+        {
+          value: 'identityCardNumber',
+          label: {
+            en: 'identity card number',
+            pt: 'Nº Documento Identificação',
+          },
+        },
+        {
+          value: 'identityCardFile',
+          label: {
+            en: 'Identity card copy',
+            pt: 'Fotocópia do Documento Identificação',
+          },
+        },
+        {
+          value: 'profilePicture',
+          label: {
+            en: 'Profile picture',
+            pt: 'Foto do Perfil',
+          },
+        },
+        {
+          value: 'nif',
+          label: {
+            en: 'NIF',
+            pt: 'NIF',
+          },
+        },
+        {
+          value: 'disability',
+          label: {
+            en: 'Disabilities',
+            pt: 'Categorias de Deficiência',
+          },
+        },
+        {
+          value: 'phoneNumber',
+          label: {
+            en: 'Phone number',
+            pt: 'Número de telefone',
+          },
+        },
+        {
+          value: 'gender',
+          label: {
+            en: 'Gender',
+            pt: 'Genero',
+          },
+        },
+        {
+          value: 'address',
+          label: {
+            en: 'Address',
+            pt: 'Morada',
+          },
+        },
+      ],
+      hasMany: true,
+      admin: {
+        position: 'sidebar',
+        condition: (_, siblingData) => {
+          return siblingData.status === 'pendingAnalysis'
+        },
       },
     },
     {
@@ -378,6 +493,22 @@ export const Users: CollectionConfig = {
   ],
   hooks: {
     beforeChange: [autoIncrement, saveFederationHistory],
+    // TODO - Use this hook to trigger the email based on user status
+    // afterChange: [
+    //   async ({doc, previousDoc, operation, req}) => {
+    //     console.log('doc:', doc);
+    //     if (operation === 'update' && doc.status !== previousDoc?.status) {
+    //       const payload = req.payload;
+    //       await payload.update({
+    //         collection: 'users',
+    //         id: doc.id,
+    //         data: {
+    //           status: doc.status,
+    //         },
+    //       })
+    //     }
+    //   }
+    // ]
   },
   timestamps: true,
 }

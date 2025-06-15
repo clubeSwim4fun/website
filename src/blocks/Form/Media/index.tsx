@@ -37,8 +37,8 @@ export const Media: React.FC<
               value={field.value}
               onValueChange={field.onChange}
               accept={{ 'image/*': [], 'application/pdf': [] }}
-              maxFileCount={4}
-              maxSize={4 * 1024 * 1024}
+              maxFileCount={2}
+              maxSize={2 * 1024 * 1024}
             />
           )
         }}

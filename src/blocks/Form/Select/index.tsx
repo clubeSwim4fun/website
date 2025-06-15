@@ -58,7 +58,7 @@ export const Select: React.FC<
   }, [])
 
   return (
-    <Width width={100}>
+    <Width width={100} className="flex flex-col gap-2">
       <Label htmlFor={name}>
         {label}
         {required && (

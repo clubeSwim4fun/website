@@ -6,8 +6,9 @@ import { getTranslations } from 'next-intl/server'
 import { redirect } from 'next/navigation'
 import { TypedLocale } from 'payload'
 import { PaymentForm } from './payment-form'
-import { Handshake } from 'lucide-react'
+import { ClipboardPenLine, FileUser, Handshake } from 'lucide-react'
 import { cn } from '@/utilities/ui'
+import { UserFieldsUpdateForm } from '@/components/User/user-fields-update-form'
 
 const UserSubscriptionPage = async ({ params }: { params: Promise<{ locale: string }> }) => {
   const { locale } = await params
@@ -33,12 +34,18 @@ const UserSubscriptionPage = async ({ params }: { params: Promise<{ locale: stri
         `${user.status !== 'active' ? 'mx' : 'm'}-auto`,
       )}
     >
-      {user.status !== 'active' ? (
+      {user.status === 'pendingPayment' || user.status === 'expired' ? (
         <PaymentForm user={user} associationFees={globalConfig.associationFees} />
       ) : (
         <div className="flex mt-6 justify-center items-center">
           <div className="w-1/3 border-r-2 border-gray-600 flex items-center justify-center">
-            <Handshake className="w-40 h-40 stroke-1" />
+            {user.status === 'pendingUpdate' ? (
+              <ClipboardPenLine className="w-40 h-40 stroke-1" />
+            ) : user.status === 'pendingAnalysis' ? (
+              <FileUser className="w-40 h-40 stroke-1" />
+            ) : (
+              <Handshake className="w-40 h-40 stroke-1" />
+            )}
           </div>
           <div className="flex flex-col gap-4 justify-start items-start p-6">
             <p className="font-bold text-3xl">
@@ -46,7 +53,18 @@ const UserSubscriptionPage = async ({ params }: { params: Promise<{ locale: stri
                 username: user.name,
               })}
             </p>
-            <p className="text-xl">{t('Subscription.allRightText')}</p>
+            <p className="text-xl">
+              {t(
+                `Subscription.${user.status === 'pendingUpdate' ? 'pendingUpdate' : user.status === 'pendingAnalysis' ? 'pendingAnalysis' : 'allRightText'}`,
+              )}
+            </p>
+            {user.status === 'pendingUpdate' && (
+              <UserFieldsUpdateForm
+                generalConfig={globalConfig}
+                user={user}
+                fieldsToUpdate={user.fieldsToUpdate || []}
+              />
+            )}
           </div>
         </div>
       )}
