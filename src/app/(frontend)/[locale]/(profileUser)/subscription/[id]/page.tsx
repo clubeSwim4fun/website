@@ -32,7 +32,7 @@ const UserSubscriptionConfirmationPage = async ({
     >
       <div className="flex mt-6 justify-center items-center">
         <div className="w-1/3 border-r-2 border-gray-600 flex items-center justify-center">
-          <Handshake className="w-40 h-40 stroke-1" /> - {id}
+          <Handshake className="w-40 h-40 stroke-1" />
         </div>
         <div className="flex flex-col gap-4 justify-start items-start p-6">
           <p className="font-bold text-3xl">
@@ -40,7 +40,7 @@ const UserSubscriptionConfirmationPage = async ({
               username: user.name,
             })}
           </p>
-          <p className="text-xl">{t('Subscription.allRightText')}</p>
+          <p className="text-xl">{t('Subscription.subscriptionConfirmation', { id })}</p>
         </div>
       </div>
     </section>

@@ -163,6 +163,7 @@
     "descriptionDate": "referente ao período de: {dateRange}",
     "payForCurrentMonth": "Eu quero pagar o mês atual.",
     "allRightText": "Isso é tudo por agora, obrigado!",
+    "subscriptionConfirmation": "Subscrição confirmada com o ID: {id}",
     "pendingAnalysis": "Nossa equipa está a analisar seu registo, por favor aguarde a confirmação.",
     "pendingUpdate": "Encontramos alguns problemas com o seu registo, por favor atualize o seu perfil."
   },

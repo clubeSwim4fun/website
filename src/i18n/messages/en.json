@@ -163,6 +163,7 @@
     "descriptionDate": "corresponding to: {dateRange}",
     "payForCurrentMonth": "I want to pay current month.",
     "allRightText": "That is all for now, thank you!",
+    "subscriptionConfirmation": "Subscription confirmed with id: {id}",
     "pendingUpdate": "We found some issues with your registration, please update your profile.",
     "pendingAnalysis": "Our team is reviewing your registration, please wait for confirmation."
   },

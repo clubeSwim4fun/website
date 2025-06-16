@@ -8,13 +8,16 @@ import { GeneralConfig } from '@/payload-types'
 
 const SignInPage = async (props: { searchParams: Promise<{ callbackUrl: string }> }) => {
   const { callbackUrl } = await props.searchParams
-  const session = await getMeUser()
+  const session = await getMeUser({ invalidateCache: true })
   const locale = (await getLocale()) as TypedLocale
   const globalConfig = (await getCachedGlobal('generalConfigs', 1, locale)()) as GeneralConfig
 
   const login = globalConfig?.settings?.login
 
   if (session.token && session.user) {
+    if (session.user.status !== 'active') {
+      return redirect(`/${locale}/subscription`)
+    }
     return redirect(callbackUrl || '/')
   }
 
