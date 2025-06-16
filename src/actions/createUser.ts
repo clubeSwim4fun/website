@@ -2,7 +2,7 @@
 
 import { getPayload, User } from 'payload'
 import config from '@payload-config'
-import AWS from 'aws-sdk'
+import { S3 } from '@aws-sdk/client-s3'
 import { getTranslations } from 'next-intl/server'
 import { uploadUserFiles } from '@/helpers/userHelper'
 
@@ -21,20 +21,26 @@ export type CreateUserRequestType = {
 
 export type CreateuserType = Omit<User, 'id' | 'createdAt' | 'updatedAt'>
 
-const s3 = new AWS.S3({
-  accessKeyId: process.env.S3_ACCESS_KEY_ID,
-  secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
-  region: process.env.S3_REGION,
+const { S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY, S3_REGION } = process.env
+
+if (!S3_ACCESS_KEY_ID || !S3_SECRET_ACCESS_KEY || !S3_REGION) {
+  throw new Error('Missing required AWS S3 environment variables')
+}
+
+const s3 = new S3({
+  credentials: {
+    accessKeyId: S3_ACCESS_KEY_ID,
+    secretAccessKey: S3_SECRET_ACCESS_KEY,
+  },
+  region: S3_REGION,
 })
 
 export const deleteS3Files = async (files: string[]) => {
   const deletePromises = files.map((fileKey) =>
-    s3
-      .deleteObject({
-        Bucket: process.env.S3_BUCKET || 'clube-swim-4fun-bucket',
-        Key: fileKey,
-      })
-      .promise(),
+    s3.deleteObject({
+      Bucket: process.env.S3_BUCKET || 'clube-swim-4fun-bucket',
+      Key: fileKey,
+    }),
   )
 
   await Promise.all(deletePromises)
