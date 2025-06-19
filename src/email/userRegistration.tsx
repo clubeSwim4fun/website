@@ -1,7 +1,7 @@
 import React from 'react'
 import { TemplateEmail } from './template'
 import { User } from '@/payload-types'
-import { getFormatter, getLocale, getTranslations } from 'next-intl/server'
+import { getLocale, getTranslations } from 'next-intl/server'
 import { Button } from '@react-email/components'
 
 type Args = {

@@ -1,11 +1,15 @@
 'use server'
 
-import { getPayload } from 'payload'
+import { APIError, getPayload } from 'payload'
 import config from '@payload-config'
 import { cookies } from 'next/headers'
 import { User } from '@/payload-types'
 import { getTranslations } from 'next-intl/server'
 import { verifyUserStatus } from '@/helpers/userHelper'
+import { render } from '@react-email/components'
+import React from 'react'
+import { sendEmail } from '@/helpers/emailHelper'
+import { UserResetPassword } from '@/email/UserResetPassword'
 
 interface LoginParams {
   email: string
@@ -59,5 +63,78 @@ export async function login({ email, password }: LoginParams): Promise<LoginResp
     }
     payload.logger.error(error)
     return { success: false, error: t('Common.unexpectedError') }
+  }
+}
+
+export type ResetPasswordResponse = {
+  success: boolean
+  message: string
+  error?: APIError
+}
+
+export async function resetPassword({
+  email,
+  token,
+  password,
+}: {
+  email?: string
+  token?: string
+  password?: string
+}): Promise<ResetPasswordResponse> {
+  const payload = await getPayload({ config })
+  const t = await getTranslations()
+
+  try {
+    if (email) {
+      const token = await payload.forgotPassword({
+        collection: 'users',
+        data: { email },
+        disableEmail: true,
+      })
+
+      if (!token) {
+        return {
+          success: false,
+          message: t('Sign-in.resetPasswordError'),
+        }
+      }
+
+      const emailHtml = await render(React.createElement(UserResetPassword, { token }))
+
+      await sendEmail({
+        emailHtml,
+        subject: t('Email.ResetPassword.subject'),
+        to: email,
+      })
+
+      return {
+        success: true,
+        message: t('Sign-in.resetPasswordSuccess'),
+      }
+
+      // If token and password are provided, reset the password
+    } else if (token && password) {
+      await payload.resetPassword({
+        collection: 'users',
+        data: { token, password },
+        overrideAccess: true,
+      })
+
+      return {
+        success: true,
+        message: 'Ok',
+      }
+    }
+
+    return {
+      success: false,
+      message: t('Sign-in.resetPasswordError'),
+    }
+  } catch (error) {
+    return {
+      success: false,
+      message: t('Sign-in.resetPasswordError'),
+      error: error as APIError,
+    }
   }
 }

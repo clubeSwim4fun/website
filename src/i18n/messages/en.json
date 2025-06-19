@@ -5,7 +5,13 @@
     "loggingIn": "Logging in...",
     "dontHaveAccount": "Don't have an account?",
     "register": "Register",
-    "login": "Login"
+    "login": "Login",
+    "forgotPassword": "Forgot my password",
+    "resetPassword": "Reset Password",
+    "resetPasswordError": "Error resetting password, please try again later.",
+    "resetPasswordEmailSent": "Password reset email sent, please check your inbox.",
+    "resetPasswordTokenInvalid": "Token is either invalid or has expired.",
+    "resetPasswordSuccess": "Password reset successfully, try to login again"
   },
   "Metadata": {
     "Club": "Club Swim4Fun",
@@ -81,6 +87,7 @@
     "transactionError": "Internal Error while creating transaction, please contact an admin",
     "loginAuthenticationError": "User or Password invalid",
     "notAuthorized": "User not allowed",
+    "submiting": "submiting",
     "submit": "Submit"
   },
   "Cart": {
@@ -122,6 +129,13 @@
       "title": "Your account is approved",
       "description": "Your account has been approved, you can now proceed to payment.",
       "button": "Pay Now"
+    },
+    "ResetPassword": {
+      "subject": "Password Reset Request",
+      "title": "Password Reset",
+      "dearUser": "Dear user, we received your request to reset your password.",
+      "description": "Please click the button below to reset your password.",
+      "button": "Reset Password"
     }
   },
   "Order": {

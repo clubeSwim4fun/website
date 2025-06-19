@@ -86,10 +86,19 @@ export default function LoginForm({
           {t('dontHaveAccount')}
           <Link
             href={registerUrl}
-            className="font-semibold leading-6 text-headBlue-500 hover:text-headBlue-400"
+            className="font-semibold leading-6 text-headBlue-500 hover:text-headBlue-400 hover:underline"
           >
             {' '}
             {t('register')}
+          </Link>
+        </p>
+        <p className="mt-2 text-center text-sm text-gray-400">
+          <Link
+            href={`reset-password`}
+            className="font-semibold leading-6 text-headBlue-500 hover:text-headBlue-400 hover:underline"
+          >
+            {' '}
+            {t('forgotPassword')}
           </Link>
         </p>
       </div>

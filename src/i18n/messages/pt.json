@@ -5,7 +5,13 @@
     "loggingIn": "A entrar...",
     "dontHaveAccount": "Não tem uma conta?",
     "register": "Registar",
-    "login": "Entrar"
+    "login": "Entrar",
+    "forgotPassword": "Esqueci-me da palavra-passe",
+    "resetPassword": "Redefinir Palavra-passe",
+    "resetPasswordError": "Erro ao redefinir a palavra-passe, por favor tente novamente mais tarde.",
+    "resetPasswordEmailSent": "E-mail de redefinição de palavra-passe enviado, por favor verifique a sua caixa de entrada.",
+    "resetPasswordTokenInvalid": "Token inválido ou expirado.",
+    "resetPasswordSuccess": "Pedido de redefinição de palavra-passe concluido com sucesso, por favor tente entrar novamente"
   },
   "Metadata": {
     "Club": "Clube Swim4Fun",
@@ -81,6 +87,7 @@
     "transactionError": "Erro interno ao criar transação, por favor informe o admin",
     "loginAuthenticationError": "Utilizador ou senha inválidos",
     "notAuthorized": "Utilizador não autorizado",
+    "submiting": "Enviando",
     "submit": "Submeter"
   },
   "Cart": {
@@ -122,6 +129,13 @@
       "title": "Sua conta está aprovada",
       "description": "Obrigado por se inscrever! Por favor, efetue o pagamento para completar a sua inscrição.",
       "button": "Pagar agora"
+    },
+    "ResetPassword": {
+      "subject": "Redefinir sua palavra-passe",
+      "title": "Redefinir sua palavra-passe",
+      "dearUser": "Prezado(a) utilizador(a), recebemos uma solicitação para redefinir a sua palavra-passe.",
+      "description": "Por favor, clique no botão abaixo para redefinir.",
+      "button": "Redefinir Palavra-passe"
     }
   },
   "Order": {

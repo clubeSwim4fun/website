@@ -68,9 +68,6 @@ export async function sendEmail({
       ...(attachments || []),
     ],
   })
-
-  // TODO - add treatment to handle failed delivere envelops
-  console.log('email', email)
 }
 
 export async function replaceFields(
