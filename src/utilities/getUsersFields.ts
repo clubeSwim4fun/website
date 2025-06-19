@@ -13,10 +13,12 @@ const checkFields = (fields: Field[]) => {
       field.type !== 'collapsible' &&
       field.type !== 'tabs'
     ) {
-      userCollectionFieldsName.push({
-        value: field.name,
-        label: field.label || field.name,
-      })
+      if ('name' in field && typeof field.name === 'string') {
+        userCollectionFieldsName.push({
+          value: field.name,
+          label: field.label || field.name,
+        })
+      }
     } else if (field.type === 'row') {
       checkFields(field.fields)
     }
