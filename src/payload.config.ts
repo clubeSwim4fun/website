@@ -19,8 +19,8 @@ import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { s3Storage } from '@payloadcms/storage-s3'
 import { getServerSideURL } from './utilities/getURL'
-import { Groups } from './collections/Groups'
-import { GroupCategories } from './collections/GroupCategories'
+import { Groups } from './collections/Groups/Groups'
+import { GroupCategories } from './collections/Groups/GroupCategories'
 import { UserMedia } from './collections/Users/Media'
 import { Events } from './collections/Events/Events'
 import { Carts } from './collections/Ecommerce/Carts'
@@ -35,6 +35,7 @@ import { Disability } from './collections/Users/Disability'
 import { AboutClub } from './collections/Users/HeardAboutClub'
 import { FederationHistory } from './collections/Users/FederationHistory'
 import { Subscription } from './collections/Users/Subscription'
+import { GroupSubscription } from './collections/Groups/GroupSubscription'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -96,6 +97,7 @@ export default buildConfig({
     Disability,
     AboutClub,
     Subscription,
+    GroupSubscription,
   ],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer, GeneralConfigs],

@@ -23,9 +23,10 @@ export type FormBlockType = {
   blockName?: string
   blockType?: 'formBlock'
   enableIntro: boolean
-  form: FormType
+  form?: FormType
   introContent?: SerializedEditorState
   isRegistrationForm?: boolean
+  onSubmit?: (data: { [key: string]: any }[]) => Promise<{ error?: string; redirectUrl?: string }>
 }
 
 export type CreateUserMediaType = {
@@ -50,10 +51,11 @@ export const FormBlockClient: React.FC<
     introContent,
     isRegistrationForm,
     generalConfigData,
+    onSubmit: onSubmitFromProps,
   } = props
 
   const formMethods = useForm({
-    defaultValues: formFromProps.fields,
+    defaultValues: formFromProps?.fields,
   })
   const {
     control,
@@ -76,7 +78,16 @@ export const FormBlockClient: React.FC<
 
       const submitForm = async () => {
         setError(undefined)
-        const fields = formFromProps.fields as CustomFormFieldBlock[]
+
+        if (onSubmitFromProps) {
+          const { error, redirectUrl } = await onSubmitFromProps(data)
+          if (error) setError({ message: error || '' })
+          if (redirectUrl) router.push(redirectUrl)
+
+          return
+        }
+
+        const fields = formFromProps?.fields as CustomFormFieldBlock[]
 
         const dataToSend: CreateUserRequestType = {}
 

@@ -7,7 +7,6 @@ import { getMeUser } from '@/utilities/getMeUser'
 import { getUserPaymentAmount } from '@/helpers/userHelper'
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import { GeneralConfig } from '@/payload-types'
-import { revalidatePath } from 'next/cache'
 
 type responseType = {
   success: boolean

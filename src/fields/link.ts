@@ -1,6 +1,7 @@
 import type { Field, GroupField } from 'payload'
 
 import deepMerge from '@/utilities/deepMerge'
+import { en } from '@payloadcms/translations/languages/en'
 
 export type LinkAppearances = 'default' | 'outline'
 
@@ -37,7 +38,7 @@ export const link: LinkType = ({ appearances, disableLabel = false, overrides = 
             type: 'radio',
             admin: {
               layout: 'horizontal',
-              width: '50%',
+              width: '75%',
             },
             defaultValue: 'reference',
             options: [
@@ -49,6 +50,10 @@ export const link: LinkType = ({ appearances, disableLabel = false, overrides = 
                 label: 'Custom URL',
                 value: 'custom',
               },
+              {
+                label: 'Subscription',
+                value: 'subscription',
+              },
             ],
           },
           {
@@ -58,7 +63,7 @@ export const link: LinkType = ({ appearances, disableLabel = false, overrides = 
               style: {
                 alignSelf: 'flex-end',
               },
-              width: '50%',
+              width: '25%',
             },
             label: 'Open in new tab',
           },
@@ -74,8 +79,28 @@ export const link: LinkType = ({ appearances, disableLabel = false, overrides = 
       admin: {
         condition: (_, siblingData) => siblingData?.type === 'reference',
       },
-      label: 'Document to link to',
+      label: {
+        en: 'Document to link to',
+        pt: 'Documento para vincular',
+      },
       relationTo: ['pages', 'posts'],
+      required: true,
+    },
+    {
+      name: 'subscriptionGroup',
+      type: 'relationship',
+      admin: {
+        condition: (_, siblingData) => siblingData?.type === 'subscription',
+        description: {
+          en: 'Select the group that this subscription will be linked to.',
+          pt: 'Selecione o grupo ao qual esta assinatura será vinculada.',
+        },
+      },
+      label: {
+        en: 'Subscription Group',
+        pt: 'Grupo de Assinatura',
+      },
+      relationTo: 'groups',
       required: true,
     },
     {
@@ -84,7 +109,10 @@ export const link: LinkType = ({ appearances, disableLabel = false, overrides = 
       admin: {
         condition: (_, siblingData) => siblingData?.type === 'custom',
       },
-      label: 'Custom URL',
+      label: {
+        en: 'Custom URL',
+        pt: 'URL Personalizada',
+      },
       required: true,
     },
   ]

@@ -61,6 +61,9 @@
     "pendingAnalysis": "Nossa equipe está analisando seu registo, por favor aguarde a confirmação.",
     "paymentExpired": "Renove sua inscrição"
   },
+  "GroupSubscription": {
+    "description": "Subscrição ao grupo {groupName}"
+  },
   "Common": {
     "error": "Erro",
     "success": "Sucesso",

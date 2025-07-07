@@ -84,6 +84,7 @@ export interface Config {
     disability: Disability;
     aboutClub: AboutClub;
     subscription: Subscription;
+    'group-subscription': GroupSubscription;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -112,6 +113,7 @@ export interface Config {
     disability: DisabilitySelect<false> | DisabilitySelect<true>;
     aboutClub: AboutClubSelect<false> | AboutClubSelect<true>;
     subscription: SubscriptionSelect<false> | SubscriptionSelect<true>;
+    'group-subscription': GroupSubscriptionSelect<false> | GroupSubscriptionSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -194,7 +196,7 @@ export interface Page {
     links?:
       | {
           link: {
-            type?: ('reference' | 'custom') | null;
+            type?: ('reference' | 'custom' | 'subscription') | null;
             newTab?: boolean | null;
             reference?:
               | ({
@@ -205,6 +207,10 @@ export interface Page {
                   relationTo: 'posts';
                   value: string | Post;
                 } | null);
+            /**
+             * Select the group that this subscription will be linked to.
+             */
+            subscriptionGroup?: (string | null) | Group;
             url?: string | null;
             label: string;
             hasChildren?: boolean | null;
@@ -267,7 +273,7 @@ export interface Page {
     } | null;
     enableLink?: boolean | null;
     link?: {
-      type?: ('reference' | 'custom') | null;
+      type?: ('reference' | 'custom' | 'subscription') | null;
       newTab?: boolean | null;
       reference?:
         | ({
@@ -278,6 +284,10 @@ export interface Page {
             relationTo: 'posts';
             value: string | Post;
           } | null);
+      /**
+       * Select the group that this subscription will be linked to.
+       */
+      subscriptionGroup?: (string | null) | Group;
       url?: string | null;
       label: string;
       hasChildren?: boolean | null;
@@ -836,239 +846,14 @@ export interface Group {
   id: string;
   title: string;
   badge?: (string | null) | Media;
+  hasSubscription?: boolean | null;
+  subscriptionPrice: number;
+  subscriptionPeriod: 'monthly' | 'yearly';
+  subscriptionForm: string | Form;
   slug?: string | null;
   slugLock?: boolean | null;
   updatedAt: string;
   createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "group-categories".
- */
-export interface GroupCategory {
-  id: string;
-  title: string;
-  badge?: (string | null) | Media;
-  slug?: string | null;
-  slugLock?: boolean | null;
-  parent?: (string | null) | Group;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "disability".
- */
-export interface Disability {
-  id: string;
-  label: string;
-  value: string;
-  hiddenId?: string | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "aboutClub".
- */
-export interface AboutClub {
-  id: string;
-  label: string;
-  value: string;
-  hiddenId?: string | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "CallToActionBlock".
- */
-export interface CallToActionBlock {
-  richText?: {
-    root: {
-      type: string;
-      children: {
-        type: string;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  links?:
-    | {
-        link: {
-          type?: ('reference' | 'custom') | null;
-          newTab?: boolean | null;
-          reference?:
-            | ({
-                relationTo: 'pages';
-                value: string | Page;
-              } | null)
-            | ({
-                relationTo: 'posts';
-                value: string | Post;
-              } | null);
-          url?: string | null;
-          label: string;
-          hasChildren?: boolean | null;
-          childrenPages?:
-            | {
-                reference: {
-                  relationTo: 'pages';
-                  value: string | Page;
-                };
-                label: string;
-                id?: string | null;
-              }[]
-            | null;
-          /**
-           * Choose how the link should be rendered.
-           */
-          appearance?: ('default' | 'outline') | null;
-        };
-        id?: string | null;
-      }[]
-    | null;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'cta';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ContentBlock".
- */
-export interface ContentBlock {
-  columns?:
-    | {
-        size?: ('oneThird' | 'half' | 'twoThirds' | 'full') | null;
-        richText?: {
-          root: {
-            type: string;
-            children: {
-              type: string;
-              version: number;
-              [k: string]: unknown;
-            }[];
-            direction: ('ltr' | 'rtl') | null;
-            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-            indent: number;
-            version: number;
-          };
-          [k: string]: unknown;
-        } | null;
-        enableLink?: boolean | null;
-        link?: {
-          type?: ('reference' | 'custom') | null;
-          newTab?: boolean | null;
-          reference?:
-            | ({
-                relationTo: 'pages';
-                value: string | Page;
-              } | null)
-            | ({
-                relationTo: 'posts';
-                value: string | Post;
-              } | null);
-          url?: string | null;
-          label: string;
-          hasChildren?: boolean | null;
-          childrenPages?:
-            | {
-                reference: {
-                  relationTo: 'pages';
-                  value: string | Page;
-                };
-                label: string;
-                id?: string | null;
-              }[]
-            | null;
-          /**
-           * Choose how the link should be rendered.
-           */
-          appearance?: ('default' | 'outline') | null;
-        };
-        id?: string | null;
-      }[]
-    | null;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'content';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "MediaBlock".
- */
-export interface MediaBlock {
-  media: string | Media;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'mediaBlock';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ArchiveBlock".
- */
-export interface ArchiveBlock {
-  introContent?: {
-    root: {
-      type: string;
-      children: {
-        type: string;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  populateBy?: ('collection' | 'selection') | null;
-  relationTo?: 'posts' | null;
-  categories?: (string | Category)[] | null;
-  limit?: number | null;
-  selectedDocs?:
-    | {
-        relationTo: 'posts';
-        value: string | Post;
-      }[]
-    | null;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'archive';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "FormBlock".
- */
-export interface FormBlock {
-  form: string | Form;
-  isRegistrationForm?: boolean | null;
-  enableIntro?: boolean | null;
-  introContent?: {
-    root: {
-      type: string;
-      children: {
-        type: string;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'formBlock';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1579,6 +1364,243 @@ export interface DateField {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "group-categories".
+ */
+export interface GroupCategory {
+  id: string;
+  title: string;
+  badge?: (string | null) | Media;
+  slug?: string | null;
+  slugLock?: boolean | null;
+  parent?: (string | null) | Group;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "disability".
+ */
+export interface Disability {
+  id: string;
+  label: string;
+  value: string;
+  hiddenId?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "aboutClub".
+ */
+export interface AboutClub {
+  id: string;
+  label: string;
+  value: string;
+  hiddenId?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CallToActionBlock".
+ */
+export interface CallToActionBlock {
+  richText?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  links?:
+    | {
+        link: {
+          type?: ('reference' | 'custom' | 'subscription') | null;
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: string | Page;
+              } | null)
+            | ({
+                relationTo: 'posts';
+                value: string | Post;
+              } | null);
+          /**
+           * Select the group that this subscription will be linked to.
+           */
+          subscriptionGroup?: (string | null) | Group;
+          url?: string | null;
+          label: string;
+          hasChildren?: boolean | null;
+          childrenPages?:
+            | {
+                reference: {
+                  relationTo: 'pages';
+                  value: string | Page;
+                };
+                label: string;
+                id?: string | null;
+              }[]
+            | null;
+          /**
+           * Choose how the link should be rendered.
+           */
+          appearance?: ('default' | 'outline') | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'cta';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ContentBlock".
+ */
+export interface ContentBlock {
+  columns?:
+    | {
+        size?: ('oneThird' | 'half' | 'twoThirds' | 'full') | null;
+        richText?: {
+          root: {
+            type: string;
+            children: {
+              type: string;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        enableLink?: boolean | null;
+        link?: {
+          type?: ('reference' | 'custom' | 'subscription') | null;
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: string | Page;
+              } | null)
+            | ({
+                relationTo: 'posts';
+                value: string | Post;
+              } | null);
+          /**
+           * Select the group that this subscription will be linked to.
+           */
+          subscriptionGroup?: (string | null) | Group;
+          url?: string | null;
+          label: string;
+          hasChildren?: boolean | null;
+          childrenPages?:
+            | {
+                reference: {
+                  relationTo: 'pages';
+                  value: string | Page;
+                };
+                label: string;
+                id?: string | null;
+              }[]
+            | null;
+          /**
+           * Choose how the link should be rendered.
+           */
+          appearance?: ('default' | 'outline') | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'content';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MediaBlock".
+ */
+export interface MediaBlock {
+  media: string | Media;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'mediaBlock';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ArchiveBlock".
+ */
+export interface ArchiveBlock {
+  introContent?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  populateBy?: ('collection' | 'selection') | null;
+  relationTo?: 'posts' | null;
+  categories?: (string | Category)[] | null;
+  limit?: number | null;
+  selectedDocs?:
+    | {
+        relationTo: 'posts';
+        value: string | Post;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'archive';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FormBlock".
+ */
+export interface FormBlock {
+  form: string | Form;
+  isRegistrationForm?: boolean | null;
+  enableIntro?: boolean | null;
+  introContent?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'formBlock';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "Calendar".
  */
 export interface Calendar {
@@ -1977,6 +1999,26 @@ export interface Subscription {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "group-subscription".
+ */
+export interface GroupSubscription {
+  id: string;
+  group: string | Group;
+  user: string | User;
+  status?: ('pending' | 'approved' | 'rejected') | null;
+  transactionId?: string | null;
+  submissionData?:
+    | {
+        field?: string | null;
+        value?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -2217,6 +2259,10 @@ export interface PayloadLockedDocument {
         value: string | Subscription;
       } | null)
     | ({
+        relationTo: 'group-subscription';
+        value: string | GroupSubscription;
+      } | null)
+    | ({
         relationTo: 'redirects';
         value: string | Redirect;
       } | null)
@@ -2298,6 +2344,7 @@ export interface PagesSelect<T extends boolean = true> {
                     type?: T;
                     newTab?: T;
                     reference?: T;
+                    subscriptionGroup?: T;
                     url?: T;
                     label?: T;
                     hasChildren?: T;
@@ -2343,6 +2390,7 @@ export interface PagesSelect<T extends boolean = true> {
               type?: T;
               newTab?: T;
               reference?: T;
+              subscriptionGroup?: T;
               url?: T;
               label?: T;
               hasChildren?: T;
@@ -2379,6 +2427,7 @@ export interface CallToActionBlockSelect<T extends boolean = true> {
               type?: T;
               newTab?: T;
               reference?: T;
+              subscriptionGroup?: T;
               url?: T;
               label?: T;
               hasChildren?: T;
@@ -2413,6 +2462,7 @@ export interface ContentBlockSelect<T extends boolean = true> {
               type?: T;
               newTab?: T;
               reference?: T;
+              subscriptionGroup?: T;
               url?: T;
               label?: T;
               hasChildren?: T;
@@ -2714,6 +2764,10 @@ export interface FederationHistorySelect<T extends boolean = true> {
 export interface GroupsSelect<T extends boolean = true> {
   title?: T;
   badge?: T;
+  hasSubscription?: T;
+  subscriptionPrice?: T;
+  subscriptionPeriod?: T;
+  subscriptionForm?: T;
   slug?: T;
   slugLock?: T;
   updatedAt?: T;
@@ -2869,6 +2923,25 @@ export interface SubscriptionSelect<T extends boolean = true> {
   amount?: T;
   startDate?: T;
   endDate?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "group-subscription_select".
+ */
+export interface GroupSubscriptionSelect<T extends boolean = true> {
+  group?: T;
+  user?: T;
+  status?: T;
+  transactionId?: T;
+  submissionData?:
+    | T
+    | {
+        field?: T;
+        value?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -3238,7 +3311,7 @@ export interface Header {
   navItems?:
     | {
         link: {
-          type?: ('reference' | 'custom') | null;
+          type?: ('reference' | 'custom' | 'subscription') | null;
           newTab?: boolean | null;
           reference?:
             | ({
@@ -3249,6 +3322,10 @@ export interface Header {
                 relationTo: 'posts';
                 value: string | Post;
               } | null);
+          /**
+           * Select the group that this subscription will be linked to.
+           */
+          subscriptionGroup?: (string | null) | Group;
           url?: string | null;
           label: string;
           hasChildren?: boolean | null;
@@ -3278,7 +3355,7 @@ export interface Footer {
   navItems?:
     | {
         link: {
-          type?: ('reference' | 'custom') | null;
+          type?: ('reference' | 'custom' | 'subscription') | null;
           newTab?: boolean | null;
           reference?:
             | ({
@@ -3289,6 +3366,10 @@ export interface Footer {
                 relationTo: 'posts';
                 value: string | Post;
               } | null);
+          /**
+           * Select the group that this subscription will be linked to.
+           */
+          subscriptionGroup?: (string | null) | Group;
           url?: string | null;
           label: string;
           hasChildren?: boolean | null;
@@ -3396,6 +3477,7 @@ export interface HeaderSelect<T extends boolean = true> {
               type?: T;
               newTab?: T;
               reference?: T;
+              subscriptionGroup?: T;
               url?: T;
               label?: T;
               hasChildren?: T;
@@ -3427,6 +3509,7 @@ export interface FooterSelect<T extends boolean = true> {
               type?: T;
               newTab?: T;
               reference?: T;
+              subscriptionGroup?: T;
               url?: T;
               label?: T;
               hasChildren?: T;
