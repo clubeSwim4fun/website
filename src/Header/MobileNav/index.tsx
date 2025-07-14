@@ -1,7 +1,7 @@
 'use client'
 
 import React, { Fragment, useState } from 'react'
-import type { Header as HeaderType, Page, Post } from '@/payload-types'
+import type { Group, Header as HeaderType, Page, Post } from '@/payload-types'
 import { Button } from '@/components/ui/button'
 import { CMSLink } from '@/components/Link'
 import { ChevronDown } from 'lucide-react'
@@ -9,7 +9,7 @@ import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 
 type LinkType = {
-  type?: ('reference' | 'custom') | null
+  type?: ('reference' | 'custom' | 'subscription') | null
   newTab?: boolean | null
   reference?:
     | ({
@@ -20,6 +20,10 @@ type LinkType = {
         relationTo: 'posts'
         value: string | Post
       } | null)
+  /**
+   * Select the group that this subscription will be linked to.
+   */
+  subscriptionGroup?: (string | null) | Group
   url?: string | null
   label: string
   hasChildren?: boolean | null
@@ -33,6 +37,10 @@ type LinkType = {
         id?: string | null
       }[]
     | null
+  /**
+   * Choose how the link should be rendered.
+   */
+  appearance?: ('default' | 'outline') | null
 }
 
 const getLinkHref = (link: LinkType) => {

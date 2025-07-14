@@ -16,7 +16,7 @@ const UserSubscriptionConfirmationPage = async ({
   const { locale, id } = await params
   const userObject = await getMeUser({ invalidateCache: true })
   const t = await getTranslations()
-  let isLoading = true
+  // let isLoading = true
 
   if (!userObject || !userObject.user) {
     redirect(`sign-in?callbackUrl=/${locale}/subscription/order-generation`)

@@ -37,7 +37,7 @@ type Args = {
         } | null
         enableLink?: boolean | null
         link?: {
-          type?: ('reference' | 'custom') | null
+          type?: ('reference' | 'custom' | 'subscription') | null
           newTab?: boolean | null
           reference?:
             | ({
@@ -48,6 +48,10 @@ type Args = {
                 relationTo: 'posts'
                 value: string | Post
               } | null)
+          /**
+           * Select the group that this subscription will be linked to.
+           */
+          subscriptionGroup?: (string | null) | Group
           url?: string | null
           label: string
           hasChildren?: boolean | null
@@ -61,6 +65,9 @@ type Args = {
                 id?: string | null
               }[]
             | null
+          /**
+           * Choose how the link should be rendered.
+           */
           appearance?: ('default' | 'outline') | null
         }
       }

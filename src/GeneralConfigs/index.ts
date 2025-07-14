@@ -1,4 +1,4 @@
-import type { Description, GlobalConfig } from 'payload'
+import type { GlobalConfig } from 'payload'
 
 import { revalidateConfigs } from './hooks/revalidateConfigs'
 import { updateCollections } from './hooks/updateCollections'

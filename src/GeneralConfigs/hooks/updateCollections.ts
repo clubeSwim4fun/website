@@ -1,4 +1,4 @@
-import type { BasePayload, Payload, TypedLocale } from 'payload'
+import type { BasePayload, TypedLocale } from 'payload'
 import { GlobalBeforeChangeHook } from 'payload'
 
 type CollectionData = {
