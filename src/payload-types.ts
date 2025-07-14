@@ -1994,6 +1994,8 @@ export interface Subscription {
   amount: number;
   startDate: string;
   endDate: string;
+  sibsTransactionId: string;
+  paymentStatus?: ('pending' | 'paid' | 'failed') | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -2923,6 +2925,8 @@ export interface SubscriptionSelect<T extends boolean = true> {
   amount?: T;
   startDate?: T;
   endDate?: T;
+  sibsTransactionId?: T;
+  paymentStatus?: T;
   updatedAt?: T;
   createdAt?: T;
 }

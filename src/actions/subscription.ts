@@ -14,7 +14,10 @@ type responseType = {
   orderId?: string
 }
 
-export const createSubscription = async (payForCurrentMonth: boolean): Promise<responseType> => {
+export const createSubscription = async (
+  payForCurrentMonth: boolean,
+  sibsTransactionId: string,
+): Promise<responseType> => {
   const t = await getTranslations()
   const locale = await getLocale()
   const payload = await getPayload({ config })
@@ -51,20 +54,21 @@ export const createSubscription = async (payForCurrentMonth: boolean): Promise<r
         amount,
         startDate: startDate.toISOString(),
         endDate: endDate.toISOString(),
+        sibsTransactionId,
       },
     })
 
-    await payload.update({
-      collection: 'users',
-      where: {
-        id: {
-          equals: user?.id,
-        },
-      },
-      data: {
-        status: 'active',
-      },
-    })
+    // await payload.update({
+    //   collection: 'users',
+    //   where: {
+    //     id: {
+    //       equals: user?.id,
+    //     },
+    //   },
+    //   data: {
+    //     status: 'active',
+    //   },
+    // })
 
     if (response.id) {
       await payload.db.commitTransaction(transactionID)

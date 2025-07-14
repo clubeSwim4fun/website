@@ -13,7 +13,7 @@ export const Subscription: CollectionConfig = {
     },
   },
   admin: {
-    defaultColumns: ['user', 'type', 'amount', 'startDate', 'endDate'],
+    defaultColumns: ['user', 'type', 'amount', 'startDate', 'endDate', 'paymentStatus'],
     // hidden: true,
   },
   fields: [
@@ -42,6 +42,27 @@ export const Subscription: CollectionConfig = {
       name: 'endDate',
       type: 'date',
       required: true,
+    },
+    {
+      name: 'sibsTransactionId',
+      type: 'text',
+      required: true,
+    },
+    {
+      name: 'paymentStatus',
+      type: 'select',
+      options: [
+        {
+          label: {
+            en: 'Pending',
+            pt: 'Pendente',
+          },
+          value: 'pending',
+        },
+        { label: { en: 'Paid', pt: 'Pago' }, value: 'paid' },
+        { label: { en: 'Failed', pt: 'Falhou' }, value: 'failed' },
+      ],
+      defaultValue: 'pending',
     },
   ],
 }

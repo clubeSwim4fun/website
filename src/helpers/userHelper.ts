@@ -322,9 +322,18 @@ export const verifyUserStatus = async (user?: User) => {
       sort: '-endDate',
       limit: 1,
       where: {
-        user: {
-          equals: user.id,
-        },
+        and: [
+          {
+            user: {
+              equals: user.id,
+            },
+          },
+          {
+            paymentStatus: {
+              equals: 'paid',
+            },
+          },
+        ],
       },
     })
 

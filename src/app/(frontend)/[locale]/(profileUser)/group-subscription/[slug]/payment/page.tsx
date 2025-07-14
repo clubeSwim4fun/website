@@ -10,6 +10,7 @@ import configPromise from '@payload-config'
 import { PaymentForm } from './payment-form'
 import { getClientSideURL } from '@/utilities/getURL'
 import PaymentStatus from './payment-status'
+import { generateSibsPaymentTransaction } from '@/helpers/sibsHelper'
 
 const GroupSubscriptionPage = async ({
   params,
@@ -23,7 +24,7 @@ const GroupSubscriptionPage = async ({
   const { id } = await searchParams
   const userObject = await getMeUser({ invalidateCache: true })
   const t = await getTranslations()
-  let transactionID, formContext
+  let sibsTransactionID, sibsFormContext
 
   const groupConfig = await payload.find({
     collection: 'groups',
@@ -50,32 +51,16 @@ const GroupSubscriptionPage = async ({
   const user = userObject.user
 
   if (!id) {
-    try {
-      const sibsForm = await fetch(`${getClientSideURL()}/api/sibs`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+    const { transactionID, formContext } = await generateSibsPaymentTransaction({
+      price: group?.subscriptionPrice || 0,
+      orderID: `group-subscription-${user.id}`,
+      description: t(`GroupSubscription.description`, {
+        groupName: group?.title || 'Group',
+      }),
+    })
 
-        body: JSON.stringify({
-          amount: group?.subscriptionPrice,
-          merchantTransactionId: `group-subscription-${user.id}}`,
-          description: t(`GroupSubscription.description`, {
-            groupName: group?.title || 'Group',
-          }),
-        }),
-      })
-
-      if (sibsForm) {
-        const json = await sibsForm.json()
-        console.log('SIBS form response:', json)
-        transactionID = json.transactionID
-        formContext = json.formContext
-      }
-    } catch (error) {
-      console.error('Error fetching SIBS form:', error)
-      // TODO - handle error properly, maybe redirect to an error page
-    }
+    sibsTransactionID = transactionID
+    sibsFormContext = formContext
   }
 
   return (
@@ -88,7 +73,11 @@ const GroupSubscriptionPage = async ({
       {id ? (
         <PaymentStatus id={id} />
       ) : (
-        <PaymentForm transactionID={transactionID} formContext={formContext} groupSlug={slug} />
+        <PaymentForm
+          transactionID={sibsTransactionID}
+          formContext={sibsFormContext}
+          groupSlug={slug}
+        />
       )}
     </section>
   )

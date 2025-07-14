@@ -5,11 +5,13 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
+import { generateSibsPaymentTransaction } from '@/helpers/sibsHelper'
 import { getUserPaymentAmount } from '@/helpers/userHelper'
 import { useToast } from '@/hooks/use-toast'
 import { User } from '@/payload-types'
+import { is } from 'date-fns/locale'
 import { Check, Loader } from 'lucide-react'
-import { useFormatter, useTranslations } from 'next-intl'
+import { useFormatter, useLocale, useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState, useTransition } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
@@ -24,6 +26,17 @@ type Args = {
   }
 }
 
+const initialFormConfig = {
+  paymentMethodList: ['MBWAY'],
+  amount: {
+    value: 0,
+    currency: 'EUR',
+  },
+  language: 'pt',
+  redirectUrl: '',
+  customerData: null,
+}
+
 export const PaymentForm: React.FC<Args> = (props) => {
   const { user, associationFees } = props
   const router = useRouter()
@@ -32,8 +45,12 @@ export const PaymentForm: React.FC<Args> = (props) => {
   const { toast } = useToast()
   const t = useTranslations()
   const format = useFormatter()
+  const locale = useLocale()
 
   const [fees, setFees] = useState({ amount: 0, startDate: new Date(), endDate: new Date() })
+  const [transactionID, setTransactionID] = useState('')
+  const [formContext, setFormContext] = useState('')
+  const [formConfig, setFormConfig] = useState(initialFormConfig)
   const [payForCurrentMonth, setPayForCurrentMonth] = useState(false)
   const formMethods = useForm<{ payForCurrentMonth: boolean }>({
     defaultValues: {
@@ -62,18 +79,61 @@ export const PaymentForm: React.FC<Args> = (props) => {
 
   const onSubmit: SubmitHandler<{ payForCurrentMonth: boolean }> = async () => {
     startTransition(async () => {
-      const response = await createSubscription(payForCurrentMonth)
+      const sibsForm = await generateSibsPaymentTransaction({
+        price: fees.amount,
+        orderID: `subscription-${user?.id}`,
+        description: t('Subscription.description', {
+          username: user?.name || '',
+          price: fees.amount,
+        }),
+      })
+
+      if (sibsForm.error) {
+        toast({
+          variant: 'destructive',
+          description: sibsForm.error.message || t('Common.unexpectedError'),
+        })
+        return
+      }
+
+      setTransactionID(sibsForm.transactionID)
+      setFormContext(sibsForm.formContext)
+
+      const response = await createSubscription(payForCurrentMonth, sibsForm.transactionID)
 
       if (!response.success) {
         toast({
           variant: 'destructive',
           description: response.message || t('Common.unexpectedError'),
         })
-      } else {
-        router.push(`/subscription/${response.orderId}`)
+        return
       }
     })
   }
+
+  useEffect(() => {
+    if (transactionID && formContext) {
+      const script = document.createElement('script')
+      script.src = `https://spg.qly.site1.sibs.pt/assets/js/widget.js?id=${transactionID}` // TODO update to env var
+      script.async = true
+      document.body.appendChild(script)
+
+      setFormConfig({
+        paymentMethodList: ['MBWAY'],
+        amount: {
+          value: fees.amount,
+          currency: 'EUR',
+        },
+        language: locale,
+        redirectUrl: `${window.location.origin}/subscription/order-generation`,
+        customerData: null,
+      })
+
+      return () => {
+        document.body.removeChild(script)
+      }
+    }
+  }, [transactionID, formContext])
 
   const PlaceOrderButton = () => {
     return (
@@ -138,6 +198,7 @@ export const PaymentForm: React.FC<Args> = (props) => {
                 <Checkbox
                   defaultChecked={payForCurrentMonth}
                   id="payForCurrentMonth"
+                  disabled={(!!transactionID && !!formContext) || isSubmitting || isPending}
                   onCheckedChange={(checked) => {
                     setPayForCurrentMonth(!!checked.valueOf())
                   }}
@@ -147,8 +208,31 @@ export const PaymentForm: React.FC<Args> = (props) => {
             <Label htmlFor="payForCurrentMonth">{t('Subscription.payForCurrentMonth')}</Label>
           </div>
         )}
-        <PlaceOrderButton />
+        {!transactionID && !formContext && <PlaceOrderButton />}
       </form>
+
+      <div className="mt-4">
+        <form
+          className="w-full paymentSPG"
+          spg-context={formContext}
+          spg-config={JSON.stringify(formConfig)}
+        />
+        {isPending ||
+          (isSubmitting && (
+            <div className="flex flex-col gap-20 items-center justify-center min-h-60 bg-[#f7f7f7] py-4">
+              <div className="flex flex-col gap-2">
+                <Skeleton className="h-2 w-36 bg-slate-500 rounded-xl" />
+                <Skeleton className="h-2 w-36 bg-slate-500 rounded-xl" />
+                <Skeleton className="h-2 w-36 bg-slate-500 rounded-xl" />
+              </div>
+              <div className="flex gap-1">
+                <Skeleton className="h-12 w-12 bg-slate-500 rounded-xl" />
+                <Skeleton className="h-12 w-36 bg-slate-500 rounded-xl" />
+              </div>
+              <Skeleton className="h-12 w-36 bg-slate-500 rounded-full" />
+            </div>
+          ))}
+      </div>
     </div>
   )
 }
