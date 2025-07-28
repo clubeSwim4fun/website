@@ -31,6 +31,38 @@ const columnFields: Field[] = [
     ],
   },
   {
+    name: 'verticalAlignment',
+    label: {
+      en: 'Vertical Alignment',
+      pt: 'Alinhamento Vertical',
+    },
+    type: 'select',
+    defaultValue: 'top',
+    options: [
+      {
+        label: {
+          en: 'Top',
+          pt: 'Topo',
+        },
+        value: 'top',
+      },
+      {
+        label: {
+          en: 'Middle',
+          pt: 'Meio',
+        },
+        value: 'middle',
+      },
+      {
+        label: {
+          en: 'Bottom',
+          pt: 'Base',
+        },
+        value: 'bottom',
+      },
+    ],
+  },
+  {
     name: 'richText',
     localized: true,
     type: 'richText',

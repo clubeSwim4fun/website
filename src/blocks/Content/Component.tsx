@@ -22,18 +22,27 @@ export const ContentBlock: React.FC<ContentBlockProps> = (props) => {
         {columns &&
           columns.length > 0 &&
           columns.map((col, index) => {
-            const { enableLink, link, richText, size } = col
+            const { enableLink, link, richText, size, verticalAlignment } = col
+
+            console.log('verticalAlignment', verticalAlignment)
 
             return (
               <div
-                className={cn(`col-span-4 lg:col-span-${colsSpanClasses[size!]}`, {
-                  'md:col-span-2': size !== 'full',
-                })}
+                className={cn(
+                  `col-span-4 lg:col-span-${colsSpanClasses[size!]} flex flex-col gap-5`,
+                  {
+                    'md:col-span-2': size !== 'full',
+                  },
+                  { 'justify-center': verticalAlignment === 'middle' },
+                  { 'justify-end': verticalAlignment === 'bottom' },
+                )}
                 key={index}
               >
-                {richText && <RichText data={richText} enableGutter={false} />}
+                {richText && (
+                  <RichText data={richText} enableGutter={false} className="flex flex-col gap-5" />
+                )}
 
-                {enableLink && <CMSLink {...link} />}
+                {enableLink && <CMSLink {...link} className="w-fit" />}
               </div>
             )
           })}

@@ -1471,6 +1471,7 @@ export interface ContentBlock {
   columns?:
     | {
         size?: ('oneThird' | 'half' | 'twoThirds' | 'full') | null;
+        verticalAlignment?: ('top' | 'middle' | 'bottom') | null;
         richText?: {
           root: {
             type: string;
@@ -2456,6 +2457,7 @@ export interface ContentBlockSelect<T extends boolean = true> {
     | T
     | {
         size?: T;
+        verticalAlignment?: T;
         richText?: T;
         enableLink?: T;
         link?:
