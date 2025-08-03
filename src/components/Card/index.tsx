@@ -7,8 +7,11 @@ import React, { Fragment } from 'react'
 import type { Post } from '@/payload-types'
 
 import { Media } from '@/components/Media'
+import { formatDateTime } from '@/utilities/formatDateTime'
+import { useTranslation } from '@payloadcms/ui'
+import { useTranslations } from 'next-intl'
 
-export type CardPostData = Pick<Post, 'slug' | 'categories' | 'meta' | 'title'>
+export type CardPostData = Pick<Post, 'slug' | 'categories' | 'meta' | 'title' | 'publishedAt'>
 
 export const Card: React.FC<{
   alignItems?: 'center'
@@ -19,9 +22,10 @@ export const Card: React.FC<{
   title?: string
 }> = (props) => {
   const { card, link } = useClickableCard({})
+  const t = useTranslations('Posts')
   const { className, doc, relationTo, showCategories, title: titleFromProps } = props
 
-  const { slug, categories, meta, title } = doc || {}
+  const { slug, categories, meta, title, publishedAt } = doc || {}
   const { description, image: metaImage } = meta || {}
 
   const hasCategories = categories && Array.isArray(categories) && categories.length > 0
@@ -32,13 +36,13 @@ export const Card: React.FC<{
   return (
     <article
       className={cn(
-        'border border-border rounded-lg overflow-hidden bg-card hover:cursor-pointer',
+        'border border-border rounded-lg overflow-hidden bg-card hover:cursor-pointer transform transition duration-300 hover:scale-105 hover:shadow-xl hover:shado',
         className,
       )}
       ref={card.ref}
     >
       <div className="relative w-full ">
-        {!metaImage && <div className="">No image</div>}
+        {!metaImage && <div className="">{t('noImage')}</div>}
         {metaImage && typeof metaImage !== 'string' && <Media resource={metaImage} size="33vw" />}
       </div>
       <div className="p-4">
@@ -75,6 +79,11 @@ export const Card: React.FC<{
                 {titleToUse}
               </Link>
             </h3>
+          </div>
+        )}
+        {publishedAt && (
+          <div className="flex flex-col gap-1 text-[14px]">
+            <time dateTime={publishedAt}>{formatDateTime(publishedAt)}</time>
           </div>
         )}
         {description && <div className="mt-2">{description && <p>{sanitizedDescription}</p>}</div>}

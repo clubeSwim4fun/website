@@ -157,7 +157,10 @@
   "Posts": {
     "title": "Blog",
     "noResults": "A pesquisa não produziu resultados.",
-    "queryResults": "A mostrar {indexStart} - {indexEnd} de {totalDocs} {docText}"
+    "queryResults": "A mostrar {indexStart} - {indexEnd} de {totalDocs} {docText}",
+    "author": "por",
+    "noImage": "Sem imagem",
+    "date": "em"
   },
   "Search": {
     "title": "Pesquisar",

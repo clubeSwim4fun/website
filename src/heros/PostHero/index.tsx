@@ -5,11 +5,13 @@ import type { Post } from '@/payload-types'
 
 import { Media } from '@/components/Media'
 import { formatAuthors } from '@/utilities/formatAuthors'
+import { getTranslations } from 'next-intl/server'
 
 export const PostHero: React.FC<{
   post: Post
-}> = ({ post }) => {
+}> = async ({ post }) => {
   const { categories, heroImage, populatedAuthors, publishedAt, title } = post
+  const t = await getTranslations('Posts')
 
   const hasAuthors =
     populatedAuthors && populatedAuthors.length > 0 && formatAuthors(populatedAuthors) !== ''
@@ -39,14 +41,14 @@ export const PostHero: React.FC<{
           </div>
 
           <div className="">
-            <h1 className="mb-6">{title}</h1>
+            <h1 className="text-4xl font-bold mb-6">{title}</h1>
           </div>
 
           <div className="flex flex-col md:flex-row gap-4 md:gap-16">
             {hasAuthors && (
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col gap-1">
-                  <p className="text-sm">Author</p>
+                  <p className="text-sm">{t('author')}</p>
 
                   <p>{formatAuthors(populatedAuthors)}</p>
                 </div>
@@ -54,7 +56,7 @@ export const PostHero: React.FC<{
             )}
             {publishedAt && (
               <div className="flex flex-col gap-1">
-                <p className="text-sm">Date Published</p>
+                <p className="text-sm">{t('date')}</p>
 
                 <time dateTime={publishedAt}>{formatDateTime(publishedAt)}</time>
               </div>
