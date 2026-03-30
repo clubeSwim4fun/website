@@ -15,18 +15,14 @@ import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 
-export async function generateStaticParams({
-  params: paramsPromise,
-}: {
-  params: Promise<{ locale: TypedLocale }>
-}) {
-  const { locale } = await paramsPromise
+export async function generateStaticParams({ params }: { params: { locale: string } }) {
+  const { locale } = params
   const payload = await getPayload({ config: configPromise })
   const posts = await payload.find({
     collection: 'posts',
     draft: false,
     limit: 1000,
-    locale,
+    locale: locale as TypedLocale,
     overrideAccess: false,
     pagination: false,
     select: {
@@ -34,11 +30,7 @@ export async function generateStaticParams({
     },
   })
 
-  const params = posts.docs.map(({ slug }) => {
-    return { slug }
-  })
-
-  return params
+  return posts.docs.map(({ slug }) => ({ slug }))
 }
 
 type Args = {

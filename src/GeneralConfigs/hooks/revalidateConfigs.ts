@@ -6,8 +6,8 @@ export const revalidateConfigs: GlobalAfterChangeHook = ({ doc, req: { payload, 
   if (!context.disableRevalidate) {
     payload.logger.info(`Revalidating general configs`)
 
-    revalidateTag(`global_generalConfigs_en`)
-    revalidateTag(`global_generalConfigs_pt`)
+    revalidateTag(`global_generalConfigs_en`, 'default')
+    revalidateTag(`global_generalConfigs_pt`, 'default')
   }
 
   return doc
