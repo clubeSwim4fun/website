@@ -220,7 +220,19 @@
     "tickets": "Tickets",
     "ticketAlreadyPurchased": "Ticket already purchased",
     "ticketOnlyForMembersOf": "Ticket can only be purchased by members of {groups}",
-    "addToCalendar": "Add to calendar"
+    "addToCalendar": "Add to calendar",
+    "memberDiscount": "discount for members",
+    "register": "Register",
+    "distances": "Distances",
+    "totalDistance": "Total distance",
+    "swimDistance": "Swim",
+    "runDistance": "Run",
+    "transitions": "Transitions",
+    "longestSwim": "Longest swim",
+    "longestRun": "Longest run",
+    "elevationGain": "Elevation gain",
+    "timeLimit": "Time limit",
+    "regulation": "Regulation"
   },
   "FileUploader": {
     "uploading": "Uploading {target}...",

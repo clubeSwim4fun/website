@@ -228,6 +228,131 @@ export const Events: CollectionConfig = {
       ],
     },
     {
+      name: 'image',
+      label: {
+        en: 'Event Image',
+        pt: 'Imagem do Evento',
+      },
+      type: 'upload',
+      relationTo: 'media',
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'externalRegistrationUrl',
+      label: {
+        en: 'External Registration URL',
+        pt: 'URL de Inscrição Externa',
+      },
+      type: 'text',
+      admin: {
+        position: 'sidebar',
+        description: {
+          en: 'If set, shows an "Inscrições" button linking to this URL instead of the internal cart.',
+          pt: 'Se preenchido, mostra um botão "Inscrições" com link para este URL em vez do carrinho interno.',
+        },
+      },
+    },
+    {
+      name: 'promoCode',
+      label: {
+        en: 'Promo Code',
+        pt: 'Código Promocional',
+      },
+      type: 'text',
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'memberDiscount',
+      label: {
+        en: 'Member Discount (%)',
+        pt: 'Desconto para Sócios (%)',
+      },
+      type: 'number',
+      min: 0,
+      max: 100,
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'distanceCategories',
+      label: {
+        en: 'Distance Categories',
+        pt: 'Categorias de Distância',
+      },
+      type: 'array',
+      fields: [
+        {
+          name: 'name',
+          localized: true,
+          label: { en: 'Category Name', pt: 'Nome da Categoria' },
+          type: 'text',
+          required: true,
+        },
+        {
+          name: 'totalDistance',
+          label: { en: 'Total Distance (m)', pt: 'Distância Total (m)' },
+          type: 'number',
+          min: 0,
+        },
+        {
+          name: 'swimDistance',
+          label: { en: 'Swim Distance (m)', pt: 'Distância de Natação (m)' },
+          type: 'number',
+          min: 0,
+        },
+        {
+          name: 'runDistance',
+          label: { en: 'Run Distance (m)', pt: 'Distância de Corrida (m)' },
+          type: 'number',
+          min: 0,
+        },
+        {
+          name: 'transitions',
+          label: { en: 'Transitions (swim/run)', pt: 'Transições (nado/corrida)' },
+          type: 'text',
+        },
+        {
+          name: 'longestSwim',
+          label: { en: 'Longest Swim (m)', pt: 'Nado mais longo (m)' },
+          type: 'number',
+          min: 0,
+        },
+        {
+          name: 'longestRun',
+          label: { en: 'Longest Run (m)', pt: 'Corrida mais longa (m)' },
+          type: 'number',
+          min: 0,
+        },
+        {
+          name: 'elevationGain',
+          label: { en: 'Elevation Gain (D+)', pt: 'Ganho de Elevação (D+)' },
+          type: 'number',
+          min: 0,
+        },
+        {
+          name: 'timeLimit',
+          localized: true,
+          label: { en: 'Time Limit', pt: 'Tempo Limite' },
+          type: 'text',
+        },
+        {
+          name: 'regulationUrl',
+          label: { en: 'Regulation URL', pt: 'URL do Regulamento' },
+          type: 'text',
+        },
+        {
+          name: 'registrationUrl',
+          label: { en: 'Registration URL', pt: 'URL de Inscrição' },
+          type: 'text',
+        },
+      ],
+    },
+    {
       name: 'tickets',
       label: {
         en: 'Tickets',

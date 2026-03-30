@@ -220,7 +220,19 @@
     "tickets": "Bilhetes",
     "ticketAlreadyPurchased": "Bilhete já comprado",
     "ticketOnlyForMembersOf": "Bilhete só pode ser comprado por membros do {groups}",
-    "addToCalendar": "Adicionar ao calendário"
+    "addToCalendar": "Adicionar ao calendário",
+    "memberDiscount": "desconto para sócios",
+    "register": "Inscrições",
+    "distances": "Distâncias",
+    "totalDistance": "Distância total",
+    "swimDistance": "Natação",
+    "runDistance": "Corrida",
+    "transitions": "Transições",
+    "longestSwim": "Nado mais longo",
+    "longestRun": "Corrida mais longa",
+    "elevationGain": "Ganho de elevação",
+    "timeLimit": "Tempo limite",
+    "regulation": "Regulamento"
   },
   "FileUploader": {
     "uploading": "A carregar {target}...",

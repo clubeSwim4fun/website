@@ -89,6 +89,7 @@ export interface Config {
     forms: Form;
     'form-submissions': FormSubmission;
     search: Search;
+    'payload-kv': PayloadKv;
     'payload-jobs': PayloadJob;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -118,6 +119,7 @@ export interface Config {
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
     search: SearchSelect<false> | SearchSelect<true>;
+    'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -126,6 +128,7 @@ export interface Config {
   db: {
     defaultIDType: string;
   };
+  fallbackLocale: ('false' | 'none' | 'null') | false | null | ('en' | 'pt') | ('en' | 'pt')[];
   globals: {
     header: Header;
     footer: Footer;
@@ -137,9 +140,10 @@ export interface Config {
     generalConfigs: GeneralConfigsSelect<false> | GeneralConfigsSelect<true>;
   };
   locale: 'en' | 'pt';
-  user: User & {
-    collection: 'users';
+  widgets: {
+    collections: CollectionsWidget;
   };
+  user: User;
   jobs: {
     tasks: {
       schedulePublish: TaskSchedulePublish;
@@ -182,7 +186,7 @@ export interface Page {
       root: {
         type: string;
         children: {
-          type: string;
+          type: any;
           version: number;
           [k: string]: unknown;
         }[];
@@ -260,7 +264,7 @@ export interface Page {
       root: {
         type: string;
         children: {
-          type: string;
+          type: any;
           version: number;
           [k: string]: unknown;
         }[];
@@ -327,7 +331,7 @@ export interface Post {
     root: {
       type: string;
       children: {
-        type: string;
+        type: any;
         version: number;
         [k: string]: unknown;
       }[];
@@ -373,7 +377,7 @@ export interface Media {
     root: {
       type: string;
       children: {
-        type: string;
+        type: any;
         version: number;
         [k: string]: unknown;
       }[];
@@ -801,6 +805,7 @@ export interface User {
       }[]
     | null;
   password?: string | null;
+  collection: 'users';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -879,7 +884,7 @@ export interface Form {
               root: {
                 type: string;
                 children: {
-                  type: string;
+                  type: any;
                   version: number;
                   [k: string]: unknown;
                 }[];
@@ -923,7 +928,7 @@ export interface Form {
     root: {
       type: string;
       children: {
-        type: string;
+        type: any;
         version: number;
         [k: string]: unknown;
       }[];
@@ -955,7 +960,7 @@ export interface Form {
           root: {
             type: string;
             children: {
-              type: string;
+              type: any;
               version: number;
               [k: string]: unknown;
             }[];
@@ -1416,7 +1421,7 @@ export interface CallToActionBlock {
     root: {
       type: string;
       children: {
-        type: string;
+        type: any;
         version: number;
         [k: string]: unknown;
       }[];
@@ -1483,7 +1488,7 @@ export interface ContentBlock {
           root: {
             type: string;
             children: {
-              type: string;
+              type: any;
               version: number;
               [k: string]: unknown;
             }[];
@@ -1555,7 +1560,7 @@ export interface ArchiveBlock {
     root: {
       type: string;
       children: {
-        type: string;
+        type: any;
         version: number;
         [k: string]: unknown;
       }[];
@@ -1592,7 +1597,7 @@ export interface FormBlock {
     root: {
       type: string;
       children: {
-        type: string;
+        type: any;
         version: number;
         [k: string]: unknown;
       }[];
@@ -1640,7 +1645,7 @@ export interface Event {
     root: {
       type: string;
       children: {
-        type: string;
+        type: any;
         version: number;
         [k: string]: unknown;
       }[];
@@ -1923,6 +1928,29 @@ export interface Event {
         )
       | null;
   };
+  image?: (string | null) | Media;
+  /**
+   * If set, shows an "Inscrições" button linking to this URL instead of the internal cart.
+   */
+  externalRegistrationUrl?: string | null;
+  promoCode?: string | null;
+  memberDiscount?: number | null;
+  distanceCategories?:
+    | {
+        name: string;
+        totalDistance?: number | null;
+        swimDistance?: number | null;
+        runDistance?: number | null;
+        transitions?: string | null;
+        longestSwim?: number | null;
+        longestRun?: number | null;
+        elevationGain?: number | null;
+        timeLimit?: string | null;
+        regulationUrl?: string | null;
+        registrationUrl?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   tickets?: (string | Ticket)[] | null;
   slug?: string | null;
   slugLock?: boolean | null;
@@ -2100,6 +2128,23 @@ export interface Search {
     | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-kv".
+ */
+export interface PayloadKv {
+  id: string;
+  key: string;
+  data:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2287,10 +2332,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'search';
         value: string | Search;
-      } | null)
-    | ({
-        relationTo: 'payload-jobs';
-        value: string | PayloadJob;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -2833,6 +2874,26 @@ export interface EventsSelect<T extends boolean = true> {
         zipcode?: T;
         country?: T;
       };
+  image?: T;
+  externalRegistrationUrl?: T;
+  promoCode?: T;
+  memberDiscount?: T;
+  distanceCategories?:
+    | T
+    | {
+        name?: T;
+        totalDistance?: T;
+        swimDistance?: T;
+        runDistance?: T;
+        transitions?: T;
+        longestSwim?: T;
+        longestRun?: T;
+        elevationGain?: T;
+        timeLimit?: T;
+        regulationUrl?: T;
+        registrationUrl?: T;
+        id?: T;
+      };
   tickets?: T;
   slug?: T;
   slugLock?: T;
@@ -3260,6 +3321,14 @@ export interface SearchSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-kv_select".
+ */
+export interface PayloadKvSelect<T extends boolean = true> {
+  key?: T;
+  data?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-jobs_select".
  */
 export interface PayloadJobsSelect<T extends boolean = true> {
@@ -3372,41 +3441,76 @@ export interface Header {
  */
 export interface Footer {
   id: string;
-  navItems?:
-    | {
-        link: {
-          type?: ('reference' | 'custom' | 'subscription') | null;
-          newTab?: boolean | null;
-          reference?:
-            | ({
-                relationTo: 'pages';
-                value: string | Page;
-              } | null)
-            | ({
-                relationTo: 'posts';
-                value: string | Post;
-              } | null);
-          /**
-           * Select the group that this subscription will be linked to.
-           */
-          subscriptionGroup?: (string | null) | Group;
-          url?: string | null;
-          label: string;
-          hasChildren?: boolean | null;
-          childrenPages?:
-            | {
-                reference: {
+  contact: {
+    label: string;
+    emailLabel?: string | null;
+    email?: string | null;
+    phoneLabel?: string | null;
+    phone?: string | null;
+    whatsappLabel?: string | null;
+    whatsapp?: string | null;
+  };
+  socialMedia: {
+    label: string;
+    /**
+     * Full Instagram profile URL
+     */
+    instagram?: string | null;
+    /**
+     * Full X (Twitter) profile URL
+     */
+    x?: string | null;
+    /**
+     * Full Facebook page URL
+     */
+    facebook?: string | null;
+    /**
+     * Full YouTube channel URL
+     */
+    youtube?: string | null;
+  };
+  company: {
+    label: string;
+    /**
+     * e.g. Copyright © 2026 Clube Swim4fun
+     */
+    copyright?: string | null;
+    navItems?:
+      | {
+          link: {
+            type?: ('reference' | 'custom' | 'subscription') | null;
+            newTab?: boolean | null;
+            reference?:
+              | ({
                   relationTo: 'pages';
                   value: string | Page;
-                };
-                label: string;
-                id?: string | null;
-              }[]
-            | null;
-        };
-        id?: string | null;
-      }[]
-    | null;
+                } | null)
+              | ({
+                  relationTo: 'posts';
+                  value: string | Post;
+                } | null);
+            /**
+             * Select the group that this subscription will be linked to.
+             */
+            subscriptionGroup?: (string | null) | Group;
+            url?: string | null;
+            label: string;
+            hasChildren?: boolean | null;
+            childrenPages?:
+              | {
+                  reference: {
+                    relationTo: 'pages';
+                    value: string | Page;
+                  };
+                  label: string;
+                  id?: string | null;
+                }[]
+              | null;
+          };
+          id?: string | null;
+        }[]
+      | null;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -3520,28 +3624,54 @@ export interface HeaderSelect<T extends boolean = true> {
  * via the `definition` "footer_select".
  */
 export interface FooterSelect<T extends boolean = true> {
-  navItems?:
+  contact?:
     | T
     | {
-        link?:
+        label?: T;
+        emailLabel?: T;
+        email?: T;
+        phoneLabel?: T;
+        phone?: T;
+        whatsappLabel?: T;
+        whatsapp?: T;
+      };
+  socialMedia?:
+    | T
+    | {
+        label?: T;
+        instagram?: T;
+        x?: T;
+        facebook?: T;
+        youtube?: T;
+      };
+  company?:
+    | T
+    | {
+        label?: T;
+        copyright?: T;
+        navItems?:
           | T
           | {
-              type?: T;
-              newTab?: T;
-              reference?: T;
-              subscriptionGroup?: T;
-              url?: T;
-              label?: T;
-              hasChildren?: T;
-              childrenPages?:
+              link?:
                 | T
                 | {
+                    type?: T;
+                    newTab?: T;
                     reference?: T;
+                    subscriptionGroup?: T;
+                    url?: T;
                     label?: T;
-                    id?: T;
+                    hasChildren?: T;
+                    childrenPages?:
+                      | T
+                      | {
+                          reference?: T;
+                          label?: T;
+                          id?: T;
+                        };
                   };
+              id?: T;
             };
-        id?: T;
       };
   updatedAt?: T;
   createdAt?: T;
@@ -3635,6 +3765,16 @@ export interface GeneralConfigsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "collections_widget".
+ */
+export interface CollectionsWidget {
+  data?: {
+    [k: string]: unknown;
+  };
+  width: 'full';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "TaskSchedulePublish".
  */
 export interface TaskSchedulePublish {
@@ -3665,7 +3805,7 @@ export interface BannerBlock {
     root: {
       type: string;
       children: {
-        type: string;
+        type: any;
         version: number;
         [k: string]: unknown;
       }[];

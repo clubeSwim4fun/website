@@ -4,18 +4,22 @@ import type { Calendar as CalendarBlockProps } from '@/payload-types'
 
 import { EventsProvider } from '@/components/Calendar/events-context'
 
-import { getPayload } from 'payload'
+import { getPayload, TypedLocale } from 'payload'
 import config from '@payload-config'
 import { CalendarEvent } from '@/components/Calendar/calendar-types'
 import { Calendar } from '@/components/Calendar/calendar'
 
-export const CalendarBlock: React.FC<CalendarBlockProps> = async (props) => {
+export const CalendarBlock: React.FC<CalendarBlockProps & { locale?: TypedLocale }> = async (
+  props,
+) => {
   const payload = await getPayload({ config })
 
   const result = await payload.find({
     collection: 'events',
     depth: 1,
-    limit: 12,
+    limit: 1000,
+    pagination: false,
+    locale: props.locale,
     select: {
       slug: true,
       title: true,

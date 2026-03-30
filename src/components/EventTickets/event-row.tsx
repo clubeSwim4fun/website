@@ -30,8 +30,11 @@ export const EventRow: React.FC<{
   const getGroupName = (groupId?: (string | GroupCategory)[]) => {
     const response: string[] = []
 
+    // normalise to IDs — groupId entries may be populated objects or plain strings
+    const allowedIds = groupId?.map((c) => (typeof c === 'object' ? c.id : c)) ?? []
+
     groups?.forEach((group) => {
-      if (groupId?.includes(group.id)) {
+      if (allowedIds.includes(group.id)) {
         response.push(group.title)
       }
     })
@@ -44,13 +47,15 @@ export const EventRow: React.FC<{
       return true
     }
 
+    // canBePurchasedBy may contain either strings or populated objects — normalise to IDs
+    const allowedIds = ticket.canBePurchasedBy.map((c) => (typeof c === 'object' ? c.id : c))
+
     const response =
       (user &&
-        user.groups?.some((group) =>
-          typeof group.value === 'object'
-            ? ticket.canBePurchasedBy?.includes(group.value.id)
-            : ticket.canBePurchasedBy?.includes(group.value),
-        )) ||
+        user.groups?.some((group) => {
+          const groupId = typeof group.value === 'object' ? group.value.id : group.value
+          return allowedIds.includes(groupId)
+        })) ||
       false
 
     if (!response) {

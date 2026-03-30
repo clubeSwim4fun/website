@@ -36,5 +36,7 @@
     "editor.codeActionsOnSave": {
       "source.fixAll.eslint": "explicit"
     }
-  }
+  },
+  "kiroAgent.configureMCP": "Enabled",
+  "typescript.autoClosingTags": false
 }

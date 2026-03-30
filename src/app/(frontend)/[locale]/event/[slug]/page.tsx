@@ -11,6 +11,7 @@ import { generateMeta } from '@/utilities/generateMeta'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { EventHero } from '@/heros/EventHero'
 import { EventDetails } from '@/components/EventDetails'
+import { EventDistanceCategories } from '@/components/EventDistanceCategories'
 import { getMeUser } from '@/utilities/getMeUser'
 
 export async function generateStaticParams() {
@@ -89,7 +90,12 @@ export default async function Event({ params: paramsPromise }: Args) {
 
       <div className="container pt-8 max-w-6xl mx-auto">
         <section className="flex flex-col-reverse lg:flex-row gap-3">
-          <RichText data={description} enableGutter={false} />
+          <div className="flex-1 min-w-0">
+            <RichText data={description} enableGutter={false} />
+            {event.distanceCategories && event.distanceCategories.length > 0 && (
+              <EventDistanceCategories categories={event.distanceCategories} />
+            )}
+          </div>
           <EventDetails
             user={user}
             event={event}
