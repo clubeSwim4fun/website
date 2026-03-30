@@ -84,7 +84,7 @@ const updateRelatedCollection = async ({
         }
       }
     } catch (error) {
-      payload.logger.error('error while creating gender', error)
+      payload.logger.error(`error while creating ${collection}: ${String(error)}`)
     }
   }
 
