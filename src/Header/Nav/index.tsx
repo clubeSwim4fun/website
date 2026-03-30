@@ -83,6 +83,16 @@ export const HeaderNav: React.FC<{
           </Link>
         </Button>
       )}
+      {user && (
+        <Button asChild variant={'link'} size={'clear'}>
+          <Link
+            href={'/my-profile'}
+            className="text-black dark:text-white group flex flex-col items-center"
+          >
+            A minha conta
+          </Link>
+        </Button>
+      )}
       {user && <LogoutButton />}
       <Link href="/search">
         <span className="sr-only">Search</span>

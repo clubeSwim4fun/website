@@ -164,16 +164,28 @@ const MobileHeaderNav: React.FC<{
           )
         })}
         {/* TODO - Improve this section to have a box and allow to login or create an account */}
-        <Button asChild variant={'link'} size={'clear'}>
-          {/* TODO - Add label  */}
-          <Link
-            href={'/sign-in'}
-            onClick={() => setIsOpen(false)}
-            className={`pl-2 text-black dark:text-white py-4 border-b border-gray-300 rounded-none ${'/sign-in' === pathname && 'bg-blueSwim text-white'}`}
-          >
-            Login
-          </Link>
-        </Button>
+        {user ? (
+          <Button asChild variant={'link'} size={'clear'}>
+            <Link
+              href={'/my-profile'}
+              onClick={() => setIsOpen(false)}
+              className={`pl-2 text-black dark:text-white py-4 border-b border-gray-300 rounded-none ${'/my-profile' === pathname && 'bg-blueSwim text-white'}`}
+            >
+              A minha conta
+            </Link>
+          </Button>
+        ) : (
+          <Button asChild variant={'link'} size={'clear'}>
+            {/* TODO - Add label  */}
+            <Link
+              href={'/sign-in'}
+              onClick={() => setIsOpen(false)}
+              className={`pl-2 text-black dark:text-white py-4 border-b border-gray-300 rounded-none ${'/sign-in' === pathname && 'bg-blueSwim text-white'}`}
+            >
+              Login
+            </Link>
+          </Button>
+        )}
       </nav>
     </div>
   )
