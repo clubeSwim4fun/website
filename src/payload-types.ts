@@ -2016,6 +2016,8 @@ export interface Order {
       }[]
     | null;
   total: number;
+  stripePaymentIntentId?: string | null;
+  paymentStatus?: ('pending' | 'paid' | 'failed') | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -2030,7 +2032,8 @@ export interface Subscription {
   amount: number;
   startDate: string;
   endDate: string;
-  sibsTransactionId: string;
+  sibsTransactionId?: string | null;
+  stripePaymentIntentId?: string | null;
   paymentStatus?: ('pending' | 'paid' | 'failed') | null;
   updatedAt: string;
   createdAt: string;
@@ -2956,6 +2959,8 @@ export interface OrdersSelect<T extends boolean = true> {
         id?: T;
       };
   total?: T;
+  stripePaymentIntentId?: T;
+  paymentStatus?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -3003,6 +3008,7 @@ export interface SubscriptionSelect<T extends boolean = true> {
   startDate?: T;
   endDate?: T;
   sibsTransactionId?: T;
+  stripePaymentIntentId?: T;
   paymentStatus?: T;
   updatedAt?: T;
   createdAt?: T;

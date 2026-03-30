@@ -152,7 +152,12 @@
   "Payment": {
     "title": "Método de Pagamento",
     "payButton": "Pagar",
-    "payButtonLoading": "A pagar..."
+    "payButtonLoading": "A pagar...",
+    "initialising": "A preparar pagamento...",
+    "paymentFailed": "O pagamento falhou. Por favor tente novamente.",
+    "validationError": "Erro de validação. Verifique os dados introduzidos.",
+    "mbwayPendingTitle": "Confirmação pendente no MB Way",
+    "mbwayPendingDescription": "Foi enviada uma notificação para o seu telemóvel. Aceite o pagamento na app MB Way para concluir."
   },
   "Posts": {
     "title": "Blog",

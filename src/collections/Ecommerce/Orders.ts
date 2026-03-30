@@ -152,5 +152,26 @@ export const Orders: CollectionConfig = {
         readOnly: true,
       },
     },
+    {
+      name: 'stripePaymentIntentId',
+      label: {
+        en: 'Stripe Payment Intent ID',
+        pt: 'ID do Pagamento Stripe',
+      },
+      type: 'text',
+      admin: { readOnly: true },
+    },
+    {
+      name: 'paymentStatus',
+      label: { en: 'Payment Status', pt: 'Estado do Pagamento' },
+      type: 'select',
+      options: [
+        { label: { en: 'Pending', pt: 'Pendente' }, value: 'pending' },
+        { label: { en: 'Paid', pt: 'Pago' }, value: 'paid' },
+        { label: { en: 'Failed', pt: 'Falhou' }, value: 'failed' },
+      ],
+      defaultValue: 'pending',
+      admin: { readOnly: true },
+    },
   ],
 }

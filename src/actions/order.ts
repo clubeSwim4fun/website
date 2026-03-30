@@ -18,7 +18,7 @@ type eventTicket = {
   }
 }
 
-export const createOrder = async (locale: TypedLocale) => {
+export const createOrder = async (locale: TypedLocale, stripePaymentIntentId: string) => {
   // TODO integrate with payment gateway
 
   const cart = await getMyCart()
@@ -82,6 +82,8 @@ export const createOrder = async (locale: TypedLocale) => {
         }
       }),
       total: cart.totalPrice,
+      stripePaymentIntentId,
+      paymentStatus: 'pending' as const,
     }
 
     const response = await payload.create({

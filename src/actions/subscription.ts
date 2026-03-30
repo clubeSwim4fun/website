@@ -12,11 +12,12 @@ type responseType = {
   success: boolean
   message: string
   orderId?: string
+  stripePaymentIntentId?: string
 }
 
 export const createSubscription = async (
   payForCurrentMonth: boolean,
-  sibsTransactionId: string,
+  stripePaymentIntentId: string,
 ): Promise<responseType> => {
   const t = await getTranslations()
   const locale = await getLocale()
@@ -54,29 +55,26 @@ export const createSubscription = async (
         amount,
         startDate: startDate.toISOString(),
         endDate: endDate.toISOString(),
-        sibsTransactionId,
+        stripePaymentIntentId,
+        paymentStatus: 'paid',
       },
     })
 
-    // await payload.update({
-    //   collection: 'users',
-    //   where: {
-    //     id: {
-    //       equals: user?.id,
-    //     },
-    //   },
-    //   data: {
-    //     status: 'active',
-    //   },
-    // })
-
     if (response.id) {
+      await payload.update({
+        collection: 'users',
+        id: user!.id,
+        req: { transactionID },
+        data: { status: 'active' },
+      })
+
       await payload.db.commitTransaction(transactionID)
 
       return {
         success: true,
         message: 'subscription added',
         orderId: response.id,
+        stripePaymentIntentId,
       }
     }
   } catch (error) {

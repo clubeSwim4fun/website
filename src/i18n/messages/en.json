@@ -152,7 +152,12 @@
   "Payment": {
     "title": "Payment Method",
     "payButton": "Pay",
-    "payButtonLoading": "Paying..."
+    "payButtonLoading": "Paying...",
+    "initialising": "Preparing payment...",
+    "paymentFailed": "Payment failed. Please try again.",
+    "validationError": "Validation error. Please check your details.",
+    "mbwayPendingTitle": "Waiting for MB Way confirmation",
+    "mbwayPendingDescription": "A notification was sent to your phone. Accept the payment in the MB Way app to complete."
   },
   "Posts": {
     "title": "Blog",

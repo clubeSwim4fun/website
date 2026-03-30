@@ -10,12 +10,15 @@ interface Props {
 export const Logo = (props: Props) => {
   const { media } = props
 
-  return (
-    media &&
-    typeof media === 'object' && (
-      <div className="h-10 w-10 flex">
-        <ImageMedia imgClassName="-z-10 object-cover" priority resource={media} />
+  if (media && typeof media === 'object') {
+    return (
+      <div className="h-10 w-auto flex items-center">
+        <ImageMedia imgClassName="h-10 w-auto object-contain" priority resource={media} />
       </div>
     )
-  )
+  }
+
+  // No logo uploaded — render a small text placeholder so the Link
+  // doesn't expand to fill available space and block page interactions
+  return <span className="h-10 w-10 flex items-center justify-center text-sm font-bold">S4F</span>
 }

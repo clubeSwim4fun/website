@@ -10,13 +10,15 @@ import { cn } from '@/utilities/ui'
 
 const UserSubscriptionConfirmationPage = async ({
   params,
+  searchParams,
 }: {
-  params: Promise<{ locale: string; id: string }>
+  params: Promise<{ locale: string }>
+  searchParams: Promise<{ id?: string }>
 }) => {
-  const { locale, id } = await params
+  const { locale } = await params
+  const { id } = await searchParams
   const userObject = await getMeUser({ invalidateCache: true })
   const t = await getTranslations()
-  // let isLoading = true
 
   if (!userObject || !userObject.user) {
     redirect(`sign-in?callbackUrl=/${locale}/subscription/order-generation`)
@@ -37,11 +39,9 @@ const UserSubscriptionConfirmationPage = async ({
         </div>
         <div className="flex flex-col gap-4 justify-start items-start p-6">
           <p className="font-bold text-3xl">
-            {t('Subscription.userTitle', {
-              username: user.name,
-            })}
+            {t('Subscription.userTitle', { username: user.name })}
           </p>
-          <p className="text-xl">{t('Subscription.subscriptionConfirmation', { id })}</p>
+          <p className="text-xl">{t('Subscription.subscriptionConfirmation', { id: id ?? '—' })}</p>
         </div>
       </div>
     </section>
@@ -64,11 +64,8 @@ export async function generateMetadata({
   )()) as GeneralConfig
 
   const subscription = globalConfig?.settings?.fixedPages?.subscription
-
   const clubTitle = globalConfig?.clubName || t('Club')
   const subscriptionTitle = subscription?.title || t('Subscription')
 
-  return {
-    title: `${clubTitle} - ${subscriptionTitle}`,
-  }
+  return { title: `${clubTitle} - ${subscriptionTitle}` }
 }
