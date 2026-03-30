@@ -11,12 +11,33 @@ import { Button } from '@/components/ui/button'
 import LogoutButton from '../Logout'
 import { Cart } from '@/components/Cart'
 
-export const HeaderNav: React.FC<{ data: HeaderType; user?: User }> = ({ data, user }) => {
+export const HeaderNav: React.FC<{
+  data: HeaderType
+  user?: User
+  registerSlug?: string | null
+}> = ({ data, user, registerSlug }) => {
   const navItems = data?.navItems || []
+
+  const filteredNavItems = user
+    ? navItems.filter(({ link }) => {
+        if (!registerSlug) return true
+        const refSlug =
+          link.type === 'reference' &&
+          link.reference &&
+          typeof link.reference.value === 'object' &&
+          'slug' in link.reference.value
+            ? link.reference.value.slug
+            : null
+        const customUrl = link.type === 'custom' ? link.url : null
+        return (
+          refSlug !== registerSlug && customUrl !== `/${registerSlug}` && customUrl !== registerSlug
+        )
+      })
+    : navItems
 
   return (
     <nav className="gap-3 items-center hidden md:flex" aria-label="Desktop navigation">
-      {navItems.map(({ link }, i) => {
+      {filteredNavItems.map(({ link }, i) => {
         return (
           <Fragment key={i}>
             {link.hasChildren && link.childrenPages!.length > 0 ? (

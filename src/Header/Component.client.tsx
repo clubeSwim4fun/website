@@ -13,9 +13,10 @@ import MobileHeaderNav from './MobileNav'
 interface HeaderClientProps {
   data: Header
   user?: User
+  registerSlug?: string | null
 }
 
-export const HeaderClient: React.FC<HeaderClientProps> = ({ data, user }) => {
+export const HeaderClient: React.FC<HeaderClientProps> = ({ data, user, registerSlug }) => {
   /* Storing the value in a useState to avoid hydration errors */
   const [theme] = useState<string | null>(null)
   // const { headerTheme, setHeaderTheme } = useHeaderTheme()
@@ -62,8 +63,8 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, user }) => {
         <Link href="/" className="w-fit">
           <Logo media={data.logo} />
         </Link>
-        <MobileHeaderNav data={data} />
-        <HeaderNav data={data} user={user} />
+        <MobileHeaderNav data={data} user={user} registerSlug={registerSlug} />
+        <HeaderNav data={data} user={user} registerSlug={registerSlug} />
       </div>
     </header>
   )

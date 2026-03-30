@@ -1,7 +1,7 @@
 'use client'
 
 import React, { Fragment, useState } from 'react'
-import type { Group, Header as HeaderType, Page, Post } from '@/payload-types'
+import type { Group, Header as HeaderType, Page, Post, User } from '@/payload-types'
 import { Button } from '@/components/ui/button'
 import { CMSLink } from '@/components/Link'
 import { ChevronDown } from 'lucide-react'
@@ -55,10 +55,31 @@ const getLinkHref = (link: LinkType) => {
   return href
 }
 
-const MobileHeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
+const MobileHeaderNav: React.FC<{
+  data: HeaderType
+  user?: User
+  registerSlug?: string | null
+}> = ({ data, user, registerSlug }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [subNavOpen, setSubNavOpen] = useState<string[]>([])
   const navItems = data?.navItems || []
+
+  const filteredNavItems = user
+    ? navItems.filter(({ link }) => {
+        if (!registerSlug) return true
+        const refSlug =
+          link.type === 'reference' &&
+          link.reference &&
+          typeof link.reference.value === 'object' &&
+          'slug' in link.reference.value
+            ? link.reference.value.slug
+            : null
+        const customUrl = link.type === 'custom' ? link.url : null
+        return (
+          refSlug !== registerSlug && customUrl !== `/${registerSlug}` && customUrl !== registerSlug
+        )
+      })
+    : navItems
   let pathname = usePathname()
 
   if (pathname === '/') pathname = '/home'
@@ -125,7 +146,7 @@ const MobileHeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
         aria-label="Mobile navigation"
         className={`${isOpen ? 'max-h-[100vh]' : 'max-h-0'} overflow-hidden h-[90vh] w-full transition-all duration-300 flex flex-col ${isOpen && 'pt-6'}`}
       >
-        {navItems.map(({ link }, i) => {
+        {filteredNavItems.map(({ link }, i) => {
           return (
             <Fragment key={i}>
               {link.hasChildren && link.childrenPages!.length > 0 ? (
