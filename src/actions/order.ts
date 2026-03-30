@@ -83,7 +83,7 @@ export const createOrder = async (locale: TypedLocale, stripePaymentIntentId: st
       }),
       total: cart.totalPrice,
       stripePaymentIntentId,
-      paymentStatus: 'pending' as const,
+      paymentStatus: 'paid' as const,
     }
 
     const response = await payload.create({
@@ -107,22 +107,21 @@ export const createOrder = async (locale: TypedLocale, stripePaymentIntentId: st
     })
 
     await payload.db.commitTransaction(transactionID)
-    // TODO test this
-    const emailHtml = await render(React.createElement(OrderConfirmationEmail, { order: response }))
-
-    await sendEmail({
-      emailHtml,
-      subject: 'test Order confirmation',
-      to: '',
-    })
 
     revalidatePath(`/${locale}/payment`)
 
-    if (!response || !cartResponse) {
-      return {
-        success: false,
-        message: 'Error creating order',
-      }
+    // Email is best-effort — don't let it fail the order
+    try {
+      const emailHtml = await render(
+        React.createElement(OrderConfirmationEmail, { order: response }),
+      )
+      await sendEmail({
+        emailHtml,
+        subject: 'test Order confirmation',
+        to: '',
+      })
+    } catch (emailError) {
+      console.error('Order confirmation email failed:', emailError)
     }
 
     return {

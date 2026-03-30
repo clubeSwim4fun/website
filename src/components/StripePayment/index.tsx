@@ -68,16 +68,20 @@ const CheckoutForm: React.FC<
       return
     }
 
-    if (paymentIntent?.status === 'succeeded') {
-      await onSuccess(paymentIntent.id)
+    // succeeded = card; processing = MB Way (async); requires_action = 3DS redirect handled above
+    const acceptedStatuses = ['succeeded', 'processing', 'requires_action']
+    if (paymentIntent && acceptedStatuses.includes(paymentIntent.status)) {
+      try {
+        await onSuccess(paymentIntent.id)
+      } catch {
+        setErrorMessage(t('paymentFailed'))
+        setIsProcessing(false)
+      }
       return
     }
 
-    // declined / expired — always use our own translated message
-    if (paymentIntent) {
-      setErrorMessage(t('paymentFailed'))
-    }
-
+    // Any other status (canceled, requires_payment_method) is a failure
+    setErrorMessage(t('paymentFailed'))
     setIsProcessing(false)
   }
 

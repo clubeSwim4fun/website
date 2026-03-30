@@ -27,7 +27,7 @@ export const PaymentForm: React.FC<Props> = ({ amountCents }) => {
         variant: 'destructive',
         description: response.message || t('Common.unexpectedError'),
       })
-      return
+      throw new Error(response.message)
     }
 
     router.push(`/${locale}/order/${response.orderId}`)
