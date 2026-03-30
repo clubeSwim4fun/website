@@ -24,20 +24,20 @@ All frontend routes live under `src/app/(frontend)/[locale]/`. The `[locale]` se
 
 These routes redirect to sign-in if user is not logged in. They also enforce `user.status === 'active'`.
 
-| Route                                | File                                                       | Notes                            |
-| ------------------------------------ | ---------------------------------------------------------- | -------------------------------- |
-| `/my-profile`                        | `(profileUser)/my-profile/page.tsx`                        | User profile view/edit           |
-| `/subscription`                      | `(profileUser)/subscription/page.tsx`                      | Pay membership fee               |
-| `/subscription/order-generation`     | `(profileUser)/subscription/order-generation/page.tsx`     | Generates SIBS payment reference |
-| `/group-subscription/[slug]`         | `(profileUser)/group-subscription/[slug]/page.tsx`         | Group join form                  |
-| `/group-subscription/[slug]/payment` | `(profileUser)/group-subscription/[slug]/payment/page.tsx` | Group subscription payment       |
+| Route                                | File                                                       | Notes                      |
+| ------------------------------------ | ---------------------------------------------------------- | -------------------------- |
+| `/my-profile`                        | `(profileUser)/my-profile/page.tsx`                        | User profile view/edit     |
+| `/subscription`                      | `(profileUser)/subscription/page.tsx`                      | Pay membership fee         |
+| `/subscription/order-generation`     | `(profileUser)/subscription/order-generation/page.tsx`     | Subscription confirmation  |
+| `/group-subscription/[slug]`         | `(profileUser)/group-subscription/[slug]/page.tsx`         | Group join form            |
+| `/group-subscription/[slug]/payment` | `(profileUser)/group-subscription/[slug]/payment/page.tsx` | Group subscription payment |
 
 ## Cart & Checkout Routes
 
 | Route         | File                  | Notes                               |
 | ------------- | --------------------- | ----------------------------------- |
 | `/cart`       | `cart/page.tsx`       | Cart review, T-shirt size selection |
-| `/payment`    | `payment/page.tsx`    | Event ticket payment (SIBS widget)  |
+| `/payment`    | `payment/page.tsx`    | Event ticket payment (Stripe)       |
 | `/order/[id]` | `order/[id]/page.tsx` | Order confirmation/detail           |
 
 ## Sitemap Routes
@@ -96,11 +96,11 @@ These routes redirect to sign-in if user is not logged in. They also enforce `us
 ## Checkout Flow (Membership)
 
 ```
-/subscription  →  /subscription/order-generation  →  (SIBS widget)
+/subscription  →  /subscription/order-generation  →  (Stripe payment)
 ```
 
 ## Checkout Flow (Group Subscription)
 
 ```
-/group-subscription/[slug]  →  /group-subscription/[slug]/payment  →  (SIBS widget)
+/group-subscription/[slug]  →  /group-subscription/[slug]/payment  →  (Stripe payment)
 ```

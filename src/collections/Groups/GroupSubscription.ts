@@ -65,8 +65,8 @@ export const GroupSubscription: CollectionConfig = {
           name: 'transactionId',
           type: 'text',
           label: {
-            en: 'SIBS - Transaction ID',
-            pt: 'SIBS - ID da Transação',
+            en: 'Stripe Payment Intent ID',
+            pt: 'ID do Pagamento Stripe',
           },
           admin: {
             readOnly: true,

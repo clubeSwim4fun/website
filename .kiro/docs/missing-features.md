@@ -65,13 +65,10 @@ The original site links to an **external registration URL** (`https://bit.ly/Tro
 
 ---
 
-## 4. Payment Confirmation Webhook (SIBS)
+## 4. Payment — Open Items
 
-Already documented in `dev-conventions.md` as a TODO, but critical for the event ticket flow:
-
-- SIBS callback/webhook is not wired — `paymentStatus` stays `pending` forever
 - `createOrder` action uses `payload.init()` instead of `getPayload()` — needs refactoring
-- No retry or expiry handling for failed/expired SIBS transactions (4-minute expiry)
+- Order confirmation email `to` field is hardcoded as empty string
 
 ---
 
@@ -136,7 +133,7 @@ The original WordPress site has a `locations` taxonomy (e.g. `/locations/troia/`
 | # | Feature | Priority |
 |---|---|---|
 | 1 | External registration URL on events | High |
-| 2 | SIBS payment webhook (order confirmation) | High |
+| 2 | Payment — order action refactor (`payload.init` → `getPayload`) | High |
 | 3 | Event image upload | High |
 | 4 | Distance detail breakdown per category | Medium |
 | 5 | Promo code + member discount | Medium |

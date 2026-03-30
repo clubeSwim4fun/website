@@ -85,4 +85,4 @@ Middleware matcher excludes: `/api`, `/_next`, `/_vercel`, `/admin`, and files w
 
 - `users` read access is `authenticated` but noted as needing tightening (accessible via Postman)
 - `carts` read access has the same note
-- Payment gateway integration is incomplete — SIBS transaction IDs are stored but payment confirmation flow needs to be wired up
+- Payment gateway integration is complete — Stripe handles all payment flows via webhook

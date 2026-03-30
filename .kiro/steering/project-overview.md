@@ -16,7 +16,7 @@ This is a **swimming club management website** built with **PayloadCMS v3** (hea
 - **i18n**: `next-intl` — Portuguese (`pt`, default) and English (`en`)
 - **Styling**: Tailwind CSS + shadcn/ui (Radix UI primitives)
 - **Email**: Nodemailer + `@react-email/components` for templated emails
-- **Payment**: SIBS (Portuguese payment gateway, Multibanco references) — Stripe integration is planned but not yet implemented
+- **Payment**: Stripe (card, MB Way via Stripe Payment Element)
 - **Rate Limiting**: Upstash Redis
 - **Package Manager**: pnpm
 
@@ -50,7 +50,7 @@ src/
   i18n/                    # Locale config and message files
   plugins/                 # PayloadCMS plugin config
   utilities/               # Shared utilities
-  helpers/                 # Domain helpers (cart, user, event, SIBS, email)
+  helpers/                 # Domain helpers (cart, user, event, stripe, email)
   GeneralConfigs/          # Global CMS config (fees, settings)
   Header/ Footer/          # Global header/footer CMS configs
 lib/

@@ -8,9 +8,6 @@ import { getPayload, TypedLocale } from 'payload'
 import { cn } from '@/utilities/ui'
 import configPromise from '@payload-config'
 import { PaymentForm } from './payment-form'
-import { getClientSideURL } from '@/utilities/getURL'
-import PaymentStatus from './payment-status'
-import { generateSibsPaymentTransaction } from '@/helpers/sibsHelper'
 
 const GroupSubscriptionPage = async ({
   params,
@@ -23,16 +20,10 @@ const GroupSubscriptionPage = async ({
   const { locale, slug } = await params
   const { id } = await searchParams
   const userObject = await getMeUser({ invalidateCache: true })
-  const t = await getTranslations()
-  let sibsTransactionID, sibsFormContext
 
   const groupConfig = await payload.find({
     collection: 'groups',
-    where: {
-      slug: {
-        equals: slug,
-      },
-    },
+    where: { slug: { equals: slug } },
     limit: 1,
   })
 
@@ -50,18 +41,8 @@ const GroupSubscriptionPage = async ({
 
   const user = userObject.user
 
-  if (!id) {
-    const { transactionID, formContext } = await generateSibsPaymentTransaction({
-      price: group?.subscriptionPrice || 0,
-      orderID: `group-subscription-${user.id}`,
-      description: t(`GroupSubscription.description`, {
-        groupName: group?.title || 'Group',
-      }),
-    })
-
-    sibsTransactionID = transactionID
-    sibsFormContext = formContext
-  }
+  // Amount in EUR cents for Stripe
+  const amountCents = Math.round((group?.subscriptionPrice || 0) * 100)
 
   return (
     <section
@@ -70,15 +51,13 @@ const GroupSubscriptionPage = async ({
         `${user.status !== 'active' ? 'mx' : 'm'}-auto`,
       )}
     >
-      {id ? (
-        <PaymentStatus id={id} />
-      ) : (
-        <PaymentForm
-          transactionID={sibsTransactionID}
-          formContext={sibsFormContext}
-          groupSlug={slug}
-        />
-      )}
+      <PaymentForm
+        amountCents={amountCents}
+        groupSlug={slug}
+        groupSubscriptionId={id}
+        groupName={typeof group?.title === 'string' ? group.title : ''}
+        locale={locale}
+      />
     </section>
   )
 }
@@ -99,7 +78,6 @@ export async function generateMetadata({
   )()) as GeneralConfig
 
   const subscription = globalConfig?.settings?.fixedPages?.subscription
-
   const clubTitle = globalConfig?.clubName || t('Club')
   const subscriptionTitle = subscription?.title || t('Subscription')
 

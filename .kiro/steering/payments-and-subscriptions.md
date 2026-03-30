@@ -4,28 +4,38 @@ inclusion: always
 
 # Payments & Subscriptions
 
-## Current Payment Gateway: SIBS
+## Current Payment Gateway: Stripe
 
-SIBS is a Portuguese payment gateway used for Multibanco references. It is the **only active payment integration**. Stripe is planned but not yet implemented.
+Stripe is the active payment integration for all payment flows.
 
-### SIBS Flow
+### Stripe Flow
 
-1. Frontend calls `generateSibsPaymentTransaction()` from `src/helpers/sibsHelper.ts`
-2. That hits the internal API route `POST /api/sibs` (`src/app/(payload)/api/sibs/route.ts`)
-3. The route calls the SIBS API and returns `{ transactionID, formContext }`
-4. `formContext` is used to render the SIBS payment widget in the browser
-5. After payment, the `sibsTransactionId` is stored on the relevant record
+1. Frontend renders `StripePaymentForm` from `src/components/StripePayment/index.tsx`
+2. On mount, it calls `createPaymentIntent()` from `src/helpers/stripeHelper.ts` to get a `clientSecret`
+3. The Stripe Elements widget collects card/MB Way details
+4. On submit, `stripe.confirmPayment()` is called
+5. On success, the `onSuccess(paymentIntentId)` callback fires — the calling page stores the intent ID and updates the record
+6. Stripe webhooks (`POST /api/stripe/webhook`) handle async confirmation for MB Way and 3DS flows, updating `paymentStatus` to `paid` or `failed`
 
-### SIBS Environment Variables
+### Stripe Environment Variables
 
 ```
-SIBS_TERMINAL_ID=
-SIBS_PAYMENT_METHODS=   # comma-separated, e.g. "CARD,MB"
+STRIPE_SECRET_KEY=
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
+STRIPE_WEBHOOK_SECRET=
 ```
 
-### Payment Expiry
+### Webhook Handler
 
-SIBS payment references expire 4 minutes after creation (hardcoded in the API route).
+`src/app/(payload)/api/stripe/webhook/route.ts` handles:
+
+- `payment_intent.succeeded` → sets `paymentStatus: 'paid'` and stores `stripePaymentIntentId`
+- `payment_intent.payment_failed` → sets `paymentStatus: 'failed'`
+
+The PaymentIntent `metadata` must include:
+
+- `type`: `'order'` | `'subscription'` | `'group-subscription'`
+- `recordId`: the Payload document ID to update
 
 ---
 
@@ -42,8 +52,8 @@ Handles club membership fees paid by individual users.
   - `startDate` / `endDate`: based on `limitDate` cutoff logic
     - If today ≤ `limitDate`: covers current month
     - If today > `limitDate`: starts from next month
-- Creates a `subscription` record with `paymentStatus: 'pending'`
-- **TODO**: payment gateway integration is incomplete — the SIBS transaction ID parameter exists but the confirmation webhook/callback is not yet wired
+- Creates a `subscription` record with `paymentStatus: 'paid'` and stores `stripePaymentIntentId`
+- Updates `user.status` to `active`
 
 ### Subscription Types
 
@@ -68,6 +78,12 @@ Handles paid membership to specific groups (e.g. competitive team).
 - Looks up the group by slug
 - Creates a `group-subscription` record with `status: 'pending'`
 - Stores form submission data in `submissionData[]`
+- Returns `redirectUrl` pointing to the payment page
+
+### Server Action: `updateGroupSubscription` (`src/actions/group-subscription.ts`)
+
+- Called after successful Stripe payment
+- Stores the `stripePaymentIntentId` in `transactionId` field
 - Admin manually approves/rejects via the admin panel
 
 ### Group Subscription Config (on `groups` collection)
@@ -88,7 +104,7 @@ Handles ticket purchases for swimming events.
 2. User adds tickets to cart via `cartHelper.ts`
 3. Cart page (`/cart`) shows items with T-shirt size selection
 4. Checkout goes to payment page (`/payment`)
-5. Server action `createOrder()` (`src/actions/order.ts`) converts cart to order
+5. `StripePaymentForm` collects payment; on success calls `createOrder()` (`src/actions/order.ts`)
 6. Order confirmation email sent via `OrderConfirmationEmail` template
 7. Admin assigns dorsal numbers (`eventPurchaseId`) and marks `ticketPurchased`
 
@@ -110,15 +126,3 @@ Key functions:
 ### Ticket Purchase Restrictions
 
 Tickets have `canBePurchasedBy` (relationship to `group-categories`). If set, only users belonging to those group-categories can purchase. If empty, anyone can buy.
-
----
-
-## Future: Stripe Integration
-
-When implementing Stripe:
-
-- Replace or complement the SIBS helper with a Stripe helper
-- The `subscription`, `group-subscription`, and `orders` collections already have a `transactionId`/`sibsTransactionId` field — add a `stripePaymentIntentId` or rename as appropriate
-- Implement webhook handlers for payment confirmation
-- Update `paymentStatus` from `pending` → `paid` | `failed` via webhook
-- The `createSubscription` and `createOrder` actions have `// TODO - integrate with payment gateway` comments marking the exact integration points

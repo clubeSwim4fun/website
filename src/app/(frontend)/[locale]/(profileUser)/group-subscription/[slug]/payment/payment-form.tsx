@@ -1,67 +1,53 @@
 'use client'
 
-import { Skeleton } from '@/components/ui/skeleton'
+import { updateGroupSubscription } from '@/actions/group-subscription'
+import { StripePaymentForm } from '@/components/StripePayment'
 import { getClientSideURL } from '@/utilities/getURL'
-import { useLocale, useTranslations } from 'next-intl'
-import { useEffect, useState } from 'react'
+import { useToast } from '@/hooks/use-toast'
+import { useTranslations } from 'next-intl'
+import { useRouter } from 'next/navigation'
 
-type Args = {
-  groupSlug?: string
-  transactionID?: string
-  formContext?: string
-  signature?: string
+type Props = {
+  amountCents: number
+  groupSlug: string
+  groupSubscriptionId?: string
+  groupName: string
+  locale: string
 }
 
-export const PaymentForm: React.FC<Args> = (props) => {
-  const { formContext, transactionID, signature, groupSlug } = props
-  const [isLoading, setIsLoading] = useState(true)
+export const PaymentForm: React.FC<Props> = ({
+  amountCents,
+  groupSlug,
+  groupSubscriptionId,
+  groupName,
+  locale,
+}) => {
+  const router = useRouter()
+  const { toast } = useToast()
   const t = useTranslations()
-  const locale = useLocale()
 
-  const groupSubscriptionId = sessionStorage.getItem('groupSubscriptionId')
-  // TODO - add error message to do not show payment form if groupSubscriptionId is not set
-
-  useEffect(() => {
-    const script = document.createElement('script')
-    script.src = `https://spg.qly.site1.sibs.pt/assets/js/widget.js?id=${transactionID}` // TODO update to env var
-    script.async = true
-    document.body.appendChild(script)
-
-    setIsLoading(false)
-
-    return () => {
-      document.body.removeChild(script)
+  const handleSuccess = async (paymentIntentId: string) => {
+    if (groupSubscriptionId) {
+      await updateGroupSubscription({ id: groupSubscriptionId, transactionId: paymentIntentId })
     }
-  }, [])
 
-  const formConfig = {
-    paymentMethodList: ['MBWAY'],
-    amount: {
-      value: 5,
-      currency: 'EUR',
-    },
-    language: locale,
-    redirectUrl: `${getClientSideURL()}/group-subscription/${groupSlug}/payment`,
-    customerData: null,
+    router.push(`/${locale}/group-subscription/${groupSlug}`)
   }
 
-  return isLoading ? (
-    <div className="flex items-center space-x-4">
-      {/* TODO - add proper skeleton */}
-      <Skeleton className="h-12 w-12 rounded-full" />
-      <div className="space-y-2">
-        <Skeleton className="h-4 w-[250px]" />
-        <Skeleton className="h-4 w-[200px]" />
-      </div>
+  if (!groupSubscriptionId) {
+    return <p className="text-destructive">{t('GroupSubscription.missingSubscriptionId')}</p>
+  }
+
+  return (
+    <div className="flex flex-col gap-6 max-w-lg">
+      <h1 className="font-bold text-4xl">{groupName}</h1>
+      <StripePaymentForm
+        amount={amountCents}
+        description={`Group subscription - ${groupName}`}
+        metadata={{ type: 'group-subscription', recordId: groupSubscriptionId }}
+        onSuccess={handleSuccess}
+        returnUrl={`${getClientSideURL()}/${locale}/group-subscription/${groupSlug}`}
+      />
     </div>
-  ) : groupSubscriptionId ? (
-    <>start again... add button here removing payment path</>
-  ) : (
-    <form
-      className="w-full paymentSPG"
-      spg-context={formContext}
-      spg-config={JSON.stringify(formConfig)}
-      spg-signature={signature}
-    ></form>
   )
 }

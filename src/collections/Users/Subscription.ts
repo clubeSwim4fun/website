@@ -44,11 +44,6 @@ export const Subscription: CollectionConfig = {
       required: true,
     },
     {
-      name: 'sibsTransactionId',
-      type: 'text',
-      required: false,
-    },
-    {
       name: 'stripePaymentIntentId',
       type: 'text',
       required: false,

@@ -140,8 +140,9 @@ If `externalRegistrationUrl` is set, the internal cart is hidden and replaced wi
 
 ### Step 3 — Payment (`/payment`)
 
-- Renders `PaymentForm` (SIBS widget)
-- **TODO**: SIBS payment confirmation webhook is not yet wired — `createOrder()` is called but payment status stays `pending`
+- Renders `PaymentForm` with `StripePaymentForm`
+- On success, calls `createOrder()` which sets `paymentStatus: 'paid'`
+- Stripe webhook at `/api/stripe/webhook` handles async confirmation (MB Way, 3DS)
 
 ### Step 4 — Order confirmation (`/order/[id]`)
 
@@ -185,12 +186,11 @@ These are per-ticket fields inside `orders.events[].tickets[]`.
 
 ## Known Issues & TODOs
 
-| #   | Issue                                                                                                   | Location                                                      |
-| --- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| 1   | SIBS payment webhook not wired — `paymentStatus` stays `pending` forever                                | `src/actions/order.ts`, `src/app/(payload)/api/sibs/route.ts` |
-| 2   | `createOrder` uses `payload.init()` instead of `getPayload()` — should be refactored                    | `src/actions/order.ts`                                        |
-| 3   | Order confirmation email `to` field is hardcoded as empty string                                        | `src/actions/order.ts`                                        |
-| 4   | `memberDiscount` field is display-only — not applied to ticket prices                                   | `src/collections/Events/Events.ts`                            |
-| 5   | `canBuyTickets` checks `event.start` but not `event.end` — past multi-day events may still show tickets | `src/helpers/eventHelper.ts`                                  |
-| 6   | Group-categories are fetched on every event page load with a TODO to move into context                  | `src/app/(frontend)/[locale]/event/[slug]/page.tsx`           |
-| 7   | No ticket capacity / max attendees enforcement                                                          | `src/collections/Events/Tickets.ts`                           |
+| #   | Issue                                                                                                   | Location                                            |
+| --- | ------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
+| 1   | `createOrder` uses `payload.init()` instead of `getPayload()` — should be refactored                    | `src/actions/order.ts`                              |
+| 2   | Order confirmation email `to` field is hardcoded as empty string                                        | `src/actions/order.ts`                              |
+| 3   | `memberDiscount` field is display-only — not applied to ticket prices                                   | `src/collections/Events/Events.ts`                  |
+| 4   | `canBuyTickets` checks `event.start` but not `event.end` — past multi-day events may still show tickets | `src/helpers/eventHelper.ts`                        |
+| 5   | Group-categories are fetched on every event page load with a TODO to move into context                  | `src/app/(frontend)/[locale]/event/[slug]/page.tsx` |
+| 6   | No ticket capacity / max attendees enforcement                                                          | `src/collections/Events/Tickets.ts`                 |

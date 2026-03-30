@@ -145,8 +145,9 @@ SMTP_HOST=                 # Nodemailer SMTP
 SMTP_PORT=
 SMTP_USER=
 SMTP_PASS=
-SIBS_TERMINAL_ID=          # SIBS payment gateway
-SIBS_PAYMENT_METHODS=
+STRIPE_SECRET_KEY=         # Stripe payment gateway
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
+STRIPE_WEBHOOK_SECRET=
 UPSTASH_REDIS_REST_URL=    # Rate limiting
 UPSTASH_REDIS_REST_TOKEN=
 ```
@@ -158,8 +159,7 @@ Build: `docker compose up --build`
 
 ## Known TODOs / Open Work
 
-- Payment confirmation webhooks not implemented (SIBS callback not wired)
-- Stripe integration planned — see `payments-and-subscriptions.md`
-- `users` and `carts` read access needs tightening (currently any authenticated user can read all)
+- Order confirmation email `to` field is hardcoded as empty string (`src/actions/order.ts`)
 - `createOrder` action uses `payload.init()` instead of `getPayload()` — should be refactored
+- `users` and `carts` read access needs tightening (currently any authenticated user can read all)
 - Some pages may need additional status checks beyond just `authenticated`

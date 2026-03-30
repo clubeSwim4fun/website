@@ -89,7 +89,7 @@ Key fields:
 - `user`: relationship to `users`
 - `type`: `memberFee` | `pool`
 - `amount`, `startDate`, `endDate`
-- `sibsTransactionId`: SIBS payment reference
+- `stripePaymentIntentId`: Stripe Payment Intent ID
 - `paymentStatus`: `pending` | `paid` | `failed`
 
 ### Groups (`groups`)
@@ -113,7 +113,7 @@ Key fields:
 - `group`: relationship to `groups`
 - `user`: relationship to `users`
 - `status`: `pending` | `approved` | `rejected`
-- `transactionId`: SIBS transaction ID
+- `transactionId`: Stripe Payment Intent ID
 - `submissionData`: array of `{ field, value }` from the group's form
 
 ### GroupCategories (`group-categories`)
