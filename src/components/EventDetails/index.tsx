@@ -4,7 +4,7 @@ import { Event, GroupCategory, Order, Ticket, User } from '@/payload-types'
 import { convertMtoKm, isObjectNotEmpty } from '@/utilities/util'
 import { formatDate } from 'date-fns'
 import { pt } from 'date-fns/locale'
-import { Calendar1, Clock, ExternalLink, MapPin, Route, Tag } from 'lucide-react'
+import { Calendar1, Clock, ExternalLink, Lock, MapPin, Route, Tag } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { getClientSideURL } from '@/utilities/getURL'
 import { AddToCalendarButton } from '../AddToCalendarButton'
@@ -13,6 +13,7 @@ import { Card } from '@/components/ui/card'
 import { EventTickets } from '../EventTickets'
 import { useTranslations } from 'next-intl'
 import { canBuyTickets } from '@/helpers/eventHelper'
+import { Link } from '@/i18n/routing'
 
 export const EventDetails: React.FC<{
   user?: User
@@ -165,14 +166,33 @@ export const EventDetails: React.FC<{
       </Card>
 
       {/* Internal ticket purchase — only shown when no external registration URL */}
-      {user && canBuyTickets(event) && !externalRegistrationUrl && (
-        <EventTickets
-          tickets={tickets as Ticket[]}
-          user={user}
-          orderedEvent={orderedEvent}
-          groups={props.groups}
-        />
-      )}
+      {user &&
+        canBuyTickets(event) &&
+        !externalRegistrationUrl &&
+        (user.status === 'active' ? (
+          <EventTickets
+            tickets={tickets as Ticket[]}
+            user={user}
+            orderedEvent={orderedEvent}
+            groups={props.groups}
+          />
+        ) : (
+          <Card className="dark:bg-slate-900 border rounded-xl shadow-md shadow-gray-400 border-blueSwim p-4 w-full flex flex-col bg-white gap-3">
+            <div className="flex items-center gap-2 text-blueSwim">
+              <Lock className="w-5 h-5 shrink-0" />
+              <h3 className="font-extrabold text-xl">{t('Event.tickets')}</h3>
+            </div>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              {t('Event.inactiveUserTicketGate')}
+            </p>
+            <Link
+              href="/subscription"
+              className="inline-flex items-center justify-center rounded-md bg-blueSwim px-4 py-2 text-sm font-semibold text-white hover:bg-blueSwim/90 transition-colors"
+            >
+              {t('Event.renewMembership')}
+            </Link>
+          </Card>
+        ))}
     </aside>
   )
 }

@@ -51,6 +51,10 @@ const GroupSubscriptionPage = async ({
 
   const user = userObject.user
 
+  if (user.status !== 'active') {
+    redirect(`/${locale}/subscription`)
+  }
+
   return (
     <GroupSubscriptionPageClient
       user={user}

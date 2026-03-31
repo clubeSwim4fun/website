@@ -251,7 +251,9 @@
     "longestRun": "Corrida mais longa",
     "elevationGain": "Ganho de elevação",
     "timeLimit": "Tempo limite",
-    "regulation": "Regulamento"
+    "regulation": "Regulamento",
+    "inactiveUserTicketGate": "A sua conta não está ativa. Para comprar bilhetes, renove a sua inscrição.",
+    "renewMembership": "Renovar inscrição"
   },
   "FileUploader": {
     "uploading": "A carregar {target}...",

@@ -14,6 +14,7 @@ import { getTranslations } from 'next-intl/server'
 import { CartPageClient } from './page.client'
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import { TypedLocale } from 'payload'
+import { redirect } from 'next/navigation'
 
 export type eventTicket = {
   [key: string]: {
@@ -29,6 +30,14 @@ export default async function Cart({ params }: { params: Promise<{ locale: strin
   const t = await getTranslations({ locale, namespace: 'Cart' })
 
   const { user } = await getMeUser()
+
+  if (!user) {
+    redirect(`/${locale}/sign-in?callbackUrl=/${locale}/cart`)
+  }
+
+  if (user.status !== 'active') {
+    redirect(`/${locale}/subscription`)
+  }
 
   const cart = user ? await getMyCart() : null
 

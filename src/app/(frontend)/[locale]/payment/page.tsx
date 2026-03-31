@@ -22,6 +22,10 @@ export default async function Payment({ params }: { params: Promise<{ locale: st
   })
   const cart = await getMyCart()
 
+  if (user?.status !== 'active') {
+    redirect(`/${locale}/subscription`)
+  }
+
   if (!cart || !cart.items?.length) {
     redirect(`/${locale}/cart`)
   }

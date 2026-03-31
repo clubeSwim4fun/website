@@ -9,6 +9,7 @@ import { getClientSideURL } from '@/utilities/getURL'
 import { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 import { notFound } from 'next/navigation'
+import { redirect } from 'next/navigation'
 import { TypedLocale } from 'payload'
 
 const UserPage = async ({ params }: { params: Promise<{ locale: string }> }) => {
@@ -26,6 +27,10 @@ const UserPage = async ({ params }: { params: Promise<{ locale: string }> }) => 
   if (!userObject || !userObject.user) notFound()
 
   const user = userObject.user
+
+  if (user.status !== 'active') {
+    redirect(`/${locale}/subscription`)
+  }
   const initials = user.name.charAt(0) + user.surname.charAt(0)
   const profilePictureUrl = `${getClientSideURL()}/${
     typeof user.profilePicture === 'object' ? user.profilePicture?.url : defaultAvatar?.thumbnailURL

@@ -251,7 +251,9 @@
     "longestRun": "Longest run",
     "elevationGain": "Elevation gain",
     "timeLimit": "Time limit",
-    "regulation": "Regulation"
+    "regulation": "Regulation",
+    "inactiveUserTicketGate": "Your account is not active. To purchase tickets, please renew your membership.",
+    "renewMembership": "Renew membership"
   },
   "FileUploader": {
     "uploading": "Uploading {target}...",

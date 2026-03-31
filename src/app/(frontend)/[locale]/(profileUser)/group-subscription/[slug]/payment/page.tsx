@@ -41,6 +41,10 @@ const GroupSubscriptionPage = async ({
 
   const user = userObject.user
 
+  if (user.status !== 'active') {
+    redirect(`/${locale}/subscription`)
+  }
+
   // Amount in EUR cents for Stripe
   const amountCents = Math.round((group?.subscriptionPrice || 0) * 100)
 
