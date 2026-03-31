@@ -37,6 +37,9 @@ export const Users: CollectionConfig = {
   admin: {
     defaultColumns: ['name', 'status', 'email', 'role', 'groups', 'createdAt', 'updatedAt'],
     useAsTitle: 'name',
+    components: {
+      beforeListTable: ['src/components/admin/AnnualReset/ResetButton'],
+    },
   },
   auth: true,
   fields: [

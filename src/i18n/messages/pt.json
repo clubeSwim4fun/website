@@ -147,6 +147,12 @@
       "dearUser": "Prezado(a) utilizador(a), recebemos uma solicitação para redefinir a sua palavra-passe.",
       "description": "Por favor, clique no botão abaixo para redefinir.",
       "button": "Redefinir Palavra-passe"
+    },
+    "MembershipRenewal": {
+      "subject": "Renove a sua inscrição",
+      "title": "A sua inscrição precisa de ser renovada",
+      "description": "O período de renovação anual começou. Por favor, efetue o pagamento para reativar a sua conta e continuar a usufruir dos benefícios do clube.",
+      "button": "Renovar Inscrição"
     }
   },
   "Order": {

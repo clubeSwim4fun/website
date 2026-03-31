@@ -147,6 +147,12 @@
       "dearUser": "Dear user, we received your request to reset your password.",
       "description": "Please click the button below to reset your password.",
       "button": "Reset Password"
+    },
+    "MembershipRenewal": {
+      "subject": "Renew your membership",
+      "title": "Your membership needs to be renewed",
+      "description": "The annual renewal period has started. Please complete your payment to reactivate your account and continue enjoying club benefits.",
+      "button": "Renew Membership"
     }
   },
   "Order": {
