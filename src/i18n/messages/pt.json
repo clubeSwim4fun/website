@@ -40,7 +40,8 @@
       "state": "Concelho:",
       "zipcode": "Código Postal:",
       "editProfile": "Editar Meu Perfil",
-      "birthday": "Data de Nascimento:"
+      "birthday": "Data de Nascimento:",
+      "email": "E-mail:"
     },
     "Profile": {
       "profileTitle": "Perfil do Utilizador",
@@ -49,13 +50,20 @@
       "groups": "Grupos"
     },
     "Events": {
-      "title": "Meus próximos eventos",
+      "title": "Meus eventos",
       "date": "Data",
       "ticketName": "Bilhete",
       "event": "Nome do evento",
       "noDate": "Sem data",
       "dorsal": "Nº Dorsal",
-      "distance": "Distância"
+      "distance": "Distância",
+      "filterAll": "Todos",
+      "filterFuture": "Próximos",
+      "filterPast": "Passados",
+      "searchPlaceholder": "Pesquisar evento...",
+      "sortAsc": "Data ↑",
+      "sortDesc": "Data ↓",
+      "noResults": "Nenhum evento encontrado."
     },
     "pendingPayment": "Pagamento de inscrição pendente",
     "pendingAnalysis": "Nossa equipe está analisando seu registo, por favor aguarde a confirmação.",

@@ -2,11 +2,12 @@
 
 import { Event, Gender, Ticket, User } from '@/payload-types'
 import COUNTRY_LIST from '@/utilities/countryList'
-import config from '@/payload.config'
+import config from '@payload-config'
 import { getPayload } from 'payload'
 import { revalidatePath } from 'next/cache'
 import { deleteS3Files } from '@/actions/createUser'
 import { getLocale, getTranslations } from 'next-intl/server'
+import { EVENTS_PAGE_SIZE } from './userHelperConstants'
 
 export type UserEvents = {
   eventDate?: Date | null
@@ -28,37 +29,43 @@ export const getCountryCode = async (countryName?: string): Promise<string | und
   return COUNTRY_LIST.find((c) => c.name.toLowerCase() === countryName?.toLowerCase())?.code || 'PT'
 }
 
+export type EventDateFilter = 'all' | 'future' | 'past'
+export type EventSortOrder = 'asc' | 'desc'
+
 export const getUserFutureEvents = async ({
   userId,
   page = 1,
+  dateFilter = 'future',
+  nameSearch = '',
+  sortOrder = 'asc',
 }: {
   userId: string
   page?: number
+  dateFilter?: EventDateFilter
+  nameSearch?: string
+  sortOrder?: EventSortOrder
 }) => {
   const payload = await getPayload({ config })
   const userEvents: UserEvents[] = []
 
+  const dateCondition =
+    dateFilter === 'future'
+      ? { 'events.event.start': { greater_than: new Date() } }
+      : dateFilter === 'past'
+        ? { 'events.event.start': { less_than: new Date() } }
+        : null
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const whereConditions: any[] = [{ user: { equals: userId } }]
+  if (dateCondition) whereConditions.push(dateCondition)
+
   const ordersCollection = await payload.find({
     collection: 'orders',
-    sort: 'events.event.start',
     depth: 2,
-    limit: 5,
+    limit: EVENTS_PAGE_SIZE,
     pagination: true,
     page,
-    where: {
-      and: [
-        {
-          user: {
-            equals: userId,
-          },
-        },
-        {
-          'events.event.start': {
-            greater_than: new Date(),
-          },
-        },
-      ],
-    },
+    where: { and: whereConditions },
   })
 
   ordersCollection.docs.forEach((doc) => {
@@ -73,13 +80,28 @@ export const getUserFutureEvents = async ({
           eventPurchaseId: ticketData.eventPurchaseId,
           eventUrl: event.slug,
         }
-
         userEvents.push(purchasedEvent)
       })
     })
   })
 
-  return { events: userEvents, totalPages: ordersCollection.totalPages }
+  // Sort client-side by full date (nested relationship sort is unreliable in Payload)
+  userEvents.sort((a, b) => {
+    const aTime = a.eventDate?.getTime() ?? 0
+    const bTime = b.eventDate?.getTime() ?? 0
+    return sortOrder === 'asc' ? aTime - bTime : bTime - aTime
+  })
+
+  // Client-side name filter
+  const filtered = nameSearch
+    ? userEvents.filter((e) => e.eventName?.toLowerCase().includes(nameSearch.toLowerCase()))
+    : userEvents
+
+  return {
+    events: filtered,
+    totalPages: ordersCollection.totalPages,
+    filteredCount: filtered.length,
+  }
 }
 
 type UserData = {

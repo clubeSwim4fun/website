@@ -39,19 +39,23 @@ export const UserDetails: React.FC<{ user: User }> = async (props) => {
           <div className="grid lg:grid-cols-12 gap-4">
             <div className="col-span-4 flex flex-col">
               <strong className="uppercase">{t('nif')}</strong>
-              {`${user.nif}`}
+              {user.nif ?? '—'}
             </div>
             <div className="col-span-4 flex flex-col">
               <strong className="capitalize">{t('identity')}</strong>
-              {`${user.identity}`}
+              {user.identity ?? '—'}
             </div>
             <div className="col-span-4 flex flex-col">
-              <strong className="capitalize">{t('nationality')}</strong>
-              <FlagComponent country={countryCode} countryName={nationality} />
+              <strong className="capitalize">{t('email')}</strong>
+              {user.email}
             </div>
           </div>
           {/* Second line */}
           <div className="grid lg:grid-cols-12 gap-4">
+            <div className="col-span-4 flex flex-col">
+              <strong className="capitalize">{t('nationality')}</strong>
+              <FlagComponent country={countryCode} countryName={nationality} />
+            </div>
             {user.birthDate && (
               <div className="col-span-4 flex flex-col">
                 <strong className="capitalize">{t('birthday')}</strong>
@@ -60,7 +64,7 @@ export const UserDetails: React.FC<{ user: User }> = async (props) => {
             )}
             <div className="col-span-4 flex flex-col">
               <strong className="capitalize">{t('phone')}</strong>
-              {`${user.phone}`}
+              {user.phone ?? '—'}
             </div>
             <div className="col-span-4 flex flex-col">
               <strong className="capitalize">{t('gender')}</strong>

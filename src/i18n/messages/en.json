@@ -40,7 +40,8 @@
       "state": "State:",
       "zipcode": "Postal Code:",
       "editProfile": "Edit My Profile",
-      "birthday": "Birthday:"
+      "birthday": "Birthday:",
+      "email": "Email:"
     },
     "Profile": {
       "profileTitle": "User Profile",
@@ -49,13 +50,20 @@
       "groups": "Groups"
     },
     "Events": {
-      "title": "My next events",
+      "title": "My events",
       "date": "Date",
       "ticketName": "Ticket",
       "event": "Event name",
       "noDate": "No date",
       "dorsal": "Dorsal Number",
-      "distance": "Distance"
+      "distance": "Distance",
+      "filterAll": "All",
+      "filterFuture": "Upcoming",
+      "filterPast": "Past",
+      "searchPlaceholder": "Search event...",
+      "sortAsc": "Date ↑",
+      "sortDesc": "Date ↓",
+      "noResults": "No events found."
     },
     "pendingPayment": "Pending registration payment",
     "pendingAnalysis": "Our team is reviewing your registration, please wait for confirmation.",
