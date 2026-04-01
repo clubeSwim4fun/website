@@ -67,7 +67,29 @@
     },
     "pendingPayment": "Pending registration payment",
     "pendingAnalysis": "Our team is reviewing your registration, please wait for confirmation.",
-    "paymentExpired": "Renove sua inscrição"
+    "paymentExpired": "Renove sua inscrição",
+    "Subscriptions": {
+      "title": "My subscriptions",
+      "period": "Period",
+      "type": "Type",
+      "status": "Status",
+      "amount": "Amount",
+      "filterAll": "All",
+      "filterMemberFee": "Membership",
+      "filterPool": "Pool",
+      "sortAsc": "Date ↑",
+      "sortDesc": "Date ↓",
+      "noResults": "No subscriptions found.",
+      "typeMemberFee": "Membership",
+      "typePool": "Pool",
+      "statusPaid": "Paid",
+      "statusPending": "Pending",
+      "statusFailed": "Failed",
+      "statusSubscribed": "Subscribed",
+      "statusNotSubscribed": "Not subscribed",
+      "statusWaitlisted": "Waitlisted",
+      "statusCancelled": "Cancelled"
+    }
   },
   "GroupSubscription": {
     "description": "Subscription to group {groupName}"

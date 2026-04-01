@@ -1,6 +1,7 @@
 import { UserAvatar } from '@/components/Avatar'
 import { UserDetails } from '@/components/User/user-details'
 import { UserFutureEvents } from '@/components/User/user-future-events'
+import { UserSubscriptions } from '@/components/User/user-subscriptions'
 import { UserProfile } from '@/components/User/user-profile'
 import { GeneralConfig, Media } from '@/payload-types'
 import { getCachedGlobal } from '@/utilities/getGlobals'
@@ -56,6 +57,7 @@ const UserPage = async ({ params }: { params: Promise<{ locale: string }> }) => 
         </div>
         <div className="w-full lg:w-2/3">
           <UserFutureEvents userId={user.id} />
+          <UserSubscriptions userId={user.id} />
         </div>
       </div>
     </section>

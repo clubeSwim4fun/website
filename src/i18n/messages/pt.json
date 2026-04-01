@@ -67,7 +67,29 @@
     },
     "pendingPayment": "Pagamento de inscrição pendente",
     "pendingAnalysis": "Nossa equipe está analisando seu registo, por favor aguarde a confirmação.",
-    "paymentExpired": "Renove sua inscrição"
+    "paymentExpired": "Renove sua inscrição",
+    "Subscriptions": {
+      "title": "As minhas subscrições",
+      "period": "Período",
+      "type": "Tipo",
+      "status": "Estado",
+      "amount": "Valor",
+      "filterAll": "Todas",
+      "filterMemberFee": "Quotas",
+      "filterPool": "Piscina",
+      "sortAsc": "Data ↑",
+      "sortDesc": "Data ↓",
+      "noResults": "Nenhuma subscrição encontrada.",
+      "typeMemberFee": "Quota",
+      "typePool": "Piscina",
+      "statusPaid": "Pago",
+      "statusPending": "Pendente",
+      "statusFailed": "Falhado",
+      "statusSubscribed": "Subscrito",
+      "statusNotSubscribed": "Não subscrito",
+      "statusWaitlisted": "Lista de espera",
+      "statusCancelled": "Cancelado"
+    }
   },
   "GroupSubscription": {
     "description": "Subscrição ao grupo {groupName}"
