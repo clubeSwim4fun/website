@@ -88,7 +88,10 @@
       "statusSubscribed": "Subscribed",
       "statusNotSubscribed": "Not subscribed",
       "statusWaitlisted": "Waitlisted",
-      "statusCancelled": "Cancelled"
+      "statusCancelled": "Cancelled",
+      "invoice": "Invoice",
+      "downloadInvoice": "Download invoice",
+      "invoiceNotAvailable": "Invoice is not available yet. Please try again later."
     }
   },
   "GroupSubscription": {

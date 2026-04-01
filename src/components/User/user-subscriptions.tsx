@@ -16,19 +16,23 @@ import {
   SubscriptionSortOrder,
 } from '@/helpers/subscriptionHelper'
 import { useFormatter, useTranslations } from 'next-intl'
-import { ArrowUp, ArrowDown, Loader } from 'lucide-react'
+import { ArrowUp, ArrowDown, Loader, FileDown } from 'lucide-react'
 import { cn } from '@/utilities/ui'
 import { Link } from '@/i18n/routing'
+import { fetchReceiptForPaymentIntent } from '@/actions/invoice'
+import { useToast } from '@/hooks/use-toast'
 
 type Args = { userId: string }
 
 export const UserSubscriptions: React.FC<Args> = ({ userId }) => {
   const t = useTranslations('User.Subscriptions')
   const format = useFormatter()
+  const { toast } = useToast()
 
   const [rows, setRows] = useState<SubscriptionRow[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isPending, startTransition] = useTransition()
+  const [downloadingId, setDownloadingId] = useState<string | null>(null)
 
   const [typeFilter, setTypeFilter] = useState<SubscriptionTypeFilter>('all')
   const [sortOrder, setSortOrder] = useState<SubscriptionSortOrder>('desc')
@@ -44,6 +48,22 @@ export const UserSubscriptions: React.FC<Args> = ({ userId }) => {
   useEffect(() => {
     fetchData()
   }, [fetchData])
+
+  const handleDownloadInvoice = async (paymentIntentId: string, rowId: string) => {
+    setDownloadingId(rowId)
+    console.log('HEEERE ', paymentIntentId)
+    const result = await fetchReceiptForPaymentIntent(paymentIntentId)
+    setDownloadingId(null)
+    if (result.error || !result.receipt) {
+      toast({
+        variant: 'destructive',
+        description: t('invoiceNotAvailable'),
+      })
+      return
+    }
+    const url = result.receipt.permalink
+    if (url) window.open(url, '_blank', 'noopener,noreferrer')
+  }
 
   const filterOptions: { value: SubscriptionTypeFilter; label: string }[] = [
     { value: 'all', label: t('filterAll') },
@@ -129,18 +149,19 @@ export const UserSubscriptions: React.FC<Args> = ({ userId }) => {
             <TableHead className="text-left">{t('type')}</TableHead>
             <TableHead className="text-left">{t('status')}</TableHead>
             <TableHead className="text-right">{t('amount')}</TableHead>
+            <TableHead className="text-right">{t('invoice')}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {isLoading || isPending ? (
             <TableRow>
-              <TableCell colSpan={4} className="text-center py-8">
+              <TableCell colSpan={5} className="text-center py-8">
                 <Loader className="w-6 h-6 animate-spin mx-auto text-muted-foreground" />
               </TableCell>
             </TableRow>
           ) : rows.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={4} className="text-center py-8 text-muted-foreground text-sm">
+              <TableCell colSpan={5} className="text-center py-8 text-muted-foreground text-sm">
                 {t('noResults')}
               </TableCell>
             </TableRow>
@@ -166,6 +187,22 @@ export const UserSubscriptions: React.FC<Args> = ({ userId }) => {
                 </TableCell>
                 <TableCell className="text-right tabular-nums">
                   {format.number(row.amount, { style: 'currency', currency: 'EUR' })}
+                </TableCell>
+                <TableCell className="text-right">
+                  {row.paymentStatus === 'paid' && row.stripePaymentIntentId ? (
+                    <button
+                      onClick={() => handleDownloadInvoice(row.stripePaymentIntentId!, row.id)}
+                      disabled={downloadingId === row.id}
+                      title={t('downloadInvoice')}
+                      className="inline-flex items-center justify-end text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
+                    >
+                      {downloadingId === row.id ? (
+                        <Loader className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <FileDown className="w-4 h-4" />
+                      )}
+                    </button>
+                  ) : null}
                 </TableCell>
               </TableRow>
             ))

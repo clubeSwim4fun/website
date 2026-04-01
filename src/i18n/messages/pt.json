@@ -88,7 +88,10 @@
       "statusSubscribed": "Subscrito",
       "statusNotSubscribed": "Não subscrito",
       "statusWaitlisted": "Lista de espera",
-      "statusCancelled": "Cancelado"
+      "statusCancelled": "Cancelado",
+      "invoice": "Fatura",
+      "downloadInvoice": "Descarregar fatura",
+      "invoiceNotAvailable": "A fatura ainda não está disponível. Tenta novamente mais tarde."
     }
   },
   "GroupSubscription": {

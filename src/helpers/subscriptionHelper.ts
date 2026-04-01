@@ -12,6 +12,7 @@ export type SubscriptionRow =
       endDate: string
       amount: number
       paymentStatus: 'paid' | 'pending' | 'failed'
+      stripePaymentIntentId?: string | null
       /** True for the most recent pending memberFee — should link to /subscription */
       linkToSubscription?: boolean
     }
@@ -23,6 +24,7 @@ export type SubscriptionRow =
       amount: number
       status: 'active' | 'waitlisted' | 'cancelled'
       paymentStatus: 'paid' | 'pending' | 'failed'
+      stripePaymentIntentId?: string | null
       /** True for the most recent active pool sub whose cycle month hasn't passed */
       linkToMyPool?: boolean
     }
@@ -59,6 +61,7 @@ export async function getUserSubscriptions({
         endDate: sub.endDate,
         amount: sub.amount,
         paymentStatus: sub.paymentStatus as 'paid' | 'pending' | 'failed',
+        stripePaymentIntentId: sub.stripePaymentIntentId ?? null,
       })
     }
 
@@ -91,6 +94,7 @@ export async function getUserSubscriptions({
         amount: cycle.price,
         status: sub.status,
         paymentStatus: sub.paymentStatus,
+        stripePaymentIntentId: sub.stripePaymentIntentId ?? null,
       })
     }
 

@@ -159,7 +159,7 @@ export const Orders: CollectionConfig = {
         pt: 'ID do Pagamento Stripe',
       },
       type: 'text',
-      admin: { readOnly: true },
+      // admin: { readOnly: true },
     },
     {
       name: 'paymentStatus',
