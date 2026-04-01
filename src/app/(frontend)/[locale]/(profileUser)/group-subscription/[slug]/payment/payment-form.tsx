@@ -31,7 +31,7 @@ export const PaymentForm: React.FC<Props> = ({
       await updateGroupSubscription({ id: groupSubscriptionId, transactionId: paymentIntentId })
     }
 
-    router.push(`/${locale}/group-subscription/${groupSlug}`)
+    router.push(`/group-subscription/${groupSlug}`)
   }
 
   if (!groupSubscriptionId) {

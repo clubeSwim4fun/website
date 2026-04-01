@@ -267,5 +267,32 @@
     "userMaxFileSize": "You can upload a file with {maxSize}",
     "removeFile": "Remove file",
     "rejectedFile": "File {fileName} was rejected"
+  },
+  "PoolSubscription": {
+    "pageTitle": "Pool Subscription",
+    "subscribeTitle": "Subscribe to Pool",
+    "waitlistTitle": "Waitlist",
+    "confirmationTitle": "Confirmation",
+    "mySubscriptionTitle": "My Subscription",
+    "subscribeButton": "Subscribe to Pool",
+    "joinWaitlistButton": "Join Waitlist",
+    "cancelButton": "Cancel Subscription",
+    "confirmCancelButton": "Confirm Cancellation",
+    "closed": "Subscriptions are closed.",
+    "fullyBooked": "Fully booked.",
+    "remainingSpots": "{count} spots remaining",
+    "remainingWaitlistSpots": "{count} waitlist spots remaining",
+    "waitlistPosition": "Waitlist position: #{position}",
+    "cycleLabel": "Cycle: {month}/{year}",
+    "priceLabel": "Price: {price, number, currency}",
+    "availableSlotsLabel": "Available slots:",
+    "noRefundNotice": "Note: no refunds are issued upon cancellation.",
+    "activeConfirmation": "You're in! Your pool subscription for {month}/{year} is confirmed.",
+    "waitlistConfirmation": "You're on the waitlist at position #{position}. We'll notify you by email if a spot opens.",
+    "cycleNotFound": "No open pool cycle found.",
+    "noSpotsAvailable": "No spots available.",
+    "alreadySubscribed": "You already have an active subscription for this cycle.",
+    "cancelConfirmTitle": "Cancel Subscription",
+    "cancelConfirmDescription": "Are you sure you want to cancel your subscription? This action cannot be undone and no refunds will be issued."
   }
 }

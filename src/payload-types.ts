@@ -85,6 +85,8 @@ export interface Config {
     aboutClub: AboutClub;
     subscription: Subscription;
     'group-subscription': GroupSubscription;
+    'pool-cycles': PoolCycle;
+    'pool-subscriptions': PoolSubscription;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -115,6 +117,8 @@ export interface Config {
     aboutClub: AboutClubSelect<false> | AboutClubSelect<true>;
     subscription: SubscriptionSelect<false> | SubscriptionSelect<true>;
     'group-subscription': GroupSubscriptionSelect<false> | GroupSubscriptionSelect<true>;
+    'pool-cycles': PoolCyclesSelect<false> | PoolCyclesSelect<true>;
+    'pool-subscriptions': PoolSubscriptionsSelect<false> | PoolSubscriptionsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -2059,6 +2063,41 @@ export interface GroupSubscription {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pool-cycles".
+ */
+export interface PoolCycle {
+  id: string;
+  status: 'open' | 'closed';
+  month: number;
+  year: number;
+  maxAthletes: number;
+  waitlistLimit: number;
+  price: number;
+  availableSlots: {
+    day: string;
+    time: string;
+    id?: string | null;
+  }[];
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pool-subscriptions".
+ */
+export interface PoolSubscription {
+  id: string;
+  athlete: string | User;
+  cycle: string | PoolCycle;
+  status: 'active' | 'waitlisted' | 'cancelled';
+  waitlistPosition?: number | null;
+  paymentStatus: 'paid' | 'pending' | 'failed';
+  stripePaymentIntentId?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -2318,6 +2357,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'group-subscription';
         value: string | GroupSubscription;
+      } | null)
+    | ({
+        relationTo: 'pool-cycles';
+        value: string | PoolCycle;
+      } | null)
+    | ({
+        relationTo: 'pool-subscriptions';
+        value: string | PoolSubscription;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -3027,6 +3074,41 @@ export interface GroupSubscriptionSelect<T extends boolean = true> {
         value?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pool-cycles_select".
+ */
+export interface PoolCyclesSelect<T extends boolean = true> {
+  status?: T;
+  month?: T;
+  year?: T;
+  maxAthletes?: T;
+  waitlistLimit?: T;
+  price?: T;
+  availableSlots?:
+    | T
+    | {
+        day?: T;
+        time?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pool-subscriptions_select".
+ */
+export interface PoolSubscriptionsSelect<T extends boolean = true> {
+  athlete?: T;
+  cycle?: T;
+  status?: T;
+  waitlistPosition?: T;
+  paymentStatus?: T;
+  stripePaymentIntentId?: T;
   updatedAt?: T;
   createdAt?: T;
 }

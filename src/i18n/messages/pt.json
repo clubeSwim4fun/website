@@ -267,5 +267,32 @@
     "userMaxFileSize": "Pode carregar um ficheiro com {maxSize}",
     "removeFile": "Remover o ficheiro",
     "rejectedFile": "O ficheiro {fileName} foi rejeitado"
+  },
+  "PoolSubscription": {
+    "pageTitle": "Subscrição de Piscina",
+    "subscribeTitle": "Subscrever à Piscina",
+    "waitlistTitle": "Lista de Espera",
+    "confirmationTitle": "Confirmação",
+    "mySubscriptionTitle": "A Minha Subscrição",
+    "subscribeButton": "Subscrever à Piscina",
+    "joinWaitlistButton": "Entrar na Lista de Espera",
+    "cancelButton": "Cancelar Subscrição",
+    "confirmCancelButton": "Confirmar Cancelamento",
+    "closed": "As subscrições estão fechadas.",
+    "fullyBooked": "Completamente esgotado.",
+    "remainingSpots": "{count} vagas restantes",
+    "remainingWaitlistSpots": "{count} vagas na lista de espera",
+    "waitlistPosition": "Posição na lista de espera: #{position}",
+    "cycleLabel": "Ciclo: {month}/{year}",
+    "priceLabel": "Preço: {price, number, currency}",
+    "availableSlotsLabel": "Horários disponíveis:",
+    "noRefundNotice": "Atenção: não são emitidos reembolsos em caso de cancelamento.",
+    "activeConfirmation": "Está dentro! A sua subscrição de piscina para {month}/{year} está confirmada.",
+    "waitlistConfirmation": "Está na lista de espera na posição #{position}. Será notificado por e-mail se uma vaga abrir.",
+    "cycleNotFound": "Nenhum ciclo de piscina aberto encontrado.",
+    "noSpotsAvailable": "Não há vagas disponíveis.",
+    "alreadySubscribed": "Já tem uma subscrição ativa para este ciclo.",
+    "cancelConfirmTitle": "Cancelar Subscrição",
+    "cancelConfirmDescription": "Tem a certeza que quer cancelar a sua subscrição? Esta ação não pode ser desfeita e não serão emitidos reembolsos."
   }
 }

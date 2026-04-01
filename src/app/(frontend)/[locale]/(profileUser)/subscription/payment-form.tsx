@@ -78,7 +78,7 @@ export const PaymentForm: React.FC<Args> = ({ user, associationFees }) => {
       return
     }
 
-    router.push(`/${locale}/subscription/order-generation?id=${response.stripePaymentIntentId}`)
+    router.push(`/subscription/order-generation?id=${response.stripePaymentIntentId}`)
   }
 
   if (isLoading) {

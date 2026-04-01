@@ -8,7 +8,7 @@ import config from '@payload-config'
  *
  * Listens for payment_intent.succeeded and payment_intent.payment_failed.
  * The PaymentIntent metadata must include:
- *   - type: 'order' | 'subscription' | 'group-subscription'
+ *   - type: 'order' | 'subscription' | 'group-subscription' | 'pool-subscription'
  *   - recordId: the Payload document ID to update
  */
 export async function POST(req: NextRequest) {
@@ -86,6 +86,14 @@ async function handlePaymentSuccess(
       data: { transactionId: intent.id },
     })
   }
+
+  if (type === 'pool-subscription') {
+    await payload.update({
+      collection: 'pool-subscriptions',
+      id: recordId,
+      data: { paymentStatus: 'paid', status: 'active', stripePaymentIntentId: intent.id },
+    })
+  }
 }
 
 async function handlePaymentFailure(
@@ -107,6 +115,14 @@ async function handlePaymentFailure(
   if (type === 'subscription') {
     await payload.update({
       collection: 'subscription',
+      id: recordId,
+      data: { paymentStatus: 'failed' },
+    })
+  }
+
+  if (type === 'pool-subscription') {
+    await payload.update({
+      collection: 'pool-subscriptions',
       id: recordId,
       data: { paymentStatus: 'failed' },
     })

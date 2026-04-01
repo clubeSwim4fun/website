@@ -30,7 +30,7 @@ export const PaymentForm: React.FC<Props> = ({ amountCents }) => {
       throw new Error(response.message)
     }
 
-    router.push(`/${locale}/order/${response.orderId}`)
+    router.push(`/order/${response.orderId}`)
   }
 
   return (

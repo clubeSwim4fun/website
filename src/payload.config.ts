@@ -36,6 +36,8 @@ import { AboutClub } from './collections/Users/HeardAboutClub'
 import { FederationHistory } from './collections/Users/FederationHistory'
 import { Subscription } from './collections/Users/Subscription'
 import { GroupSubscription } from './collections/Groups/GroupSubscription'
+import { PoolCycles } from '@/collections/Pool/PoolCycles'
+import { PoolSubscriptions } from '@/collections/Pool/PoolSubscriptions'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -98,6 +100,8 @@ export default buildConfig({
     AboutClub,
     Subscription,
     GroupSubscription,
+    PoolCycles,
+    PoolSubscriptions,
   ],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer, GeneralConfigs],
