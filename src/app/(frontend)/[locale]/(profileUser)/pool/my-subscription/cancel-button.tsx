@@ -22,11 +22,11 @@ type Props = {
 
 export const CancelButton: React.FC<Props> = ({ subscriptionId }) => {
   const t = useTranslations('PoolSubscription')
-  const locale = useLocale()
   const router = useRouter()
   const { toast } = useToast()
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [hideButton] = useState(true) // Hidden button for now as it's not required
 
   const handleConfirm = async () => {
     setLoading(true)
@@ -48,7 +48,9 @@ export const CancelButton: React.FC<Props> = ({ subscriptionId }) => {
     }
   }
 
-  return (
+  return hideButton ? (
+    <></>
+  ) : (
     <>
       <Button variant="destructive" onClick={() => setOpen(true)}>
         {t('cancelButton')}

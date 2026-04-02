@@ -318,6 +318,13 @@
     "noSpotsAvailable": "No spots available.",
     "alreadySubscribed": "You already have an active subscription for this cycle.",
     "cancelConfirmTitle": "Cancel Subscription",
-    "cancelConfirmDescription": "Are you sure you want to cancel your subscription? This action cannot be undone and no refunds will be issued."
+    "cancelConfirmDescription": "Are you sure you want to cancel your subscription? This action cannot be undone and no refunds will be issued.",
+    "selectSlotsLabel": "Select your training slots:",
+    "saveSlotsButton": "Save Slots",
+    "slotsSaved": "Your slots have been saved.",
+    "slotFull": "Full",
+    "slotAvailable": "{count} spots left",
+    "slotNotFound": "Selected slot not found.",
+    "slotFullError": "This slot is full."
   }
 }

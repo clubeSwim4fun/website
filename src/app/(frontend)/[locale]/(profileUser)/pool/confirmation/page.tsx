@@ -47,6 +47,11 @@ const PoolConfirmationPage = async ({ params }: { params: Promise<{ locale: stri
           <Button asChild variant="outline">
             <Link href="/pool">{t('pageTitle')}</Link>
           </Button>
+          {subscription.status === 'active' && (
+            <Button asChild className="ml-3">
+              <Link href="/pool/my-subscription">{t('mySubscriptionTitle')}</Link>
+            </Button>
+          )}
         </div>
       </div>
     </section>

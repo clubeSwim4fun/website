@@ -10,6 +10,7 @@ import { getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/routing'
 import { Button } from '@/components/ui/button'
 import { PoolCycle, PoolSubscription } from '@/payload-types'
+import { SubscribeInline } from './subscribe-inline.client'
 
 const PoolPage = async ({ params }: { params: Promise<{ locale: string }> }) => {
   const { locale } = await params
@@ -67,12 +68,7 @@ const PoolPage = async ({ params }: { params: Promise<{ locale: string }> }) => 
       {state.variant === 'subscribe' && cycle && (
         <div className="flex flex-col gap-6">
           {renderCycleDetails(cycle)}
-          <p className="text-lg">{t('remainingSpots', { count: state.remainingSpots })}</p>
-          <div>
-            <Button asChild>
-              <Link href="/pool/subscribe">{t('subscribeButton')}</Link>
-            </Button>
-          </div>
+          <SubscribeInline cycle={cycle} user={user!} remainingSpots={state.remainingSpots} />
         </div>
       )}
 

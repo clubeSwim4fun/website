@@ -7,8 +7,9 @@ import { getTranslations } from 'next-intl/server'
 import { sendEmail } from '@/helpers/emailHelper'
 import { render } from '@react-email/components'
 import React from 'react'
-import { notifyWaitlist } from '@/helpers/poolHelper'
+import { notifyWaitlist, getSlotAttendanceCounts } from '@/helpers/poolHelper'
 import { PoolCycle, PoolSubscription, User } from '@/payload-types'
+import { revalidatePath } from 'next/cache'
 
 export async function createPoolSubscription(
   cycleId: string,
@@ -353,6 +354,98 @@ export async function cancelPoolSubscription(
   } catch (error) {
     await payload.db.rollbackTransaction(transactionID)
     payload.logger.error(`[cancelPoolSubscription] Error: ${JSON.stringify(error)}`)
+    return { success: false, message: t('Common.unexpectedError') }
+  }
+}
+
+export async function selectPoolSlots(
+  subscriptionId: string,
+  slotIndexes: number[],
+): Promise<{ success: boolean; message?: string }> {
+  const t = await getTranslations()
+  const payload = await getPayload({ config })
+  const { user } = await getMeUser()
+
+  if (!user) {
+    return { success: false, message: t('Common.unexpectedError') }
+  }
+
+  const transactionID = await payload.db.beginTransaction()
+  if (!transactionID) {
+    return { success: false, message: t('Common.unexpectedError') }
+  }
+
+  try {
+    const subscription = (await payload.findByID({
+      collection: 'pool-subscriptions',
+      id: subscriptionId,
+      depth: 1,
+      req: { transactionID },
+    })) as PoolSubscription
+
+    if (!subscription || subscription.status !== 'active') {
+      await payload.db.rollbackTransaction(transactionID)
+      return { success: false, message: t('Common.unexpectedError') }
+    }
+
+    const athleteId =
+      typeof subscription.athlete === 'string' ? subscription.athlete : subscription.athlete.id
+    if (athleteId !== user.id && user.role !== 'admin') {
+      await payload.db.rollbackTransaction(transactionID)
+      return { success: false, message: t('Common.unexpectedError') }
+    }
+
+    const cycleId =
+      typeof subscription.cycle === 'string' ? subscription.cycle : subscription.cycle.id
+
+    const cycle = (await payload.findByID({
+      collection: 'pool-cycles',
+      id: cycleId,
+      req: { transactionID },
+    })) as PoolCycle
+
+    if (!cycle) {
+      await payload.db.rollbackTransaction(transactionID)
+      return { success: false, message: t('Common.unexpectedError') }
+    }
+
+    // Re-count attendance inside the transaction, excluding this subscription's current selections
+    const attendanceCounts = await getSlotAttendanceCounts(cycleId, transactionID, subscriptionId)
+
+    for (const idx of slotIndexes) {
+      const slot = cycle.availableSlots?.[idx]
+      if (!slot) {
+        await payload.db.rollbackTransaction(transactionID)
+        return { success: false, message: t('PoolSubscription.slotNotFound') }
+      }
+      const count = attendanceCounts[idx] ?? 0
+      if (count >= ((slot as any).maxAttendance ?? Infinity)) {
+        await payload.db.rollbackTransaction(transactionID)
+        return { success: false, message: t('PoolSubscription.slotFullError') }
+      }
+    }
+
+    await payload.update({
+      collection: 'pool-subscriptions',
+      id: subscriptionId,
+      data: {
+        selectedSlots: slotIndexes.map((idx) => ({
+          slotIndex: idx,
+          day: cycle.availableSlots?.[idx]?.day ?? '',
+          time: cycle.availableSlots?.[idx]?.time ?? '',
+        })),
+      },
+      req: { transactionID },
+    })
+
+    await payload.db.commitTransaction(transactionID)
+
+    revalidatePath('/[locale]/(profileUser)/pool/my-subscription', 'page')
+
+    return { success: true }
+  } catch (error) {
+    await payload.db.rollbackTransaction(transactionID)
+    payload.logger.error(`[selectPoolSlots] Error: ${JSON.stringify(error)}`)
     return { success: false, message: t('Common.unexpectedError') }
   }
 }

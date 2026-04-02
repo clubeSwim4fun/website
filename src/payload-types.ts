@@ -2076,6 +2076,10 @@ export interface PoolCycle {
   availableSlots: {
     day: string;
     time: string;
+    /**
+     * Maximum number of athletes allowed in this slot
+     */
+    maxAttendance: number;
     id?: string | null;
   }[];
   updatedAt: string;
@@ -2093,6 +2097,14 @@ export interface PoolSubscription {
   waitlistPosition?: number | null;
   paymentStatus: 'paid' | 'pending' | 'failed';
   stripePaymentIntentId?: string | null;
+  selectedSlots?:
+    | {
+        slotIndex: number;
+        day?: string | null;
+        time?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -3093,6 +3105,7 @@ export interface PoolCyclesSelect<T extends boolean = true> {
     | {
         day?: T;
         time?: T;
+        maxAttendance?: T;
         id?: T;
       };
   updatedAt?: T;
@@ -3109,6 +3122,14 @@ export interface PoolSubscriptionsSelect<T extends boolean = true> {
   waitlistPosition?: T;
   paymentStatus?: T;
   stripePaymentIntentId?: T;
+  selectedSlots?:
+    | T
+    | {
+        slotIndex?: T;
+        day?: T;
+        time?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }

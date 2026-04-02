@@ -127,7 +127,7 @@ export const PoolCycles: CollectionConfig = {
               type: 'text',
               required: true,
               admin: {
-                width: '50%',
+                width: '33%',
               },
             },
             {
@@ -139,7 +139,24 @@ export const PoolCycles: CollectionConfig = {
               type: 'text',
               required: true,
               admin: {
-                width: '50%',
+                width: '33%',
+              },
+            },
+            {
+              name: 'maxAttendance',
+              label: {
+                en: 'Max Attendance',
+                pt: 'Máximo de Participantes',
+              },
+              type: 'number',
+              required: true,
+              min: 1,
+              admin: {
+                width: '33%',
+                description: {
+                  en: 'Maximum number of athletes allowed in this slot',
+                  pt: 'Número máximo de atletas permitidos neste horário',
+                },
               },
             },
           ],

@@ -1,8 +1,10 @@
 import { getMeUser } from '@/utilities/getMeUser'
-import { getOpenCycle, getAthleteSubscription } from '@/helpers/poolHelper'
+import { getOpenCycle, getAthleteSubscription, getSlotAttendanceCounts } from '@/helpers/poolHelper'
 import { getTranslations } from 'next-intl/server'
 import { redirect } from 'next/navigation'
 import { CancelButton } from './cancel-button'
+import { SlotSelector } from './slot-selector.client'
+import { PoolCycle, PoolSubscription } from '@/payload-types'
 
 const MySubscriptionPage = async ({ params }: { params: Promise<{ locale: string }> }) => {
   const { locale } = await params
@@ -19,31 +21,48 @@ const MySubscriptionPage = async ({ params }: { params: Promise<{ locale: string
 
   const t = await getTranslations({ locale, namespace: 'PoolSubscription' })
 
+  const isActive = subscription!.status === 'active'
+
+  // Build slot list with available capacity for active subscribers
+  let slotsWithAvailability: Array<{
+    index: number
+    day: string
+    time: string
+    maxAttendance: number
+    available: number
+  }> = []
+
+  if (isActive && cycle!.availableSlots) {
+    const attendanceCounts = await getSlotAttendanceCounts(cycle!.id)
+    slotsWithAvailability = cycle!.availableSlots.map((slot, i) => {
+      const max = (slot as any).maxAttendance ?? 0
+      const taken = attendanceCounts[i] ?? 0
+      return {
+        index: i,
+        day: slot.day,
+        time: slot.time,
+        maxAttendance: max,
+        available: max - taken,
+      }
+    })
+  }
+
+  const initialSelected =
+    (subscription as PoolSubscription).selectedSlots?.map((s) => s.slotIndex) ?? []
+
   return (
     <section className="pt-[104px] pb-24 container mx-auto max-w-5xl">
       <h1 className="text-3xl font-bold mb-8">{t('mySubscriptionTitle')}</h1>
 
       <div className="flex flex-col gap-4 mb-8">
         <p className="text-lg">{t('cycleLabel', { month: cycle!.month, year: cycle!.year })}</p>
-        <p className="text-lg">
-          {t(
-            'priceLabel',
-            { price: cycle!.price },
-            { number: { currency: { style: 'currency', currency: 'EUR' } } },
-          )}
-        </p>
 
-        {subscription!.status === 'active' && (
-          <div>
-            <p className="font-medium">{t('availableSlotsLabel')}</p>
-            <ul className="list-disc list-inside mt-1">
-              {cycle!.availableSlots?.map((slot, i) => (
-                <li key={i}>
-                  {slot.day} — {slot.time}
-                </li>
-              ))}
-            </ul>
-          </div>
+        {isActive && slotsWithAvailability.length > 0 && (
+          <SlotSelector
+            subscriptionId={subscription!.id}
+            slots={slotsWithAvailability}
+            initialSelected={initialSelected}
+          />
         )}
 
         {subscription!.status === 'waitlisted' && (

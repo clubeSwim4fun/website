@@ -89,5 +89,52 @@ export const PoolSubscriptions: CollectionConfig = {
       type: 'text',
       required: false,
     },
+    {
+      name: 'selectedSlots',
+      label: {
+        en: 'Selected Slots',
+        pt: 'Horários Selecionados',
+      },
+      type: 'array',
+      required: false,
+      admin: {
+        readOnly: true,
+        components: {
+          RowLabel: '@/collections/Pool/PoolSubscriptionSlotRowLabel#PoolSubscriptionSlotRowLabel',
+        },
+      },
+      fields: [
+        {
+          name: 'slotIndex',
+          label: {
+            en: 'Slot Index',
+            pt: 'Índice do Horário',
+          },
+          type: 'number',
+          required: true,
+          admin: { hidden: true },
+        },
+        {
+          name: 'day',
+          label: {
+            en: 'Day',
+            pt: 'Dia',
+          },
+          type: 'text',
+          required: false,
+          admin: { readOnly: true },
+        },
+        {
+          name: 'time',
+          label: {
+            en: 'Time',
+            pt: 'Hora',
+          },
+          type: 'text',
+          required: false,
+          admin: { readOnly: true },
+        },
+      ],
+    },
   ],
 }

@@ -318,6 +318,13 @@
     "noSpotsAvailable": "Não há vagas disponíveis.",
     "alreadySubscribed": "Já tem uma subscrição ativa para este ciclo.",
     "cancelConfirmTitle": "Cancelar Subscrição",
-    "cancelConfirmDescription": "Tem a certeza que quer cancelar a sua subscrição? Esta ação não pode ser desfeita e não serão emitidos reembolsos."
+    "cancelConfirmDescription": "Tem a certeza que quer cancelar a sua subscrição? Esta ação não pode ser desfeita e não serão emitidos reembolsos.",
+    "selectSlotsLabel": "Selecione os seus horários de treino:",
+    "saveSlotsButton": "Guardar Horários",
+    "slotsSaved": "Os seus horários foram guardados.",
+    "slotFull": "Esgotado",
+    "slotAvailable": "{count} vagas disponíveis",
+    "slotNotFound": "Horário selecionado não encontrado.",
+    "slotFullError": "Este horário está esgotado."
   }
 }

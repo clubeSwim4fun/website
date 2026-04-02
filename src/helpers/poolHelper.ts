@@ -141,6 +141,41 @@ export async function notifyWaitlist(cycleId: string): Promise<void> {
   }
 }
 
+/**
+ * Returns a map of slotIndex → number of active subscribers (excluding the given subscriptionId)
+ * who selected that slot.
+ */
+export async function getSlotAttendanceCounts(
+  cycleId: string,
+  transactionID?: string | number | null,
+  excludeSubscriptionId?: string,
+): Promise<Record<number, number>> {
+  const payload = await getPayload({ config })
+
+  const result = await payload.find({
+    collection: 'pool-subscriptions',
+    where: {
+      and: [{ cycle: { equals: cycleId } }, { status: { equals: 'active' } }],
+    },
+    limit: 1000,
+    req: transactionID ? ({ transactionID } as any) : undefined,
+  })
+
+  const counts: Record<number, number> = {}
+  for (const sub of result.docs) {
+    const s = sub as PoolSubscription
+    // Skip the subscription being updated — we only care about other users' selections
+    if (excludeSubscriptionId && s.id === excludeSubscriptionId) continue
+    if (s.selectedSlots) {
+      for (const entry of s.selectedSlots) {
+        const idx = entry.slotIndex
+        counts[idx] = (counts[idx] ?? 0) + 1
+      }
+    }
+  }
+  return counts
+}
+
 export async function decrementWaitlistPositions(cycleId: string): Promise<void> {
   const payload = await getPayload({ config })
 
