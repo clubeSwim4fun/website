@@ -173,6 +173,9 @@ export function RegistrationWizard({ generalConfig, form, submitButtonLabel }: P
       } else {
         setDone(true)
       }
+    } catch (err) {
+      console.error('[RegistrationWizard] submit error:', err)
+      setServerError(t('errorServer'))
     } finally {
       setSubmitting(false)
     }

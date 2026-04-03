@@ -53,26 +53,28 @@ export async function createUser(userData: CreateUserRequestType): Promise<Creat
   const t = await getTranslations()
 
   if (!transactionID) {
-    return {
-      success: false,
-      error: t('Common.transactionError'),
-    }
+    return { success: false, error: t('Common.transactionError') }
   }
 
   try {
     const userObject: CreateuserType = {}
+    // Collect file entries separately — they arrive as File[] and need S3 upload after user creation
+    const fileEntries: Array<{ files: File[]; relatesTo: string }> = []
 
-    for (const [name, data] of Object.entries(userData)) {
-      if (!Array.isArray(data.value)) {
-        // Handle nested Address fields (e.g. relatesTo = 'Address.street')
-        if (data.relatesTo.startsWith('Address.')) {
-          const subKey = data.relatesTo.split('.')[1]!
+    for (const [, entry] of Object.entries(userData)) {
+      if (Array.isArray(entry.value)) {
+        // File fields — defer until after user is created
+        if (entry.value.length > 0) {
+          fileEntries.push({ files: entry.value as File[], relatesTo: entry.relatesTo })
+        }
+      } else {
+        if (entry.relatesTo.startsWith('Address.')) {
+          const subKey = entry.relatesTo.split('.')[1]!
           if (!userObject['Address']) userObject['Address'] = {} as any
-          ;(userObject['Address'] as any)[subKey] = data.value
+          ;(userObject['Address'] as any)[subKey] = entry.value
         } else {
-          // Handle booleans stored as strings
-          const val = data.value === 'true' ? true : data.value === 'false' ? false : data.value
-          userObject[data.relatesTo] = val as any
+          const val = entry.value === 'true' ? true : entry.value === 'false' ? false : entry.value
+          userObject[entry.relatesTo] = val as any
         }
       }
     }
@@ -88,32 +90,20 @@ export async function createUser(userData: CreateUserRequestType): Promise<Creat
       req: { transactionID },
     })
 
-    for (const [name, data] of Object.entries(userData)) {
-      // If data value is an array, we need to treat all files to first upload,
-      //  then add as reference to user object
-      if (Array.isArray(data.value)) {
-        const files = data.value
-
-        tempFilesToDelete = await uploadUserFiles({
-          transactionID,
-          files,
-          user: createdUser,
-          dataRelatesTo: data.relatesTo,
-        })
-      }
+    for (const { files, relatesTo } of fileEntries) {
+      tempFilesToDelete = await uploadUserFiles({
+        transactionID,
+        files,
+        user: createdUser,
+        dataRelatesTo: relatesTo,
+      })
     }
 
     await payload.db.commitTransaction(transactionID)
-
-    return {
-      success: true,
-      message: 'user created successfully',
-    }
+    return { success: true, message: 'user created successfully' }
   } catch (err) {
     await payload.db.rollbackTransaction(transactionID)
-
     await deleteS3Files(tempFilesToDelete)
-
     return {
       success: false,
       error: err instanceof Error ? err.message : String(err),
