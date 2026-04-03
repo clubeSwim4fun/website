@@ -276,6 +276,74 @@ export const Users: CollectionConfig = {
       },
     },
     {
+      name: 'emergencyContact',
+      label: {
+        en: 'Emergency Contact Name',
+        pt: 'Contato de Emergência',
+      },
+      type: 'text',
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'emergencyPhone',
+      label: {
+        en: 'Emergency Phone',
+        pt: 'Telefone de Emergência',
+      },
+      type: 'text',
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'wantsInvoiceWithNif',
+      label: {
+        en: 'Wants invoice with NIF?',
+        pt: 'Fatura com Contribuinte?',
+      },
+      type: 'checkbox',
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'sportInsurance',
+      label: {
+        en: 'Sport Insurance',
+        pt: 'Seguro Desportivo',
+      },
+      type: 'select',
+      options: [
+        { label: { en: 'None', pt: 'Nenhuma' }, value: 'none' },
+        {
+          label: { en: 'FPN (Swimming Federation)', pt: 'FPN (Federação Portuguesa de Natação)' },
+          value: 'fpn',
+        },
+        {
+          label: { en: 'FPT (Triathlon Federation)', pt: 'FPT (Federação Portuguesa de Triatlo)' },
+          value: 'fpt',
+        },
+      ],
+      defaultValue: 'none',
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'tshirtSize',
+      label: {
+        en: 'T-shirt size',
+        pt: 'Tamanho de T-shirt',
+      },
+      type: 'select',
+      options: ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
       name: 'heardAboutClub',
       label: {
         en: 'Heard about the Club through:',
@@ -428,6 +496,27 @@ export const Users: CollectionConfig = {
           label: {
             en: 'Address',
             pt: 'Morada',
+          },
+        },
+        {
+          value: 'emergencyContact',
+          label: {
+            en: 'Emergency Contact',
+            pt: 'Contato de Emergência',
+          },
+        },
+        {
+          value: 'emergencyPhone',
+          label: {
+            en: 'Emergency Phone',
+            pt: 'Telefone de Emergência',
+          },
+        },
+        {
+          value: 'tshirtSize',
+          label: {
+            en: 'T-shirt size',
+            pt: 'Tamanho de T-shirt',
           },
         },
       ],

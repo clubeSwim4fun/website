@@ -774,6 +774,11 @@ export interface User {
   birthDate?: string | null;
   disability?: (string | Disability)[] | null;
   wantsToBeFederado?: boolean | null;
+  emergencyContact?: string | null;
+  emergencyPhone?: string | null;
+  wantsInvoiceWithNif?: boolean | null;
+  sportInsurance?: ('none' | 'fpn' | 'fpt') | null;
+  tshirtSize?: ('XS' | 'S' | 'M' | 'L' | 'XL' | 'XXL' | 'XXXL') | null;
   heardAboutClub?: (string | null) | AboutClub;
   status?: ('active' | 'pendingAnalysis' | 'pendingUpdate' | 'pendingPayment' | 'expired') | null;
   fieldsToUpdate?:
@@ -788,6 +793,9 @@ export interface User {
         | 'phoneNumber'
         | 'gender'
         | 'address'
+        | 'emergencyContact'
+        | 'emergencyPhone'
+        | 'tshirtSize'
       )[]
     | null;
   Address?: {
@@ -1012,6 +1020,11 @@ export interface Checkbox {
         | 'birthDate'
         | 'disability'
         | 'wantsToBeFederado'
+        | 'emergencyContact'
+        | 'emergencyPhone'
+        | 'wantsInvoiceWithNif'
+        | 'sportInsurance'
+        | 'tshirtSize'
         | 'heardAboutClub'
         | 'status'
         | 'validated'
@@ -1050,6 +1063,11 @@ export interface Country {
         | 'birthDate'
         | 'disability'
         | 'wantsToBeFederado'
+        | 'emergencyContact'
+        | 'emergencyPhone'
+        | 'wantsInvoiceWithNif'
+        | 'sportInsurance'
+        | 'tshirtSize'
         | 'heardAboutClub'
         | 'status'
         | 'validated'
@@ -1103,6 +1121,11 @@ export interface Number {
         | 'birthDate'
         | 'disability'
         | 'wantsToBeFederado'
+        | 'emergencyContact'
+        | 'emergencyPhone'
+        | 'wantsInvoiceWithNif'
+        | 'sportInsurance'
+        | 'tshirtSize'
         | 'heardAboutClub'
         | 'status'
         | 'validated'
@@ -1151,6 +1174,11 @@ export interface Select {
         | 'birthDate'
         | 'disability'
         | 'wantsToBeFederado'
+        | 'emergencyContact'
+        | 'emergencyPhone'
+        | 'wantsInvoiceWithNif'
+        | 'sportInsurance'
+        | 'tshirtSize'
         | 'heardAboutClub'
         | 'status'
         | 'validated'
@@ -1190,6 +1218,11 @@ export interface Text {
         | 'birthDate'
         | 'disability'
         | 'wantsToBeFederado'
+        | 'emergencyContact'
+        | 'emergencyPhone'
+        | 'wantsInvoiceWithNif'
+        | 'sportInsurance'
+        | 'tshirtSize'
         | 'heardAboutClub'
         | 'status'
         | 'validated'
@@ -1242,6 +1275,11 @@ export interface Phone {
         | 'birthDate'
         | 'disability'
         | 'wantsToBeFederado'
+        | 'emergencyContact'
+        | 'emergencyPhone'
+        | 'wantsInvoiceWithNif'
+        | 'sportInsurance'
+        | 'tshirtSize'
         | 'heardAboutClub'
         | 'status'
         | 'validated'
@@ -1281,6 +1319,11 @@ export interface MediaUpload {
         | 'birthDate'
         | 'disability'
         | 'wantsToBeFederado'
+        | 'emergencyContact'
+        | 'emergencyPhone'
+        | 'wantsInvoiceWithNif'
+        | 'sportInsurance'
+        | 'tshirtSize'
         | 'heardAboutClub'
         | 'status'
         | 'validated'
@@ -1318,6 +1361,11 @@ export interface Address {
         | 'birthDate'
         | 'disability'
         | 'wantsToBeFederado'
+        | 'emergencyContact'
+        | 'emergencyPhone'
+        | 'wantsInvoiceWithNif'
+        | 'sportInsurance'
+        | 'tshirtSize'
         | 'heardAboutClub'
         | 'status'
         | 'validated'
@@ -1370,6 +1418,11 @@ export interface DateField {
         | 'birthDate'
         | 'disability'
         | 'wantsToBeFederado'
+        | 'emergencyContact'
+        | 'emergencyPhone'
+        | 'wantsInvoiceWithNif'
+        | 'sportInsurance'
+        | 'tshirtSize'
         | 'heardAboutClub'
         | 'status'
         | 'validated'
@@ -2875,6 +2928,11 @@ export interface UsersSelect<T extends boolean = true> {
   birthDate?: T;
   disability?: T;
   wantsToBeFederado?: T;
+  emergencyContact?: T;
+  emergencyPhone?: T;
+  wantsInvoiceWithNif?: T;
+  sportInsurance?: T;
+  tshirtSize?: T;
   heardAboutClub?: T;
   status?: T;
   fieldsToUpdate?: T;

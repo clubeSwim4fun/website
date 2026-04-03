@@ -322,4 +322,4 @@ If you have any issues or questions, reach out to us on [Discord](https://discor
 
 # Chrome MCP usage
 
-run on terminal /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --remote-debugging-port=9222 then MCP can be used
+run on terminal /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --remote-debugging-port=9222
