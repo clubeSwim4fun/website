@@ -172,7 +172,7 @@ export function RegistrationWizard({ generalConfig, form, submitButtonLabel }: P
   const currentStepConfig = STEPS.find((s) => s.id === step)!
 
   return (
-    <div className="flex flex-col gap-6 w-full max-w-2xl mx-auto">
+    <div className="flex flex-col gap-6 w-full max-w-2xl mx-auto px-4 md:px-0">
       <ProgressBanner currentStep={step} steps={STEPS} done={done} />
 
       {done ? (
