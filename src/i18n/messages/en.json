@@ -363,6 +363,12 @@
     "lockedTitle": "Subscriptions not open yet",
     "lockedDescription": "You can select your slots for next week starting {date}. Check back then to reserve your spots.",
     "lockedNoDate": "Selection for this week is not yet open.",
-    "opensInDays": "Opens in ~{days} days"
+    "opensInDays": "Opens in ~{days} days",
+    "joinSlotWaitlistButton": "Join waitlist",
+    "leaveWaitlistButton": "Leave waitlist",
+    "slotWaitlistPosition": "Waitlist position #{position}",
+    "slotWaitlistCount": "{count} on waitlist",
+    "slotWaitlistJoined": "You joined the waitlist at position #{position}.",
+    "slotWaitlistLeft": "You left the slot waitlist."
   }
 }

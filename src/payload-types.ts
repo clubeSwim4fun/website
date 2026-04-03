@@ -88,6 +88,7 @@ export interface Config {
     'pool-cycles': PoolCycle;
     'pool-subscriptions': PoolSubscription;
     'pool-slot-registrations': PoolSlotRegistration;
+    'pool-slot-waitlist': PoolSlotWaitlist;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -121,6 +122,7 @@ export interface Config {
     'pool-cycles': PoolCyclesSelect<false> | PoolCyclesSelect<true>;
     'pool-subscriptions': PoolSubscriptionsSelect<false> | PoolSubscriptionsSelect<true>;
     'pool-slot-registrations': PoolSlotRegistrationsSelect<false> | PoolSlotRegistrationsSelect<true>;
+    'pool-slot-waitlist': PoolSlotWaitlistSelect<false> | PoolSlotWaitlistSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -2156,6 +2158,21 @@ export interface PoolSlotRegistration {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pool-slot-waitlist".
+ */
+export interface PoolSlotWaitlist {
+  id: string;
+  athlete: string | User;
+  cycle: string | PoolCycle;
+  slotId: string;
+  slotDay: string;
+  slotTime: string;
+  position: number;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -2427,6 +2444,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'pool-slot-registrations';
         value: string | PoolSlotRegistration;
+      } | null)
+    | ({
+        relationTo: 'pool-slot-waitlist';
+        value: string | PoolSlotWaitlist;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -3217,6 +3238,20 @@ export interface PoolSlotRegistrationsSelect<T extends boolean = true> {
   slotId?: T;
   slotDay?: T;
   slotTime?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pool-slot-waitlist_select".
+ */
+export interface PoolSlotWaitlistSelect<T extends boolean = true> {
+  athlete?: T;
+  cycle?: T;
+  slotId?: T;
+  slotDay?: T;
+  slotTime?: T;
+  position?: T;
   updatedAt?: T;
   createdAt?: T;
 }

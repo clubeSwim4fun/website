@@ -363,6 +363,12 @@
     "lockedTitle": "Inscrições ainda não abertas",
     "lockedDescription": "Pode selecionar os seus horários para a próxima semana a partir de {date}. Volte então para reservar os seus lugares.",
     "lockedNoDate": "A seleção para esta semana ainda não está aberta.",
-    "opensInDays": "Abre em ~{days} dias"
+    "opensInDays": "Abre em ~{days} dias",
+    "joinSlotWaitlistButton": "Entrar na lista de espera",
+    "leaveWaitlistButton": "Sair da lista de espera",
+    "slotWaitlistPosition": "Posição na lista de espera #{position}",
+    "slotWaitlistCount": "{count} na lista de espera",
+    "slotWaitlistJoined": "Entrou na lista de espera na posição #{position}.",
+    "slotWaitlistLeft": "Saiu da lista de espera do horário."
   }
 }

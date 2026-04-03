@@ -524,3 +524,113 @@ export async function selectPoolSlots(
     return { success: false, message: t('Common.unexpectedError') }
   }
 }
+
+export async function joinSlotWaitlist(
+  cycleId: string,
+  slotId: string,
+  slotDay: string,
+  slotTime: string,
+): Promise<{ success: boolean; position?: number; message?: string }> {
+  const t = await getTranslations()
+  const payload = await getPayload({ config })
+  const { user } = await getMeUser()
+
+  if (!user) return { success: false, message: t('Common.unexpectedError') }
+
+  // Must have an active subscription for this cycle
+  const subResult = await payload.find({
+    collection: 'pool-subscriptions',
+    where: {
+      and: [
+        { cycle: { equals: cycleId } },
+        { athlete: { equals: user.id } },
+        { status: { equals: 'active' } },
+      ],
+    },
+    limit: 1,
+  })
+  if (subResult.totalDocs === 0) return { success: false, message: t('Common.unexpectedError') }
+
+  // Check not already on waitlist for this slot
+  const existing = await payload.find({
+    collection: 'pool-slot-waitlist',
+    where: {
+      and: [
+        { cycle: { equals: cycleId } },
+        { slotId: { equals: slotId } },
+        { athlete: { equals: user.id } },
+      ],
+    },
+    limit: 1,
+  })
+  if (existing.totalDocs > 0) return { success: false, message: t('Common.unexpectedError') }
+
+  // Calculate next position
+  const allEntries = await payload.find({
+    collection: 'pool-slot-waitlist',
+    where: { and: [{ cycle: { equals: cycleId } }, { slotId: { equals: slotId } }] },
+    limit: 0,
+  })
+  const position = allEntries.totalDocs + 1
+
+  await payload.create({
+    collection: 'pool-slot-waitlist',
+    data: { athlete: user.id, cycle: cycleId, slotId, slotDay, slotTime, position } as any,
+  })
+
+  revalidatePath('/[locale]/(profileUser)/pool/my-subscription', 'page')
+  return { success: true, position }
+}
+
+export async function leaveSlotWaitlist(
+  cycleId: string,
+  slotId: string,
+): Promise<{ success: boolean; message?: string }> {
+  const t = await getTranslations()
+  const payload = await getPayload({ config })
+  const { user } = await getMeUser()
+
+  if (!user) return { success: false, message: t('Common.unexpectedError') }
+
+  const existing = await payload.find({
+    collection: 'pool-slot-waitlist',
+    where: {
+      and: [
+        { cycle: { equals: cycleId } },
+        { slotId: { equals: slotId } },
+        { athlete: { equals: user.id } },
+      ],
+    },
+    limit: 1,
+  })
+
+  if (existing.totalDocs === 0) return { success: false, message: t('Common.unexpectedError') }
+
+  const entry = existing.docs[0]!
+  const removedPosition = (entry as any).position as number
+
+  await payload.delete({ collection: 'pool-slot-waitlist', id: entry.id })
+
+  // Shift down positions for everyone after the removed entry
+  const later = await payload.find({
+    collection: 'pool-slot-waitlist',
+    where: {
+      and: [
+        { cycle: { equals: cycleId } },
+        { slotId: { equals: slotId } },
+        { position: { greater_than: removedPosition } },
+      ],
+    },
+    limit: 1000,
+  })
+  for (const e of later.docs) {
+    await payload.update({
+      collection: 'pool-slot-waitlist',
+      id: e.id,
+      data: { position: ((e as any).position as number) - 1 },
+    })
+  }
+
+  revalidatePath('/[locale]/(profileUser)/pool/my-subscription', 'page')
+  return { success: true }
+}

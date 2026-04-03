@@ -144,35 +144,59 @@ export async function notifyWaitlist(cycleId: string): Promise<void> {
 /**
  * Fetches all slot registrations for a cycle once.
  * Returns counts per slotId and the set of slotIds the given athlete has registered for.
+ * Also returns slot-level waitlist counts and the athlete's waitlist positions.
  */
 export async function getSlotRegistrationData(
   cycleId: string,
   athleteId: string,
-): Promise<{ countsBySlotId: Record<string, number>; athleteSlotIds: Set<string> }> {
+): Promise<{
+  countsBySlotId: Record<string, number>
+  athleteSlotIds: Set<string>
+  waitlistCountsBySlotId: Record<string, number>
+  athleteWaitlistPositions: Record<string, number> // slotId → position
+}> {
   const payload = await getPayload({ config })
 
-  const result = await payload.find({
-    collection: 'pool-slot-registrations',
-    where: { cycle: { equals: cycleId } },
-    limit: 10000,
-    pagination: false,
-    depth: 0,
-  })
+  const [regResult, waitlistResult] = await Promise.all([
+    payload.find({
+      collection: 'pool-slot-registrations',
+      where: { cycle: { equals: cycleId } },
+      limit: 10000,
+      pagination: false,
+      depth: 0,
+    }),
+    payload.find({
+      collection: 'pool-slot-waitlist',
+      where: { cycle: { equals: cycleId } },
+      limit: 10000,
+      pagination: false,
+      depth: 0,
+    }),
+  ])
 
   const countsBySlotId: Record<string, number> = {}
   const athleteSlotIds = new Set<string>()
 
-  for (const reg of result.docs as any[]) {
+  for (const reg of regResult.docs as any[]) {
     const slotId: string = reg.slotId
     if (!slotId) continue
     countsBySlotId[slotId] = (countsBySlotId[slotId] ?? 0) + 1
     const regAthleteId = typeof reg.athlete === 'string' ? reg.athlete : reg.athlete?.id
-    if (regAthleteId === athleteId) {
-      athleteSlotIds.add(slotId)
-    }
+    if (regAthleteId === athleteId) athleteSlotIds.add(slotId)
   }
 
-  return { countsBySlotId, athleteSlotIds }
+  const waitlistCountsBySlotId: Record<string, number> = {}
+  const athleteWaitlistPositions: Record<string, number> = {}
+
+  for (const entry of waitlistResult.docs as any[]) {
+    const slotId: string = entry.slotId
+    if (!slotId) continue
+    waitlistCountsBySlotId[slotId] = (waitlistCountsBySlotId[slotId] ?? 0) + 1
+    const entryAthleteId = typeof entry.athlete === 'string' ? entry.athlete : entry.athlete?.id
+    if (entryAthleteId === athleteId) athleteWaitlistPositions[slotId] = entry.position
+  }
+
+  return { countsBySlotId, athleteSlotIds, waitlistCountsBySlotId, athleteWaitlistPositions }
 }
 
 export type WeekSlot = {
@@ -181,6 +205,8 @@ export type WeekSlot = {
   time: string
   maxAttendance: number
   available: number
+  waitlistCount: number
+  userWaitlistPosition: number | null // null = not on waitlist
 }
 
 export type WeekStatus = 'last' | 'current' | 'next'
@@ -212,7 +238,8 @@ export async function getWeekSlotData(cycle: PoolCycle, athleteId: string): Prom
 
   if (!weeks || weeks.length === 0) return []
 
-  const { countsBySlotId, athleteSlotIds } = await getSlotRegistrationData(cycle.id, athleteId)
+  const { countsBySlotId, athleteSlotIds, waitlistCountsBySlotId, athleteWaitlistPositions } =
+    await getSlotRegistrationData(cycle.id, athleteId)
 
   const today = new Date()
   today.setHours(0, 0, 0, 0)
@@ -258,6 +285,8 @@ export async function getWeekSlotData(cycle: PoolCycle, athleteId: string): Prom
         time: slot.time,
         maxAttendance: slot.maxAttendance ?? 0,
         available: (slot.maxAttendance ?? 0) - taken,
+        waitlistCount: waitlistCountsBySlotId[slot.slotId] ?? 0,
+        userWaitlistPosition: athleteWaitlistPositions[slot.slotId] ?? null,
       }
     })
 

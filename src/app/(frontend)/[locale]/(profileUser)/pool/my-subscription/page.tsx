@@ -33,6 +33,7 @@ const MySubscriptionPage = async ({ params }: { params: Promise<{ locale: string
       {isActive && weeks.length > 0 && (
         <WeeklySlotSelector
           subscriptionId={subscription!.id}
+          cycleId={cycle!.id}
           weeks={weeks}
           cycleMonth={cycle!.month}
           cycleYear={cycle!.year}

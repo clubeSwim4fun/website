@@ -1,22 +1,23 @@
 'use client'
 
-import { selectPoolSlots } from '@/actions/pool-subscription'
+import { selectPoolSlots, joinSlotWaitlist, leaveSlotWaitlist } from '@/actions/pool-subscription'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { useToast } from '@/hooks/use-toast'
 import { useRouter } from '@/i18n/routing'
 import { cn } from '@/utilities/ui'
-import { Check, Lock, Loader, Save, X } from 'lucide-react'
+import { Check, Clock, Lock, Loader, Save, X } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import type { WeekData, WeekSlot } from '@/helpers/poolHelper'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
-type SlotStatus = 'available' | 'limited' | 'full' | 'selected'
+type SlotStatus = 'available' | 'limited' | 'full' | 'selected' | 'waitlist'
 
 function getSlotStatus(slot: WeekSlot, isSelected: boolean, heldOnServer: boolean): SlotStatus {
   if (isSelected) return 'selected'
+  if (slot.userWaitlistPosition !== null) return 'waitlist'
   if (slot.available <= 0 && !heldOnServer) return 'full'
   if (slot.available <= Math.ceil(slot.maxAttendance * 0.3)) return 'limited'
   return 'available'
@@ -27,6 +28,7 @@ const STATUS_BORDER: Record<SlotStatus, string> = {
   limited: 'border-l-[#f59e0b]',
   full: 'border-l-[#ef4444]',
   selected: 'border-l-[hsl(var(--blue-swim))]',
+  waitlist: 'border-l-[hsl(var(--slot-waitlist))]',
 }
 
 const STATUS_LABEL_CLASS: Record<SlotStatus, string> = {
@@ -34,6 +36,7 @@ const STATUS_LABEL_CLASS: Record<SlotStatus, string> = {
   limited: 'text-[#f59e0b]',
   full: 'text-[#ef4444]',
   selected: 'text-[hsl(var(--blue-swim))]',
+  waitlist: 'text-[hsl(var(--slot-waitlist))]',
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -60,16 +63,23 @@ function SlotRow({
   heldOnServer,
   readOnly,
   onToggle,
+  onJoinWaitlist,
+  onLeaveWaitlist,
+  waitlistLoading,
 }: {
   slot: WeekSlot
   isSelected: boolean
   heldOnServer: boolean
   readOnly: boolean
   onToggle: () => void
+  onJoinWaitlist: () => void
+  onLeaveWaitlist: () => void
+  waitlistLoading: boolean
 }) {
   const t = useTranslations('PoolSubscription')
   const status = getSlotStatus(slot, isSelected, heldOnServer)
   const isFull = slot.available <= 0 && !isSelected && !heldOnServer
+  const isOnWaitlist = slot.userWaitlistPosition !== null
   const fillPct = Math.min(
     100,
     slot.maxAttendance > 0
@@ -79,66 +89,135 @@ function SlotRow({
 
   return (
     <li
-      onClick={readOnly || isFull ? undefined : onToggle}
       className={cn(
-        'flex items-center gap-4 rounded-lg border border-border bg-card px-5 py-4 border-l-4 transition-all duration-200',
+        'flex flex-col gap-3 rounded-lg border border-border bg-card px-5 py-4 border-l-4 transition-all duration-200',
         STATUS_BORDER[status],
-        readOnly || isFull ? 'opacity-60 cursor-default' : 'cursor-pointer hover:shadow-md',
         isSelected && !readOnly && 'ring-1 ring-[hsl(var(--blue-swim))]',
+        isOnWaitlist && !isSelected && 'ring-1 ring-[hsl(var(--slot-waitlist))]',
       )}
     >
-      <div className="flex-1 min-w-0">
-        <p className="font-semibold uppercase tracking-wide text-sm">{slot.day}</p>
-        <p className="text-muted-foreground text-sm">{slot.time}</p>
-      </div>
-
-      <div className="flex flex-col gap-1 w-32 shrink-0">
-        <div className="h-1.5 rounded-full bg-muted overflow-hidden">
-          <div
-            className={cn('h-full rounded-full transition-all duration-500', {
-              'bg-[#22c55e]': status === 'available',
-              'bg-[#f59e0b]': status === 'limited',
-              'bg-[#ef4444]': status === 'full',
-              'bg-[hsl(var(--blue-swim))]': status === 'selected',
-            })}
-            style={{ width: `${fillPct}%` }}
-          />
-        </div>
-        <p className="text-xs text-muted-foreground">
-          {slot.maxAttendance - slot.available}/{slot.maxAttendance} {t('enrolled')}
-        </p>
-      </div>
-
       <div
-        className={cn('text-xs font-semibold w-24 text-right shrink-0', STATUS_LABEL_CLASS[status])}
+        onClick={readOnly || (isFull && !isOnWaitlist) ? undefined : onToggle}
+        className={cn(
+          'flex items-center gap-4',
+          readOnly || (isFull && !isOnWaitlist) ? 'cursor-default' : 'cursor-pointer',
+        )}
       >
-        {readOnly && isSelected && (
-          <span className="inline-flex items-center justify-end gap-1 text-[hsl(var(--blue-swim))]">
-            <Check className="w-3 h-3" /> {t('attended')}
-          </span>
-        )}
-        {readOnly && !isSelected && <span className="text-muted-foreground">{t('skipped')}</span>}
-        {!readOnly && status === 'selected' && (
-          <span className="flex items-center justify-end gap-1">
-            <Check className="w-3 h-3" /> {t('legend_selected')}
-          </span>
-        )}
-        {!readOnly && status === 'full' && t('legend_full')}
-        {!readOnly &&
-          (status === 'limited' || status === 'available') &&
-          t('spotsLeft', { count: slot.available })}
-      </div>
+        <div className="flex-1 min-w-0">
+          <p className="font-semibold uppercase tracking-wide text-sm">{slot.day}</p>
+          <p className="text-muted-foreground text-sm">{slot.time}</p>
+        </div>
 
-      {!readOnly && (
+        <div className="flex flex-col gap-1 w-32 shrink-0">
+          <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+            <div
+              className={cn('h-full rounded-full transition-all duration-500', {
+                'bg-[#22c55e]': status === 'available',
+                'bg-[#f59e0b]': status === 'limited',
+                'bg-[#ef4444]': status === 'full' || status === 'waitlist',
+                'bg-[hsl(var(--blue-swim))]': status === 'selected',
+              })}
+              style={{ width: `${fillPct}%` }}
+            />
+          </div>
+          <p className="text-xs text-muted-foreground">
+            {slot.maxAttendance - slot.available}/{slot.maxAttendance} {t('enrolled')}
+          </p>
+        </div>
+
         <div
           className={cn(
-            'w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-all duration-200',
-            isSelected
-              ? 'bg-[hsl(var(--blue-swim))] border-[hsl(var(--blue-swim))]'
-              : 'border-muted-foreground',
+            'text-xs font-semibold w-24 text-right shrink-0',
+            STATUS_LABEL_CLASS[status],
           )}
         >
-          {isSelected && <Check className="w-3.5 h-3.5 text-white" />}
+          {readOnly && isSelected && (
+            <span className="inline-flex items-center justify-end gap-1 text-[hsl(var(--blue-swim))]">
+              <Check className="w-3 h-3" /> {t('attended')}
+            </span>
+          )}
+          {readOnly && !isSelected && <span className="text-muted-foreground">{t('skipped')}</span>}
+          {!readOnly && status === 'selected' && (
+            <span className="flex items-center justify-end gap-1">
+              <Check className="w-3 h-3" /> {t('legend_selected')}
+            </span>
+          )}
+          {!readOnly && status === 'waitlist' && (
+            <span className="flex items-center justify-end gap-1">
+              <Clock className="w-3 h-3" /> #{slot.userWaitlistPosition}
+            </span>
+          )}
+          {!readOnly && status === 'full' && t('legend_full')}
+          {!readOnly &&
+            (status === 'limited' || status === 'available') &&
+            t('spotsLeft', { count: slot.available })}
+        </div>
+
+        {!readOnly && (
+          <div
+            className={cn(
+              'w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-all duration-200',
+              isSelected
+                ? 'bg-[hsl(var(--blue-swim))] border-[hsl(var(--blue-swim))]'
+                : isOnWaitlist
+                  ? 'bg-[hsl(var(--slot-waitlist))] border-[hsl(var(--slot-waitlist))]'
+                  : 'border-muted-foreground',
+            )}
+          >
+            {isSelected && <Check className="w-3.5 h-3.5 text-white" />}
+            {isOnWaitlist && !isSelected && <Clock className="w-3 h-3 text-white" />}
+          </div>
+        )}
+      </div>
+
+      {/* Waitlist actions — only for full slots in open (non-readonly) weeks */}
+      {!readOnly && isFull && (
+        <div className="flex items-center gap-2 pt-1 border-t border-border">
+          {isOnWaitlist ? (
+            <div className="flex items-center justify-between w-full">
+              <p className="text-xs text-[hsl(var(--slot-waitlist))] font-medium">
+                {t('slotWaitlistPosition', { position: slot.userWaitlistPosition! })}
+              </p>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="h-7 text-xs text-muted-foreground hover:text-destructive"
+                disabled={waitlistLoading}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onLeaveWaitlist()
+                }}
+              >
+                {waitlistLoading ? (
+                  <Loader className="w-3 h-3 animate-spin" />
+                ) : (
+                  t('leaveWaitlistButton')
+                )}
+              </Button>
+            </div>
+          ) : (
+            <div className="flex items-center justify-between w-full">
+              <p className="text-xs text-muted-foreground">
+                {t('slotWaitlistCount', { count: slot.waitlistCount })}
+              </p>
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-7 text-xs border-[hsl(var(--slot-waitlist))] text-[hsl(var(--slot-waitlist))] hover:bg-[hsl(var(--slot-waitlist))] hover:text-white"
+                disabled={waitlistLoading}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onJoinWaitlist()
+                }}
+              >
+                {waitlistLoading ? (
+                  <Loader className="w-3 h-3 animate-spin" />
+                ) : (
+                  t('joinSlotWaitlistButton')
+                )}
+              </Button>
+            </div>
+          )}
         </div>
       )}
     </li>
@@ -230,6 +309,7 @@ function SummaryPanel({
 
 type Props = {
   subscriptionId: string
+  cycleId: string
   weeks: WeekData[]
   cycleMonth: number
   cycleYear: number
@@ -237,6 +317,7 @@ type Props = {
 
 export const WeeklySlotSelector: React.FC<Props> = ({
   subscriptionId,
+  cycleId,
   weeks,
   cycleMonth,
   cycleYear,
@@ -252,7 +333,7 @@ export const WeeklySlotSelector: React.FC<Props> = ({
     return init
   })
   const [saving, setSaving] = useState(false)
-
+  const [waitlistLoadingSlotId, setWaitlistLoadingSlotId] = useState<string | null>(null)
   const currentWeek = weeks.find((w) => w.status === 'current') ?? weeks[0]
   const defaultTab = currentWeek ? String(currentWeek.weekIndex) : '0'
 
@@ -293,7 +374,32 @@ export const WeeklySlotSelector: React.FC<Props> = ({
     router.refresh()
   }
 
+  const handleJoinWaitlist = async (slot: WeekSlot) => {
+    setWaitlistLoadingSlotId(slot.slotId)
+    const result = await joinSlotWaitlist(cycleId, slot.slotId, slot.day, slot.time)
+    setWaitlistLoadingSlotId(null)
+    if (!result.success) {
+      toast({ variant: 'destructive', description: result.message || t('cycleNotFound') })
+    } else {
+      toast({ description: t('slotWaitlistJoined', { position: result.position }) })
+      router.refresh()
+    }
+  }
+
+  const handleLeaveWaitlist = async (slot: WeekSlot) => {
+    setWaitlistLoadingSlotId(slot.slotId)
+    const result = await leaveSlotWaitlist(cycleId, slot.slotId)
+    setWaitlistLoadingSlotId(null)
+    if (!result.success) {
+      toast({ variant: 'destructive', description: result.message || t('cycleNotFound') })
+    } else {
+      toast({ description: t('slotWaitlistLeft') })
+      router.refresh()
+    }
+  }
+
   const totalSelected = Object.values(selectedByWeek).flat().length
+
   const totalHours = Object.entries(selectedByWeek).reduce((sum, [weekIdx, ids]) => {
     const week = weeks.find((w) => w.weekIndex === Number(weekIdx))
     if (!week) return sum
@@ -339,7 +445,7 @@ export const WeeklySlotSelector: React.FC<Props> = ({
 
       {/* Legend */}
       <div className="flex flex-wrap gap-4 text-xs text-muted-foreground">
-        {(['available', 'limited', 'full', 'selected'] as SlotStatus[]).map((s) => (
+        {(['available', 'limited', 'full', 'selected', 'waitlist'] as SlotStatus[]).map((s) => (
           <span key={s} className="flex items-center gap-1.5">
             <span
               className={cn('w-2.5 h-2.5 rounded-full', {
@@ -347,6 +453,7 @@ export const WeeklySlotSelector: React.FC<Props> = ({
                 'bg-[#f59e0b]': s === 'limited',
                 'bg-[#ef4444]': s === 'full',
                 'bg-[hsl(var(--blue-swim))]': s === 'selected',
+                'bg-[hsl(var(--slot-waitlist))]': s === 'waitlist',
               })}
             />
             {t(`legend_${s}`)}
@@ -464,6 +571,9 @@ export const WeeklySlotSelector: React.FC<Props> = ({
                         heldOnServer={week.selectedSlotIds.includes(slot.slotId)}
                         readOnly={isReadOnly}
                         onToggle={() => toggle(week.weekIndex, slot, week.selectedSlotIds)}
+                        onJoinWaitlist={() => handleJoinWaitlist(slot)}
+                        onLeaveWaitlist={() => handleLeaveWaitlist(slot)}
+                        waitlistLoading={waitlistLoadingSlotId === slot.slotId}
                       />
                     ))}
                   </ul>
