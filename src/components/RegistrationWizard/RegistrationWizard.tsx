@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { User, Lock, FileText, Star, CheckCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ProgressBanner } from './ProgressBanner'
@@ -77,6 +77,15 @@ export function RegistrationWizard({ generalConfig, form, submitButtonLabel }: P
   const [submitting, setSubmitting] = useState(false)
   const [done, setDone] = useState(false)
   const [serverError, setServerError] = useState<string | null>(null)
+  const cardRef = useRef<HTMLDivElement>(null)
+
+  // Focus first focusable element in the card whenever the step changes
+  useEffect(() => {
+    const first = cardRef.current?.querySelector<HTMLElement>(
+      'input, select, button, textarea, [tabindex]:not([tabindex="-1"])',
+    )
+    first?.focus()
+  }, [step])
 
   const set = (field: keyof FormData, value: string | boolean | File[]) =>
     setData((prev) => ({ ...prev, [field]: value }))
@@ -198,35 +207,45 @@ export function RegistrationWizard({ generalConfig, form, submitButtonLabel }: P
             title={currentStepConfig.title}
             subtitle={currentStepConfig.subtitle}
           >
-            {step === 1 && <Step1 data={data} errors={errors} onChange={set} fieldMap={fieldMap} />}
-            {step === 2 && (
-              <Step2
-                data={data}
-                errors={errors}
-                onChange={set}
-                generalConfig={generalConfig}
-                fieldMap={fieldMap}
-              />
-            )}
-            {step === 3 && (
-              <Step3
-                data={data}
-                errors={errors}
-                onChange={set}
-                onFileChange={(field, files) => set(field, files as unknown as string)}
-                generalConfig={generalConfig}
-                fieldMap={fieldMap}
-              />
-            )}
-            {step === 4 && (
-              <Step4
-                data={data}
-                errors={errors}
-                onChange={set}
-                fieldMap={fieldMap}
-                generalConfig={generalConfig}
-              />
-            )}
+            <div ref={cardRef}>
+              {step === 1 && (
+                <Step1
+                  data={data}
+                  errors={errors}
+                  onChange={set}
+                  onConfirmError={(msg) => setErrors((e) => ({ ...e, confirmPassword: msg }))}
+                  fieldMap={fieldMap}
+                />
+              )}
+              {step === 2 && (
+                <Step2
+                  data={data}
+                  errors={errors}
+                  onChange={set}
+                  generalConfig={generalConfig}
+                  fieldMap={fieldMap}
+                />
+              )}
+              {step === 3 && (
+                <Step3
+                  data={data}
+                  errors={errors}
+                  onChange={set}
+                  onFileChange={(field, files) => set(field, files as unknown as string)}
+                  generalConfig={generalConfig}
+                  fieldMap={fieldMap}
+                />
+              )}
+              {step === 4 && (
+                <Step4
+                  data={data}
+                  errors={errors}
+                  onChange={set}
+                  fieldMap={fieldMap}
+                  generalConfig={generalConfig}
+                />
+              )}
+            </div>
           </StepCard>
 
           {serverError && <p className="text-sm text-[#e85d4a] text-center">{serverError}</p>}

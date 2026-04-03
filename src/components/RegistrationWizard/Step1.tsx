@@ -14,10 +14,11 @@ type Props = {
   data: FormData
   errors: Errors
   onChange: (field: keyof FormData, value: string) => void
+  onConfirmError: (msg: string | undefined) => void
   fieldMap: Record<string, CmsField>
 }
 
-export function Step1({ data, errors, onChange, fieldMap }: Props) {
+export function Step1({ data, errors, onChange, onConfirmError, fieldMap }: Props) {
   const t = useTranslations('Registration')
 
   // Password field carries confirm-password config in CMS
@@ -95,7 +96,15 @@ export function Step1({ data, errors, onChange, fieldMap }: Props) {
             type="password"
             placeholder={t('confirmPasswordPlaceholder')}
             value={data.confirmPassword}
-            onChange={(e) => onChange('confirmPassword', e.target.value)}
+            onChange={(e) => {
+              onChange('confirmPassword', e.target.value)
+              // inline mismatch feedback while typing
+              if (data.password && e.target.value && e.target.value !== data.password) {
+                onConfirmError(t('errorPasswordMatch'))
+              } else {
+                onConfirmError(undefined)
+              }
+            }}
             className={errors.confirmPassword ? 'border-[#e85d4a]' : ''}
           />
           <FieldError message={errors.confirmPassword} />
