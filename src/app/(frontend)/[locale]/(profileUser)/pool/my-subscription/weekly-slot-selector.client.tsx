@@ -381,7 +381,7 @@ export const WeeklySlotSelector: React.FC<Props> = ({
     if (!result.success) {
       toast({ variant: 'destructive', description: result.message || t('cycleNotFound') })
     } else {
-      toast({ description: t('slotWaitlistJoined', { position: result.position }) })
+      toast({ description: t('slotWaitlistJoined', { position: result.position ?? 0 }) })
       router.refresh()
     }
   }
