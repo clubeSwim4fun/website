@@ -16,6 +16,8 @@ const PoolWaitlistPage = async ({ params }: { params: Promise<{ locale: string }
     nullUserRedirect: `/${locale}/sign-in?callbackUrl=/${locale}/pool/waitlist`,
   })
 
+  if (!user) return redirect(`/${locale}/sign-in?callbackUrl=/${locale}/pool/waitlist`)
+
   const cycle = await getOpenCycle()
   if (!cycle) redirect(`/${locale}/pool`)
 

@@ -78,6 +78,10 @@ export const getMeUser = async (args?: {
     // Clear the cache on error
     cachedUser = null
 
+    if (nullUserRedirect) {
+      redirect(nullUserRedirect)
+    }
+
     return {
       error: JSON.stringify(error),
     }

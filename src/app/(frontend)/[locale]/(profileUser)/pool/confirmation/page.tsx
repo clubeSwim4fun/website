@@ -12,6 +12,8 @@ const PoolConfirmationPage = async ({ params }: { params: Promise<{ locale: stri
     nullUserRedirect: `/${locale}/sign-in?callbackUrl=/${locale}/pool/confirmation`,
   })
 
+  if (!user) return redirect(`/${locale}/sign-in?callbackUrl=/${locale}/pool/confirmation`)
+
   const cycle = await getOpenCycle()
 
   if (!cycle) {

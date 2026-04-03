@@ -11,6 +11,8 @@ const PoolSubscribePage = async ({ params }: { params: Promise<{ locale: string 
     nullUserRedirect: `/${locale}/sign-in?callbackUrl=/${locale}/pool/subscribe`,
   })
 
+  if (!user) return redirect(`/${locale}/sign-in?callbackUrl=/${locale}/pool/subscribe`)
+
   const cycle = await getOpenCycle()
   if (!cycle) redirect(`/${locale}/pool`)
 

@@ -7,6 +7,7 @@ import {
   computePoolPageState,
 } from '@/helpers/poolHelper'
 import { getTranslations } from 'next-intl/server'
+import { redirect } from 'next/navigation'
 import { Link } from '@/i18n/routing'
 import { Button } from '@/components/ui/button'
 import { PoolCycle, PoolSubscription } from '@/payload-types'
@@ -20,6 +21,8 @@ const PoolPage = async ({ params }: { params: Promise<{ locale: string }> }) => 
     nullUserRedirect: `/${locale}/sign-in?callbackUrl=/${locale}/pool`,
   })
 
+  if (!user) return redirect(`/${locale}/sign-in?callbackUrl=/${locale}/pool`)
+
   const cycle = await getOpenCycle()
 
   let activeCount = 0
@@ -30,7 +33,7 @@ const PoolPage = async ({ params }: { params: Promise<{ locale: string }> }) => 
     ;[activeCount, waitlistCount, athleteSub] = await Promise.all([
       getActiveCount(cycle.id),
       getWaitlistCount(cycle.id),
-      getAthleteSubscription(cycle.id, user!.id),
+      getAthleteSubscription(cycle.id, user.id),
     ])
   }
 
