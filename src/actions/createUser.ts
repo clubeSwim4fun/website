@@ -64,7 +64,16 @@ export async function createUser(userData: CreateUserRequestType): Promise<Creat
 
     for (const [name, data] of Object.entries(userData)) {
       if (!Array.isArray(data.value)) {
-        userObject[data.relatesTo] = data.value
+        // Handle nested Address fields (e.g. relatesTo = 'Address.street')
+        if (data.relatesTo.startsWith('Address.')) {
+          const subKey = data.relatesTo.split('.')[1]!
+          if (!userObject['Address']) userObject['Address'] = {} as any
+          ;(userObject['Address'] as any)[subKey] = data.value
+        } else {
+          // Handle booleans stored as strings
+          const val = data.value === 'true' ? true : data.value === 'false' ? false : data.value
+          userObject[data.relatesTo] = val as any
+        }
       }
     }
 

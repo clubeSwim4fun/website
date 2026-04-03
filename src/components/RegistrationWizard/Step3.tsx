@@ -1,0 +1,135 @@
+'use client'
+
+import { Input } from '@/components/ui/input'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { FieldError, FieldGroup, FieldLabel, FieldRow, Hint } from './StepCard'
+import { UploadZone } from './UploadZone'
+import { FormData } from './types'
+import { CmsField, label, options, required } from './useFormFields'
+import { GeneralConfig } from '@/payload-types'
+import { useTranslations } from 'next-intl'
+
+type Errors = Partial<Record<keyof FormData, string>>
+
+type Props = {
+  data: FormData
+  errors: Errors
+  onChange: (field: keyof FormData, value: string) => void
+  onFileChange: (field: 'identityFile' | 'profilePicture', files: File[]) => void
+  generalConfig: GeneralConfig
+  fieldMap: Record<string, CmsField>
+}
+
+export function Step3({ data, errors, onChange, onFileChange, generalConfig, fieldMap }: Props) {
+  const t = useTranslations('Registration')
+
+  const disabilityField = fieldMap['disability']
+  const disabilityOptions =
+    disabilityField?.type === 'globalConfig'
+      ? (
+          (generalConfig?.userData?.disabilities ?? []) as {
+            label: string
+            collectionId?: string | null
+          }[]
+        ).map((d) => ({ label: d.label, value: d.collectionId ?? d.label }))
+      : options(fieldMap, 'disability')
+
+  const insuranceOptions = options(fieldMap, 'sportInsurance').length
+    ? options(fieldMap, 'sportInsurance')
+    : [
+        { label: t('insuranceNone'), value: 'none' },
+        { label: 'FPN (Federação Portuguesa de Natação)', value: 'fpn' },
+        { label: 'FPT (Federação Portuguesa de Triatlo)', value: 'fpt' },
+      ]
+
+  return (
+    <div className="flex flex-col gap-5">
+      <FieldRow>
+        <FieldGroup>
+          <FieldLabel htmlFor="identity" required={required(fieldMap, 'identity')}>
+            {label(fieldMap, 'identity', t('idDocumentNumber'))}
+          </FieldLabel>
+          <Input
+            id="identity"
+            placeholder={t('idDocumentPlaceholder')}
+            value={data.identity}
+            onChange={(e) => onChange('identity', e.target.value)}
+            className={errors.identity ? 'border-[#e85d4a]' : ''}
+          />
+          <FieldError message={errors.identity} />
+        </FieldGroup>
+        <FieldGroup>
+          <FieldLabel htmlFor="nif" required={required(fieldMap, 'nif')}>
+            {label(fieldMap, 'nif', t('nif'))}
+          </FieldLabel>
+          <Input
+            id="nif"
+            placeholder={t('nifPlaceholder')}
+            value={data.nif}
+            onChange={(e) => onChange('nif', e.target.value)}
+            className={errors.nif ? 'border-[#e85d4a]' : ''}
+          />
+          <FieldError message={errors.nif} />
+        </FieldGroup>
+      </FieldRow>
+
+      <FieldRow>
+        <UploadZone
+          label={label(fieldMap, 'identityFile', t('idDocumentCopy'))}
+          value={data.identityFile}
+          onChange={(files) => onFileChange('identityFile', files)}
+          error={errors.identityFile}
+          hint={t('uploadHint')}
+        />
+        <UploadZone
+          label={label(fieldMap, 'profilePicture', t('profilePhoto'))}
+          value={data.profilePicture}
+          onChange={(files) => onFileChange('profilePicture', files)}
+          error={errors.profilePicture}
+          hint={t('uploadHint')}
+        />
+      </FieldRow>
+
+      <FieldRow>
+        <FieldGroup>
+          <FieldLabel>{label(fieldMap, 'disability', t('disabilityCategory'))}</FieldLabel>
+          <Select value={data.disability} onValueChange={(v) => onChange('disability', v)}>
+            <SelectTrigger>
+              <SelectValue placeholder={t('disabilityCategoryPlaceholder')} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="none">{t('disabilityNone')}</SelectItem>
+              {disabilityOptions.map((d) => (
+                <SelectItem key={d.value} value={d.value}>
+                  {d.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Hint>{t('disabilityHint')}</Hint>
+        </FieldGroup>
+        <FieldGroup>
+          <FieldLabel>{label(fieldMap, 'sportInsurance', t('sportsInsurance'))}</FieldLabel>
+          <Select value={data.sportInsurance} onValueChange={(v) => onChange('sportInsurance', v)}>
+            <SelectTrigger>
+              <SelectValue placeholder={t('sportsInsurancePlaceholder')} />
+            </SelectTrigger>
+            <SelectContent>
+              {insuranceOptions.map((s) => (
+                <SelectItem key={s.value} value={s.value}>
+                  {s.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </FieldGroup>
+      </FieldRow>
+    </div>
+  )
+}
