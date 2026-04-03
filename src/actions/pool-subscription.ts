@@ -7,7 +7,7 @@ import { getTranslations } from 'next-intl/server'
 import { sendEmail } from '@/helpers/emailHelper'
 import { render } from '@react-email/components'
 import React from 'react'
-import { notifyWaitlist, getSlotAttendanceCounts } from '@/helpers/poolHelper'
+import { notifyWaitlist } from '@/helpers/poolHelper'
 import { PoolCycle, PoolSubscription, User } from '@/payload-types'
 import { revalidatePath } from 'next/cache'
 
@@ -360,7 +360,7 @@ export async function cancelPoolSubscription(
 
 export async function selectPoolSlots(
   subscriptionId: string,
-  slotIndexes: number[],
+  slotIds: string[],
 ): Promise<{ success: boolean; message?: string }> {
   const t = await getTranslations()
   const payload = await getPayload({ config })
@@ -370,81 +370,156 @@ export async function selectPoolSlots(
     return { success: false, message: t('Common.unexpectedError') }
   }
 
-  const transactionID = await payload.db.beginTransaction()
-  if (!transactionID) {
-    return { success: false, message: t('Common.unexpectedError') }
-  }
-
   try {
     const subscription = (await payload.findByID({
       collection: 'pool-subscriptions',
       id: subscriptionId,
       depth: 1,
-      req: { transactionID },
     })) as PoolSubscription
 
     if (!subscription || subscription.status !== 'active') {
-      await payload.db.rollbackTransaction(transactionID)
       return { success: false, message: t('Common.unexpectedError') }
     }
 
     const athleteId =
       typeof subscription.athlete === 'string' ? subscription.athlete : subscription.athlete.id
     if (athleteId !== user.id && user.role !== 'admin') {
-      await payload.db.rollbackTransaction(transactionID)
       return { success: false, message: t('Common.unexpectedError') }
     }
 
     const cycleId =
       typeof subscription.cycle === 'string' ? subscription.cycle : subscription.cycle.id
 
-    const cycle = (await payload.findByID({
-      collection: 'pool-cycles',
-      id: cycleId,
-      req: { transactionID },
-    })) as PoolCycle
-
+    const cycle = (await payload.findByID({ collection: 'pool-cycles', id: cycleId })) as PoolCycle
     if (!cycle) {
-      await payload.db.rollbackTransaction(transactionID)
       return { success: false, message: t('Common.unexpectedError') }
     }
 
-    // Re-count attendance inside the transaction, excluding this subscription's current selections
-    const attendanceCounts = await getSlotAttendanceCounts(cycleId, transactionID, subscriptionId)
+    // Flatten all slots from all weeks for lookup
+    const allSlots: Array<{ slotId: string; day: string; time: string; maxAttendance: number }> = []
+    const weeks = (cycle as any).weeks ?? []
+    for (const week of weeks) {
+      for (const slot of week.slots ?? []) {
+        allSlots.push({
+          slotId: slot.slotId,
+          day: slot.day,
+          time: slot.time,
+          maxAttendance: slot.maxAttendance ?? 0,
+        })
+      }
+    }
+    // Also support legacy flat availableSlots
+    for (const slot of (cycle.availableSlots ?? []) as any[]) {
+      if (slot.slotId) allSlots.push(slot)
+    }
 
-    for (const idx of slotIndexes) {
-      const slot = cycle.availableSlots?.[idx]
-      if (!slot) {
-        await payload.db.rollbackTransaction(transactionID)
+    // Fetch all current registrations for this cycle once
+    const existingRegs = await payload.find({
+      collection: 'pool-slot-registrations',
+      where: { cycle: { equals: cycleId } },
+      limit: 10000,
+      pagination: false,
+      depth: 0,
+    })
+
+    // Build maps from the single fetch
+    const countsBySlotId: Record<string, number> = {}
+    const athleteRegBySlotId: Record<string, string> = {} // slotId → registration doc id
+
+    for (const reg of existingRegs.docs as any[]) {
+      const sid: string = reg.slotId
+      if (!sid) continue
+      countsBySlotId[sid] = (countsBySlotId[sid] ?? 0) + 1
+      const regAthleteId = typeof reg.athlete === 'string' ? reg.athlete : reg.athlete?.id
+      if (regAthleteId === athleteId) {
+        athleteRegBySlotId[sid] = reg.id
+      }
+    }
+
+    const previousSlotIds = Object.keys(athleteRegBySlotId)
+    const toAcquire = slotIds.filter((sid) => !previousSlotIds.includes(sid))
+    const toRelease = previousSlotIds.filter((sid) => !slotIds.includes(sid))
+
+    // Capacity check for new slots
+    for (const sid of toAcquire) {
+      const slotDef = allSlots.find((s) => s.slotId === sid)
+      if (!slotDef) {
         return { success: false, message: t('PoolSubscription.slotNotFound') }
       }
-      const count = attendanceCounts[idx] ?? 0
-      if (count >= ((slot as any).maxAttendance ?? Infinity)) {
-        await payload.db.rollbackTransaction(transactionID)
+      const taken = countsBySlotId[sid] ?? 0
+      if (taken >= (slotDef.maxAttendance ?? 0)) {
         return { success: false, message: t('PoolSubscription.slotFullError') }
       }
     }
 
+    // Acquire new slots via Payload (handles ObjectIds correctly)
+    for (const sid of toAcquire) {
+      const slotDef = allSlots.find((s) => s.slotId === sid)!
+
+      // Double-check atomically: re-count just before insert
+      const freshCount = await payload.find({
+        collection: 'pool-slot-registrations',
+        where: { and: [{ cycle: { equals: cycleId } }, { slotId: { equals: sid } }] },
+        limit: 0,
+        pagination: false,
+      })
+      if (freshCount.totalDocs >= (slotDef.maxAttendance ?? 0)) {
+        // Roll back any already acquired in this loop
+        for (const acquiredSid of toAcquire.slice(0, toAcquire.indexOf(sid))) {
+          const newReg = await payload.find({
+            collection: 'pool-slot-registrations',
+            where: {
+              and: [
+                { cycle: { equals: cycleId } },
+                { slotId: { equals: acquiredSid } },
+                { athlete: { equals: athleteId } },
+              ],
+            },
+            limit: 1,
+          })
+          if (newReg.docs[0]) {
+            await payload.delete({ collection: 'pool-slot-registrations', id: newReg.docs[0].id })
+          }
+        }
+        return { success: false, message: t('PoolSubscription.slotFullError') }
+      }
+
+      await payload.create({
+        collection: 'pool-slot-registrations',
+        data: {
+          athlete: athleteId,
+          cycle: cycleId,
+          slotId: sid,
+          slotDay: slotDef.day ?? '',
+          slotTime: slotDef.time ?? '',
+        } as any,
+      })
+    }
+
+    // Release deselected slots
+    for (const sid of toRelease) {
+      const regId = athleteRegBySlotId[sid]
+      if (regId) {
+        await payload.delete({ collection: 'pool-slot-registrations', id: regId })
+      }
+    }
+
+    // Keep subscription.selectedSlots in sync for admin visibility
     await payload.update({
       collection: 'pool-subscriptions',
       id: subscriptionId,
       data: {
-        selectedSlots: slotIndexes.map((idx) => ({
-          slotIndex: idx,
-          day: cycle.availableSlots?.[idx]?.day ?? '',
-          time: cycle.availableSlots?.[idx]?.time ?? '',
-        })),
+        selectedSlots: slotIds.map((sid) => {
+          const slotDef = allSlots.find((s) => s.slotId === sid)
+          const idx = allSlots.findIndex((s) => s.slotId === sid)
+          return { slotIndex: idx, day: slotDef?.day ?? '', time: slotDef?.time ?? '' }
+        }),
       },
-      req: { transactionID },
     })
 
-    await payload.db.commitTransaction(transactionID)
-
     revalidatePath('/[locale]/(profileUser)/pool/my-subscription', 'page')
-
     return { success: true }
   } catch (error) {
-    await payload.db.rollbackTransaction(transactionID)
     payload.logger.error(`[selectPoolSlots] Error: ${JSON.stringify(error)}`)
     return { success: false, message: t('Common.unexpectedError') }
   }

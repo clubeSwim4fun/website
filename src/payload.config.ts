@@ -38,6 +38,7 @@ import { Subscription } from './collections/Users/Subscription'
 import { GroupSubscription } from './collections/Groups/GroupSubscription'
 import { PoolCycles } from '@/collections/Pool/PoolCycles'
 import { PoolSubscriptions } from '@/collections/Pool/PoolSubscriptions'
+import { PoolSlotRegistrations } from '@/collections/Pool/PoolSlotRegistrations'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -102,6 +103,7 @@ export default buildConfig({
     GroupSubscription,
     PoolCycles,
     PoolSubscriptions,
+    PoolSlotRegistrations,
   ],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer, GeneralConfigs],

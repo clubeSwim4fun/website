@@ -142,38 +142,139 @@ export async function notifyWaitlist(cycleId: string): Promise<void> {
 }
 
 /**
- * Returns a map of slotIndex → number of active subscribers (excluding the given subscriptionId)
- * who selected that slot.
+ * Fetches all slot registrations for a cycle once.
+ * Returns counts per slotId and the set of slotIds the given athlete has registered for.
  */
-export async function getSlotAttendanceCounts(
+export async function getSlotRegistrationData(
   cycleId: string,
-  transactionID?: string | number | null,
-  excludeSubscriptionId?: string,
-): Promise<Record<number, number>> {
+  athleteId: string,
+): Promise<{ countsBySlotId: Record<string, number>; athleteSlotIds: Set<string> }> {
   const payload = await getPayload({ config })
 
   const result = await payload.find({
-    collection: 'pool-subscriptions',
-    where: {
-      and: [{ cycle: { equals: cycleId } }, { status: { equals: 'active' } }],
-    },
-    limit: 1000,
-    req: transactionID ? ({ transactionID } as any) : undefined,
+    collection: 'pool-slot-registrations',
+    where: { cycle: { equals: cycleId } },
+    limit: 10000,
+    pagination: false,
+    depth: 0,
   })
 
-  const counts: Record<number, number> = {}
-  for (const sub of result.docs) {
-    const s = sub as PoolSubscription
-    // Skip the subscription being updated — we only care about other users' selections
-    if (excludeSubscriptionId && s.id === excludeSubscriptionId) continue
-    if (s.selectedSlots) {
-      for (const entry of s.selectedSlots) {
-        const idx = entry.slotIndex
-        counts[idx] = (counts[idx] ?? 0) + 1
-      }
+  const countsBySlotId: Record<string, number> = {}
+  const athleteSlotIds = new Set<string>()
+
+  for (const reg of result.docs as any[]) {
+    const slotId: string = reg.slotId
+    if (!slotId) continue
+    countsBySlotId[slotId] = (countsBySlotId[slotId] ?? 0) + 1
+    const regAthleteId = typeof reg.athlete === 'string' ? reg.athlete : reg.athlete?.id
+    if (regAthleteId === athleteId) {
+      athleteSlotIds.add(slotId)
     }
   }
-  return counts
+
+  return { countsBySlotId, athleteSlotIds }
+}
+
+export type WeekSlot = {
+  slotId: string
+  day: string
+  time: string
+  maxAttendance: number
+  available: number
+}
+
+export type WeekStatus = 'last' | 'current' | 'next'
+
+export type WeekData = {
+  weekIndex: number
+  startDate: string
+  endDate: string
+  nextWeekOpenDate: string | null
+  status: WeekStatus
+  slots: WeekSlot[]
+  selectedSlotIds: string[]
+}
+
+/**
+ * Builds week-structured slot data from the cycle, enriched with registration counts
+ * and the athlete's current selections. Determines which week is last/current/next
+ * based on today's date.
+ */
+export async function getWeekSlotData(cycle: PoolCycle, athleteId: string): Promise<WeekData[]> {
+  const weeks = (cycle as any).weeks as
+    | Array<{
+        startDate: string
+        endDate: string
+        nextWeekOpenDate?: string
+        slots: Array<{ slotId: string; day: string; time: string; maxAttendance: number }>
+      }>
+    | undefined
+
+  if (!weeks || weeks.length === 0) return []
+
+  const { countsBySlotId, athleteSlotIds } = await getSlotRegistrationData(cycle.id, athleteId)
+
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  // Find which week index contains today
+  let currentWeekIndex = -1
+  for (let i = 0; i < weeks.length; i++) {
+    const weekEntry = weeks[i]
+    if (!weekEntry?.startDate || !weekEntry?.endDate) continue
+    const start = new Date(weekEntry.startDate)
+    const end = new Date(weekEntry.endDate)
+    start.setHours(0, 0, 0, 0)
+    end.setHours(23, 59, 59, 999)
+    if (today >= start && today <= end) {
+      currentWeekIndex = i
+      break
+    }
+  }
+
+  // If today is before all weeks, treat first week as current
+  if (currentWeekIndex === -1) {
+    const firstWeek = weeks[0]
+    const firstStart = firstWeek?.startDate ? new Date(firstWeek.startDate) : new Date()
+    firstStart.setHours(0, 0, 0, 0)
+    currentWeekIndex = today < firstStart ? 0 : weeks.length - 1
+  }
+
+  const result: WeekData[] = []
+
+  for (let i = 0; i < weeks.length; i++) {
+    const week = weeks[i]
+    if (!week) continue
+    let status: WeekStatus
+    if (i < currentWeekIndex) status = 'last'
+    else if (i === currentWeekIndex) status = 'current'
+    else status = 'next'
+
+    const slots: WeekSlot[] = (week.slots ?? []).map((slot) => {
+      const taken = countsBySlotId[slot.slotId] ?? 0
+      return {
+        slotId: slot.slotId,
+        day: slot.day,
+        time: slot.time,
+        maxAttendance: slot.maxAttendance ?? 0,
+        available: (slot.maxAttendance ?? 0) - taken,
+      }
+    })
+
+    const selectedSlotIds = slots.filter((s) => athleteSlotIds.has(s.slotId)).map((s) => s.slotId)
+
+    result.push({
+      weekIndex: i,
+      startDate: week.startDate,
+      endDate: week.endDate,
+      nextWeekOpenDate: week.nextWeekOpenDate ?? null,
+      status,
+      slots,
+      selectedSlotIds,
+    })
+  }
+
+  return result
 }
 
 export async function decrementWaitlistPositions(cycleId: string): Promise<void> {

@@ -87,6 +87,7 @@ export interface Config {
     'group-subscription': GroupSubscription;
     'pool-cycles': PoolCycle;
     'pool-subscriptions': PoolSubscription;
+    'pool-slot-registrations': PoolSlotRegistration;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -119,6 +120,7 @@ export interface Config {
     'group-subscription': GroupSubscriptionSelect<false> | GroupSubscriptionSelect<true>;
     'pool-cycles': PoolCyclesSelect<false> | PoolCyclesSelect<true>;
     'pool-subscriptions': PoolSubscriptionsSelect<false> | PoolSubscriptionsSelect<true>;
+    'pool-slot-registrations': PoolSlotRegistrationsSelect<false> | PoolSlotRegistrationsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -2073,15 +2075,45 @@ export interface PoolCycle {
   maxAthletes: number;
   waitlistLimit: number;
   price: number;
-  availableSlots: {
-    day: string;
-    time: string;
-    /**
-     * Maximum number of athletes allowed in this slot
-     */
-    maxAttendance: number;
-    id?: string | null;
-  }[];
+  /**
+   * Define slots per week. Each week has a date range and its own training slots.
+   */
+  weeks?:
+    | {
+        startDate: string;
+        endDate: string;
+        /**
+         * When users can start selecting slots for the following week
+         */
+        nextWeekOpenDate?: string | null;
+        slots: {
+          slotId?: string | null;
+          day: string;
+          time: string;
+          /**
+           * Maximum number of athletes allowed in this slot
+           */
+          maxAttendance: number;
+          id?: string | null;
+        }[];
+        id?: string | null;
+      }[]
+    | null;
+  availableSlots?:
+    | {
+        slotId?: string | null;
+        day?: string | null;
+        time?: string | null;
+        maxAttendance?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  slotCounts?:
+    | {
+        count?: number | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -2105,6 +2137,20 @@ export interface PoolSubscription {
         id?: string | null;
       }[]
     | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pool-slot-registrations".
+ */
+export interface PoolSlotRegistration {
+  id: string;
+  athlete: string | User;
+  cycle: string | PoolCycle;
+  slotId: string;
+  slotDay: string;
+  slotTime: string;
   updatedAt: string;
   createdAt: string;
 }
@@ -2377,6 +2423,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'pool-subscriptions';
         value: string | PoolSubscription;
+      } | null)
+    | ({
+        relationTo: 'pool-slot-registrations';
+        value: string | PoolSlotRegistration;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -3100,12 +3150,36 @@ export interface PoolCyclesSelect<T extends boolean = true> {
   maxAthletes?: T;
   waitlistLimit?: T;
   price?: T;
+  weeks?:
+    | T
+    | {
+        startDate?: T;
+        endDate?: T;
+        nextWeekOpenDate?: T;
+        slots?:
+          | T
+          | {
+              slotId?: T;
+              day?: T;
+              time?: T;
+              maxAttendance?: T;
+              id?: T;
+            };
+        id?: T;
+      };
   availableSlots?:
     | T
     | {
+        slotId?: T;
         day?: T;
         time?: T;
         maxAttendance?: T;
+        id?: T;
+      };
+  slotCounts?:
+    | T
+    | {
+        count?: T;
         id?: T;
       };
   updatedAt?: T;
@@ -3130,6 +3204,19 @@ export interface PoolSubscriptionsSelect<T extends boolean = true> {
         time?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pool-slot-registrations_select".
+ */
+export interface PoolSlotRegistrationsSelect<T extends boolean = true> {
+  athlete?: T;
+  cycle?: T;
+  slotId?: T;
+  slotDay?: T;
+  slotTime?: T;
   updatedAt?: T;
   createdAt?: T;
 }
