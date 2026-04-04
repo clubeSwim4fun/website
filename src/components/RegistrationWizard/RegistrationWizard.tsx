@@ -77,6 +77,7 @@ export function RegistrationWizard({ generalConfig, form, submitButtonLabel }: P
   const [submitting, setSubmitting] = useState(false)
   const [done, setDone] = useState(false)
   const [serverError, setServerError] = useState<string | null>(null)
+  const [debugResponse, setDebugResponse] = useState<unknown>(null)
   const cardRef = useRef<HTMLDivElement>(null)
 
   // Focus first focusable element in the card whenever the step changes
@@ -138,6 +139,7 @@ export function RegistrationWizard({ generalConfig, form, submitButtonLabel }: P
 
     setSubmitting(true)
     setServerError(null)
+    setDebugResponse(null)
     try {
       const payload: CreateUserRequestType = {
         nome: { value: data.nome, relatesTo: 'name' },
@@ -168,6 +170,7 @@ export function RegistrationWizard({ generalConfig, form, submitButtonLabel }: P
         profilePicture: { value: data.profilePicture, relatesTo: 'profilePicture' },
       }
       const result = await createUser(payload)
+      setDebugResponse(result)
       if (!result.success) {
         setServerError(result.error ?? t('errorServer'))
       } else {
@@ -252,6 +255,12 @@ export function RegistrationWizard({ generalConfig, form, submitButtonLabel }: P
           </StepCard>
 
           {serverError && <p className="text-sm text-[#e85d4a] text-center">{serverError}</p>}
+
+          {debugResponse !== null && (
+            <pre className="text-xs bg-muted border border-border rounded-lg p-3 overflow-auto max-h-60 whitespace-pre-wrap break-all">
+              {JSON.stringify(debugResponse, null, 2)}
+            </pre>
+          )}
 
           <div className="flex items-center justify-between">
             {step > 1 ? (
