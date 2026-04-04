@@ -1033,6 +1033,7 @@ export interface Checkbox {
       )
     | null;
   size?: ('full' | 'half' | 'one-third') | null;
+  wizardStep?: ('1' | '2' | '3' | '4') | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'checkbox';
@@ -1076,6 +1077,7 @@ export interface Country {
       )
     | null;
   size?: ('full' | 'half' | 'one-third') | null;
+  wizardStep?: ('1' | '2' | '3' | '4') | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'country';
@@ -1090,6 +1092,7 @@ export interface Email {
   defaultValue?: string | null;
   required?: boolean | null;
   size?: ('full' | 'half' | 'one-third') | null;
+  wizardStep?: ('1' | '2' | '3' | '4') | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'email';
@@ -1134,6 +1137,7 @@ export interface Number {
       )
     | null;
   size?: ('full' | 'half' | 'one-third') | null;
+  wizardStep?: ('1' | '2' | '3' | '4') | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'number';
@@ -1187,6 +1191,7 @@ export interface Select {
       )
     | null;
   size?: ('full' | 'half' | 'one-third') | null;
+  wizardStep?: ('1' | '2' | '3' | '4') | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'select';
@@ -1231,6 +1236,7 @@ export interface Text {
       )
     | null;
   size?: ('full' | 'half' | 'one-third') | null;
+  wizardStep?: ('1' | '2' | '3' | '4') | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'text';
@@ -1245,6 +1251,7 @@ export interface Password {
   hasConfirmPassword?: boolean | null;
   confirmLabel?: string | null;
   errorPassword?: string | null;
+  wizardStep?: ('1' | '2' | '3' | '4') | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'password';
@@ -1288,6 +1295,7 @@ export interface Phone {
       )
     | null;
   size?: ('full' | 'half' | 'one-third') | null;
+  wizardStep?: ('1' | '2' | '3' | '4') | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'phone';
@@ -1332,6 +1340,7 @@ export interface MediaUpload {
       )
     | null;
   size?: ('full' | 'half' | 'one-third') | null;
+  wizardStep?: ('1' | '2' | '3' | '4') | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'media';
@@ -1387,6 +1396,7 @@ export interface Address {
     zipSize?: ('full' | 'half' | 'one-third') | null;
     zipRequired?: boolean | null;
   };
+  wizardStep?: ('1' | '2' | '3' | '4') | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'address';
@@ -1431,6 +1441,7 @@ export interface DateField {
       )
     | null;
   size?: ('full' | 'half' | 'one-third') | null;
+  wizardStep?: ('1' | '2' | '3' | '4') | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'datePicker';
@@ -3402,6 +3413,7 @@ export interface CheckboxSelect<T extends boolean = true> {
   required?: T;
   relatesTo?: T;
   size?: T;
+  wizardStep?: T;
   id?: T;
   blockName?: T;
 }
@@ -3415,6 +3427,7 @@ export interface CountrySelect<T extends boolean = true> {
   required?: T;
   relatesTo?: T;
   size?: T;
+  wizardStep?: T;
   id?: T;
   blockName?: T;
 }
@@ -3428,6 +3441,7 @@ export interface EmailSelect<T extends boolean = true> {
   defaultValue?: T;
   required?: T;
   size?: T;
+  wizardStep?: T;
   id?: T;
   blockName?: T;
 }
@@ -3442,6 +3456,7 @@ export interface NumberSelect<T extends boolean = true> {
   required?: T;
   relatesTo?: T;
   size?: T;
+  wizardStep?: T;
   id?: T;
   blockName?: T;
 }
@@ -3465,6 +3480,7 @@ export interface SelectSelect<T extends boolean = true> {
   required?: T;
   relatesTo?: T;
   size?: T;
+  wizardStep?: T;
   id?: T;
   blockName?: T;
 }
@@ -3479,6 +3495,7 @@ export interface TextSelect<T extends boolean = true> {
   required?: T;
   relatesTo?: T;
   size?: T;
+  wizardStep?: T;
   id?: T;
   blockName?: T;
 }
@@ -3492,6 +3509,7 @@ export interface PasswordSelect<T extends boolean = true> {
   hasConfirmPassword?: T;
   confirmLabel?: T;
   errorPassword?: T;
+  wizardStep?: T;
   id?: T;
   blockName?: T;
 }
@@ -3505,6 +3523,7 @@ export interface PhoneSelect<T extends boolean = true> {
   required?: T;
   relatesTo?: T;
   size?: T;
+  wizardStep?: T;
   id?: T;
   blockName?: T;
 }
@@ -3519,6 +3538,7 @@ export interface MediaUploadSelect<T extends boolean = true> {
   required?: T;
   relatesTo?: T;
   size?: T;
+  wizardStep?: T;
   id?: T;
   blockName?: T;
 }
@@ -3546,6 +3566,7 @@ export interface AddressSelect<T extends boolean = true> {
         zipSize?: T;
         zipRequired?: T;
       };
+  wizardStep?: T;
   id?: T;
   blockName?: T;
 }
@@ -3560,6 +3581,7 @@ export interface DateFieldSelect<T extends boolean = true> {
   required?: T;
   relatesTo?: T;
   size?: T;
+  wizardStep?: T;
   id?: T;
   blockName?: T;
 }

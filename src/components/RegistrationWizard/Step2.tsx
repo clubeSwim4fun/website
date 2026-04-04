@@ -1,11 +1,18 @@
 'use client'
 
 import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { PhoneInput } from '@/components/ui/phone-input'
 import { FieldError, FieldGroup, FieldLabel, FieldRow } from './StepCard'
 import { FormData } from './types'
-import { CmsField, label, options, required } from './useFormFields'
+import { CmsField, label, options, required, extraFieldsForStep } from './useFormFields'
+import { DynamicField } from './DynamicField'
 import COUNTRY_LIST from '@/utilities/countryList'
 import { GeneralConfig } from '@/payload-types'
 import { useTranslations } from 'next-intl'
@@ -23,12 +30,17 @@ const TSHIRT_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL']
 
 export function Step2({ data, errors, onChange, generalConfig, fieldMap }: Props) {
   const t = useTranslations('Registration')
+  const extra = extraFieldsForStep(fieldMap, '2')
 
   const genderField = fieldMap['gender']
   const genderOptions =
     genderField?.type === 'globalConfig'
-      ? ((generalConfig?.userData?.genders ?? []) as { label: string; collectionId?: string | null }[])
-          .map((g) => ({ label: g.label, value: g.collectionId ?? g.label }))
+      ? (
+          (generalConfig?.userData?.genders ?? []) as {
+            label: string
+            collectionId?: string | null
+          }[]
+        ).map((g) => ({ label: g.label, value: g.collectionId ?? g.label }))
       : options(fieldMap, 'gender')
 
   const tshirtOptions = options(fieldMap, 'tshirtSize').length
@@ -54,7 +66,9 @@ export function Step2({ data, errors, onChange, generalConfig, fieldMap }: Props
             </SelectTrigger>
             <SelectContent>
               {genderOptions.map((g) => (
-                <SelectItem key={g.value} value={g.value}>{g.label}</SelectItem>
+                <SelectItem key={g.value} value={g.value}>
+                  {g.label}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -86,7 +100,9 @@ export function Step2({ data, errors, onChange, generalConfig, fieldMap }: Props
             </SelectTrigger>
             <SelectContent>
               {COUNTRY_LIST.map((c) => (
-                <SelectItem key={c.code} value={c.name}>{c.name}</SelectItem>
+                <SelectItem key={c.code} value={c.name}>
+                  {c.name}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -102,7 +118,9 @@ export function Step2({ data, errors, onChange, generalConfig, fieldMap }: Props
             </SelectTrigger>
             <SelectContent>
               {tshirtOptions.map((s) => (
-                <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
+                <SelectItem key={s.value} value={s.value}>
+                  {s.label}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -110,22 +128,39 @@ export function Step2({ data, errors, onChange, generalConfig, fieldMap }: Props
         </FieldGroup>
       </FieldRow>
 
-      <FieldGroup>
-        <FieldLabel htmlFor="addressStreet" required={addressField?.address?.streetRequired ?? true}>
-          {streetLbl}
-        </FieldLabel>
-        <Input
-          id="addressStreet"
-          placeholder={t('addressStreetPlaceholder')}
-          value={data.addressStreet}
-          onChange={(e) => onChange('addressStreet', e.target.value)}
-          className={errors.addressStreet ? 'border-[#e85d4a]' : ''}
-        />
-        <FieldError message={errors.addressStreet} />
-      </FieldGroup>
-
-      <div className="grid grid-cols-3 gap-4">
+      {/* Street + number: street takes remaining space, number is fixed narrow */}
+      <div className="grid grid-cols-[1fr_80px] gap-4 sm:block sm:space-y-0">
         <FieldGroup>
+          <FieldLabel
+            htmlFor="addressStreet"
+            required={addressField?.address?.streetRequired ?? true}
+          >
+            {streetLbl}
+          </FieldLabel>
+          <Input
+            id="addressStreet"
+            placeholder={t('addressStreetPlaceholder')}
+            value={data.addressStreet}
+            onChange={(e) => onChange('addressStreet', e.target.value)}
+            className={errors.addressStreet ? 'border-[#e85d4a]' : ''}
+          />
+          <FieldError message={errors.addressStreet} />
+        </FieldGroup>
+        {/* Number inline with street on mobile; hidden on desktop (shown in 3-col below) */}
+        <FieldGroup className="sm:hidden">
+          <FieldLabel htmlFor="addressNumber-m">{numberLbl}</FieldLabel>
+          <Input
+            id="addressNumber-m"
+            placeholder="Nr"
+            value={data.addressNumber}
+            onChange={(e) => onChange('addressNumber', e.target.value)}
+          />
+        </FieldGroup>
+      </div>
+
+      {/* Desktop: 3-col (number + city + zipcode) | Mobile: 2-col (city + zipcode, number already above) */}
+      <div className="grid grid-cols-3 gap-4 max-sm:grid-cols-2">
+        <FieldGroup className="max-sm:hidden">
           <FieldLabel htmlFor="addressNumber">{numberLbl}</FieldLabel>
           <Input
             id="addressNumber"
@@ -135,7 +170,10 @@ export function Step2({ data, errors, onChange, generalConfig, fieldMap }: Props
           />
         </FieldGroup>
         <FieldGroup>
-          <FieldLabel htmlFor="addressState" required={addressField?.address?.stateRequired ?? true}>
+          <FieldLabel
+            htmlFor="addressState"
+            required={addressField?.address?.stateRequired ?? true}
+          >
             {stateLbl}
           </FieldLabel>
           <Input
@@ -148,7 +186,10 @@ export function Step2({ data, errors, onChange, generalConfig, fieldMap }: Props
           <FieldError message={errors.addressState} />
         </FieldGroup>
         <FieldGroup>
-          <FieldLabel htmlFor="addressZipcode" required={addressField?.address?.zipRequired ?? true}>
+          <FieldLabel
+            htmlFor="addressZipcode"
+            required={addressField?.address?.zipRequired ?? true}
+          >
             {zipcodeLbl}
           </FieldLabel>
           <Input
@@ -190,6 +231,17 @@ export function Step2({ data, errors, onChange, generalConfig, fieldMap }: Props
           <FieldError message={errors.emergencyPhone} />
         </FieldGroup>
       </FieldRow>
+
+      {extra.map((f) => (
+        <DynamicField
+          key={f.name}
+          name={f.name}
+          field={f}
+          value={data[f.name] as string | boolean}
+          error={errors[f.name as keyof FormData]}
+          onChange={(name, val) => onChange(name as keyof FormData, val as string)}
+        />
+      ))}
     </div>
   )
 }

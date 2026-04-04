@@ -5,7 +5,8 @@ import { PhoneInput } from '@/components/ui/phone-input'
 import { FieldError, FieldGroup, FieldLabel, FieldRow, Hint } from './StepCard'
 import { PasswordStrength } from './PasswordStrength'
 import { FormData } from './types'
-import { CmsField, label, required } from './useFormFields'
+import { CmsField, label, required, extraFieldsForStep } from './useFormFields'
+import { DynamicField } from './DynamicField'
 import { useTranslations } from 'next-intl'
 
 type Errors = Partial<Record<keyof FormData, string>>
@@ -20,6 +21,7 @@ type Props = {
 
 export function Step1({ data, errors, onChange, onConfirmError, fieldMap }: Props) {
   const t = useTranslations('Registration')
+  const extra = extraFieldsForStep(fieldMap, '1')
 
   // Password field carries confirm-password config in CMS
   const pwField = fieldMap['password']
@@ -124,6 +126,17 @@ export function Step1({ data, errors, onChange, onConfirmError, fieldMap }: Prop
         />
         <FieldError message={errors.phone} />
       </FieldGroup>
+
+      {extra.map((f) => (
+        <DynamicField
+          key={f.name}
+          name={f.name}
+          field={f}
+          value={data[f.name] as string | boolean}
+          error={errors[f.name as keyof FormData]}
+          onChange={(name, val) => onChange(name as keyof FormData, val as string)}
+        />
+      ))}
     </div>
   )
 }

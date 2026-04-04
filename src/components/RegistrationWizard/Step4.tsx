@@ -4,7 +4,8 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { FieldError } from './StepCard'
 import { Toggle } from './Toggle'
 import { FormData } from './types'
-import { CmsField, label, options } from './useFormFields'
+import { CmsField, label, options, extraFieldsForStep } from './useFormFields'
+import { DynamicField } from './DynamicField'
 import { GeneralConfig } from '@/payload-types'
 import { cn } from '@/utilities/ui'
 import { useTranslations } from 'next-intl'
@@ -21,6 +22,7 @@ type Props = {
 
 export function Step4({ data, errors, onChange, fieldMap, generalConfig }: Props) {
   const t = useTranslations('Registration')
+  const extra = extraFieldsForStep(fieldMap, '4')
 
   const heardField = fieldMap['heardAboutClub']
   const heardOptions =
@@ -123,6 +125,17 @@ export function Step4({ data, errors, onChange, fieldMap, generalConfig }: Props
         </label>
       </div>
       <FieldError message={errors.consent} />
+
+      {extra.map((f) => (
+        <DynamicField
+          key={f.name}
+          name={f.name}
+          field={f}
+          value={data[f.name] as string | boolean}
+          error={errors[f.name as keyof FormData]}
+          onChange={(name, val) => onChange(name as keyof FormData, val as string | boolean)}
+        />
+      ))}
     </div>
   )
 }

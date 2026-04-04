@@ -11,7 +11,8 @@ import {
 import { FieldError, FieldGroup, FieldLabel, FieldRow, Hint } from './StepCard'
 import { UploadZone } from './UploadZone'
 import { FormData } from './types'
-import { CmsField, label, options, required } from './useFormFields'
+import { CmsField, label, options, required, extraFieldsForStep } from './useFormFields'
+import { DynamicField } from './DynamicField'
 import { GeneralConfig } from '@/payload-types'
 import { useTranslations } from 'next-intl'
 
@@ -28,6 +29,7 @@ type Props = {
 
 export function Step3({ data, errors, onChange, onFileChange, generalConfig, fieldMap }: Props) {
   const t = useTranslations('Registration')
+  const extra = extraFieldsForStep(fieldMap, '3')
 
   const disabilityField = fieldMap['disability']
   const disabilityOptions =
@@ -104,7 +106,6 @@ export function Step3({ data, errors, onChange, onFileChange, generalConfig, fie
               <SelectValue placeholder={t('disabilityCategoryPlaceholder')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="none">{t('disabilityNone')}</SelectItem>
               {disabilityOptions.map((d) => (
                 <SelectItem key={d.value} value={d.value}>
                   {d.label}
@@ -130,6 +131,17 @@ export function Step3({ data, errors, onChange, onFileChange, generalConfig, fie
           </Select>
         </FieldGroup>
       </FieldRow>
+
+      {extra.map((f) => (
+        <DynamicField
+          key={f.name}
+          name={f.name}
+          field={f}
+          value={data[f.name] as string | boolean}
+          error={errors[f.name as keyof FormData]}
+          onChange={(name, val) => onChange(name as keyof FormData, val as string)}
+        />
+      ))}
     </div>
   )
 }

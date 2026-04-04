@@ -3,6 +3,7 @@ import type { Form } from '@payloadcms/plugin-form-builder/types'
 export type CmsField = {
   label: string
   required: boolean
+  blockType?: string
   options?: { label: string; value: string }[]
   // password-specific
   hasConfirmPassword?: boolean
@@ -21,6 +22,8 @@ export type CmsField = {
     stateRequired?: boolean | null
     zipRequired?: boolean | null
   }
+  // which wizard step this field belongs to (1–4)
+  wizardStep?: '1' | '2' | '3' | '4'
 }
 
 /**
@@ -37,12 +40,14 @@ export function buildFieldMap(form: Form | undefined): Record<string, CmsField> 
     map[name] = {
       label: field.label ?? name,
       required: Boolean(field.required),
+      blockType: field.blockType,
       options: field.options ?? undefined,
       hasConfirmPassword: field.hasConfirmPassword,
       confirmLabel: field.confirmLabel,
       type: field.type,
       globalConfigCollection: field.globalConfigCollection,
       address: field.address,
+      wizardStep: field.wizardStep ?? '1',
     }
   }
   return map
@@ -64,4 +69,47 @@ export function options(
   name: string,
 ): { label: string; value: string }[] {
   return map[name]?.options ?? []
+}
+
+/**
+ * The set of field names that are hardcoded in the wizard steps.
+ * Extra fields added by the admin (not in this set) will be rendered dynamically.
+ */
+const HARDCODED_FIELDS = new Set([
+  'nome',
+  'surname',
+  'email',
+  'password',
+  'phone',
+  'gender',
+  'birthDate',
+  'nationality',
+  'tshirtSize',
+  'address',
+  'emergencyContact',
+  'emergencyPhone',
+  'identity',
+  'nif',
+  'identityFile',
+  'profilePicture',
+  'disability',
+  'sportInsurance',
+  'emailNotifications',
+  'whatsappNotifications',
+  'heardAboutClub',
+  'wantsInvoiceWithNif',
+  'consent',
+])
+
+/**
+ * Returns extra CMS fields (not hardcoded) assigned to a given wizard step.
+ * These are fields the admin added beyond the built-in ones.
+ */
+export function extraFieldsForStep(
+  map: Record<string, CmsField>,
+  step: '1' | '2' | '3' | '4',
+): Array<{ name: string } & CmsField> {
+  return Object.entries(map)
+    .filter(([name, field]) => !HARDCODED_FIELDS.has(name) && field.wizardStep === step)
+    .map(([name, field]) => ({ name, ...field }))
 }

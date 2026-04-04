@@ -30,6 +30,8 @@ export type FormData = {
   heardAboutClub: string
   wantsInvoiceWithNif: boolean
   consent: boolean
+  // Extra CMS-configured fields (keyed by field name)
+  [key: string]: string | boolean | File[]
 }
 
 export type StepId = 1 | 2 | 3 | 4
