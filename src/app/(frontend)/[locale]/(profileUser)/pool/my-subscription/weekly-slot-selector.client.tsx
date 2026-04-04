@@ -42,8 +42,10 @@ const STATUS_LABEL_CLASS: Record<SlotStatus, string> = {
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function formatDateRange(startDate: string, endDate: string): string {
-  const fmt = (d: string) =>
-    new Date(d).toLocaleDateString('default', { day: 'numeric', month: 'short' })
+  const fmt = (d: string) => {
+    const date = new Date(d)
+    return `${date.getUTCDate()} ${date.toLocaleString('en', { month: 'short', timeZone: 'UTC' })}`
+  }
   return `${fmt(startDate)} – ${fmt(endDate)}`
 }
 
@@ -99,75 +101,100 @@ function SlotRow({
       <div
         onClick={readOnly || (isFull && !isOnWaitlist) ? undefined : onToggle}
         className={cn(
-          'flex items-center gap-4',
+          'flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4',
           readOnly || (isFull && !isOnWaitlist) ? 'cursor-default' : 'cursor-pointer',
         )}
       >
-        <div className="flex-1 min-w-0">
-          <p className="font-semibold uppercase tracking-wide text-sm">{slot.day}</p>
-          <p className="text-muted-foreground text-sm">{slot.time}</p>
-        </div>
-
-        <div className="flex flex-col gap-1 w-32 shrink-0">
-          <div className="h-1.5 rounded-full bg-muted overflow-hidden">
-            <div
-              className={cn('h-full rounded-full transition-all duration-500', {
-                'bg-[#22c55e]': status === 'available',
-                'bg-[#f59e0b]': status === 'limited',
-                'bg-[#ef4444]': status === 'full' || status === 'waitlist',
-                'bg-[hsl(var(--blue-swim))]': status === 'selected',
-              })}
-              style={{ width: `${fillPct}%` }}
-            />
+        {/* Day + time — always visible, full width on mobile */}
+        <div className="flex items-center justify-between sm:flex-1 sm:min-w-0">
+          <div>
+            <p className="font-semibold uppercase tracking-wide text-sm">{slot.day}</p>
+            <p className="text-muted-foreground text-sm">{slot.time}</p>
           </div>
-          <p className="text-xs text-muted-foreground">
-            {slot.maxAttendance - slot.available}/{slot.maxAttendance} {t('enrolled')}
-          </p>
+          {/* Checkbox — shown inline with day on mobile, at end on desktop */}
+          {!readOnly && (
+            <div
+              className={cn(
+                'sm:hidden w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-all duration-200',
+                isSelected
+                  ? 'bg-[hsl(var(--blue-swim))] border-[hsl(var(--blue-swim))]'
+                  : isOnWaitlist
+                    ? 'bg-[hsl(var(--slot-waitlist))] border-[hsl(var(--slot-waitlist))]'
+                    : 'border-muted-foreground',
+              )}
+            >
+              {isSelected && <Check className="w-3.5 h-3.5 text-white" />}
+              {isOnWaitlist && !isSelected && <Clock className="w-3 h-3 text-white" />}
+            </div>
+          )}
         </div>
 
-        <div
-          className={cn(
-            'text-xs font-semibold w-24 text-right shrink-0',
-            STATUS_LABEL_CLASS[status],
-          )}
-        >
-          {readOnly && isSelected && (
-            <span className="inline-flex items-center justify-end gap-1 text-[hsl(var(--blue-swim))]">
-              <Check className="w-3 h-3" /> {t('attended')}
-            </span>
-          )}
-          {readOnly && !isSelected && <span className="text-muted-foreground">{t('skipped')}</span>}
-          {!readOnly && status === 'selected' && (
-            <span className="flex items-center justify-end gap-1">
-              <Check className="w-3 h-3" /> {t('legend_selected')}
-            </span>
-          )}
-          {!readOnly && status === 'waitlist' && (
-            <span className="flex items-center justify-end gap-1">
-              <Clock className="w-3 h-3" /> #{slot.userWaitlistPosition}
-            </span>
-          )}
-          {!readOnly && status === 'full' && t('legend_full')}
-          {!readOnly &&
-            (status === 'limited' || status === 'available') &&
-            t('spotsLeft', { count: slot.available })}
-        </div>
+        {/* Progress bar + enrolled count + status label + checkbox (desktop) */}
+        <div className="flex items-center gap-3 sm:gap-4">
+          <div className="flex flex-col gap-1 flex-1 sm:w-32 sm:flex-none sm:shrink-0">
+            <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+              <div
+                className={cn('h-full rounded-full transition-all duration-500', {
+                  'bg-[#22c55e]': status === 'available',
+                  'bg-[#f59e0b]': status === 'limited',
+                  'bg-[#ef4444]': status === 'full' || status === 'waitlist',
+                  'bg-[hsl(var(--blue-swim))]': status === 'selected',
+                })}
+                style={{ width: `${fillPct}%` }}
+              />
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {slot.maxAttendance - slot.available}/{slot.maxAttendance} {t('enrolled')}
+            </p>
+          </div>
 
-        {!readOnly && (
           <div
             className={cn(
-              'w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-all duration-200',
-              isSelected
-                ? 'bg-[hsl(var(--blue-swim))] border-[hsl(var(--blue-swim))]'
-                : isOnWaitlist
-                  ? 'bg-[hsl(var(--slot-waitlist))] border-[hsl(var(--slot-waitlist))]'
-                  : 'border-muted-foreground',
+              'text-xs font-semibold shrink-0 text-right sm:w-24',
+              STATUS_LABEL_CLASS[status],
             )}
           >
-            {isSelected && <Check className="w-3.5 h-3.5 text-white" />}
-            {isOnWaitlist && !isSelected && <Clock className="w-3 h-3 text-white" />}
+            {readOnly && isSelected && (
+              <span className="inline-flex items-center justify-end gap-1 text-[hsl(var(--blue-swim))]">
+                <Check className="w-3 h-3" /> {t('attended')}
+              </span>
+            )}
+            {readOnly && !isSelected && (
+              <span className="text-muted-foreground">{t('skipped')}</span>
+            )}
+            {!readOnly && status === 'selected' && (
+              <span className="flex items-center justify-end gap-1">
+                <Check className="w-3 h-3" /> {t('legend_selected')}
+              </span>
+            )}
+            {!readOnly && status === 'waitlist' && (
+              <span className="flex items-center justify-end gap-1">
+                <Clock className="w-3 h-3" /> #{slot.userWaitlistPosition}
+              </span>
+            )}
+            {!readOnly && status === 'full' && t('legend_full')}
+            {!readOnly &&
+              (status === 'limited' || status === 'available') &&
+              t('spotsLeft', { count: slot.available })}
           </div>
-        )}
+
+          {/* Checkbox — desktop only (mobile version is above) */}
+          {!readOnly && (
+            <div
+              className={cn(
+                'hidden sm:flex w-6 h-6 rounded-full border-2 items-center justify-center shrink-0 transition-all duration-200',
+                isSelected
+                  ? 'bg-[hsl(var(--blue-swim))] border-[hsl(var(--blue-swim))]'
+                  : isOnWaitlist
+                    ? 'bg-[hsl(var(--slot-waitlist))] border-[hsl(var(--slot-waitlist))]'
+                    : 'border-muted-foreground',
+              )}
+            >
+              {isSelected && <Check className="w-3.5 h-3.5 text-white" />}
+              {isOnWaitlist && !isSelected && <Clock className="w-3 h-3 text-white" />}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Waitlist actions — only for full slots in open (non-readonly) weeks */}
