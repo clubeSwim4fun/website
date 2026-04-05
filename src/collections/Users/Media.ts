@@ -38,6 +38,7 @@ export const UserMedia: CollectionConfig = {
     },
   ],
   upload: {
+    disableLocalStorage: true,
     focalPoint: true,
     imageSizes: [
       {
