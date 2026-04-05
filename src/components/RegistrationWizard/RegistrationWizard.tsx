@@ -120,11 +120,10 @@ export function RegistrationWizard({ generalConfig, form, submitButtonLabel }: P
     if (step === 3) {
       if (req('identity') && !data.identity.trim()) e.identity = t('errorIdentity')
       if (req('nif') && !data.nif.trim()) e.nif = t('errorNif')
-      // FILE UPLOAD TEMPORARILY DISABLED FOR TESTING
-      // if (req('identityFile', false) && !data.identityFile?.length)
-      //   e.identityFile = t('errorIdentityFile')
-      // if (req('profilePicture', false) && !data.profilePicture?.length)
-      //   e.profilePicture = t('errorProfilePicture')
+      if (req('identityFile', false) && !data.identityFile?.length)
+        e.identityFile = t('errorIdentityFile')
+      if (req('profilePicture', false) && !data.profilePicture?.length)
+        e.profilePicture = t('errorProfilePicture')
     }
     if (step === 4) {
       if (!data.consent) e.consent = t('errorConsent')
@@ -177,13 +176,13 @@ export function RegistrationWizard({ generalConfig, form, submitButtonLabel }: P
 
       formData.append('__meta', JSON.stringify(meta))
 
-      // FILE UPLOAD TEMPORARILY DISABLED FOR TESTING
-      // for (const file of data.identityFile ?? []) {
-      //   formData.append('identityFile', file)
-      // }
-      // for (const file of data.profilePicture ?? []) {
-      //   formData.append('profilePicture', file)
-      // }
+      // Append files directly — key is the relatesTo value so the server can map them
+      for (const file of data.identityFile ?? []) {
+        formData.append('identityFile', file)
+      }
+      for (const file of data.profilePicture ?? []) {
+        formData.append('profilePicture', file)
+      }
 
       setDebugPayload(meta)
       const result = await createUser(formData)
