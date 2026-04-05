@@ -34,9 +34,22 @@ export function UploadZone({ label, value, onChange, error, hint }: Props) {
           type="file"
           className="hidden"
           accept="image/*,application/pdf"
+          capture={undefined}
           onChange={(e) => {
             const f = e.target.files?.[0]
-            if (f) onChange([f])
+            if (!f) return
+            // Normalise missing MIME type (common on Android camera captures)
+            const mime =
+              f.type ||
+              (f.name.match(/\.(jpe?g)$/i)
+                ? 'image/jpeg'
+                : f.name.match(/\.png$/i)
+                  ? 'image/png'
+                  : f.name.match(/\.pdf$/i)
+                    ? 'application/pdf'
+                    : 'application/octet-stream')
+            const normalised = mime === f.type ? f : new File([f], f.name, { type: mime })
+            onChange([normalised])
           }}
         />
         <Upload className="w-6 h-6 text-[hsl(var(--blue-swim))]" />

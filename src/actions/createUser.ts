@@ -88,13 +88,24 @@ export async function createUser(formData: FormData): Promise<CreateUserResponse
     // Extract File entries from FormData
     for (const [key, value] of formData.entries()) {
       if (key === '__meta') continue
-      if (value instanceof File && value.size > 0) {
+      if (value instanceof File && value.name) {
+        // Normalise missing MIME type (common on Android camera captures)
+        const mime =
+          value.type ||
+          (value.name.match(/\.(jpe?g)$/i)
+            ? 'image/jpeg'
+            : value.name.match(/\.png$/i)
+              ? 'image/png'
+              : value.name.match(/\.pdf$/i)
+                ? 'application/pdf'
+                : 'application/octet-stream')
+        const file = mime === value.type ? value : new File([value], value.name, { type: mime })
         const relatesTo = key // key is the relatesTo value (e.g. 'identityFile', 'profilePicture')
         const existing = fileEntries.find((e) => e.relatesTo === relatesTo)
         if (existing) {
-          existing.files.push(value)
+          existing.files.push(file)
         } else {
-          fileEntries.push({ files: [value], relatesTo })
+          fileEntries.push({ files: [file], relatesTo })
         }
       }
     }
@@ -125,9 +136,16 @@ export async function createUser(formData: FormData): Promise<CreateUserResponse
     console.error('[createUser] error:', err)
     await payload.db.rollbackTransaction(transactionID)
     await deleteS3Files(tempFilesToDelete)
+    const errMsg =
+      err instanceof Error
+        ? err.message
+        : typeof err === 'object' && err !== null && 'message' in err
+          ? String((err as { message: unknown }).message)
+          : JSON.stringify(err)
+    console.error('[createUser] error detail:', errMsg)
     return {
       success: false,
-      error: err instanceof Error ? err.message : String(err),
+      error: errMsg,
     }
   }
 }
