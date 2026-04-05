@@ -3,7 +3,6 @@ import { authenticated } from '@/access/authenticated'
 import { isAdmin } from '@/access/isAdmin'
 import { isAdminOrEditor } from '@/access/isAdminOrEditor'
 import { CollectionConfig } from 'payload'
-import updateImageName from './hooks/updateImageName'
 
 export const UserMedia: CollectionConfig = {
   slug: 'user-media',
@@ -48,7 +47,5 @@ export const UserMedia: CollectionConfig = {
       },
     ],
   },
-  hooks: {
-    beforeChange: [updateImageName],
-  },
+  hooks: {},
 }
