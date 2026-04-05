@@ -81,10 +81,11 @@ export function RegistrationWizard({ generalConfig, form, submitButtonLabel }: P
   const [debugPayload, setDebugPayload] = useState<unknown>(null)
   const cardRef = useRef<HTMLDivElement>(null)
 
-  // Scroll to top of card when step changes, but only from step 2 onwards
+  // Scroll to card when step changes, but only from step 2 onwards
   useEffect(() => {
-    if (step > 1) {
-      cardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    if (step > 1 && cardRef.current) {
+      const top = cardRef.current.getBoundingClientRect().top + window.scrollY - 100
+      window.scrollTo({ top, behavior: 'smooth' })
     }
   }, [step])
 

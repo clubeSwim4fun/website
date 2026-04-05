@@ -99,7 +99,22 @@ export const FormBlockClient: React.FC<
         })
 
         if (isRegistrationForm) {
-          const { error } = await createUser(dataToSend)
+          const formData = new FormData()
+          const meta: Record<string, { value: string; relatesTo: string }> = {}
+
+          for (const [name, entry] of Object.entries(dataToSend)) {
+            if (Array.isArray(entry.value)) {
+              for (const file of entry.value as File[]) {
+                formData.append(entry.relatesTo, file)
+              }
+            } else {
+              meta[name] = { value: entry.value as string, relatesTo: entry.relatesTo }
+            }
+          }
+
+          formData.append('__meta', JSON.stringify(meta))
+
+          const { error } = await createUser(formData)
 
           if (error) {
             setIsLoading(false)
