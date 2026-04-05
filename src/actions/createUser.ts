@@ -121,15 +121,16 @@ export async function createUser(formData: FormData): Promise<CreateUserResponse
       req: { transactionID },
     })
 
-    for (const { files, relatesTo } of fileEntries) {
-      tempFilesToDelete = await uploadUserFiles({
-        transactionID,
-        files,
-        user: createdUser,
-        dataRelatesTo: relatesTo,
-      })
-    }
-
+    // FILE UPLOAD TEMPORARILY DISABLED FOR TESTING
+    // for (const { files, relatesTo } of fileEntries) {
+    //   if (!files.length) continue
+    //   tempFilesToDelete = await uploadUserFiles({
+    //     transactionID,
+    //     files,
+    //     user: createdUser,
+    //     dataRelatesTo: relatesTo,
+    //   })
+    // }
     await payload.db.commitTransaction(transactionID)
     return { success: true, message: 'user created successfully' }
   } catch (err) {

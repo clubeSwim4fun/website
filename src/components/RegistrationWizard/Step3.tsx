@@ -81,6 +81,7 @@ export function Step3({ data, errors, onChange, onFileChange, generalConfig, fie
         </FieldGroup>
       </FieldRow>
 
+      {/* FILE UPLOAD TEMPORARILY DISABLED FOR TESTING
       <FieldRow>
         <UploadZone
           label={label(fieldMap, 'identityFile', t('idDocumentCopy'))}
@@ -97,6 +98,7 @@ export function Step3({ data, errors, onChange, onFileChange, generalConfig, fie
           hint={t('uploadHint')}
         />
       </FieldRow>
+      */}
 
       <FieldRow>
         <FieldGroup>
