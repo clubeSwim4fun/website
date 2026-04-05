@@ -10,18 +10,18 @@ import {
 } from '@/components/ui/select'
 import { PhoneInput } from '@/components/ui/phone-input'
 import { FieldError, FieldGroup, FieldLabel, FieldRow } from './StepCard'
-import { FormData } from './types'
+import { RegistrationFormData } from './types'
 import { CmsField, label, options, required, extraFieldsForStep } from './useFormFields'
 import { DynamicField } from './DynamicField'
 import COUNTRY_LIST from '@/utilities/countryList'
 import { GeneralConfig } from '@/payload-types'
 import { useTranslations } from 'next-intl'
 
-type Errors = Partial<Record<keyof FormData, string>>
+type Errors = Partial<Record<keyof RegistrationFormData, string>>
 type Props = {
-  data: FormData
+  data: RegistrationFormData
   errors: Errors
-  onChange: (field: keyof FormData, value: string) => void
+  onChange: (field: keyof RegistrationFormData, value: string) => void
   generalConfig: GeneralConfig
   fieldMap: Record<string, CmsField>
 }
@@ -238,8 +238,8 @@ export function Step2({ data, errors, onChange, generalConfig, fieldMap }: Props
           name={f.name}
           field={f}
           value={data[f.name] as string | boolean}
-          error={errors[f.name as keyof FormData]}
-          onChange={(name, val) => onChange(name as keyof FormData, val as string)}
+          error={errors[f.name as keyof RegistrationFormData]}
+          onChange={(name, val) => onChange(name as keyof RegistrationFormData, val as string)}
         />
       ))}
     </div>

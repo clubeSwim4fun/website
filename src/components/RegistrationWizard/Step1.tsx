@@ -4,17 +4,17 @@ import { Input } from '@/components/ui/input'
 import { PhoneInput } from '@/components/ui/phone-input'
 import { FieldError, FieldGroup, FieldLabel, FieldRow, Hint } from './StepCard'
 import { PasswordStrength } from './PasswordStrength'
-import { FormData } from './types'
+import { RegistrationFormData } from './types'
 import { CmsField, label, required, extraFieldsForStep } from './useFormFields'
 import { DynamicField } from './DynamicField'
 import { useTranslations } from 'next-intl'
 
-type Errors = Partial<Record<keyof FormData, string>>
+type Errors = Partial<Record<keyof RegistrationFormData, string>>
 
 type Props = {
-  data: FormData
+  data: RegistrationFormData
   errors: Errors
-  onChange: (field: keyof FormData, value: string) => void
+  onChange: (field: keyof RegistrationFormData, value: string) => void
   onConfirmError: (msg: string | undefined) => void
   fieldMap: Record<string, CmsField>
 }
@@ -133,8 +133,8 @@ export function Step1({ data, errors, onChange, onConfirmError, fieldMap }: Prop
           name={f.name}
           field={f}
           value={data[f.name] as string | boolean}
-          error={errors[f.name as keyof FormData]}
-          onChange={(name, val) => onChange(name as keyof FormData, val as string)}
+          error={errors[f.name as keyof RegistrationFormData]}
+          onChange={(name, val) => onChange(name as keyof RegistrationFormData, val as string)}
         />
       ))}
     </div>

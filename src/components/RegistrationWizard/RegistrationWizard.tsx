@@ -9,8 +9,8 @@ import { Step1 } from './Step1'
 import { Step2 } from './Step2'
 import { Step3 } from './Step3'
 import { Step4 } from './Step4'
-import { FormData, StepConfig, StepId } from './types'
-import { createUser, CreateUserRequestType } from '@/actions/createUser'
+import { RegistrationFormData, StepConfig, StepId } from './types'
+import { createUser } from '@/actions/createUser'
 import { GeneralConfig } from '@/payload-types'
 import { calcStrength } from './PasswordStrength'
 import { buildFieldMap } from './useFormFields'
@@ -24,7 +24,7 @@ const STEP_ICONS: Record<StepId, React.ReactNode> = {
   4: <Lock className="w-5 h-5" />,
 }
 
-const EMPTY: FormData = {
+const EMPTY: RegistrationFormData = {
   nome: '',
   surname: '',
   email: '',
@@ -72,8 +72,8 @@ export function RegistrationWizard({ generalConfig, form, submitButtonLabel }: P
   ]
 
   const [step, setStep] = useState<StepId>(1)
-  const [data, setData] = useState<FormData>(EMPTY)
-  const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({})
+  const [data, setData] = useState<RegistrationFormData>(EMPTY)
+  const [errors, setErrors] = useState<Partial<Record<keyof RegistrationFormData, string>>>({})
   const [submitting, setSubmitting] = useState(false)
   const [done, setDone] = useState(false)
   const [serverError, setServerError] = useState<string | null>(null)
@@ -81,16 +81,18 @@ export function RegistrationWizard({ generalConfig, form, submitButtonLabel }: P
   const [debugPayload, setDebugPayload] = useState<unknown>(null)
   const cardRef = useRef<HTMLDivElement>(null)
 
-  // Scroll to top of card when step changes (avoid auto-focus which triggers keyboard on mobile)
+  // Scroll to top of card when step changes, but only from step 2 onwards
   useEffect(() => {
-    cardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    if (step > 1) {
+      cardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
   }, [step])
 
-  const set = (field: keyof FormData, value: string | boolean | File[]) =>
+  const set = (field: keyof RegistrationFormData, value: string | boolean | File[]) =>
     setData((prev) => ({ ...prev, [field]: value }))
 
   const validate = (): boolean => {
-    const e: Partial<Record<keyof FormData, string>> = {}
+    const e: Partial<Record<keyof RegistrationFormData, string>> = {}
     const req = (name: string, fallback = true) =>
       fieldMap[name] !== undefined ? fieldMap[name]!.required : fallback
 
@@ -140,7 +142,10 @@ export function RegistrationWizard({ generalConfig, form, submitButtonLabel }: P
     setDebugResponse(null)
     setDebugPayload(null)
     try {
-      const payload: CreateUserRequestType = {
+      // Build FormData so File objects are properly serialized to the server action
+      const formData = new FormData()
+
+      const meta: Record<string, { value: string; relatesTo: string }> = {
         nome: { value: data.nome, relatesTo: 'name' },
         surname: { value: data.surname, relatesTo: 'surname' },
         email: { value: data.email, relatesTo: 'email' },
@@ -165,12 +170,20 @@ export function RegistrationWizard({ generalConfig, form, submitButtonLabel }: P
           relatesTo: 'wantsInvoiceWithNif',
         },
         heardAboutClub: { value: data.heardAboutClub, relatesTo: 'heardAboutClub' },
-        identityFile: { value: data.identityFile, relatesTo: 'identityFile' },
-        profilePicture: { value: data.profilePicture, relatesTo: 'profilePicture' },
       }
 
-      setDebugPayload(payload)
-      const result = await createUser(payload)
+      formData.append('__meta', JSON.stringify(meta))
+
+      // Append files directly — key is the relatesTo value so the server can map them
+      for (const file of data.identityFile ?? []) {
+        formData.append('identityFile', file)
+      }
+      for (const file of data.profilePicture ?? []) {
+        formData.append('profilePicture', file)
+      }
+
+      setDebugPayload(meta)
+      const result = await createUser(formData)
       setDebugResponse(result)
       if (!result.success) {
         setServerError(result.error ?? t('errorServer'))
@@ -210,11 +223,12 @@ export function RegistrationWizard({ generalConfig, form, submitButtonLabel }: P
       ) : (
         <>
           <StepCard
+            ref={cardRef}
             icon={STEP_ICONS[step]}
             title={currentStepConfig.title}
             subtitle={currentStepConfig.subtitle}
           >
-            <div ref={cardRef}>
+            <div>
               {step === 1 && (
                 <Step1
                   data={data}

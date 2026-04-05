@@ -3,15 +3,16 @@
 import { cn } from '@/utilities/ui'
 
 type Props = {
+  ref?: React.Ref<HTMLDivElement>
   icon: React.ReactNode
   title: string
   subtitle: string
   children: React.ReactNode
 }
 
-export function StepCard({ icon, title, subtitle, children }: Props) {
+export function StepCard({ ref, icon, title, subtitle, children }: Props) {
   return (
-    <div className="bg-white rounded-xl border border-border shadow-sm">
+    <div ref={ref} className="bg-white rounded-xl border border-border shadow-sm">
       {/* Header */}
       <div className="flex items-center gap-4 px-6 py-5 border-b border-border">
         <div className="w-10 h-10 rounded-full bg-[#e0f5fb] flex items-center justify-center shrink-0 text-[hsl(var(--blue-swim))]">

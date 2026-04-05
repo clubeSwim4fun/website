@@ -3,19 +3,19 @@
 import { Checkbox } from '@/components/ui/checkbox'
 import { FieldError } from './StepCard'
 import { Toggle } from './Toggle'
-import { FormData } from './types'
+import { RegistrationFormData } from './types'
 import { CmsField, label, options, extraFieldsForStep } from './useFormFields'
 import { DynamicField } from './DynamicField'
 import { GeneralConfig } from '@/payload-types'
 import { cn } from '@/utilities/ui'
 import { useTranslations } from 'next-intl'
 
-type Errors = Partial<Record<keyof FormData, string>>
+type Errors = Partial<Record<keyof RegistrationFormData, string>>
 
 type Props = {
-  data: FormData
+  data: RegistrationFormData
   errors: Errors
-  onChange: (field: keyof FormData, value: string | boolean) => void
+  onChange: (field: keyof RegistrationFormData, value: string | boolean) => void
   fieldMap: Record<string, CmsField>
   generalConfig: GeneralConfig
 }
@@ -132,8 +132,10 @@ export function Step4({ data, errors, onChange, fieldMap, generalConfig }: Props
           name={f.name}
           field={f}
           value={data[f.name] as string | boolean}
-          error={errors[f.name as keyof FormData]}
-          onChange={(name, val) => onChange(name as keyof FormData, val as string | boolean)}
+          error={errors[f.name as keyof RegistrationFormData]}
+          onChange={(name, val) =>
+            onChange(name as keyof RegistrationFormData, val as string | boolean)
+          }
         />
       ))}
     </div>

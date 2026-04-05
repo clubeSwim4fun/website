@@ -10,18 +10,18 @@ import {
 } from '@/components/ui/select'
 import { FieldError, FieldGroup, FieldLabel, FieldRow, Hint } from './StepCard'
 import { UploadZone } from './UploadZone'
-import { FormData } from './types'
+import { RegistrationFormData } from './types'
 import { CmsField, label, options, required, extraFieldsForStep } from './useFormFields'
 import { DynamicField } from './DynamicField'
 import { GeneralConfig } from '@/payload-types'
 import { useTranslations } from 'next-intl'
 
-type Errors = Partial<Record<keyof FormData, string>>
+type Errors = Partial<Record<keyof RegistrationFormData, string>>
 
 type Props = {
-  data: FormData
+  data: RegistrationFormData
   errors: Errors
-  onChange: (field: keyof FormData, value: string) => void
+  onChange: (field: keyof RegistrationFormData, value: string) => void
   onFileChange: (field: 'identityFile' | 'profilePicture', files: File[]) => void
   generalConfig: GeneralConfig
   fieldMap: Record<string, CmsField>
@@ -138,8 +138,8 @@ export function Step3({ data, errors, onChange, onFileChange, generalConfig, fie
           name={f.name}
           field={f}
           value={data[f.name] as string | boolean}
-          error={errors[f.name as keyof FormData]}
-          onChange={(name, val) => onChange(name as keyof FormData, val as string)}
+          error={errors[f.name as keyof RegistrationFormData]}
+          onChange={(name, val) => onChange(name as keyof RegistrationFormData, val as string)}
         />
       ))}
     </div>
