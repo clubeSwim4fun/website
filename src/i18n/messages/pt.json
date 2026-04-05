@@ -486,6 +486,7 @@
     "errorEmergencyPhone": "O telefone de emergência é obrigatório",
     "errorIdentity": "O número do documento de identificação é obrigatório",
     "errorNif": "O NIF é obrigatório",
+    "errorNifInvalid": "O NIF introduzido não é válido",
     "errorIdentityFile": "A fotocópia do documento é obrigatória",
     "errorProfilePicture": "A fotografia é obrigatória",
     "errorConsent": "Deve aceitar os termos para continuar",

@@ -486,6 +486,7 @@
     "errorEmergencyPhone": "Emergency phone is required",
     "errorIdentity": "ID document number is required",
     "errorNif": "NIF is required",
+    "errorNifInvalid": "The NIF entered is not valid",
     "errorIdentityFile": "ID document copy is required",
     "errorProfilePicture": "Profile photo is required",
     "errorConsent": "You must accept the terms to continue",

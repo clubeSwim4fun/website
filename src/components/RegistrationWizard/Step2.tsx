@@ -13,6 +13,7 @@ import { FieldError, FieldGroup, FieldLabel, FieldRow } from './StepCard'
 import { RegistrationFormData } from './types'
 import { CmsField, label, options, required, extraFieldsForStep } from './useFormFields'
 import { DynamicField } from './DynamicField'
+import { MaskedInput } from './MaskedInput'
 import COUNTRY_LIST from '@/utilities/countryList'
 import { GeneralConfig } from '@/payload-types'
 import { useTranslations } from 'next-intl'
@@ -192,12 +193,14 @@ export function Step2({ data, errors, onChange, generalConfig, fieldMap }: Props
           >
             {zipcodeLbl}
           </FieldLabel>
-          <Input
+          <MaskedInput
             id="addressZipcode"
-            placeholder={t('postalCodePlaceholder')}
+            mask="9999-999"
+            placeholder="1000-001"
             value={data.addressZipcode}
-            onChange={(e) => onChange('addressZipcode', e.target.value)}
+            onValueChange={(v) => onChange('addressZipcode', v)}
             className={errors.addressZipcode ? 'border-[#e85d4a]' : ''}
+            inputMode="numeric"
           />
           <FieldError message={errors.addressZipcode} />
         </FieldGroup>

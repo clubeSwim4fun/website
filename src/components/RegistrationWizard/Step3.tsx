@@ -13,8 +13,10 @@ import { UploadZone } from './UploadZone'
 import { RegistrationFormData } from './types'
 import { CmsField, label, options, required, extraFieldsForStep } from './useFormFields'
 import { DynamicField } from './DynamicField'
+import { MaskedInput } from './MaskedInput'
 import { GeneralConfig } from '@/payload-types'
 import { useTranslations } from 'next-intl'
+import { validateNif } from '@/utilities/validateNif'
 
 type Errors = Partial<Record<keyof RegistrationFormData, string>>
 
@@ -30,6 +32,8 @@ type Props = {
 export function Step3({ data, errors, onChange, onFileChange, generalConfig, fieldMap }: Props) {
   const t = useTranslations('Registration')
   const extra = extraFieldsForStep(fieldMap, '3')
+
+  const nifInvalid = data.nif.length === 9 && !validateNif(data.nif)
 
   const disabilityField = fieldMap['disability']
   const disabilityOptions =
@@ -61,8 +65,9 @@ export function Step3({ data, errors, onChange, onFileChange, generalConfig, fie
             id="identity"
             placeholder={t('idDocumentPlaceholder')}
             value={data.identity}
-            onChange={(e) => onChange('identity', e.target.value)}
+            onChange={(e) => onChange('identity', e.target.value.toUpperCase())}
             className={errors.identity ? 'border-[#e85d4a]' : ''}
+            maxLength={20}
           />
           <FieldError message={errors.identity} />
         </FieldGroup>
@@ -70,13 +75,17 @@ export function Step3({ data, errors, onChange, onFileChange, generalConfig, fie
           <FieldLabel htmlFor="nif" required={required(fieldMap, 'nif')}>
             {label(fieldMap, 'nif', t('nif'))}
           </FieldLabel>
-          <Input
+          <MaskedInput
             id="nif"
-            placeholder={t('nifPlaceholder')}
+            mask="999999999"
+            placeholder="123456789"
             value={data.nif}
-            onChange={(e) => onChange('nif', e.target.value)}
-            className={errors.nif ? 'border-[#e85d4a]' : ''}
+            onValueChange={(v) => onChange('nif', v)}
+            className={errors.nif || nifInvalid ? 'border-[#e85d4a]' : ''}
+            maxLength={9}
+            inputMode="numeric"
           />
+          {nifInvalid && !errors.nif && <FieldError message={t('errorNifInvalid')} />}
           <FieldError message={errors.nif} />
         </FieldGroup>
       </FieldRow>

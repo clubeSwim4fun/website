@@ -1,7 +1,7 @@
 'use client'
 
 import { cn } from '@/utilities/ui'
-import { Upload, Loader2 } from 'lucide-react'
+import { Upload, Loader2, X } from 'lucide-react'
 import { useRef, useState } from 'react'
 
 type Props = {
@@ -63,6 +63,13 @@ export function UploadZone({ label, value, onChange, error, hint }: Props) {
     }
   }
 
+  const handleRemove = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    onChange([])
+    setReadError(null)
+    if (inputRef.current) inputRef.current.value = ''
+  }
+
   return (
     <div className="flex flex-col gap-1.5">
       <div
@@ -70,8 +77,9 @@ export function UploadZone({ label, value, onChange, error, hint }: Props) {
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
         className={cn(
-          'flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed p-6 cursor-pointer transition-all',
+          'relative flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed p-6 cursor-pointer transition-all',
           hover && !loading ? 'border-[#3bb8d8] bg-[#e0f5fb]' : 'border-border bg-[#f0f8fc]',
+          file && !loading && 'border-[#2ecc71] bg-[#f0fdf4]',
           error && 'border-[#e85d4a]',
           loading && 'opacity-60 cursor-wait',
         )}
@@ -91,7 +99,22 @@ export function UploadZone({ label, value, onChange, error, hint }: Props) {
         <p className="font-semibold text-sm text-center text-foreground">{label}</p>
         <p className="text-xs text-muted-foreground">{hint ?? 'PDF or image · up to 2 MB'}</p>
         {loading && <p className="text-xs text-muted-foreground">Reading file…</p>}
-        {file && !loading && <p className="text-xs text-[#2ecc71] font-medium">✓ {file.name}</p>}
+        {file && !loading && (
+          <p className="text-xs text-[#2ecc71] font-medium truncate max-w-full px-2">
+            ✓ {file.name}
+          </p>
+        )}
+
+        {file && !loading && (
+          <button
+            type="button"
+            onClick={handleRemove}
+            className="absolute top-2 right-2 rounded-full p-0.5 bg-white border border-border text-muted-foreground hover:text-[#e85d4a] hover:border-[#e85d4a] transition-colors"
+            aria-label="Remove file"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        )}
       </div>
       {(error || readError) && <p className="text-xs text-[#e85d4a]">{readError ?? error}</p>}
     </div>

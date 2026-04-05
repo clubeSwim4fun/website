@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input'
 import { PhoneInput } from '@/components/ui/phone-input'
 import { FieldError, FieldGroup, FieldLabel, FieldRow, Hint } from './StepCard'
 import { PasswordStrength } from './PasswordStrength'
+import { PasswordInput } from './PasswordInput'
 import { RegistrationFormData } from './types'
 import { CmsField, label, required, extraFieldsForStep } from './useFormFields'
 import { DynamicField } from './DynamicField'
@@ -78,9 +79,8 @@ export function Step1({ data, errors, onChange, onConfirmError, fieldMap }: Prop
           <FieldLabel htmlFor="password" required>
             {label(fieldMap, 'password', t('password'))}
           </FieldLabel>
-          <Input
+          <PasswordInput
             id="password"
-            type="password"
             placeholder={t('passwordPlaceholder')}
             value={data.password}
             onChange={(e) => onChange('password', e.target.value)}
@@ -93,14 +93,12 @@ export function Step1({ data, errors, onChange, onConfirmError, fieldMap }: Prop
           <FieldLabel htmlFor="confirmPassword" required>
             {pwField?.confirmLabel ?? t('confirmPassword')}
           </FieldLabel>
-          <Input
+          <PasswordInput
             id="confirmPassword"
-            type="password"
             placeholder={t('confirmPasswordPlaceholder')}
             value={data.confirmPassword}
             onChange={(e) => {
               onChange('confirmPassword', e.target.value)
-              // inline mismatch feedback while typing
               if (data.password && e.target.value && e.target.value !== data.password) {
                 onConfirmError(t('errorPasswordMatch'))
               } else {

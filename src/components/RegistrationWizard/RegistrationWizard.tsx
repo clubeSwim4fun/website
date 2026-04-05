@@ -16,6 +16,7 @@ import { calcStrength } from './PasswordStrength'
 import { buildFieldMap } from './useFormFields'
 import { useTranslations } from 'next-intl'
 import type { Form } from '@payloadcms/plugin-form-builder/types'
+import { validateNif } from '@/utilities/validateNif'
 
 const STEP_ICONS: Record<StepId, React.ReactNode> = {
   1: <User className="w-5 h-5" />,
@@ -120,6 +121,7 @@ export function RegistrationWizard({ generalConfig, form, submitButtonLabel }: P
     if (step === 3) {
       if (req('identity') && !data.identity.trim()) e.identity = t('errorIdentity')
       if (req('nif') && !data.nif.trim()) e.nif = t('errorNif')
+      else if (data.nif.trim() && !validateNif(data.nif)) e.nif = t('errorNifInvalid')
       if (req('identityFile', false) && !data.identityFile?.length)
         e.identityFile = t('errorIdentityFile')
       if (req('profilePicture', false) && !data.profilePicture?.length)
