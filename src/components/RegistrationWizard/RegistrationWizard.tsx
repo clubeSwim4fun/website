@@ -78,14 +78,12 @@ export function RegistrationWizard({ generalConfig, form, submitButtonLabel }: P
   const [done, setDone] = useState(false)
   const [serverError, setServerError] = useState<string | null>(null)
   const [debugResponse, setDebugResponse] = useState<unknown>(null)
+  const [debugPayload, setDebugPayload] = useState<unknown>(null)
   const cardRef = useRef<HTMLDivElement>(null)
 
-  // Focus first focusable element in the card whenever the step changes
+  // Scroll to top of card when step changes (avoid auto-focus which triggers keyboard on mobile)
   useEffect(() => {
-    const first = cardRef.current?.querySelector<HTMLElement>(
-      'input, select, button, textarea, [tabindex]:not([tabindex="-1"])',
-    )
-    first?.focus()
+    cardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }, [step])
 
   const set = (field: keyof FormData, value: string | boolean | File[]) =>
@@ -140,6 +138,7 @@ export function RegistrationWizard({ generalConfig, form, submitButtonLabel }: P
     setSubmitting(true)
     setServerError(null)
     setDebugResponse(null)
+    setDebugPayload(null)
     try {
       const payload: CreateUserRequestType = {
         nome: { value: data.nome, relatesTo: 'name' },
@@ -169,6 +168,8 @@ export function RegistrationWizard({ generalConfig, form, submitButtonLabel }: P
         identityFile: { value: data.identityFile, relatesTo: 'identityFile' },
         profilePicture: { value: data.profilePicture, relatesTo: 'profilePicture' },
       }
+
+      setDebugPayload(payload)
       const result = await createUser(payload)
       setDebugResponse(result)
       if (!result.success) {
@@ -256,6 +257,11 @@ export function RegistrationWizard({ generalConfig, form, submitButtonLabel }: P
 
           {serverError && <p className="text-sm text-[#e85d4a] text-center">{serverError}</p>}
 
+          {debugPayload !== null && (
+            <pre className="text-xs bg-muted border border-border rounded-lg p-3 overflow-auto max-h-60 whitespace-pre-wrap break-all">
+              {JSON.stringify(debugPayload, null, 2)}
+            </pre>
+          )}
           {debugResponse !== null && (
             <pre className="text-xs bg-muted border border-border rounded-lg p-3 overflow-auto max-h-60 whitespace-pre-wrap break-all">
               {JSON.stringify(debugResponse, null, 2)}
