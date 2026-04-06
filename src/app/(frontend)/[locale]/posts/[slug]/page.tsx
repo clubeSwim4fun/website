@@ -14,6 +14,7 @@ import { PostHero } from '@/heros/PostHero'
 import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
+import PostInteractions from '@/components/PostInteractions'
 
 export async function generateStaticParams({ params }: { params: { locale: string } }) {
   const { locale } = params
@@ -68,6 +69,7 @@ export default async function Post({ params: paramsPromise }: Args) {
               docs={post.relatedPosts.filter((post) => typeof post === 'object')}
             />
           )}
+          <PostInteractions postId={post.id} locale={locale} />
         </div>
       </div>
     </article>

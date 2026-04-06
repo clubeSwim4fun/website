@@ -89,6 +89,8 @@ export interface Config {
     'pool-subscriptions': PoolSubscription;
     'pool-slot-registrations': PoolSlotRegistration;
     'pool-slot-waitlist': PoolSlotWaitlist;
+    'post-comments': PostComment;
+    'post-likes': PostLike;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -123,6 +125,8 @@ export interface Config {
     'pool-subscriptions': PoolSubscriptionsSelect<false> | PoolSubscriptionsSelect<true>;
     'pool-slot-registrations': PoolSlotRegistrationsSelect<false> | PoolSlotRegistrationsSelect<true>;
     'pool-slot-waitlist': PoolSlotWaitlistSelect<false> | PoolSlotWaitlistSelect<true>;
+    'post-comments': PostCommentsSelect<false> | PostCommentsSelect<true>;
+    'post-likes': PostLikesSelect<false> | PostLikesSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -2366,6 +2370,29 @@ export interface PoolSlotWaitlist {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "post-comments".
+ */
+export interface PostComment {
+  id: string;
+  post: string | Post;
+  user: string | User;
+  content: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "post-likes".
+ */
+export interface PostLike {
+  id: string;
+  post: string | Post;
+  user: string | User;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -2641,6 +2668,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'pool-slot-waitlist';
         value: string | PoolSlotWaitlist;
+      } | null)
+    | ({
+        relationTo: 'post-comments';
+        value: string | PostComment;
+      } | null)
+    | ({
+        relationTo: 'post-likes';
+        value: string | PostLike;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -3486,6 +3521,27 @@ export interface PoolSlotWaitlistSelect<T extends boolean = true> {
   slotDay?: T;
   slotTime?: T;
   position?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "post-comments_select".
+ */
+export interface PostCommentsSelect<T extends boolean = true> {
+  post?: T;
+  user?: T;
+  content?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "post-likes_select".
+ */
+export interface PostLikesSelect<T extends boolean = true> {
+  post?: T;
+  user?: T;
   updatedAt?: T;
   createdAt?: T;
 }

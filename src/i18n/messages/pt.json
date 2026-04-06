@@ -217,7 +217,21 @@
     "queryResults": "A mostrar {indexStart} - {indexEnd} de {totalDocs} {docText}",
     "author": "por",
     "noImage": "Sem imagem",
-    "date": "em"
+    "date": "em",
+    "likes": "gostos",
+    "like": "Gosto",
+    "unlike": "Remover gosto",
+    "comments": "Comentários",
+    "addComment": "Adicionar comentário",
+    "commentPlaceholder": "Escreva um comentário...",
+    "submit": "Submeter",
+    "loginToInteract": "Inicie sessão para gostar ou comentar esta publicação.",
+    "deleteComment": "Eliminar comentário",
+    "noComments": "Ainda sem comentários. Seja o primeiro!",
+    "commentRequired": "O comentário não pode estar vazio.",
+    "commentAdded": "Comentário adicionado.",
+    "commentDeleted": "Comentário eliminado.",
+    "notAuthorized": "Não autorizado."
   },
   "Search": {
     "title": "Pesquisar",

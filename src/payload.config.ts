@@ -40,6 +40,8 @@ import { PoolCycles } from '@/collections/Pool/PoolCycles'
 import { PoolSubscriptions } from '@/collections/Pool/PoolSubscriptions'
 import { PoolSlotRegistrations } from '@/collections/Pool/PoolSlotRegistrations'
 import { PoolSlotWaitlist } from '@/collections/Pool/PoolSlotWaitlist'
+import { PostComments } from './collections/Posts/PostComments'
+import { PostLikes } from './collections/Posts/PostLikes'
 import { dashboardPool } from './admin/endpoints/dashboardPool'
 import { dashboardMembers } from './admin/endpoints/dashboardMembers'
 import { dashboardEvents } from './admin/endpoints/dashboardEvents'
@@ -128,6 +130,8 @@ export default buildConfig({
     PoolSubscriptions,
     PoolSlotRegistrations,
     PoolSlotWaitlist,
+    PostComments,
+    PostLikes,
   ],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer, GeneralConfigs],

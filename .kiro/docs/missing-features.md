@@ -4,151 +4,145 @@ Mapped by comparing the original WordPress site (`clube-swim4fun.pt`) with the c
 
 ---
 
-## 1. Event Detail Page — Missing Fields & UI
+## 1. Event Detail Page — Missing Fields & UI ✅ DONE
 
 ### Fields missing from the `events` collection
 
-| Field | Description | Priority |
-|---|---|---|
-| `promoCode` | Discount code shown on the event (e.g. `SWIM4FUN_TROIA`) | Medium |
-| `memberDiscount` | Percentage discount for club members (e.g. "20% de desconto para sócios") | Medium |
-| `externalRegistrationUrl` | External link for registrations (e.g. `https://bit.ly/TroiaSwimrun2026`) | High |
-| `regulationUrl` | Link to the event regulation PDF/page (currently shows "Em breve") | Medium |
-| `location` | Named location (e.g. "Tróia") — currently only raw address fields exist | Low |
-| `image` | Event-specific hero image — currently uses static placeholder images | High |
+| Field | Description | Priority | Status |
+|---|---|---|---|
+| `promoCode` | Discount code shown on the event (e.g. `SWIM4FUN_TROIA`) | Medium | ✅ Done |
+| `memberDiscount` | Percentage discount for club members (e.g. "20% de desconto para sócios") | Medium | ✅ Done (display only) |
+| `externalRegistrationUrl` | External link for registrations (e.g. `https://bit.ly/TroiaSwimrun2026`) | High | ✅ Done |
+| `regulationUrl` | Link to the event regulation PDF/page — per distance category | Medium | ✅ Done (inside `distanceCategories[].regulationUrl`) |
+| `location` | Named location — currently only raw address fields exist | Low | ❌ Not done |
+| `image` | Event-specific hero image | High | ✅ Done |
 
 ### UI gaps on the event detail page
 
-| Gap | Description |
-|---|---|
-| Promo code display | Show the discount code and member discount badge prominently |
-| External registration link | "INSCRIÇÕES" button linking to external registration URL |
-| Regulation link | "REGULAMENTO" button/link per distance category |
-| Location name | Show named location (e.g. "Tróia, Grândola") not just raw address |
-| Map embed | Original shows a map widget for the event location |
-| Distance breakdown detail | Original shows per-distance breakdown: total, swim, run, transitions, elevation, time limit — our model only stores a single `distance` number per ticket |
-| Event image | Use a real uploaded image instead of static placeholders |
+| Gap | Description | Status |
+|---|---|---|
+| Promo code display | Show the discount code and member discount badge prominently | ✅ Done |
+| External registration link | "INSCRIÇÕES" button linking to external registration URL | ✅ Done |
+| Regulation link | "REGULAMENTO" button/link per distance category | ✅ Done |
+| Location name | Show named location (e.g. "Tróia, Grândola") not just raw address | ❌ Not done |
+| Map embed | Original shows a map widget for the event location | ❌ Not done |
+| Distance breakdown detail | Per-distance breakdown: total, swim, run, transitions, elevation, time limit | ✅ Done (`distanceCategories` array + `EventDistanceCategories` component) |
+| Event image | Use a real uploaded image instead of static placeholders | ✅ Done |
 
 ---
 
-## 2. Distance / Ticket Model — Structural Gap
+## 2. Distance / Ticket Model — Structural Gap ✅ DONE
 
-The original event has **named distance categories** (STANDARD, SPRINT, EXPERIENCE), each with:
-- Total distance
-- Swim distance
-- Run distance
-- Number of transitions (swim + run)
-- Longest swim segment
-- Longest run segment
-- Total elevation gain
-- Time limit
-
-Our current model stores only a flat `distance` (in meters) on each `Ticket`. This is insufficient for SwimRun-style events.
-
-**Proposed solution:** Add a `distanceDetails` group or array to the `events` collection (or to `tickets`) with these sub-fields, or create a separate `distance-categories` collection that tickets reference.
+`distanceCategories[]` array added to `events` collection with all sub-fields (totalDistance, swimDistance, runDistance, transitions, longestSwim, longestRun, elevationGain, timeLimit, regulationUrl, registrationUrl). `EventDistanceCategories` component renders them on the event detail page.
 
 ---
 
 ## 3. Registration / Subscription Form
 
-The original site links to an **external registration URL** (`https://bit.ly/TroiaSwimrun2026`). Our platform has a ticket purchase flow (cart → payment), but:
-
-- No support for **external registration links** as an alternative to the internal cart
-- No **subscription/registration form** embedded in the event page (like the `group-subscription` form pattern)
-- No **waitlist** functionality
-- No **team registration** (SwimRun is a pairs sport — registrations are typically for 2 people)
-
-**Missing features:**
-- [ ] `externalRegistrationUrl` field on events — when set, show an "INSCRIÇÕES" button instead of (or alongside) the internal ticket flow
-- [ ] Optional embedded registration form per event (reuse the form-builder plugin already used for group subscriptions)
-- [ ] Team/pair registration support
+| Feature | Status |
+|---|---|
+| `externalRegistrationUrl` field on events — shows "INSCRIÇÕES" button instead of internal cart | ✅ Done |
+| Optional embedded registration form per event | ❌ Not done |
+| Waitlist functionality | ❌ Not done |
+| Team/pair registration support | ❌ Not done |
 
 ---
 
-## 4. Payment — Open Items
+## 4. Payment — ✅ Done
 
-- `createOrder` action uses `payload.init()` instead of `getPayload()` — needs refactoring
-- Order confirmation email `to` field is hardcoded as empty string
+| Issue | Status |
+|---|---|
+| `createOrder` uses `payload.init()` instead of `getPayload()` | ✅ Fixed |
+| Order confirmation email `to` field hardcoded as empty string | ✅ Fixed — uses `user?.email ?? ''` |
 
 ---
 
 ## 5. Member Discount Logic
 
-The original site advertises "20% de desconto para sócios Swim4fun". There is no discount/pricing logic in the current implementation:
-
-- No `memberDiscount` field on events or tickets
-- No price calculation that applies a discount based on `user.groups` membership
-- The `canBePurchasedBy` field restricts access but doesn't apply discounts
+- `memberDiscount` field exists on events and is displayed as a badge ✅
+- No actual price calculation applying the discount — display only ❌
+- `canBePurchasedBy` restricts access but doesn't apply discounts ❌
 
 ---
 
 ## 6. Event Listing Page
 
-The route `/event` exists (`src/app/(frontend)/[locale]/event/page.tsx`) but needs review:
-
-- No filtering by category, date, or location
-- No pagination
-- No "past events" vs "upcoming events" separation
-- No event image thumbnails in the listing
+- Route `/event` now shows a calendar view (`CalendarBlock`) ✅
+- No filtering by category, date, or location ❌
+- No pagination ❌
+- No "past events" vs "upcoming events" separation ❌
+- No event image thumbnails in the listing ❌
 
 ---
 
 ## 7. Admin UX — Event Management
 
-- No bulk ticket creation UI (must create tickets one by one)
-- No dorsal number assignment UI beyond manually editing each order
-- No participant list export per event
-- No capacity/limit field on tickets (no max attendees enforcement)
+- No bulk ticket creation UI ❌
+- No dorsal number assignment UI beyond manually editing each order ❌
+- No participant list export per event ❌
+- No capacity/limit field on tickets (no max attendees enforcement) ❌
 
 ---
 
 ## 8. Email Notifications
 
-- No email sent to user when their ticket order is confirmed after payment
-  - `OrderConfirmationEmail` template exists but it's unclear if it's triggered post-payment or just post-order-creation
-- No reminder email before the event
-- No email when a ticket purchase window opens
+- Order confirmation email sent post-order-creation ✅ (`OrderConfirmationEmail` triggered in `createOrder`)
+- Subscription confirmation email sent ✅ (`SubscriptionConfirmationEmail` triggered in `createSubscription`)
+- Annual membership renewal email sent via `performAnnualReset()` ✅
+- No reminder email before the event ❌
+- No email when a ticket purchase window opens ❌
 
 ---
 
 ## 9. SEO / Structured Data
 
-- No `Event` JSON-LD structured data on event detail pages (important for Google search)
-- No Open Graph image per event (uses static fallback)
+- No `Event` JSON-LD structured data on event detail pages ❌
+- No Open Graph image per event (uses static fallback) ❌
 
 ---
 
 ## 10. Locations Collection (Nice to Have)
 
-The original WordPress site has a `locations` taxonomy (e.g. `/locations/troia/`). Our model has a raw address group on each event. A reusable `locations` collection would allow:
+❌ Not done. Events still use a raw address group. No reusable `locations` collection.
 
-- Consistent location names across events
-- Map coordinates for embed
-- Location-based filtering on the event listing
+---
 
-## 11. Blog
+## 11. Blog — Comments and Reactions
 
-Allow Comments and reactions to blog posts 
+❌ Not done. No comments or reactions on blog posts.
 
-## 12. Monthly subscription
+---
 
-Change to be annualy
+## 12. Subscription Periodicity
+
+- Subscription periodicity is configurable via `GeneralConfigs.associationFees.periodicity` (`1` | `3` | `12`) ✅
+- Annual reset flow exists via `performAnnualReset()` admin action ✅
+- The feature request to "change to annual" is covered by setting `periodicity: '12'` in the admin panel — no code change needed ✅
+
+---
+
+## 13. Newsletter Feature
+
+❌ Not done. No newsletter collection, subscription form, or email broadcast capability.
 
 ---
 
 ## Summary — Priority Order
 
-| # | Feature | Priority |
-|---|---|---|
-| 1 | External registration URL on events | High |
-| 2 | Payment — order action refactor (`payload.init` → `getPayload`) | High |
-| 3 | Event image upload | High |
-| 4 | Distance detail breakdown per category | Medium |
-| 5 | Promo code + member discount | Medium |
-| 6 | Regulation URL per distance | Medium |
-| 7 | Event listing improvements (filter, pagination) | Medium |
-| 8 | Team/pair registration | Low |
-| 9 | Locations collection | Low |
-| 10 | Event JSON-LD structured data | Low |
-| 11 | Ticket capacity/limit | Low |
-| 12 | Admin participant export | Low |
+| # | Feature | Priority | Status |
+|---|---|---|---|
+| 1 | External registration URL on events | High | ✅ Done |
+| 2 | Payment — order action refactor (`payload.init` → `getPayload`) | High | ❌ Open |
+| 3 | Event image upload | High | ✅ Done |
+| 4 | Distance detail breakdown per category | Medium | ✅ Done |
+| 5 | Promo code + member discount display | Medium | ✅ Done (display only) |
+| 6 | Member discount applied to prices | Medium | ❌ Open |
+| 7 | Regulation URL per distance | Medium | ✅ Done |
+| 8 | Event listing improvements (filter, pagination) | Medium | ❌ Open |
+| 9 | Team/pair registration | Low | ❌ Open |
+| 10 | Locations collection | Low | ❌ Open |
+| 11 | Event JSON-LD structured data | Low | ❌ Open |
+| 12 | Ticket capacity/limit | Low | ❌ Open |
+| 13 | Admin participant export | Low | ❌ Open |
+| 14 | Blog comments & reactions | Low | ❌ Open |
+| 15 | Newsletter | Low | ❌ Open |

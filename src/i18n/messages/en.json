@@ -217,7 +217,21 @@
     "queryResults": "Showing {indexStart} - {indexEnd} of {totalDocs} {docText}",
     "author": "by",
     "noImage": "No image",
-    "date": "on"
+    "date": "on",
+    "likes": "likes",
+    "like": "Like",
+    "unlike": "Unlike",
+    "comments": "Comments",
+    "addComment": "Add comment",
+    "commentPlaceholder": "Write a comment...",
+    "submit": "Submit",
+    "loginToInteract": "Log in to like or comment on this post.",
+    "deleteComment": "Delete comment",
+    "noComments": "No comments yet. Be the first!",
+    "commentRequired": "Comment cannot be empty.",
+    "commentAdded": "Comment added.",
+    "commentDeleted": "Comment deleted.",
+    "notAuthorized": "Not authorized."
   },
   "Search": {
     "title": "Search",
