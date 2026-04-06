@@ -26,7 +26,7 @@ export default function DashboardLinks() {
   if (!isAdmin) return null
 
   const lang = i18n.language in labels ? i18n.language : 'en'
-  const t = labels[lang]
+  const t = labels[lang] ?? labels['en']!
 
   const dashboards = [
     { href: '/admin/dashboard/pool', label: t.pool },
