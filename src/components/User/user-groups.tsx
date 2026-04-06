@@ -6,14 +6,32 @@ import { TypedLocale } from 'payload'
 
 type Args = {
   groups?: (string | Group | GroupCategory)[]
+  compact?: boolean
 }
 
 export const UserGroups: React.FC<Args> = async (props) => {
-  const { groups } = props
+  const { groups, compact } = props
   const locale = (await getLocale()) as TypedLocale
   const generalConfigs = (await getCachedGlobal('generalConfigs', 1, locale)()) as GeneralConfig
 
-  const showBadges = generalConfigs.settings?.fixedPages?.myProfile?.useBadges || false
+  const showBadges =
+    !compact && (generalConfigs.settings?.fixedPages?.myProfile?.useBadges || false)
+
+  if (compact) {
+    return (
+      <>
+        {groups?.map((group) => (
+          <span
+            key={typeof group === 'object' ? group.id : group}
+            className="text-[11px] font-semibold px-[10px] py-[3px] rounded-full tracking-[.4px] text-white"
+            style={{ background: 'rgba(255,255,255,.15)' }}
+          >
+            {typeof group === 'object' ? group.title : group}
+          </span>
+        ))}
+      </>
+    )
+  }
 
   return (
     <div className="grid grid-cols-6 mt-4">

@@ -1,17 +1,18 @@
-import { UserAvatar } from '@/components/Avatar'
 import { UserDetails } from '@/components/User/user-details'
 import { UserFutureEvents } from '@/components/User/user-future-events'
 import { UserSubscriptions } from '@/components/User/user-subscriptions'
-import { UserProfile } from '@/components/User/user-profile'
-import { GeneralConfig, Media } from '@/payload-types'
+import { UserProfileHeader } from '@/components/User/user-profile-header'
+import { GeneralConfig } from '@/payload-types'
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import { getMeUser } from '@/utilities/getMeUser'
-import { getClientSideURL } from '@/utilities/getURL'
+import { getCountryCode } from '@/helpers/userHelper'
 import { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import { redirect } from 'next/navigation'
 import { TypedLocale } from 'payload'
+import { getUserFutureEvents } from '@/helpers/userHelper'
+import { getUserSubscriptions } from '@/helpers/subscriptionHelper'
 
 const UserPage = async ({ params }: { params: Promise<{ locale: string }> }) => {
   const { locale } = await params
@@ -23,8 +24,6 @@ const UserPage = async ({ params }: { params: Promise<{ locale: string }> }) => 
     locale as TypedLocale,
   )()) as GeneralConfig
 
-  const defaultAvatar = globalConfig.settings?.fixedPages?.myProfile?.avatar as Media
-
   if (!userObject || !userObject.user) notFound()
 
   const user = userObject.user
@@ -32,33 +31,30 @@ const UserPage = async ({ params }: { params: Promise<{ locale: string }> }) => 
   if (user.status !== 'active') {
     redirect(`/${locale}/subscription`)
   }
-  const initials = user.name.charAt(0) + user.surname.charAt(0)
-  const profilePictureUrl = `${getClientSideURL()}/${
-    typeof user.profilePicture === 'object' ? user.profilePicture?.url : defaultAvatar?.thumbnailURL
-  }`
+
+  const [eventsData, subsResult, countryCode] = await Promise.all([
+    getUserFutureEvents({ userId: user.id, dateFilter: 'all' }),
+    getUserSubscriptions({ userId: user.id }),
+    getCountryCode(user.nationality as string),
+  ])
+
+  const poolSubCount = subsResult.rows.filter((r) => r.kind === 'pool').length
 
   return (
-    <section className="pt-[104px] pb-24 container mx-auto max-w-5xl">
-      {/* User Section */}
-      <div className="flex flex-col lg:flex-row gap-8">
-        <UserAvatar
-          className="w-full lg:w-1/3 mt-2"
-          fallbackText={initials}
-          avatarUrl={profilePictureUrl}
+    <section className="pt-[104px] pb-24 min-h-screen" style={{ background: '#fdf8f3' }}>
+      <div className="container mx-auto max-w-4xl px-4 flex flex-col gap-6">
+        <UserProfileHeader
+          user={user}
+          globalConfig={globalConfig}
+          eventCount={eventsData.events.length}
+          subscriptionCount={subsResult.totalDocs}
+          poolSubCount={poolSubCount}
         />
-        <div className="flex w-full lg:w-2/3">
-          <UserDetails user={user} />
-        </div>
-      </div>
-      {/* Table and calendar */}
-      <div className="flex flex-col md:flex-row mt-6 gap-8">
-        <div className="w-full lg:w-1/3">
-          <UserProfile user={user} />
-        </div>
-        <div className="w-full lg:w-2/3">
-          <UserFutureEvents userId={user.id} />
-          <UserSubscriptions userId={user.id} />
-        </div>
+
+        <UserDetails user={user} countryCode={countryCode || 'PT'} />
+
+        <UserFutureEvents userId={user.id} />
+        <UserSubscriptions userId={user.id} />
       </div>
     </section>
   )
@@ -80,7 +76,6 @@ export async function generateMetadata({
   )()) as GeneralConfig
 
   const myProfile = globalConfig?.settings?.fixedPages?.myProfile
-
   const clubTitle = globalConfig?.clubName || t('Club')
   const myProfileTitle = myProfile?.title || t('MyProfile')
 

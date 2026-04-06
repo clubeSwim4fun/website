@@ -1,13 +1,5 @@
 'use client'
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
 import { convertMtoKm } from '@/utilities/util'
 import { Link } from '@/i18n/routing'
 import { useEffect, useState, useTransition, useCallback } from 'react'
@@ -19,12 +11,9 @@ import {
 } from '@/helpers/userHelper'
 import { EVENTS_PAGE_SIZE } from '@/helpers/userHelperConstants'
 import { useFormatter, useTranslations } from 'next-intl'
-import { ArrowUp, ArrowDown, Loader, Search, X } from 'lucide-react'
+import { ArrowUp, ArrowDown, Loader, Search, X, Calendar } from 'lucide-react'
 import { FrontPagination } from '../FrontPagination'
-import { cn } from '@/utilities/ui'
 
-// Must match the limit set in getUserFutureEvents
-// PAGE_SIZE is defined in userHelper and shared with the BE query
 const PAGE_SIZE = EVENTS_PAGE_SIZE
 
 type Args = { userId: string }
@@ -45,7 +34,6 @@ export const UserFutureEvents: React.FC<Args> = ({ userId }) => {
   const [nameSearch, setNameSearch] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
 
-  // Only fire search after 3 characters (or when cleared)
   useEffect(() => {
     if (nameSearch.length === 0 || nameSearch.length >= 3) {
       const timer = setTimeout(() => setDebouncedSearch(nameSearch), 300)
@@ -88,46 +76,46 @@ export const UserFutureEvents: React.FC<Args> = ({ userId }) => {
     setCurrentPage(1)
   }
 
-  // When a name search is active, the name filter runs client-side after Payload paginates,
-  // so totalPages from Payload is based on unfiltered data and can't be trusted.
-  // We hide pagination if the filtered results on this page are fewer than a full page —
-  // that means the filter narrowed things down and there's nothing meaningful on the next pages.
   const showPagination =
     !isLoadingPage && totalPages > 1 && !(debouncedSearch && filteredCount < PAGE_SIZE)
 
   const filterOptions: { value: EventDateFilter; label: string }[] = [
+    { value: 'all', label: t('filterAll') },
     { value: 'future', label: t('filterFuture') },
     { value: 'past', label: t('filterPast') },
-    { value: 'all', label: t('filterAll') },
   ]
+
+  const emptyState = (
+    <div className="flex flex-col items-center py-10 gap-3" style={{ color: '#8aaabb' }}>
+      <Calendar className="w-8 h-8" style={{ stroke: '#d4eaf2' }} />
+      <span className="text-[13px]">{t('noResults')}</span>
+    </div>
+  )
+
+  const loadingState = (
+    <div className="flex justify-center py-10">
+      <Loader className="w-5 h-5 animate-spin" style={{ stroke: '#8aaabb' }} />
+    </div>
+  )
 
   return (
     <article>
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-        <h2 className="text-2xl font-semibold leading-none tracking-tight">{t('title')}</h2>
-
-        {/* Filter pills */}
-        <div className="flex items-center gap-1 bg-gray-100 dark:bg-slate-900 rounded-lg p-1">
-          {filterOptions.map(({ value, label }) => (
-            <button
-              key={value}
-              onClick={() => handleFilterChange(value)}
-              className={cn(
-                'px-3 py-1 rounded-md text-sm font-medium transition-all',
-                dateFilter === value
-                  ? 'bg-white dark:bg-slate-700 shadow-sm text-foreground'
-                  : 'text-muted-foreground hover:text-foreground',
-              )}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
+      {/* Section title */}
+      <div className="mb-3">
+        <h2
+          className="text-[15px] sm:text-[16px] font-bold tracking-wide"
+          style={{ color: '#0a4a6e' }}
+        >
+          {t('title')}
+        </h2>
       </div>
 
-      {/* Search bar */}
-      <div className="flex items-center gap-2 border rounded-md px-3 h-9 mb-3 bg-background focus-within:ring-1 focus-within:ring-ring">
-        <Search className="w-4 h-4 text-muted-foreground shrink-0" />
+      {/* Search */}
+      <div className="relative mb-2.5">
+        <Search
+          className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 pointer-events-none"
+          style={{ stroke: '#8aaabb' }}
+        />
         <input
           value={nameSearch}
           onChange={(e) => {
@@ -135,89 +123,237 @@ export const UserFutureEvents: React.FC<Args> = ({ userId }) => {
             setCurrentPage(1)
           }}
           placeholder={t('searchPlaceholder')}
-          className="flex-1 text-sm bg-transparent outline-none placeholder:text-muted-foreground"
+          className="w-full pl-8 pr-8 py-[10px] text-[13px] sm:text-[14px] rounded-[10px] outline-none transition-all"
+          style={{ border: '1.5px solid #d4eaf2', background: '#fff', color: '#0f1f2e' }}
+          onFocus={(e) => {
+            e.currentTarget.style.borderColor = '#0e7ea8'
+            e.currentTarget.style.boxShadow = '0 0 0 3px rgba(14,126,168,.1)'
+          }}
+          onBlur={(e) => {
+            e.currentTarget.style.borderColor = '#d4eaf2'
+            e.currentTarget.style.boxShadow = 'none'
+          }}
         />
         {nameSearch && (
           <button
             onClick={handleSearchClear}
-            className="text-muted-foreground hover:text-foreground transition-colors shrink-0"
-            aria-label="Clear search"
+            className="absolute right-3 top-1/2 -translate-y-1/2"
+            style={{ color: '#8aaabb' }}
           >
-            <X className="w-4 h-4" />
+            <X className="w-3.5 h-3.5" />
           </button>
         )}
       </div>
 
-      <Table className="w-full">
-        <TableHeader className="bg-gray-100 dark:bg-slate-900">
-          <TableRow className="border-b dark:border-slate-700">
-            <TableHead className="text-left">
-              <button
-                onClick={handleSortToggle}
-                className="flex items-center gap-1 font-medium hover:text-foreground transition-colors group"
-                aria-label="Sort by date"
-              >
-                {t('date')}
-                <span className="text-muted-foreground group-hover:text-foreground transition-colors">
-                  {sortOrder === 'asc' ? (
-                    <ArrowUp className="w-3.5 h-3.5" />
-                  ) : (
-                    <ArrowDown className="w-3.5 h-3.5" />
-                  )}
-                </span>
-              </button>
-            </TableHead>
-            <TableHead className="text-left">{t('event')}</TableHead>
-            <TableHead className="text-left">{t('ticketName')}</TableHead>
-            <TableHead className="text-left">{t('distance')}</TableHead>
-            <TableHead className="text-left">{t('dorsal')}</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {isPending ? (
-            <TableRow>
-              <TableCell colSpan={5} className="text-center py-8">
-                <Loader className="w-6 h-6 animate-spin mx-auto text-muted-foreground" />
-              </TableCell>
-            </TableRow>
-          ) : userEvents.length === 0 ? (
-            <TableRow>
-              <TableCell colSpan={5} className="text-center py-8 text-muted-foreground text-sm">
-                {t('noResults')}
-              </TableCell>
-            </TableRow>
+      {/* Filters + sort — horizontally scrollable on mobile */}
+      <div className="flex gap-1.5 overflow-x-auto pb-2.5 mb-1" style={{ scrollbarWidth: 'none' }}>
+        {filterOptions.map(({ value, label }) => {
+          const isActive = dateFilter === value
+          return (
+            <button
+              key={value}
+              onClick={() => handleFilterChange(value)}
+              className="px-[14px] py-[7px] rounded-full text-[12px] font-semibold transition-all whitespace-nowrap shrink-0"
+              style={{
+                border: `1.5px solid ${isActive ? '#0e7ea8' : '#d4eaf2'}`,
+                background: isActive ? '#e0f5fb' : '#fff',
+                color: isActive ? '#0a4a6e' : '#3d5a70',
+              }}
+            >
+              {label}
+            </button>
+          )
+        })}
+        <button
+          onClick={handleSortToggle}
+          className="flex items-center gap-1 px-[14px] py-[7px] rounded-full text-[12px] font-semibold transition-all whitespace-nowrap shrink-0"
+          style={{ border: '1.5px solid #d4eaf2', background: '#fff', color: '#3d5a70' }}
+        >
+          {sortOrder === 'asc' ? (
+            <ArrowUp className="w-3 h-3" />
           ) : (
-            userEvents.map((userEvent, index) => (
-              <TableRow key={index} className="border-b dark:border-slate-700">
-                <TableCell className="text-left tabular-nums">
-                  {userEvent.eventDate ? format.dateTime(userEvent.eventDate) : t('noDate')}
-                </TableCell>
-                <TableCell className="text-left">
-                  <Link
-                    href={`/event/${userEvent.eventUrl}`}
-                    className="underline hover:no-underline transition-all"
-                  >
-                    {userEvent.eventName}
-                  </Link>
-                </TableCell>
-                <TableCell className="text-left">{userEvent.ticket.name}</TableCell>
-                <TableCell className="text-left">
-                  {convertMtoKm(userEvent.ticket.distance)}
-                </TableCell>
-                <TableCell className="text-left">{userEvent.eventPurchaseId}</TableCell>
-              </TableRow>
-            ))
+            <ArrowDown className="w-3 h-3" />
           )}
-        </TableBody>
-      </Table>
+          {t('date')}
+        </button>
+      </div>
+
+      {/* ── Desktop: table ── */}
+      <div
+        className="hidden sm:block rounded-[14px] overflow-hidden"
+        style={{ border: '2px solid #d4eaf2', background: '#fff' }}
+      >
+        <table className="w-full border-collapse text-[13px]">
+          <thead>
+            <tr>
+              {[t('date'), t('event'), t('ticketName'), t('distance'), t('dorsal')].map(
+                (col, i) => (
+                  <th
+                    key={i}
+                    className="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-[.6px] whitespace-nowrap"
+                    style={{
+                      color: '#8aaabb',
+                      borderBottom: '1.5px solid #d4eaf2',
+                      background: '#f0fafd',
+                      cursor: i === 0 ? 'pointer' : 'default',
+                    }}
+                    onClick={i === 0 ? handleSortToggle : undefined}
+                  >
+                    {col}
+                    {i === 0 && (
+                      <span className="ml-1 opacity-60 text-[10px]">
+                        {sortOrder === 'asc' ? '↑' : '↓'}
+                      </span>
+                    )}
+                  </th>
+                ),
+              )}
+            </tr>
+          </thead>
+          <tbody>
+            {isPending ? (
+              <tr>
+                <td colSpan={5}>{loadingState}</td>
+              </tr>
+            ) : userEvents.length === 0 ? (
+              <tr>
+                <td colSpan={5}>{emptyState}</td>
+              </tr>
+            ) : (
+              userEvents.map((ev, i) => (
+                <tr
+                  key={i}
+                  style={{ borderBottom: '1px solid #d4eaf2' }}
+                  onMouseEnter={(e) =>
+                    ((e.currentTarget as HTMLTableRowElement).style.background = '#f0fafd')
+                  }
+                  onMouseLeave={(e) =>
+                    ((e.currentTarget as HTMLTableRowElement).style.background = 'transparent')
+                  }
+                >
+                  <td
+                    className="px-4 py-[13px] font-medium tabular-nums"
+                    style={{ color: '#0f1f2e' }}
+                  >
+                    {ev.eventDate
+                      ? format.dateTime(ev.eventDate, { dateStyle: 'medium' })
+                      : t('noDate')}
+                  </td>
+                  <td className="px-4 py-[13px]">
+                    <Link
+                      href={`/event/${ev.eventUrl}`}
+                      className="font-medium hover:underline"
+                      style={{ color: '#0e7ea8' }}
+                    >
+                      {ev.eventName}
+                    </Link>
+                  </td>
+                  <td className="px-4 py-[13px]" style={{ color: '#3d5a70' }}>
+                    {ev.ticket.name}
+                  </td>
+                  <td className="px-4 py-[13px]" style={{ color: '#3d5a70' }}>
+                    {convertMtoKm(ev.ticket.distance)}
+                  </td>
+                  <td className="px-4 py-[13px]" style={{ color: '#3d5a70' }}>
+                    {ev.eventPurchaseId ?? '—'}
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* ── Mobile: cards ── */}
+      <div className="sm:hidden">
+        {isPending
+          ? loadingState
+          : userEvents.length === 0
+            ? emptyState
+            : userEvents.map((ev, i) => {
+                const isFuture = ev.eventDate ? ev.eventDate > new Date() : false
+                return (
+                  <div
+                    key={i}
+                    className="rounded-xl overflow-hidden mb-2.5"
+                    style={{ border: '2px solid #d4eaf2', background: '#fff' }}
+                  >
+                    <div className="grid" style={{ gridTemplateColumns: '6px 1fr' }}>
+                      {/* Colored left bar */}
+                      <div
+                        className="self-stretch"
+                        style={{ background: isFuture ? '#0e7ea8' : '#8aaabb' }}
+                      />
+                      <div className="p-3.5">
+                        <Link
+                          href={`/event/${ev.eventUrl}`}
+                          className="font-semibold text-[14px] block mb-1.5 hover:underline"
+                          style={{ color: '#0f1f2e' }}
+                        >
+                          {ev.eventName}
+                        </Link>
+                        <div className="flex flex-wrap gap-2 items-center">
+                          <span
+                            className="flex items-center gap-1 text-[12px]"
+                            style={{ color: '#3d5a70' }}
+                          >
+                            <svg
+                              className="w-3 h-3 shrink-0"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="#8aaabb"
+                              strokeWidth="2"
+                            >
+                              <rect x="3" y="4" width="18" height="18" rx="2" />
+                              <line x1="16" y1="2" x2="16" y2="6" />
+                              <line x1="8" y1="2" x2="8" y2="6" />
+                              <line x1="3" y1="10" x2="21" y2="10" />
+                            </svg>
+                            {ev.eventDate
+                              ? format.dateTime(ev.eventDate, { dateStyle: 'medium' })
+                              : t('noDate')}
+                          </span>
+                          <span
+                            className="flex items-center gap-1 text-[12px]"
+                            style={{ color: '#3d5a70' }}
+                          >
+                            <svg
+                              className="w-3 h-3 shrink-0"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="#8aaabb"
+                              strokeWidth="2"
+                            >
+                              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                            </svg>
+                            {convertMtoKm(ev.ticket.distance)}
+                          </span>
+                        </div>
+                        <span
+                          className="inline-block mt-2 text-[11px] font-semibold px-2 py-0.5 rounded-full"
+                          style={
+                            isFuture
+                              ? { background: '#e8f8f0', color: '#1a9950' }
+                              : { background: '#f0fafd', color: '#0e7ea8' }
+                          }
+                        >
+                          {ev.ticket.name}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+      </div>
 
       {showPagination && (
         <FrontPagination
           page={currentPage}
           totalPages={totalPages}
-          onPreviousClick={setCurrentPage}
+          totalDocs={filteredCount || userEvents.length}
+          perPage={PAGE_SIZE}
           onPageClick={setCurrentPage}
-          onNextClick={setCurrentPage}
+          className="mt-3"
         />
       )}
     </article>

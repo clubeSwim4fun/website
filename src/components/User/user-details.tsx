@@ -1,108 +1,149 @@
+'use client'
+
 import { User } from '@/payload-types'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { useState } from 'react'
 import flags from 'react-phone-number-input/flags'
-import { getFormatter, getLocale, getTranslations } from 'next-intl/server'
-import { getCountryCode } from '@/helpers/userHelper'
+import { useFormatter, useTranslations } from 'next-intl'
 import { UserUpdateForm } from './user-update-form'
 
 const FlagComponent = ({ country, countryName }: { country: string; countryName: string }) => {
   const Flag = flags[country as keyof typeof flags]
-
   return (
-    <span className="flex h-4 w-6 overflow-hidden rounded-sm bg-foreground/20 [&_svg]:size-full">
+    <span className="inline-flex h-4 w-6 overflow-hidden rounded-sm [&_svg]:size-full">
       {Flag && <Flag title={countryName} />}
     </span>
   )
 }
 
-export const UserDetails: React.FC<{ user: User }> = async (props) => {
-  const { user } = props
-  const t = await getTranslations('User.Details')
-  const locale = await getLocale()
-  const format = await getFormatter({ locale })
+const InfoField: React.FC<{ label: string; value?: React.ReactNode; fullWidth?: boolean }> = ({
+  label,
+  value,
+  fullWidth,
+}) => (
+  <div className={fullWidth ? 'col-span-2 sm:col-span-3' : ''}>
+    <div
+      className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[.7px] mb-1"
+      style={{ color: '#8aaabb' }}
+    >
+      {label}
+    </div>
+    <div className="text-[14px] font-medium" style={{ color: '#0f1f2e' }}>
+      {value ?? '—'}
+    </div>
+  </div>
+)
+
+type Tab = 'personal' | 'address'
+
+type Props = {
+  user: User
+  countryCode: string
+}
+
+export const UserDetails: React.FC<Props> = ({ user, countryCode }) => {
+  const t = useTranslations('User.Details')
+  const format = useFormatter()
+  const [activeTab, setActiveTab] = useState<Tab>('personal')
   const nationality = user.nationality as string
-  const countryCode = (await getCountryCode(nationality)) || 'PT'
 
   return (
-    <article className="flex flex-col gap-4 w-full justify-center items-center lg:items-start">
-      <h1 className="text-center lg:text-left text-2xl md:text-4xl lg:text-7xl text-blueSwim font-bold font-serif uppercase">{`${user.name} ${user.surname}`}</h1>
+    <div>
+      {/* Tab switcher — full width on mobile, inline on desktop */}
+      <div className="flex gap-1.5 mb-3 sm:mb-5">
+        {(['personal', 'address'] as Tab[]).map((tab) => {
+          const label = tab === 'personal' ? t('myData') : t('myAddress')
+          const isActive = activeTab === tab
+          return (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className="flex-1 sm:flex-none px-4 py-2 rounded-[10px] text-[13px] font-medium transition-all"
+              style={
+                isActive
+                  ? {
+                      background: 'linear-gradient(135deg, #0a4a6e, #0e7ea8)',
+                      color: '#fff',
+                      fontWeight: 600,
+                      border: '1.5px solid transparent',
+                    }
+                  : {
+                      color: '#3d5a70',
+                      background: '#fff',
+                      border: '1.5px solid #d4eaf2',
+                    }
+              }
+            >
+              {label}
+            </button>
+          )
+        })}
+      </div>
 
-      <Tabs defaultValue="myData" className="w-auto lg:w-full">
-        <TabsList className="w-full bg-transparent gap-6 justify-between items-center">
-          <div className="flex justify-start items-start">
-            <TabsTrigger value="myData">{t('myData')}</TabsTrigger>
-            {user.Address && <TabsTrigger value="myAddress">{t('myAddress')}</TabsTrigger>}
-          </div>
+      {/* Info card */}
+      <div
+        className="relative rounded-[14px] p-4 sm:p-6"
+        style={{ background: '#fff', border: '2px solid #d4eaf2' }}
+      >
+        {/* Edit button — top right, desktop only (mobile has it in the hero) */}
+        <div className="hidden sm:block absolute top-4 right-4 sm:top-5 sm:right-5">
           <UserUpdateForm user={user} />
-        </TabsList>
-        <TabsContent value="myData" className="grid grid-flow-col lg:grid-flow-row gap-4 text-sm">
-          <div className="grid lg:grid-cols-12 gap-4">
-            <div className="col-span-4 flex flex-col">
-              <strong className="uppercase">{t('nif')}</strong>
-              {user.nif ?? '—'}
-            </div>
-            <div className="col-span-4 flex flex-col">
-              <strong className="capitalize">{t('identity')}</strong>
-              {user.identity ?? '—'}
-            </div>
-            <div className="col-span-4 flex flex-col">
-              <strong className="capitalize">{t('email')}</strong>
-              {user.email}
-            </div>
-          </div>
-          {/* Second line */}
-          <div className="grid lg:grid-cols-12 gap-4">
-            <div className="col-span-4 flex flex-col">
-              <strong className="capitalize">{t('nationality')}</strong>
-              <FlagComponent country={countryCode} countryName={nationality} />
-            </div>
-            {user.birthDate && (
-              <div className="col-span-4 flex flex-col">
-                <strong className="capitalize">{t('birthday')}</strong>
-                {format.dateTime(new Date(user.birthDate))}
-              </div>
-            )}
-            <div className="col-span-4 flex flex-col">
-              <strong className="capitalize">{t('phone')}</strong>
-              {user.phone ?? '—'}
-            </div>
-            <div className="col-span-4 flex flex-col">
-              <strong className="capitalize">{t('gender')}</strong>
-              {typeof user.gender === 'object' ? user.gender?.value : user.gender}
-            </div>
-          </div>
-        </TabsContent>
-        {user.Address && (
-          <TabsContent
-            value="myAddress"
-            className="grid grid-flow-col lg:grid-flow-row gap-4 text-sm"
-          >
-            <div className="grid lg:grid-cols-12 gap-4">
-              <div className="col-span-4 flex flex-col">
-                <strong className="capitalize">{t('street')}</strong>
-                {user.Address.street}
-              </div>
-              <div className="col-span-4 flex flex-col">
-                <strong className="capitalize">{t('number')}</strong>
-                {user.Address.number}
-              </div>
-              <div className="col-span-4 flex flex-col">
-                <strong className="capitalize">{t('state')}</strong>
-                {user.Address.state}
-              </div>
-            </div>
-            {/* Second line */}
-            <div className="grid lg:grid-cols-12 gap-4">
+        </div>
+
+        {activeTab === 'personal' && (
+          <>
+            {/* 2-col on mobile, 3-col on desktop */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 sm:gap-x-6 gap-y-4 sm:gap-y-5 sm:pr-20">
+              <InfoField label={t('nif')} value={user.nif} />
+              <InfoField label={t('identity')} value={user.identity} />
+              <InfoField
+                label={t('nationality')}
+                value={
+                  nationality ? (
+                    <span className="inline-flex items-center gap-1.5">
+                      <FlagComponent country={countryCode} countryName={nationality} />
+                      {nationality}
+                    </span>
+                  ) : undefined
+                }
+              />
               {user.birthDate && (
-                <div className="col-span-4 flex flex-col">
-                  <strong className="capitalize">{t('zipcode')}</strong>
-                  {user.Address.zipcode}
-                </div>
+                <InfoField
+                  label={t('birthday')}
+                  value={format.dateTime(new Date(user.birthDate), { dateStyle: 'medium' })}
+                />
               )}
+              <InfoField
+                label={t('gender')}
+                value={
+                  typeof user.gender === 'object' ? user.gender?.value : (user.gender ?? undefined)
+                }
+              />
+              <InfoField label={t('phone')} value={user.phone} />
             </div>
-          </TabsContent>
+            {/* Email full-width below divider on mobile */}
+            <div className="mt-4 pt-4 sm:hidden" style={{ borderTop: '1px solid #d4eaf2' }}>
+              <InfoField label={t('email')} value={user.email} />
+            </div>
+            {/* Email in grid on desktop */}
+            <div className="hidden sm:block mt-5">
+              <div className="grid grid-cols-3 gap-x-6">
+                <InfoField label={t('email')} value={user.email} />
+              </div>
+            </div>
+          </>
         )}
-      </Tabs>
-    </article>
+
+        {activeTab === 'address' && (
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 sm:gap-x-6 gap-y-4 sm:gap-y-5 sm:pr-20">
+            {/* Street full-width on mobile */}
+            <div className="col-span-2 sm:col-span-1">
+              <InfoField label={t('street')} value={user.Address?.street} />
+            </div>
+            <InfoField label={t('state')} value={user.Address?.state} />
+            <InfoField label={t('zipcode')} value={user.Address?.zipcode} />
+          </div>
+        )}
+      </div>
+    </div>
   )
 }

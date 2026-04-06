@@ -9,7 +9,7 @@ import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/s
 import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { updateUserData } from '@/helpers/userHelper'
-import { Loader, Pencil } from 'lucide-react'
+import { Loader } from 'lucide-react'
 import { useState } from 'react'
 
 export type UserFormData = {
@@ -57,8 +57,10 @@ export const UserUpdateForm: React.FC<{ user: User }> = (props) => {
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger>
-        <Pencil className="w-4 h-4" />
+      <SheetTrigger asChild>
+        <button className="text-[12px] font-medium px-3 py-1.5 rounded-lg transition-all border border-white text-white bg-white/30 sm:border-[1.5px] sm:border-[#d4eaf2] sm:text-[#0e7ea8] sm:bg-transparent sm:hover:bg-[#e0f5fb] sm:hover:border-[#3bb8d8]">
+          ✏️ {t('User.Details.editProfile')}
+        </button>
       </SheetTrigger>
       <SheetContent className="overflow-y-auto">
         <SheetTitle>{t('User.Details.editProfile')}</SheetTitle>
