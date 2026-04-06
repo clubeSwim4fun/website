@@ -129,6 +129,62 @@ export const createOrder = async (locale: TypedLocale, stripePaymentIntentId: st
       console.error('Order confirmation email failed:', emailError)
     }
 
+    // Fire-and-forget invoice creation
+    ;(async () => {
+      try {
+        const { createDraftInvoice } = await import('@/helpers/invoiceHelper')
+
+        // Aggregate line items: one per distinct eventTitle+ticketName pair
+        const lineItemMap = new Map<
+          string,
+          {
+            name: string
+            description: string
+            unit_price: string
+            quantity: number
+            tax: { name: 'IVA0' }
+          }
+        >()
+        cart?.items?.forEach((item) => {
+          const ticket = item.selectedTicket as Ticket
+          const eventFor = ticket.eventFor as Event
+          const key = `${eventFor.title}__${ticket.name}`
+          const existing = lineItemMap.get(key)
+          if (existing) {
+            existing.quantity += 1
+          } else {
+            lineItemMap.set(key, {
+              name: typeof eventFor.title === 'string' ? eventFor.title : String(eventFor.title),
+              description: typeof ticket.name === 'string' ? ticket.name : String(ticket.name),
+              unit_price: ticket.price.toFixed(2),
+              quantity: 1,
+              tax: { name: 'IVA0' },
+            })
+          }
+        })
+
+        const fullUser = await payload.findByID({
+          collection: 'users',
+          id: typeof cart.user === 'string' ? cart.user : cart.user!.id,
+        })
+
+        await createDraftInvoice({
+          user: {
+            name: fullUser.name,
+            surname: fullUser.surname,
+            email: fullUser.email,
+            associateId: fullUser.associateId ?? '',
+            nif: fullUser.nif,
+          },
+          lineItems: Array.from(lineItemMap.values()),
+          context: 'order',
+          stripePaymentIntentId,
+        })
+      } catch (err) {
+        console.error('[createOrder] Invoice creation failed:', err)
+      }
+    })()
+
     return {
       success: true,
       message: 'Order created successfully',

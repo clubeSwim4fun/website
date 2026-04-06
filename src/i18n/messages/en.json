@@ -235,6 +235,7 @@
   },
   "Subscription": {
     "title": "Subscription Payment",
+    "invoiceItemName": "Club Membership Fee",
     "userTitle": "Hello {username},",
     "description": "you have to pay: {price, number, currency}",
     "descriptionDate": "corresponding to: {dateRange}",

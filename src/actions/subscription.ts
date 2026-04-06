@@ -97,6 +97,54 @@ export const createSubscription = async (
         }
       })()
 
+      // Fire-and-forget invoice creation
+      ;(async () => {
+        try {
+          const { createDraftInvoice } = await import('@/helpers/invoiceHelper')
+          const fees = globalConfig.associationFees
+          const isFirstPayment = user?.status === 'pendingPayment'
+          const monthlyAmount =
+            amount - (isFirstPayment && fees?.registrationFee ? fees.registrationFee : 0)
+
+          const lineItems: Parameters<typeof createDraftInvoice>[0]['lineItems'] = []
+
+          if (isFirstPayment && fees?.registrationFee) {
+            lineItems.push({
+              name: 'Jóia',
+              description: 'Quota de inscrição (pagamento único anual)',
+              unit_price: fees.registrationFee.toFixed(2),
+              quantity: 1,
+              tax: { name: 'IVA0' },
+            })
+          }
+
+          lineItems.push({
+            name: 'Quota de sócio',
+            description: `${startDate.toISOString().slice(0, 10)} – ${endDate.toISOString().slice(0, 10)}`,
+            unit_price: monthlyAmount.toFixed(2),
+            quantity: 1,
+            tax: { name: 'IVA0' },
+          })
+
+          await createDraftInvoice({
+            user: {
+              name: user!.name,
+              surname: user!.surname,
+              email: user!.email,
+              associateId: user!.associateId ?? '',
+              nif: user!.nif,
+            },
+            lineItems,
+            context: 'subscription',
+            stripePaymentIntentId,
+          })
+        } catch (err) {
+          payload.logger.error(
+            `[createSubscription] Invoice creation failed: ${JSON.stringify(err)}`,
+          )
+        }
+      })()
+
       return {
         success: true,
         message: 'subscription added',

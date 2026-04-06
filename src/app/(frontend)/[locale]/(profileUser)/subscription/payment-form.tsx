@@ -47,9 +47,13 @@ export const PaymentForm: React.FC<Args> = ({ user, associationFees }) => {
   const stripeCustomer = useMemo(
     () =>
       user?.name && user?.email
-        ? { name: `${user.name} ${user.surname ?? ''}`.trim(), email: user.email }
+        ? {
+            name: `${user.name} ${user.surname ?? ''}`.trim(),
+            email: user.email,
+            taxNumber: user.nif ?? undefined,
+          }
         : undefined,
-    [user?.name, user?.surname, user?.email],
+    [user?.name, user?.surname, user?.email, user?.nif],
   )
 
   useEffect(() => {
@@ -95,8 +99,8 @@ export const PaymentForm: React.FC<Args> = ({ user, associationFees }) => {
 
   // Stripe expects integer cents
   const amountCents = Math.round(fees.amount * 100)
-  // Plain string — the translation key uses currency formatting which errors outside next-intl context
-  const stripeDescription = `Subscription - ${user?.name ?? ''} ${user?.surname ?? ''}`
+  // Plain string — used as the invoice item name in InvoiceXpress
+  const stripeDescription = t('Subscription.invoiceItemName')
   const returnUrl = `${getClientSideURL()}/${locale}/subscription/order-generation`
 
   return (

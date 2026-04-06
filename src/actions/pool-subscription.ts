@@ -113,6 +113,52 @@ export async function createPoolSubscription(
       }
     })()
 
+    // Fire-and-forget invoice creation
+    ;(async () => {
+      try {
+        const { createDraftInvoice } = await import('@/helpers/invoiceHelper')
+        const monthNames = [
+          'Janeiro',
+          'Fevereiro',
+          'Março',
+          'Abril',
+          'Maio',
+          'Junho',
+          'Julho',
+          'Agosto',
+          'Setembro',
+          'Outubro',
+          'Novembro',
+          'Dezembro',
+        ]
+        const monthLabel = cycle.month ? monthNames[(cycle.month as number) - 1] : ''
+        await createDraftInvoice({
+          user: {
+            name: user!.name,
+            surname: user!.surname,
+            email: user!.email,
+            associateId: user!.associateId ?? '',
+            nif: user!.nif,
+          },
+          lineItems: [
+            {
+              name: 'Quota de piscina',
+              description: `${monthLabel} ${cycle.year ?? ''}`,
+              unit_price: (cycle.price ?? 0).toFixed(2),
+              quantity: 1,
+              tax: { name: 'IVA0' },
+            },
+          ],
+          context: 'subscription',
+          stripePaymentIntentId,
+        })
+      } catch (err) {
+        payload.logger.error(
+          `[createPoolSubscription] Invoice creation failed: ${JSON.stringify(err)}`,
+        )
+      }
+    })()
+
     return { success: true, subscriptionId: response.id }
   } catch (error) {
     await payload.db.rollbackTransaction(transactionID)

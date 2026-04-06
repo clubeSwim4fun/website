@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { loadStripe } from '@stripe/stripe-js'
 import { Elements, PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js'
-import { createPaymentIntent } from '@/helpers/stripeHelper'
+import { createPaymentIntent, LineItem } from '@/helpers/stripeHelper'
 import { Button } from '@/components/ui/button'
 import { Loader } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
@@ -20,7 +20,8 @@ export type StripePaymentFormProps = {
   amount: number
   description?: string
   metadata?: Record<string, string>
-  customer?: { name: string; email: string }
+  customer?: { name: string; email: string; taxNumber?: string }
+  lineItems?: LineItem[]
   onSuccess: (paymentIntentId: string) => Promise<void>
   payButtonLabel?: string
   returnUrl?: string
@@ -118,6 +119,7 @@ export const StripePaymentForm: React.FC<StripePaymentFormProps> = ({
   description,
   metadata,
   customer,
+  lineItems,
   onSuccess,
   payButtonLabel,
   returnUrl,
@@ -132,7 +134,7 @@ export const StripePaymentForm: React.FC<StripePaymentFormProps> = ({
     if (initialized.current) return
     initialized.current = true
 
-    createPaymentIntent({ amount, description, metadata, customer }).then((result) => {
+    createPaymentIntent({ amount, description, metadata, customer, lineItems }).then((result) => {
       if (result.error) {
         setInitError(result.error)
         return

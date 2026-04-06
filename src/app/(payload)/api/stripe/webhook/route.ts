@@ -69,6 +69,74 @@ async function handlePaymentSuccess(
       id: recordId,
       data: { paymentStatus: 'paid', stripePaymentIntentId: intent.id },
     })
+
+    // Fire-and-forget invoice creation
+    ;(async () => {
+      try {
+        const { createDraftInvoice } = await import('@/helpers/invoiceHelper')
+
+        const order = await payload.findByID({
+          collection: 'orders',
+          id: recordId,
+          depth: 3,
+        })
+
+        const user =
+          typeof order.user === 'string'
+            ? await payload.findByID({ collection: 'users', id: order.user })
+            : order.user
+
+        const lineItemMap = new Map<
+          string,
+          {
+            name: string
+            description: string
+            unit_price: string
+            quantity: number
+            tax: { name: 'IVA0' }
+          }
+        >()
+        order.events?.forEach((eventEntry) => {
+          const event = eventEntry.event as { title?: string } | null
+          eventEntry.tickets?.forEach((ticketEntry) => {
+            const ticket = ticketEntry.ticket as { name?: string; price?: number } | null
+            if (!event || !ticket) return
+            const eventTitle =
+              typeof event.title === 'string' ? event.title : String(event.title ?? '')
+            const ticketName =
+              typeof ticket.name === 'string' ? ticket.name : String(ticket.name ?? '')
+            const key = `${eventTitle}__${ticketName}`
+            const existing = lineItemMap.get(key)
+            if (existing) {
+              existing.quantity += 1
+            } else {
+              lineItemMap.set(key, {
+                name: eventTitle,
+                description: ticketName,
+                unit_price: (ticket.price ?? 0).toFixed(2),
+                quantity: 1,
+                tax: { name: 'IVA0' },
+              })
+            }
+          })
+        })
+
+        await createDraftInvoice({
+          user: {
+            name: user.name,
+            surname: user.surname,
+            email: user.email,
+            associateId: user.associateId ?? '',
+            nif: user.nif,
+          },
+          lineItems: Array.from(lineItemMap.values()),
+          context: 'order',
+          stripePaymentIntentId: intent.id,
+        })
+      } catch (err) {
+        console.error('[webhook] Invoice creation failed:', err)
+      }
+    })()
   }
 
   if (type === 'subscription') {
@@ -77,6 +145,94 @@ async function handlePaymentSuccess(
       id: recordId,
       data: { paymentStatus: 'paid', stripePaymentIntentId: intent.id },
     })
+
+    // Fire-and-forget invoice creation
+    ;(async () => {
+      try {
+        const { createDraftInvoice } = await import('@/helpers/invoiceHelper')
+
+        const subscription = await payload.findByID({
+          collection: 'subscription',
+          id: recordId,
+          depth: 1,
+        })
+
+        const user =
+          typeof subscription.user === 'string'
+            ? await payload.findByID({ collection: 'users', id: subscription.user })
+            : subscription.user
+
+        if (!user) return
+
+        const startDate = subscription.startDate ? subscription.startDate.slice(0, 10) : ''
+        const endDate = subscription.endDate ? subscription.endDate.slice(0, 10) : ''
+
+        // Check if this is the user's first subscription (registration fee included)
+        const { getCachedGlobal } = await import('@/utilities/getGlobals')
+        const globalConfig = (await getCachedGlobal(
+          'generalConfigs',
+          1,
+          'pt',
+        )()) as import('@/payload-types').GeneralConfig
+        const registrationFee = globalConfig?.associationFees?.registrationFee ?? 0
+
+        const previousSubs = await payload.find({
+          collection: 'subscription',
+          where: {
+            and: [
+              {
+                user: {
+                  equals:
+                    typeof subscription.user === 'string'
+                      ? subscription.user
+                      : subscription.user?.id,
+                },
+              },
+              { id: { not_equals: recordId } },
+              { type: { equals: 'memberFee' } },
+            ],
+          },
+          limit: 1,
+        })
+        const isFirstPayment = previousSubs.totalDocs === 0 && registrationFee > 0
+        const monthlyAmount = isFirstPayment
+          ? (subscription.amount ?? 0) - registrationFee
+          : (subscription.amount ?? 0)
+
+        const lineItems: Parameters<typeof createDraftInvoice>[0]['lineItems'] = []
+        if (isFirstPayment) {
+          lineItems.push({
+            name: 'Jóia',
+            description: 'Quota de inscrição (pagamento único anual)',
+            unit_price: registrationFee.toFixed(2),
+            quantity: 1,
+            tax: { name: 'IVA0' },
+          })
+        }
+        lineItems.push({
+          name: 'Quota de sócio',
+          description: `${startDate} – ${endDate}`,
+          unit_price: monthlyAmount.toFixed(2),
+          quantity: 1,
+          tax: { name: 'IVA0' },
+        })
+
+        await createDraftInvoice({
+          user: {
+            name: user.name,
+            surname: user.surname,
+            email: user.email,
+            associateId: user.associateId ?? '',
+            nif: user.nif,
+          },
+          lineItems,
+          context: 'subscription',
+          stripePaymentIntentId: intent.id,
+        })
+      } catch (err) {
+        console.error('[webhook] Invoice creation failed:', err)
+      }
+    })()
   }
 
   if (type === 'group-subscription') {
@@ -85,6 +241,54 @@ async function handlePaymentSuccess(
       id: recordId,
       data: { transactionId: intent.id },
     })
+
+    // Fire-and-forget invoice creation
+    ;(async () => {
+      try {
+        const { createDraftInvoice } = await import('@/helpers/invoiceHelper')
+
+        const record = await payload.findByID({
+          collection: 'group-subscription',
+          id: recordId,
+          depth: 2,
+        })
+
+        const group = record.group as {
+          title?: string
+          subscriptionPrice?: number
+          subscriptionPeriod?: string
+        }
+        const user =
+          typeof record.user === 'string'
+            ? await payload.findByID({ collection: 'users', id: record.user })
+            : record.user
+
+        const period = group.subscriptionPeriod === 'monthly' ? 'mensal' : 'anual'
+
+        await createDraftInvoice({
+          user: {
+            name: user.name,
+            surname: user.surname,
+            email: user.email,
+            associateId: user.associateId ?? '',
+            nif: user.nif,
+          },
+          lineItems: [
+            {
+              name: group.title ?? '',
+              description: `Subscrição ${period} — ${group.title ?? ''}`,
+              unit_price: (group.subscriptionPrice ?? 0).toFixed(2),
+              quantity: 1,
+              tax: { name: 'IVA0' },
+            },
+          ],
+          context: 'group-subscription',
+          stripePaymentIntentId: intent.id,
+        })
+      } catch (err) {
+        console.error('[webhook] Invoice creation failed:', err)
+      }
+    })()
   }
 
   if (type === 'pool-subscription') {
@@ -93,6 +297,64 @@ async function handlePaymentSuccess(
       id: recordId,
       data: { paymentStatus: 'paid', status: 'active', stripePaymentIntentId: intent.id },
     })
+
+    // Fire-and-forget invoice creation
+    ;(async () => {
+      try {
+        const { createDraftInvoice } = await import('@/helpers/invoiceHelper')
+
+        const record = await payload.findByID({
+          collection: 'pool-subscriptions',
+          id: recordId,
+          depth: 2,
+        })
+
+        const cycle = record.cycle as { month?: number; year?: number; price?: number } | null
+        const user =
+          typeof record.athlete === 'string'
+            ? await payload.findByID({ collection: 'users', id: record.athlete })
+            : record.athlete
+
+        const monthNames = [
+          'Janeiro',
+          'Fevereiro',
+          'Março',
+          'Abril',
+          'Maio',
+          'Junho',
+          'Julho',
+          'Agosto',
+          'Setembro',
+          'Outubro',
+          'Novembro',
+          'Dezembro',
+        ]
+        const monthLabel = cycle?.month ? monthNames[cycle.month - 1] : ''
+
+        await createDraftInvoice({
+          user: {
+            name: user.name,
+            surname: user.surname,
+            email: user.email,
+            associateId: user.associateId ?? '',
+            nif: user.nif,
+          },
+          lineItems: [
+            {
+              name: 'Quota de piscina',
+              description: `${monthLabel} ${cycle?.year ?? ''}`,
+              unit_price: (cycle?.price ?? 0).toFixed(2),
+              quantity: 1,
+              tax: { name: 'IVA0' },
+            },
+          ],
+          context: 'subscription',
+          stripePaymentIntentId: intent.id,
+        })
+      } catch (err) {
+        console.error('[webhook] Pool subscription invoice creation failed:', err)
+      }
+    })()
   }
 }
 

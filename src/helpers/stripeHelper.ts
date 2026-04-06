@@ -2,6 +2,16 @@
 
 import Stripe from 'stripe'
 
+export type LineItem = {
+  /** Item name — maps to event title */
+  name: string
+  /** Item description — maps to ticket name */
+  description: string
+  /** Unit price in EUR (not cents) */
+  price: number
+  quantity: number
+}
+
 export type CreatePaymentIntentArgs = {
   amount: number // in EUR cents
   currency?: string
@@ -10,7 +20,10 @@ export type CreatePaymentIntentArgs = {
   customer?: {
     name: string
     email: string
+    taxNumber?: string
   }
+  /** Structured line items for InvoiceXpress (events only) */
+  lineItems?: LineItem[]
 }
 
 export type CreatePaymentIntentResult =
@@ -29,6 +42,7 @@ export async function createPaymentIntent({
   metadata = {},
   description,
   customer,
+  lineItems: _lineItems,
 }: CreatePaymentIntentArgs): Promise<CreatePaymentIntentResult> {
   try {
     const stripe = getStripe()
@@ -43,8 +57,9 @@ export async function createPaymentIntent({
         receipt_email: customer.email,
         metadata: {
           ...metadata,
-          customer_name: customer.name,
-          customer_email: customer.email,
+          client_name: customer.name,
+          client_email: customer.email,
+          ...(customer.taxNumber && { tax_number: customer.taxNumber }),
         },
       }),
     })

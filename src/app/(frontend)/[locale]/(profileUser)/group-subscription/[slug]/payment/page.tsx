@@ -61,6 +61,11 @@ const GroupSubscriptionPage = async ({
         groupSubscriptionId={id}
         groupName={typeof group?.title === 'string' ? group.title : ''}
         locale={locale}
+        customer={{
+          name: `${user.name ?? ''} ${user.surname ?? ''}`.trim(),
+          email: user.email,
+          taxNumber: user.nif ?? undefined,
+        }}
       />
     </section>
   )

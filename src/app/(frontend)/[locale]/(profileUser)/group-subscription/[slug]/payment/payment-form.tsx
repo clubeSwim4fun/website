@@ -13,6 +13,11 @@ type Props = {
   groupSubscriptionId?: string
   groupName: string
   locale: string
+  customer: {
+    name: string
+    email: string
+    taxNumber?: string
+  }
 }
 
 export const PaymentForm: React.FC<Props> = ({
@@ -21,6 +26,7 @@ export const PaymentForm: React.FC<Props> = ({
   groupSubscriptionId,
   groupName,
   locale,
+  customer,
 }) => {
   const router = useRouter()
   const { toast } = useToast()
@@ -43,8 +49,9 @@ export const PaymentForm: React.FC<Props> = ({
       <h1 className="font-bold text-4xl">{groupName}</h1>
       <StripePaymentForm
         amount={amountCents}
-        description={`Group subscription - ${groupName}`}
+        description={groupName}
         metadata={{ type: 'group-subscription', recordId: groupSubscriptionId }}
+        customer={customer}
         onSuccess={handleSuccess}
         returnUrl={`${getClientSideURL()}/${locale}/group-subscription/${groupSlug}`}
       />

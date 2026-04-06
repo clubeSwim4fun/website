@@ -235,6 +235,7 @@
   },
   "Subscription": {
     "title": "Pagamento de Subscrição",
+    "invoiceItemName": "Quota de Sócio",
     "userTitle": "Olá {username},",
     "description": "você tem que pagar: {price, number, currency}",
     "descriptionDate": "referente ao período de: {dateRange}",
