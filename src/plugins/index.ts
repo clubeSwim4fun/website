@@ -27,7 +27,6 @@ import { DatePicker } from '@/blocks/Form/Date/config'
 import { Email } from '@/blocks/Form/Email/config'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { TemplateEmail } from '@/email/template'
-import { replaceFields } from '@/helpers/emailHelper'
 
 const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
   return doc?.title ? `${doc.title} | Payload Website Template` : 'Payload Website Template'
@@ -164,16 +163,9 @@ export const plugins: Plugin[] = [
         ]
       },
     },
-    beforeEmail: (emailsToSend, beforeChangeParams) => {
-      const {
-        data: { submissionData },
-      } = beforeChangeParams
+    beforeEmail: (emailsToSend) => {
       const emailsToSendWithHtmlPromise = Promise.all(
         emailsToSend.map(async (email) => {
-          if (email.to.includes('{email}')) {
-            email.to = email.to.replace('{email}', submissionData.email.value || '')
-          }
-          const sanitinizedHtml = await replaceFields(email.html, submissionData)
           const renderedHtml = await render(
             React.createElement(
               TemplateEmail,
@@ -181,7 +173,7 @@ export const plugins: Plugin[] = [
                 title: email.subject,
                 hideLogo: true,
               },
-              sanitinizedHtml,
+              email.html,
             ),
           )
 

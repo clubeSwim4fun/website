@@ -17,6 +17,7 @@ import { buildFieldMap } from './useFormFields'
 import { useTranslations } from 'next-intl'
 import type { Form } from '@payloadcms/plugin-form-builder/types'
 import { validateNif } from '@/utilities/validateNif'
+import { getClientSideURL } from '@/utilities/getURL'
 
 const STEP_ICONS: Record<StepId, React.ReactNode> = {
   1: <User className="w-5 h-5" />,
@@ -78,8 +79,6 @@ export function RegistrationWizard({ generalConfig, form, submitButtonLabel }: P
   const [submitting, setSubmitting] = useState(false)
   const [done, setDone] = useState(false)
   const [serverError, setServerError] = useState<string | null>(null)
-  const [debugResponse, setDebugResponse] = useState<unknown>(null)
-  const [debugPayload, setDebugPayload] = useState<unknown>(null)
   const cardRef = useRef<HTMLDivElement>(null)
 
   // Scroll to card when step changes, but only from step 2 onwards
@@ -143,8 +142,6 @@ export function RegistrationWizard({ generalConfig, form, submitButtonLabel }: P
 
     setSubmitting(true)
     setServerError(null)
-    setDebugResponse(null)
-    setDebugPayload(null)
     try {
       // Build FormData so File objects are properly serialized to the server action
       const formData = new FormData()
@@ -186,12 +183,44 @@ export function RegistrationWizard({ generalConfig, form, submitButtonLabel }: P
         formData.append('profilePicture', file)
       }
 
-      setDebugPayload(meta)
       const result = await createUser(formData)
-      setDebugResponse(result)
       if (!result.success) {
         setServerError(result.error ?? t('errorServer'))
       } else {
+        // Trigger the form builder's email hooks by creating a form submission record
+        if (form?.id) {
+          try {
+            await fetch(`${getClientSideURL()}/api/form-submissions`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                form: form.id,
+                submissionData: [
+                  { field: 'firstName', value: data.nome },
+                  { field: 'surname', value: data.surname },
+                  { field: 'email', value: data.email },
+                  { field: 'phone', value: data.phone },
+                  { field: 'gender', value: data.gender },
+                  { field: 'birthDate', value: data.birthDate },
+                  { field: 'nationality', value: data.nationality },
+                  { field: 'tshirtSize', value: data.tshirtSize },
+                  { field: 'addressStreet', value: data.addressStreet },
+                  { field: 'addressNumber', value: data.addressNumber },
+                  { field: 'addressState', value: data.addressState },
+                  { field: 'addressZipcode', value: data.addressZipcode },
+                  { field: 'emergencyContact', value: data.emergencyContact },
+                  { field: 'emergencyPhone', value: data.emergencyPhone },
+                  { field: 'identity', value: data.identity },
+                  { field: 'nif', value: data.nif },
+                  { field: 'disability', value: data.disability },
+                  { field: 'heardAboutClub', value: data.heardAboutClub },
+                ],
+              }),
+            })
+          } catch {
+            // email is best-effort — don't block the success state
+          }
+        }
         setDone(true)
       }
     } catch (err) {
@@ -274,17 +303,6 @@ export function RegistrationWizard({ generalConfig, form, submitButtonLabel }: P
           </StepCard>
 
           {serverError && <p className="text-sm text-[#e85d4a] text-center">{serverError}</p>}
-
-          {debugPayload !== null && (
-            <pre className="text-xs bg-muted border border-border rounded-lg p-3 overflow-auto max-h-60 whitespace-pre-wrap break-all">
-              {JSON.stringify(debugPayload, null, 2)}
-            </pre>
-          )}
-          {debugResponse !== null && (
-            <pre className="text-xs bg-muted border border-border rounded-lg p-3 overflow-auto max-h-60 whitespace-pre-wrap break-all">
-              {JSON.stringify(debugResponse, null, 2)}
-            </pre>
-          )}
 
           <div className="flex items-center justify-between">
             {step > 1 ? (

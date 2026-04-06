@@ -178,6 +178,19 @@
       "title": "Your membership needs to be renewed",
       "description": "The annual renewal period has started. Please complete your payment to reactivate your account and continue enjoying club benefits.",
       "button": "Renew Membership"
+    },
+    "OrderConfirmation": {
+      "subject": "Order confirmation: {eventName}"
+    },
+    "SubscriptionConfirmation": {
+      "subject": "Subscription confirmed",
+      "title": "Your subscription is confirmed",
+      "description": "Your payment was successfully processed. Here are your subscription details:",
+      "period": "Period",
+      "amount": "Amount paid",
+      "status": "Status",
+      "paid": "Paid",
+      "footer": "Thank you for being part of Clube Swim4Fun!"
     }
   },
   "Order": {

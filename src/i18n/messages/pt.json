@@ -178,6 +178,19 @@
       "title": "A sua inscrição precisa de ser renovada",
       "description": "O período de renovação anual começou. Por favor, efetue o pagamento para reativar a sua conta e continuar a usufruir dos benefícios do clube.",
       "button": "Renovar Inscrição"
+    },
+    "OrderConfirmation": {
+      "subject": "Confirmação de encomenda: {eventName}"
+    },
+    "SubscriptionConfirmation": {
+      "subject": "Subscrição confirmada",
+      "title": "A sua subscrição está confirmada",
+      "description": "O seu pagamento foi processado com sucesso. Aqui estão os detalhes da sua subscrição:",
+      "period": "Período",
+      "amount": "Valor pago",
+      "status": "Estado",
+      "paid": "Pago",
+      "footer": "Obrigado por fazer parte do Clube Swim4Fun!"
     }
   },
   "Order": {

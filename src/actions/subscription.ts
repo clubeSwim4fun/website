@@ -6,7 +6,10 @@ import config from '@payload-config'
 import { getMeUser } from '@/utilities/getMeUser'
 import { getUserPaymentAmount } from '@/helpers/userHelper'
 import { getCachedGlobal } from '@/utilities/getGlobals'
-import { GeneralConfig } from '@/payload-types'
+import { GeneralConfig, Subscription } from '@/payload-types'
+import { sendEmail } from '@/helpers/emailHelper'
+import { render } from '@react-email/components'
+import React from 'react'
 
 type responseType = {
   success: boolean
@@ -69,6 +72,30 @@ export const createSubscription = async (
       })
 
       await payload.db.commitTransaction(transactionID)
+
+      // Fire-and-forget confirmation email
+      ;(async () => {
+        try {
+          const { SubscriptionConfirmationEmail } = await import('@/email/subscriptionConfirmation')
+          const emailHtml = await render(
+            React.createElement(SubscriptionConfirmationEmail, {
+              subscription: response as Subscription,
+              locale,
+            }),
+          )
+          const emailT = await getTranslations({
+            locale: locale as TypedLocale,
+            namespace: 'Email',
+          })
+          await sendEmail({
+            to: user!.email,
+            subject: emailT('SubscriptionConfirmation.subject'),
+            emailHtml,
+          })
+        } catch (emailError) {
+          payload.logger.error(`[createSubscription] Email failed: ${JSON.stringify(emailError)}`)
+        }
+      })()
 
       return {
         success: true,

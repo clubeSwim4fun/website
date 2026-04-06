@@ -9,6 +9,8 @@ import { revalidatePath } from 'next/cache'
 import { render } from '@react-email/components'
 import { OrderConfirmationEmail } from '@/email/orderConfirmationEmail'
 import { sendEmail } from '@/helpers/emailHelper'
+import { getMeUser } from '@/utilities/getMeUser'
+import { getTranslations } from 'next-intl/server'
 import React from 'react'
 
 type eventTicket = {
@@ -21,6 +23,8 @@ type eventTicket = {
 export const createOrder = async (locale: TypedLocale, stripePaymentIntentId: string) => {
   // TODO integrate with payment gateway
 
+  const { user } = await getMeUser()
+  const t = await getTranslations({ locale, namespace: 'Email' })
   const cart = await getMyCart()
   // const payload = await getPayload({ config })
 
@@ -112,13 +116,14 @@ export const createOrder = async (locale: TypedLocale, stripePaymentIntentId: st
 
     // Email is best-effort — don't let it fail the order
     try {
+      const firstEventTitle = Object.keys(eventsTickets)[0] ?? ''
       const emailHtml = await render(
         React.createElement(OrderConfirmationEmail, { order: response }),
       )
       await sendEmail({
         emailHtml,
-        subject: 'test Order confirmation',
-        to: '',
+        subject: t('OrderConfirmation.subject', { eventName: firstEventTitle }),
+        to: user?.email ?? '',
       })
     } catch (emailError) {
       console.error('Order confirmation email failed:', emailError)
