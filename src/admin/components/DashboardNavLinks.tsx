@@ -16,7 +16,7 @@ export default function DashboardNavLinks() {
 
   if (!isAdmin) return null
 
-  const t = labels[i18n.language in labels ? i18n.language : 'en']
+  const t = labels[i18n.language in labels ? i18n.language : 'en'] ?? labels['en']!
 
   return (
     <NavGroup label="Dashboards">

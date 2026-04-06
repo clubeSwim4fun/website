@@ -157,8 +157,9 @@ export const dashboardPool: Endpoint = {
       if (!dayMap[slot.day]) {
         dayMap[slot.day] = { totalRegistered: 0, totalCapacity: 0 }
       }
-      dayMap[slot.day].totalRegistered += regCountBySlot[slot.slotId] ?? 0
-      dayMap[slot.day].totalCapacity += slot.maxAttendance
+      const entry = dayMap[slot.day]!
+      entry.totalRegistered += regCountBySlot[slot.slotId] ?? 0
+      entry.totalCapacity += slot.maxAttendance
     }
     const slotFillRate = Object.entries(dayMap).map(
       ([day, { totalRegistered, totalCapacity }]) => ({
