@@ -18,8 +18,6 @@ const GroupSubscriptionPage = async ({
   const { locale, slug } = await params
   const userObject = await getMeUser({ invalidateCache: true })
 
-  console.log('slug', slug)
-
   const groupConfig = await payload.find({
     collection: 'groups',
     where: {

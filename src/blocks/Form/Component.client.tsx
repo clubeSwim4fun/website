@@ -47,12 +47,19 @@ export const FormBlockClient: React.FC<
   const {
     enableIntro,
     form: formFromProps,
-    form: { id: formID, confirmationMessage, confirmationType, redirect, submitButtonLabel } = {},
     introContent,
     isRegistrationForm,
     generalConfigData,
     onSubmit: onSubmitFromProps,
   } = props
+
+  const {
+    id: formID,
+    confirmationMessage,
+    confirmationType,
+    redirect,
+    submitButtonLabel,
+  } = formFromProps || {}
 
   const formMethods = useForm({
     defaultValues: formFromProps?.fields,

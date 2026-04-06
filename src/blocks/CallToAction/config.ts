@@ -8,11 +8,13 @@ import {
 } from '@payloadcms/richtext-lexical'
 
 import { linkGroup } from '../../fields/linkGroup'
+import { blockVisibilityDynamicField } from '@/fields/blockVisibilityDynamic'
 
 export const CallToAction: Block = {
   slug: 'cta',
   interfaceName: 'CallToActionBlock',
   fields: [
+    blockVisibilityDynamicField,
     {
       name: 'richText',
       localized: true,

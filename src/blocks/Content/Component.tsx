@@ -24,8 +24,6 @@ export const ContentBlock: React.FC<ContentBlockProps> = (props) => {
           columns.map((col, index) => {
             const { enableLink, link, richText, size, verticalAlignment } = col
 
-            console.log('verticalAlignment', verticalAlignment)
-
             return (
               <div
                 className={cn(

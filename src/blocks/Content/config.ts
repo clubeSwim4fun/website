@@ -1,6 +1,7 @@
 import type { Block, Field } from 'payload'
 import { link } from '@/fields/link'
 import { defaultLexical } from '@/fields/defaultLexical'
+import { blockVisibilityDynamicField } from '@/fields/blockVisibilityDynamic'
 
 const columnFields: Field[] = [
   {
@@ -90,6 +91,7 @@ export const Content: Block = {
   slug: 'content',
   interfaceName: 'ContentBlock',
   fields: [
+    blockVisibilityDynamicField,
     {
       name: 'columns',
       type: 'array',

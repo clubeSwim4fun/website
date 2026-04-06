@@ -63,7 +63,6 @@ export const UserFieldsUpdateForm: React.FC<{
   })
 
   const onSubmit: SubmitHandler<UserFormData> = async (data) => {
-    console.log('Submitting user data update:', data)
     await updateUserData({ data, user: user, isRegistrationFix: true })
     setOpen(false)
   }

@@ -1,11 +1,13 @@
 import type { Block } from 'payload'
 
 import { defaultLexical } from '@/fields/defaultLexical'
+import { blockVisibilityDynamicField } from '@/fields/blockVisibilityDynamic'
 
 export const Archive: Block = {
   slug: 'archive',
   interfaceName: 'ArchiveBlock',
   fields: [
+    blockVisibilityDynamicField,
     {
       name: 'introContent',
       type: 'richText',

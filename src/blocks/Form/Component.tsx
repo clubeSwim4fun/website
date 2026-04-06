@@ -15,6 +15,11 @@ export async function FormBlock(props: { id?: string } & FormBlockType) {
     locale,
   )()) as GeneralConfig
 
+  // If no form is selected, don't render anything
+  if (!props.form) {
+    return null
+  }
+
   if (props.isRegistrationForm) {
     return (
       <RegistrationWizard

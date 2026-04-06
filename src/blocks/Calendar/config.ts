@@ -1,9 +1,11 @@
 import type { Block } from 'payload'
+import { blockVisibilityDynamicField } from '@/fields/blockVisibilityDynamic'
 
 export const CalendarBlock: Block = {
   slug: 'calendarBlock',
   interfaceName: 'Calendar',
   fields: [
+    blockVisibilityDynamicField,
     {
       name: 'defaultView',
       type: 'select',

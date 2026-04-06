@@ -1489,6 +1489,27 @@ export interface AboutClub {
  * via the `definition` "CallToActionBlock".
  */
 export interface CallToActionBlock {
+  blockVisibility?: {
+    /**
+     * Choose who can see this block
+     */
+    visibilityType?: ('everyone' | 'loggedIn' | 'notLoggedIn' | 'active' | 'admin' | 'specificGroups') | null;
+    /**
+     * Select which groups and/or subgroups can see this block
+     */
+    allowedGroups?:
+      | (
+          | {
+              relationTo: 'groups';
+              value: string | Group;
+            }
+          | {
+              relationTo: 'group-categories';
+              value: string | GroupCategory;
+            }
+        )[]
+      | null;
+  };
   richText?: {
     root: {
       type: string;
@@ -1552,6 +1573,27 @@ export interface CallToActionBlock {
  * via the `definition` "ContentBlock".
  */
 export interface ContentBlock {
+  blockVisibility?: {
+    /**
+     * Choose who can see this block
+     */
+    visibilityType?: ('everyone' | 'loggedIn' | 'notLoggedIn' | 'active' | 'admin' | 'specificGroups') | null;
+    /**
+     * Select which groups and/or subgroups can see this block
+     */
+    allowedGroups?:
+      | (
+          | {
+              relationTo: 'groups';
+              value: string | Group;
+            }
+          | {
+              relationTo: 'group-categories';
+              value: string | GroupCategory;
+            }
+        )[]
+      | null;
+  };
   columns?:
     | {
         size?: ('oneThird' | 'half' | 'twoThirds' | 'full') | null;
@@ -1618,6 +1660,27 @@ export interface ContentBlock {
  * via the `definition` "MediaBlock".
  */
 export interface MediaBlock {
+  blockVisibility?: {
+    /**
+     * Choose who can see this block
+     */
+    visibilityType?: ('everyone' | 'loggedIn' | 'notLoggedIn' | 'active' | 'admin' | 'specificGroups') | null;
+    /**
+     * Select which groups and/or subgroups can see this block
+     */
+    allowedGroups?:
+      | (
+          | {
+              relationTo: 'groups';
+              value: string | Group;
+            }
+          | {
+              relationTo: 'group-categories';
+              value: string | GroupCategory;
+            }
+        )[]
+      | null;
+  };
   media: string | Media;
   id?: string | null;
   blockName?: string | null;
@@ -1628,6 +1691,27 @@ export interface MediaBlock {
  * via the `definition` "ArchiveBlock".
  */
 export interface ArchiveBlock {
+  blockVisibility?: {
+    /**
+     * Choose who can see this block
+     */
+    visibilityType?: ('everyone' | 'loggedIn' | 'notLoggedIn' | 'active' | 'admin' | 'specificGroups') | null;
+    /**
+     * Select which groups and/or subgroups can see this block
+     */
+    allowedGroups?:
+      | (
+          | {
+              relationTo: 'groups';
+              value: string | Group;
+            }
+          | {
+              relationTo: 'group-categories';
+              value: string | GroupCategory;
+            }
+        )[]
+      | null;
+  };
   introContent?: {
     root: {
       type: string;
@@ -1662,7 +1746,31 @@ export interface ArchiveBlock {
  * via the `definition` "FormBlock".
  */
 export interface FormBlock {
-  form: string | Form;
+  blockVisibility?: {
+    /**
+     * Choose who can see this block
+     */
+    visibilityType?: ('everyone' | 'loggedIn' | 'notLoggedIn' | 'active' | 'admin' | 'specificGroups') | null;
+    /**
+     * Select which groups and/or subgroups can see this block
+     */
+    allowedGroups?:
+      | (
+          | {
+              relationTo: 'groups';
+              value: string | Group;
+            }
+          | {
+              relationTo: 'group-categories';
+              value: string | GroupCategory;
+            }
+        )[]
+      | null;
+  };
+  /**
+   * Select the form to display in this block
+   */
+  form?: (string | null) | Form;
   isRegistrationForm?: boolean | null;
   enableIntro?: boolean | null;
   introContent?: {
@@ -1689,6 +1797,27 @@ export interface FormBlock {
  * via the `definition` "Calendar".
  */
 export interface Calendar {
+  blockVisibility?: {
+    /**
+     * Choose who can see this block
+     */
+    visibilityType?: ('everyone' | 'loggedIn' | 'notLoggedIn' | 'active' | 'admin' | 'specificGroups') | null;
+    /**
+     * Select which groups and/or subgroups can see this block
+     */
+    allowedGroups?:
+      | (
+          | {
+              relationTo: 'groups';
+              value: string | Group;
+            }
+          | {
+              relationTo: 'group-categories';
+              value: string | GroupCategory;
+            }
+        )[]
+      | null;
+  };
   defaultView?: ('timeGridDay' | 'timeGridWeek' | 'dayGridMonth' | 'listMonth') | null;
   id?: string | null;
   blockName?: string | null;
@@ -2664,6 +2793,12 @@ export interface PagesSelect<T extends boolean = true> {
  * via the `definition` "CallToActionBlock_select".
  */
 export interface CallToActionBlockSelect<T extends boolean = true> {
+  blockVisibility?:
+    | T
+    | {
+        visibilityType?: T;
+        allowedGroups?: T;
+      };
   richText?: T;
   links?:
     | T
@@ -2697,6 +2832,12 @@ export interface CallToActionBlockSelect<T extends boolean = true> {
  * via the `definition` "ContentBlock_select".
  */
 export interface ContentBlockSelect<T extends boolean = true> {
+  blockVisibility?:
+    | T
+    | {
+        visibilityType?: T;
+        allowedGroups?: T;
+      };
   columns?:
     | T
     | {
@@ -2733,6 +2874,12 @@ export interface ContentBlockSelect<T extends boolean = true> {
  * via the `definition` "MediaBlock_select".
  */
 export interface MediaBlockSelect<T extends boolean = true> {
+  blockVisibility?:
+    | T
+    | {
+        visibilityType?: T;
+        allowedGroups?: T;
+      };
   media?: T;
   id?: T;
   blockName?: T;
@@ -2742,6 +2889,12 @@ export interface MediaBlockSelect<T extends boolean = true> {
  * via the `definition` "ArchiveBlock_select".
  */
 export interface ArchiveBlockSelect<T extends boolean = true> {
+  blockVisibility?:
+    | T
+    | {
+        visibilityType?: T;
+        allowedGroups?: T;
+      };
   introContent?: T;
   populateBy?: T;
   relationTo?: T;
@@ -2756,6 +2909,12 @@ export interface ArchiveBlockSelect<T extends boolean = true> {
  * via the `definition` "FormBlock_select".
  */
 export interface FormBlockSelect<T extends boolean = true> {
+  blockVisibility?:
+    | T
+    | {
+        visibilityType?: T;
+        allowedGroups?: T;
+      };
   form?: T;
   isRegistrationForm?: T;
   enableIntro?: T;
@@ -2768,6 +2927,12 @@ export interface FormBlockSelect<T extends boolean = true> {
  * via the `definition` "Calendar_select".
  */
 export interface CalendarSelect<T extends boolean = true> {
+  blockVisibility?:
+    | T
+    | {
+        visibilityType?: T;
+        allowedGroups?: T;
+      };
   defaultView?: T;
   id?: T;
   blockName?: T;
@@ -4109,6 +4274,27 @@ export interface TaskSchedulePublish {
  * via the `definition` "BannerBlock".
  */
 export interface BannerBlock {
+  blockVisibility?: {
+    /**
+     * Choose who can see this block
+     */
+    visibilityType?: ('everyone' | 'loggedIn' | 'notLoggedIn' | 'active' | 'admin' | 'specificGroups') | null;
+    /**
+     * Select which groups and/or subgroups can see this block
+     */
+    allowedGroups?:
+      | (
+          | {
+              relationTo: 'groups';
+              value: string | Group;
+            }
+          | {
+              relationTo: 'group-categories';
+              value: string | GroupCategory;
+            }
+        )[]
+      | null;
+  };
   style: 'info' | 'warning' | 'error' | 'success';
   content: {
     root: {

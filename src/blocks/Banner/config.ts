@@ -1,9 +1,11 @@
 import type { Block } from 'payload'
 import { defaultLexical } from '@/fields/defaultLexical'
+import { blockVisibilityDynamicField } from '@/fields/blockVisibilityDynamic'
 
 export const Banner: Block = {
   slug: 'banner',
   fields: [
+    blockVisibilityDynamicField,
     {
       name: 'style',
       type: 'select',

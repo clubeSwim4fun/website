@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { login, LoginResponse } from '@/actions/login'
 import { Input } from '@/components/ui/input'
+import { PasswordInput } from '@/components/RegistrationWizard/PasswordInput'
 import { useSearchParams } from 'next/navigation'
 import { LoaderCircle } from 'lucide-react'
 import { useTranslations } from 'next-intl'
@@ -63,11 +64,10 @@ export default function LoginForm({
           </div>
           <div className="flex flex-col gap-2 mb-8">
             <label htmlFor="password">{t('password')}</label>
-            <Input
+            <PasswordInput
               className="w-full focus:outline-none"
               name="password"
               id="password"
-              type="password"
               required
             />
           </div>

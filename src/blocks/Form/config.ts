@@ -1,15 +1,20 @@
 import type { Block } from 'payload'
 import { defaultLexical } from '@/fields/defaultLexical'
+import { blockVisibilityDynamicField } from '@/fields/blockVisibilityDynamic'
 
 export const FormBlock: Block = {
   slug: 'formBlock',
   interfaceName: 'FormBlock',
   fields: [
+    blockVisibilityDynamicField,
     {
       name: 'form',
       type: 'relationship',
       relationTo: 'forms',
-      required: true,
+      required: false,
+      admin: {
+        description: 'Select the form to display in this block',
+      },
     },
     {
       name: 'isRegistrationForm',
