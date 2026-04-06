@@ -7,7 +7,6 @@ import { redirect } from 'next/navigation'
 import { TypedLocale } from 'payload'
 import { PaymentForm } from './payment-form'
 import { ClipboardPenLine, FileUser, Handshake } from 'lucide-react'
-import { cn } from '@/utilities/ui'
 import { UserFieldsUpdateForm } from '@/components/User/user-fields-update-form'
 
 const UserSubscriptionPage = async ({ params }: { params: Promise<{ locale: string }> }) => {
@@ -27,47 +26,44 @@ const UserSubscriptionPage = async ({ params }: { params: Promise<{ locale: stri
 
   const user = userObject.user
 
-  return (
-    <section
-      className={cn(
-        'pt-[104px] pb-24 container max-w-5xl',
-        `${user.status !== 'active' ? 'mx' : 'm'}-auto`,
-      )}
-    >
-      {user.status === 'pendingPayment' || user.status === 'expired' ? (
+  if (user.status === 'pendingPayment' || user.status === 'expired') {
+    return (
+      <section className="pt-[104px] pb-24 container max-w-2xl mx-auto">
         <PaymentForm user={user} associationFees={globalConfig.associationFees} />
-      ) : (
-        <div className="flex mt-6 justify-center items-center">
-          <div className="w-1/3 border-r-2 border-gray-600 flex items-center justify-center">
-            {user.status === 'pendingUpdate' ? (
-              <ClipboardPenLine className="w-40 h-40 stroke-1" />
-            ) : user.status === 'pendingAnalysis' ? (
-              <FileUser className="w-40 h-40 stroke-1" />
-            ) : (
-              <Handshake className="w-40 h-40 stroke-1" />
-            )}
-          </div>
-          <div className="flex flex-col gap-4 justify-start items-start p-6">
-            <p className="font-bold text-3xl">
-              {t('Subscription.userTitle', {
-                username: user.name,
-              })}
-            </p>
-            <p className="text-xl">
-              {t(
-                `Subscription.${user.status === 'pendingUpdate' ? 'pendingUpdate' : user.status === 'pendingAnalysis' ? 'pendingAnalysis' : 'allRightText'}`,
-              )}
-            </p>
-            {user.status === 'pendingUpdate' && (
-              <UserFieldsUpdateForm
-                generalConfig={globalConfig}
-                user={user}
-                fieldsToUpdate={user.fieldsToUpdate || []}
-              />
-            )}
-          </div>
+      </section>
+    )
+  }
+
+  return (
+    <section className="pt-[104px] pb-24 container max-w-5xl m-auto">
+      <div className="flex mt-6 justify-center items-center">
+        <div className="w-1/3 border-r-2 border-gray-600 flex items-center justify-center">
+          {user.status === 'pendingUpdate' ? (
+            <ClipboardPenLine className="w-40 h-40 stroke-1" />
+          ) : user.status === 'pendingAnalysis' ? (
+            <FileUser className="w-40 h-40 stroke-1" />
+          ) : (
+            <Handshake className="w-40 h-40 stroke-1" />
+          )}
         </div>
-      )}
+        <div className="flex flex-col gap-4 justify-start items-start p-6">
+          <p className="font-bold text-3xl">
+            {t('Subscription.userTitle', { username: user.name })}
+          </p>
+          <p className="text-xl">
+            {t(
+              `Subscription.${user.status === 'pendingUpdate' ? 'pendingUpdate' : user.status === 'pendingAnalysis' ? 'pendingAnalysis' : 'allRightText'}`,
+            )}
+          </p>
+          {user.status === 'pendingUpdate' && (
+            <UserFieldsUpdateForm
+              generalConfig={globalConfig}
+              user={user}
+              fieldsToUpdate={user.fieldsToUpdate || []}
+            />
+          )}
+        </div>
+      </div>
     </section>
   )
 }
@@ -88,7 +84,6 @@ export async function generateMetadata({
   )()) as GeneralConfig
 
   const subscription = globalConfig?.settings?.fixedPages?.subscription
-
   const clubTitle = globalConfig?.clubName || t('Club')
   const subscriptionTitle = subscription?.title || t('Subscription')
 
