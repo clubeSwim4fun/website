@@ -126,6 +126,14 @@ The original WordPress site has a `locations` taxonomy (e.g. `/locations/troia/`
 - Map coordinates for embed
 - Location-based filtering on the event listing
 
+## 11. Blog
+
+Allow Comments and reactions to blog posts 
+
+## 12. Monthly subscription
+
+Change to be annualy
+
 ---
 
 ## Summary — Priority Order

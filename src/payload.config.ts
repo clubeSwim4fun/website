@@ -40,6 +40,9 @@ import { PoolCycles } from '@/collections/Pool/PoolCycles'
 import { PoolSubscriptions } from '@/collections/Pool/PoolSubscriptions'
 import { PoolSlotRegistrations } from '@/collections/Pool/PoolSlotRegistrations'
 import { PoolSlotWaitlist } from '@/collections/Pool/PoolSlotWaitlist'
+import { dashboardPool } from './admin/endpoints/dashboardPool'
+import { dashboardMembers } from './admin/endpoints/dashboardMembers'
+import { dashboardEvents } from './admin/endpoints/dashboardEvents'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -49,12 +52,31 @@ export default buildConfig({
     fallbackLanguage: 'pt',
     supportedLanguages: { pt, en },
   },
+  endpoints: [dashboardPool, dashboardMembers, dashboardEvents],
   admin: {
     suppressHydrationWarning: true,
     importMap: {
       baseDir: path.resolve(dirname),
     },
     user: Users.slug,
+    components: {
+      views: {
+        PoolDashboard: {
+          Component: '@/admin/views/PoolDashboard#default',
+          path: '/dashboard/pool',
+        },
+        MembersDashboard: {
+          Component: '@/admin/views/MembersDashboard#default',
+          path: '/dashboard/members',
+        },
+        EventsDashboard: {
+          Component: '@/admin/views/EventsDashboard#default',
+          path: '/dashboard/events',
+        },
+      },
+      afterNavLinks: ['@/admin/components/DashboardNavLinks#default'],
+      afterDashboard: ['@/admin/components/DashboardLinks#default'],
+    },
     livePreview: {
       breakpoints: [
         {
