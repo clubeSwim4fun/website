@@ -123,7 +123,8 @@ Mapped by comparing the original WordPress site (`clube-swim4fun.pt`) with the c
 
 ## 13. Newsletter Feature
 
-❌ Not done. No newsletter collection, subscription form, or email broadcast capability.
+In progress. No newsletter collection, subscription form, or email broadcast capability.
+missing support for block components so it can add posts from blog for example.
 
 ---
 

@@ -461,6 +461,7 @@
     "cancelPayment": "Cancel",
     "spotsRemainingLabel": "spots remaining in this cycle"
   },
+  "emailNotificationsEnabled": "Email notifications",
   "Registration": {
     "progressLabel": "Registration progress",
     "allDone": "All done!",

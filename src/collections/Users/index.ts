@@ -265,6 +265,18 @@ export const Users: CollectionConfig = {
       },
     },
     {
+      name: 'emailNotificationsEnabled',
+      label: {
+        en: 'Email notifications',
+        pt: 'Notificações por email',
+      },
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
       name: 'wantsToBeFederado',
       label: {
         en: 'Wants to be Federated?',

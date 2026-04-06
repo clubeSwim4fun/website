@@ -461,6 +461,7 @@
     "cancelPayment": "Cancelar",
     "spotsRemainingLabel": "vagas restantes neste ciclo"
   },
+  "emailNotificationsEnabled": "Notificações por email",
   "Registration": {
     "progressLabel": "Progresso do registo",
     "allDone": "Concluído!",

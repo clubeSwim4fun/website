@@ -91,6 +91,7 @@ export interface Config {
     'pool-slot-waitlist': PoolSlotWaitlist;
     'post-comments': PostComment;
     'post-likes': PostLike;
+    newsletters: Newsletter;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -127,6 +128,7 @@ export interface Config {
     'pool-slot-waitlist': PoolSlotWaitlistSelect<false> | PoolSlotWaitlistSelect<true>;
     'post-comments': PostCommentsSelect<false> | PostCommentsSelect<true>;
     'post-likes': PostLikesSelect<false> | PostLikesSelect<true>;
+    newsletters: NewslettersSelect<false> | NewslettersSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -777,6 +779,7 @@ export interface User {
     | null;
   birthDate?: string | null;
   disability?: (string | Disability)[] | null;
+  emailNotificationsEnabled?: boolean | null;
   wantsToBeFederado?: boolean | null;
   emergencyContact?: string | null;
   emergencyPhone?: string | null;
@@ -1023,6 +1026,7 @@ export interface Checkbox {
         | 'groups'
         | 'birthDate'
         | 'disability'
+        | 'emailNotificationsEnabled'
         | 'wantsToBeFederado'
         | 'emergencyContact'
         | 'emergencyPhone'
@@ -1067,6 +1071,7 @@ export interface Country {
         | 'groups'
         | 'birthDate'
         | 'disability'
+        | 'emailNotificationsEnabled'
         | 'wantsToBeFederado'
         | 'emergencyContact'
         | 'emergencyPhone'
@@ -1127,6 +1132,7 @@ export interface Number {
         | 'groups'
         | 'birthDate'
         | 'disability'
+        | 'emailNotificationsEnabled'
         | 'wantsToBeFederado'
         | 'emergencyContact'
         | 'emergencyPhone'
@@ -1181,6 +1187,7 @@ export interface Select {
         | 'groups'
         | 'birthDate'
         | 'disability'
+        | 'emailNotificationsEnabled'
         | 'wantsToBeFederado'
         | 'emergencyContact'
         | 'emergencyPhone'
@@ -1226,6 +1233,7 @@ export interface Text {
         | 'groups'
         | 'birthDate'
         | 'disability'
+        | 'emailNotificationsEnabled'
         | 'wantsToBeFederado'
         | 'emergencyContact'
         | 'emergencyPhone'
@@ -1285,6 +1293,7 @@ export interface Phone {
         | 'groups'
         | 'birthDate'
         | 'disability'
+        | 'emailNotificationsEnabled'
         | 'wantsToBeFederado'
         | 'emergencyContact'
         | 'emergencyPhone'
@@ -1330,6 +1339,7 @@ export interface MediaUpload {
         | 'groups'
         | 'birthDate'
         | 'disability'
+        | 'emailNotificationsEnabled'
         | 'wantsToBeFederado'
         | 'emergencyContact'
         | 'emergencyPhone'
@@ -1373,6 +1383,7 @@ export interface Address {
         | 'groups'
         | 'birthDate'
         | 'disability'
+        | 'emailNotificationsEnabled'
         | 'wantsToBeFederado'
         | 'emergencyContact'
         | 'emergencyPhone'
@@ -1431,6 +1442,7 @@ export interface DateField {
         | 'groups'
         | 'birthDate'
         | 'disability'
+        | 'emailNotificationsEnabled'
         | 'wantsToBeFederado'
         | 'emergencyContact'
         | 'emergencyPhone'
@@ -2393,6 +2405,63 @@ export interface PostLike {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "newsletters".
+ */
+export interface Newsletter {
+  id: string;
+  subject: string;
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  status?: ('draft' | 'scheduled' | 'sent') | null;
+  /**
+   * Leave empty to send immediately.
+   */
+  scheduledAt?: string | null;
+  sentAt?: string | null;
+  recipientCount?: number | null;
+  recipientFilter?: {
+    userIds?: (string | User)[] | null;
+    statuses?: ('pendingAnalysis' | 'pendingUpdate' | 'pendingPayment' | 'active' | 'expired')[] | null;
+    roles?: ('admin' | 'editor' | 'default')[] | null;
+    groups?:
+      | (
+          | {
+              relationTo: 'groups';
+              value: string | Group;
+            }
+          | {
+              relationTo: 'group-categories';
+              value: string | GroupCategory;
+            }
+        )[]
+      | null;
+  };
+  recipients?:
+    | {
+        user?: (string | null) | User;
+        email?: string | null;
+        deliveredAt?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -2676,6 +2745,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'post-likes';
         value: string | PostLike;
+      } | null)
+    | ({
+        relationTo: 'newsletters';
+        value: string | Newsletter;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -3138,6 +3211,7 @@ export interface UsersSelect<T extends boolean = true> {
   groups?: T;
   birthDate?: T;
   disability?: T;
+  emailNotificationsEnabled?: T;
   wantsToBeFederado?: T;
   emergencyContact?: T;
   emergencyPhone?: T;
@@ -3542,6 +3616,36 @@ export interface PostCommentsSelect<T extends boolean = true> {
 export interface PostLikesSelect<T extends boolean = true> {
   post?: T;
   user?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "newsletters_select".
+ */
+export interface NewslettersSelect<T extends boolean = true> {
+  subject?: T;
+  content?: T;
+  status?: T;
+  scheduledAt?: T;
+  sentAt?: T;
+  recipientCount?: T;
+  recipientFilter?:
+    | T
+    | {
+        userIds?: T;
+        statuses?: T;
+        roles?: T;
+        groups?: T;
+      };
+  recipients?:
+    | T
+    | {
+        user?: T;
+        email?: T;
+        deliveredAt?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }
