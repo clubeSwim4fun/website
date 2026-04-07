@@ -272,6 +272,10 @@ export async function getWeekSlotData(cycle: PoolCycle, athleteId: string): Prom
   for (let i = 0; i < weeks.length; i++) {
     const week = weeks[i]
     if (!week) continue
+
+    // Only include: the week before current, current, and the week after current
+    if (i < currentWeekIndex - 1 || i > currentWeekIndex + 1) continue
+
     let status: WeekStatus
     if (i < currentWeekIndex) status = 'last'
     else if (i === currentWeekIndex) status = 'current'

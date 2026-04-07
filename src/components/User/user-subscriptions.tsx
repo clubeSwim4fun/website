@@ -8,6 +8,7 @@ import type {
   SubscriptionSortOrder,
 } from '@/helpers/subscriptionHelperTypes'
 import { SUBS_PAGE_SIZE } from '@/helpers/subscriptionHelperTypes'
+import { getMonthIndex } from '@/collections/Pool/PoolCycles'
 import { useFormatter, useTranslations } from 'next-intl'
 import { Loader, FileDown, Receipt } from 'lucide-react'
 import { Link } from '@/i18n/routing'
@@ -130,7 +131,10 @@ export const UserSubscriptions: React.FC<Args> = ({ userId }) => {
     if (row.kind === 'memberFee') {
       return `${format.dateTime(new Date(row.startDate), { dateStyle: 'short' })} – ${format.dateTime(new Date(row.endDate), { dateStyle: 'short' })}`
     }
-    return format.dateTime(new Date(row.year, row.month - 1, 1), { month: 'long', year: 'numeric' })
+    return format.dateTime(new Date(row.year, getMonthIndex(row.month) - 1, 1), {
+      month: 'long',
+      year: 'numeric',
+    })
   }
 
   const getStatusBadge = (row: SubscriptionRow) => {

@@ -7,6 +7,7 @@ import { PoolCycle, User } from '@/payload-types'
 import { useRouter } from '@/i18n/routing'
 import { getClientSideURL } from '@/utilities/getURL'
 import { useLocale, useTranslations } from 'next-intl'
+import { getMonthIndex, getMonthLabel } from '@/collections/Pool/PoolCycles'
 import { useMemo, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { ShieldCheck, Lock } from 'lucide-react'
@@ -43,7 +44,7 @@ export const SubscribeInline: React.FC<Props> = ({ cycle, user, remainingSpots }
     router.push(`/pool?confirmed=1`)
   }
 
-  const monthName = new Date(cycle.year, cycle.month - 1).toLocaleString('default', {
+  const monthName = new Date(cycle.year, getMonthIndex(cycle.month) - 1).toLocaleString('default', {
     month: 'long',
     year: 'numeric',
   })

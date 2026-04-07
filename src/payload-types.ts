@@ -2280,8 +2280,21 @@ export interface GroupSubscription {
  */
 export interface PoolCycle {
   id: string;
+  name?: string | null;
   status: 'open' | 'closed';
-  month: number;
+  month:
+    | 'january'
+    | 'february'
+    | 'march'
+    | 'april'
+    | 'may'
+    | 'june'
+    | 'july'
+    | 'august'
+    | 'september'
+    | 'october'
+    | 'november'
+    | 'december';
   year: number;
   maxAthletes: number;
   waitlistLimit: number;
@@ -3508,6 +3521,7 @@ export interface GroupSubscriptionSelect<T extends boolean = true> {
  * via the `definition` "pool-cycles_select".
  */
 export interface PoolCyclesSelect<T extends boolean = true> {
+  name?: T;
   status?: T;
   month?: T;
   year?: T;

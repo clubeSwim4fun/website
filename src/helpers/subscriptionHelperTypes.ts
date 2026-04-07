@@ -12,7 +12,7 @@ export type SubscriptionRow =
   | {
       kind: 'pool'
       id: string
-      month: number
+      month: string
       year: number
       amount: number
       status: 'active' | 'waitlisted' | 'cancelled'

@@ -14,7 +14,7 @@ export default function PoolWaitlistConfirmationEmail({ subscription }: Args) {
       <p>You have been added to the pool waitlist.</p>
       {cycle && (
         <p>
-          Cycle: {cycle.month}/{cycle.year}
+          Cycle: {cycle.month} {cycle.year}
         </p>
       )}
       <p>Your waitlist position: #{subscription.waitlistPosition}</p>

@@ -1,12 +1,13 @@
 'use client'
 
 import { PoolCycle, PoolSubscription, User } from '@/payload-types'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { Info, Zap, CheckCircle2, AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Link } from '@/i18n/routing'
 import { SubscribeInline } from './subscribe-inline.client'
 import { cn } from '@/utilities/ui'
+import { getMonthIndex, getMonthLabel } from '@/collections/Pool/PoolCycles'
 
 type SlotAvailability = 'available' | 'limited' | 'full' | 'closed'
 
@@ -50,6 +51,7 @@ export const PoolPageClient: React.FC<Props> = ({
   confirmed = false,
 }) => {
   const t = useTranslations('PoolSubscription')
+  const locale = useLocale() as 'en' | 'pt'
 
   if (variant === 'closed' || !cycle) {
     return (
@@ -85,7 +87,7 @@ export const PoolPageClient: React.FC<Props> = ({
   const formatDate = (iso: string) =>
     new Date(iso).toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit' })
 
-  const monthName = new Date(cycle.year, cycle.month - 1).toLocaleString('default', {
+  const monthName = new Date(cycle.year, getMonthIndex(cycle.month) - 1).toLocaleString('default', {
     month: 'long',
     year: 'numeric',
   })
@@ -137,7 +139,12 @@ export const PoolPageClient: React.FC<Props> = ({
       {variant === 'already-active' && (
         <div className="flex gap-3 items-start rounded-lg border border-blue-200 bg-blue-50 dark:bg-blue-950/20 dark:border-blue-900 px-4 py-3 text-sm text-blue-800 dark:text-blue-300">
           <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0" />
-          <p>{t('activeConfirmation', { month: cycle.month, year: cycle.year })}</p>
+          <p>
+            {t('activeConfirmation', {
+              month: getMonthLabel(cycle.month, locale),
+              year: cycle.year,
+            })}
+          </p>
         </div>
       )}
 
@@ -163,7 +170,7 @@ export const PoolPageClient: React.FC<Props> = ({
                 {t('planName')}
               </p>
               <p className="text-sm text-muted-foreground mt-0.5">
-                {t('cycleLabel', { month: cycle.month, year: cycle.year })}
+                {t('cycleLabel', { month: getMonthLabel(cycle.month, locale), year: cycle.year })}
               </p>
             </div>
             <div className="text-right shrink-0">
@@ -302,7 +309,10 @@ export const PoolPageClient: React.FC<Props> = ({
             <div className="flex flex-col gap-1">
               <p className="font-semibold text-[hsl(var(--blue-swim))]">{t('confirmationTitle')}</p>
               <p className="text-sm text-muted-foreground">
-                {t('activeConfirmation', { month: cycle.month, year: cycle.year })}
+                {t('activeConfirmation', {
+                  month: getMonthLabel(cycle.month, locale),
+                  year: cycle.year,
+                })}
               </p>
             </div>
           </div>

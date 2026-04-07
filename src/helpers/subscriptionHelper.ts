@@ -3,6 +3,7 @@
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { PoolCycle, PoolSubscription, Subscription } from '@/payload-types'
+import { getMonthIndex } from '@/collections/Pool/PoolCycles'
 import type {
   SubscriptionRow,
   SubscriptionTypeFilter,
@@ -91,7 +92,8 @@ export async function getUserSubscriptions({
       (r) =>
         r.kind === 'pool' &&
         r.status === 'active' &&
-        (r.year > currentYear || (r.year === currentYear && r.month >= currentMonth)),
+        (r.year > currentYear ||
+          (r.year === currentYear && getMonthIndex(r.month) >= currentMonth)),
     )
     if (activeCurrentPool && activeCurrentPool.kind === 'pool')
       activeCurrentPool.linkToMyPool = true
@@ -155,7 +157,7 @@ export async function getUserSubscriptions({
   const activePool = poolRows.find(
     (r) =>
       r.status === 'active' &&
-      (r.year > currentYear || (r.year === currentYear && r.month >= currentMonth)),
+      (r.year > currentYear || (r.year === currentYear && getMonthIndex(r.month) >= currentMonth)),
   )
   if (activePool) activePool.linkToMyPool = true
 
@@ -165,11 +167,11 @@ export async function getUserSubscriptions({
     const aDate =
       a.kind === 'memberFee'
         ? new Date(a.startDate).getTime()
-        : new Date(a.year, a.month - 1).getTime()
+        : new Date(a.year, getMonthIndex(a.month) - 1).getTime()
     const bDate =
       b.kind === 'memberFee'
         ? new Date(b.startDate).getTime()
-        : new Date(b.year, b.month - 1).getTime()
+        : new Date(b.year, getMonthIndex(b.month) - 1).getTime()
     return sortOrder === 'asc' ? aDate - bDate : bDate - aDate
   })
 

@@ -14,7 +14,7 @@ export default function PoolCancellationConfirmationEmail({ subscription }: Args
       <p>Your pool subscription has been cancelled.</p>
       {cycle && (
         <p>
-          Cycle: {cycle.month}/{cycle.year}
+          Cycle: {cycle.month} {cycle.year}
         </p>
       )}
       <p>Please note: no refunds are issued for cancellations.</p>

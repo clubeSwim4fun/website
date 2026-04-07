@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { getPayload } from 'payload'
 import config from '@payload-config'
+import { getMonthLabel } from '@/collections/Pool/PoolCycles'
 
 /**
  * Stripe webhook handler.
@@ -309,27 +310,13 @@ async function handlePaymentSuccess(
           depth: 2,
         })
 
-        const cycle = record.cycle as { month?: number; year?: number; price?: number } | null
+        const cycle = record.cycle as { month?: string; year?: number; price?: number } | null
         const user =
           typeof record.athlete === 'string'
             ? await payload.findByID({ collection: 'users', id: record.athlete })
             : record.athlete
 
-        const monthNames = [
-          'Janeiro',
-          'Fevereiro',
-          'Março',
-          'Abril',
-          'Maio',
-          'Junho',
-          'Julho',
-          'Agosto',
-          'Setembro',
-          'Outubro',
-          'Novembro',
-          'Dezembro',
-        ]
-        const monthLabel = cycle?.month ? monthNames[cycle.month - 1] : ''
+        const monthLabel = cycle?.month ? getMonthLabel(cycle.month, 'pt') : ''
 
         await createDraftInvoice({
           user: {

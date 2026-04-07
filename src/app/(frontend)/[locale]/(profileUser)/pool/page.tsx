@@ -49,7 +49,7 @@ const PoolPage = async ({
     redirect(`/${locale}/pool/my-subscription`)
   }
 
-  const remainingSpots = state.variant === 'subscribe' ? state.remainingSpots : 0
+  const remainingSpots = cycle ? Math.max(0, cycle.maxAthletes - activeCount) : 0
   const remainingWaitlistSpots = state.variant === 'waitlist' ? state.remainingWaitlistSpots : 0
   const waitlistPosition = state.variant === 'already-waitlisted' ? state.position : undefined
 

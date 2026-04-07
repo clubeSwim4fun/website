@@ -7,9 +7,10 @@ import { useToast } from '@/hooks/use-toast'
 import { useRouter } from '@/i18n/routing'
 import { cn } from '@/utilities/ui'
 import { Check, Clock, Lock, Loader, Save, X } from 'lucide-react'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { useState } from 'react'
 import type { WeekData, WeekSlot } from '@/helpers/poolHelper'
+import { getMonthIndex, getMonthLabel } from '@/collections/Pool/PoolCycles'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -338,7 +339,7 @@ type Props = {
   subscriptionId: string
   cycleId: string
   weeks: WeekData[]
-  cycleMonth: number
+  cycleMonth: string
   cycleYear: number
 }
 
@@ -350,6 +351,7 @@ export const WeeklySlotSelector: React.FC<Props> = ({
   cycleYear,
 }) => {
   const t = useTranslations('PoolSubscription')
+  const locale = useLocale() as 'en' | 'pt'
   const { toast } = useToast()
   const router = useRouter()
 
@@ -446,7 +448,7 @@ export const WeeklySlotSelector: React.FC<Props> = ({
         <div>
           <p className="text-xs uppercase tracking-widest opacity-80">{t('activeCycle')}</p>
           <p className="text-2xl font-bold mt-0.5">
-            {new Date(cycleYear, cycleMonth - 1).toLocaleString('default', {
+            {new Date(cycleYear, getMonthIndex(cycleMonth) - 1).toLocaleString('default', {
               month: 'long',
               year: 'numeric',
             })}
@@ -497,9 +499,9 @@ export const WeeklySlotSelector: React.FC<Props> = ({
               <TabsTrigger
                 key={week.weekIndex}
                 value={String(week.weekIndex)}
-                className="flex-1 flex flex-col items-center gap-1 py-2 px-3 h-auto"
+                className="flex-1 flex flex-col items-center gap-1 py-2 px-1 sm:px-3 h-auto min-w-0"
               >
-                <span className="text-sm font-medium">
+                <span className="text-xs sm:text-sm font-medium text-center break-words hyphens-auto leading-tight w-full">
                   {week.status === 'last' && t('lastWeek')}
                   {week.status === 'current' && t('thisWeek')}
                   {week.status === 'next' && t('nextWeek')}
@@ -644,7 +646,7 @@ export const WeeklySlotSelector: React.FC<Props> = ({
       </Tabs>
 
       <p className="text-xs text-muted-foreground">
-        {t('changesSavedFor', { month: cycleMonth, year: cycleYear })}
+        {t('changesSavedFor', { month: getMonthLabel(cycleMonth, locale), year: cycleYear })}
       </p>
     </div>
   )

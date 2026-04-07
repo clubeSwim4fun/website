@@ -3,6 +3,7 @@ import { getOpenCycle, getActiveCount, getAthleteSubscription } from '@/helpers/
 import { getTranslations } from 'next-intl/server'
 import { redirect } from 'next/navigation'
 import { PoolPaymentForm } from './payment-form'
+import { getMonthLabel } from '@/collections/Pool/PoolCycles'
 
 const PoolSubscribePage = async ({ params }: { params: Promise<{ locale: string }> }) => {
   const { locale } = await params
@@ -32,7 +33,12 @@ const PoolSubscribePage = async ({ params }: { params: Promise<{ locale: string 
       <h1 className="text-3xl font-bold mb-8">{t('subscribeTitle')}</h1>
 
       <div className="flex flex-col gap-4 mb-8">
-        <p className="text-lg">{t('cycleLabel', { month: cycle!.month, year: cycle!.year })}</p>
+        <p className="text-lg">
+          {t('cycleLabel', {
+            month: getMonthLabel(cycle!.month, locale as 'en' | 'pt'),
+            year: cycle!.year,
+          })}
+        </p>
         <p className="text-lg">
           {t(
             'priceLabel',

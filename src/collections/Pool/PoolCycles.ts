@@ -4,11 +4,53 @@ import { authenticated } from '@/access/authenticated'
 import { isAdmin } from '@/access/isAdmin'
 import { v4 as uuidv4 } from 'uuid'
 
+export const MONTH_OPTIONS = [
+  { value: 'january', label: { en: 'January', pt: 'Janeiro' }, index: 1 },
+  { value: 'february', label: { en: 'February', pt: 'Fevereiro' }, index: 2 },
+  { value: 'march', label: { en: 'March', pt: 'Março' }, index: 3 },
+  { value: 'april', label: { en: 'April', pt: 'Abril' }, index: 4 },
+  { value: 'may', label: { en: 'May', pt: 'Maio' }, index: 5 },
+  { value: 'june', label: { en: 'June', pt: 'Junho' }, index: 6 },
+  { value: 'july', label: { en: 'July', pt: 'Julho' }, index: 7 },
+  { value: 'august', label: { en: 'August', pt: 'Agosto' }, index: 8 },
+  { value: 'september', label: { en: 'September', pt: 'Setembro' }, index: 9 },
+  { value: 'october', label: { en: 'October', pt: 'Outubro' }, index: 10 },
+  { value: 'november', label: { en: 'November', pt: 'Novembro' }, index: 11 },
+  { value: 'december', label: { en: 'December', pt: 'Dezembro' }, index: 12 },
+] as const
+
+export type MonthValue = (typeof MONTH_OPTIONS)[number]['value']
+
+/** Returns the 1-based month index (1–12) for a given month value */
+export function getMonthIndex(month: string): number {
+  return MONTH_OPTIONS.find((m) => m.value === month)?.index ?? 1
+}
+
+/** Returns the localized month label */
+export function getMonthLabel(month: string, locale: 'en' | 'pt' = 'pt'): string {
+  const opt = MONTH_OPTIONS.find((m) => m.value === month)
+  return opt ? opt.label[locale] : month
+}
+
 export const PoolCycles: CollectionConfig = {
   slug: 'pool-cycles',
   labels: {
     plural: { en: 'Pool Cycles', pt: 'Ciclos de Piscina' },
     singular: { en: 'Pool Cycle', pt: 'Ciclo de Piscina' },
+  },
+  admin: {
+    useAsTitle: 'name',
+  },
+  hooks: {
+    beforeChange: [
+      ({ data, req }) => {
+        if (data?.month && data?.year) {
+          const locale = (req?.locale as 'en' | 'pt') ?? 'pt'
+          data.name = `${getMonthLabel(data.month, locale)} ${data.year}`
+        }
+        return data
+      },
+    ],
   },
   access: {
     create: isAdmin,
@@ -17,6 +59,11 @@ export const PoolCycles: CollectionConfig = {
     delete: isAdmin,
   },
   fields: [
+    {
+      name: 'name',
+      type: 'text',
+      admin: { hidden: true, readOnly: true },
+    },
     {
       name: 'status',
       label: { en: 'Status', pt: 'Estado' },
@@ -34,10 +81,9 @@ export const PoolCycles: CollectionConfig = {
         {
           name: 'month',
           label: { en: 'Month', pt: 'Mês' },
-          type: 'number',
+          type: 'select',
           required: true,
-          min: 1,
-          max: 12,
+          options: MONTH_OPTIONS.map(({ value, label }) => ({ value, label })),
           admin: { width: '50%' },
         },
         {

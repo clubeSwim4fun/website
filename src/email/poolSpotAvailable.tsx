@@ -13,7 +13,7 @@ export default function PoolSpotAvailableEmail({ subscription }: Args) {
   return (
     <TemplateEmail title="A spot is available in the pool!">
       <p>
-        Good news! A spot has opened up in the pool for {cycle.month}/{cycle.year}.
+        Good news! A spot has opened up in the pool for {cycle.month} {cycle.year}.
       </p>
       <p>This is first-come, first-served — claim your spot now before it&apos;s taken.</p>
       <p>

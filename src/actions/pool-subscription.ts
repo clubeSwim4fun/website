@@ -10,6 +10,7 @@ import React from 'react'
 import { notifyWaitlist } from '@/helpers/poolHelper'
 import { PoolCycle, PoolSubscription, User } from '@/payload-types'
 import { revalidatePath } from 'next/cache'
+import { getMonthLabel } from '@/collections/Pool/PoolCycles'
 
 export async function createPoolSubscription(
   cycleId: string,
@@ -117,21 +118,7 @@ export async function createPoolSubscription(
     ;(async () => {
       try {
         const { createDraftInvoice } = await import('@/helpers/invoiceHelper')
-        const monthNames = [
-          'Janeiro',
-          'Fevereiro',
-          'Março',
-          'Abril',
-          'Maio',
-          'Junho',
-          'Julho',
-          'Agosto',
-          'Setembro',
-          'Outubro',
-          'Novembro',
-          'Dezembro',
-        ]
-        const monthLabel = cycle.month ? monthNames[(cycle.month as number) - 1] : ''
+        const monthLabel = getMonthLabel(cycle.month as string, 'pt')
         await createDraftInvoice({
           user: {
             name: user!.name,

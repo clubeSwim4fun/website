@@ -8,6 +8,7 @@ import {
 import { getTranslations } from 'next-intl/server'
 import { redirect } from 'next/navigation'
 import { WaitlistForm } from './waitlist-form'
+import { getMonthLabel } from '@/collections/Pool/PoolCycles'
 
 const PoolWaitlistPage = async ({ params }: { params: Promise<{ locale: string }> }) => {
   const { locale } = await params
@@ -40,7 +41,12 @@ const PoolWaitlistPage = async ({ params }: { params: Promise<{ locale: string }
       <h1 className="text-3xl font-bold mb-8">{t('waitlistTitle')}</h1>
 
       <div className="flex flex-col gap-4 mb-8">
-        <p className="text-lg">{t('cycleLabel', { month: cycle!.month, year: cycle!.year })}</p>
+        <p className="text-lg">
+          {t('cycleLabel', {
+            month: getMonthLabel(cycle!.month, locale as 'en' | 'pt'),
+            year: cycle!.year,
+          })}
+        </p>
         <p className="text-lg">
           {t(
             'priceLabel',

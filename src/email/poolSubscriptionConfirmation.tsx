@@ -14,7 +14,7 @@ export default function PoolSubscriptionConfirmationEmail({ subscription }: Args
       <p>Your pool subscription has been confirmed.</p>
       {cycle && (
         <p>
-          Cycle: {cycle.month}/{cycle.year}
+          Cycle: {cycle.month} {cycle.year}
         </p>
       )}
     </TemplateEmail>
