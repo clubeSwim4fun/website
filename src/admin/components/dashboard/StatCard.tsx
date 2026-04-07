@@ -61,7 +61,7 @@ export default function StatCard({ label, value, sub, trend, trendType, barColor
         style={{
           fontFamily: '"Syne", sans-serif',
           fontWeight: 800,
-          fontSize: '22px',
+          fontSize: '20px',
           color: '#0a4a6e',
           lineHeight: 1.1,
         }}

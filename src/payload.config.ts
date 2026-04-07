@@ -44,6 +44,7 @@ import { PostComments } from './collections/Posts/PostComments'
 import { PostLikes } from './collections/Posts/PostLikes'
 import { Newsletters } from './collections/Newsletters'
 import { dashboardPool } from './admin/endpoints/dashboardPool'
+import { dashboardPoolSlot, dashboardPoolWeek } from './admin/endpoints/dashboardPoolSlot'
 import { dashboardMembers } from './admin/endpoints/dashboardMembers'
 import { dashboardEvents } from './admin/endpoints/dashboardEvents'
 
@@ -55,7 +56,13 @@ export default buildConfig({
     fallbackLanguage: 'pt',
     supportedLanguages: { pt, en },
   },
-  endpoints: [dashboardPool, dashboardMembers, dashboardEvents],
+  endpoints: [
+    dashboardPool,
+    dashboardPoolSlot,
+    dashboardPoolWeek,
+    dashboardMembers,
+    dashboardEvents,
+  ],
   admin: {
     suppressHydrationWarning: true,
     importMap: {
@@ -64,17 +71,9 @@ export default buildConfig({
     user: Users.slug,
     components: {
       views: {
-        PoolDashboard: {
-          Component: '@/admin/views/PoolDashboard#default',
-          path: '/dashboard/pool',
-        },
-        MembersDashboard: {
-          Component: '@/admin/views/MembersDashboard#default',
-          path: '/dashboard/members',
-        },
-        EventsDashboard: {
-          Component: '@/admin/views/EventsDashboard#default',
-          path: '/dashboard/events',
+        ClubDashboard: {
+          Component: '@/admin/views/ClubDashboard#default',
+          path: '/dashboard',
         },
       },
       afterNavLinks: ['@/admin/components/DashboardNavLinks#default'],

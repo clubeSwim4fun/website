@@ -168,8 +168,19 @@ export const dashboardPool: Endpoint = {
       }),
     )
 
-    // 8. slotTable — raw per-slot data
-    const slotTable = allSlots.map((slot) => ({
+    // 8. slotTable — only slots belonging to the current ISO week
+    const now = new Date()
+    const currentWeekIndex = weeks.findIndex((week: any) => {
+      const start = new Date(week.startDate)
+      start.setHours(0, 0, 0, 0)
+      const end = new Date(week.endDate)
+      end.setHours(23, 59, 59, 999)
+      return now >= start && now <= end
+    })
+    const targetWeekIndex = currentWeekIndex >= 0 ? currentWeekIndex : 0
+    const currentWeekSlots = allSlots.filter((s) => s.weekIndex === targetWeekIndex)
+
+    const slotTable = currentWeekSlots.map((slot) => ({
       slotId: slot.slotId,
       day: slot.day,
       time: slot.time,

@@ -40,6 +40,8 @@ export default function BarChart({ data, height = DEFAULT_HEIGHT }: BarChartProp
           alignItems: 'flex-end',
           gap: '6px',
           height,
+          paddingTop: 20,
+          boxSizing: 'border-box',
           width: '100%',
         }}
       >

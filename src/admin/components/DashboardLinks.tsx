@@ -4,18 +4,8 @@ import React from 'react'
 import { useAuth, Card, useTranslation } from '@payloadcms/ui'
 
 const labels: Record<string, { heading: string; pool: string; members: string; events: string }> = {
-  en: {
-    heading: 'Dashboards',
-    pool: 'Pool',
-    members: 'Members',
-    events: 'Events',
-  },
-  pt: {
-    heading: 'Dashboards',
-    pool: 'Piscina',
-    members: 'Membros',
-    events: 'Eventos',
-  },
+  en: { heading: 'Dashboards', pool: 'Pool', members: 'Members', events: 'Events' },
+  pt: { heading: 'Dashboards', pool: 'Piscina', members: 'Membros', events: 'Eventos' },
 }
 
 export default function DashboardLinks() {
@@ -25,13 +15,12 @@ export default function DashboardLinks() {
 
   if (!isAdmin) return null
 
-  const lang = i18n.language in labels ? i18n.language : 'en'
-  const t = labels[lang] ?? labels['en']!
+  const t = labels[i18n.language in labels ? i18n.language : 'en'] ?? labels['en']!
 
   const dashboards = [
-    { href: '/admin/dashboard/pool', label: t.pool },
-    { href: '/admin/dashboard/members', label: t.members },
-    { href: '/admin/dashboard/events', label: t.events },
+    { href: '/admin/dashboard?tab=pool', label: t.pool },
+    { href: '/admin/dashboard?tab=members', label: t.members },
+    { href: '/admin/dashboard?tab=events', label: t.events },
   ]
 
   return (

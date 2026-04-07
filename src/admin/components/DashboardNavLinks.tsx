@@ -21,9 +21,9 @@ export default function DashboardNavLinks() {
   return (
     <NavGroup label="Dashboards">
       <div style={{ display: 'flex', flexDirection: 'column' }}>
-        <Link href="/admin/dashboard/pool">{t.pool}</Link>
-        <Link href="/admin/dashboard/members">{t.members}</Link>
-        <Link href="/admin/dashboard/events">{t.events}</Link>
+        <Link href="/admin/dashboard?tab=pool">{t.pool}</Link>
+        <Link href="/admin/dashboard?tab=members">{t.members}</Link>
+        <Link href="/admin/dashboard?tab=events">{t.events}</Link>
       </div>
     </NavGroup>
   )
