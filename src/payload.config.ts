@@ -46,7 +46,12 @@ import { Newsletters } from './collections/Newsletters'
 import { dashboardPool } from './admin/endpoints/dashboardPool'
 import { dashboardPoolSlot, dashboardPoolWeek } from './admin/endpoints/dashboardPoolSlot'
 import { dashboardMembers } from './admin/endpoints/dashboardMembers'
+import {
+  dashboardMembersMonth,
+  dashboardMembersStatus,
+} from './admin/endpoints/dashboardMembersDetail'
 import { dashboardEvents } from './admin/endpoints/dashboardEvents'
+import { dashboardEventDetail, dashboardEventsWeek } from './admin/endpoints/dashboardEventsDetail'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -61,7 +66,11 @@ export default buildConfig({
     dashboardPoolSlot,
     dashboardPoolWeek,
     dashboardMembers,
+    dashboardMembersMonth,
+    dashboardMembersStatus,
     dashboardEvents,
+    dashboardEventDetail,
+    dashboardEventsWeek,
   ],
   admin: {
     suppressHydrationWarning: true,

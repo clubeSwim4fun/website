@@ -1699,18 +1699,59 @@ function MembersTab({ data }: { data: MembersData }) {
   const monthLabel = now.toLocaleString('en', { month: 'long', year: 'numeric' })
   const currentMonthShort = now.toLocaleString('en', { month: 'short' })
 
-  const barData = data.monthlySignups.map((item) => ({
-    label: item.month,
-    value: item.count,
-    color: item.month === currentMonthShort ? C.deep : C.mid,
-  }))
+  const [drawer, setDrawer] = React.useState<PoolDrawerContent>(null)
+  const [drawerData, setDrawerData] = React.useState<any>(null)
+  const [drawerLoading, setDrawerLoading] = React.useState(false)
 
+  const openMonth = (i: number, label: string, count: number) => {
+    setDrawer({ kind: 'week', weekIndex: i, weekLabel: label, count })
+    setDrawerData(null)
+    setDrawerLoading(true)
+    fetch(`/api/dashboard/members/month/${i}`)
+      .then((r) => r.json())
+      .then(setDrawerData)
+      .finally(() => setDrawerLoading(false))
+  }
+  const openStatus = (statusKey: string, label: string) => {
+    setDrawer({ kind: 'day', day: statusKey, rate: 0 } as any)
+    setDrawerData(null)
+    setDrawerLoading(true)
+    fetch(`/api/dashboard/members/status/${statusKey}`)
+      .then((r) => r.json())
+      .then(setDrawerData)
+      .finally(() => setDrawerLoading(false))
+  }
+  const closeDrawer = () => setDrawer(null)
+
+  const barMax = Math.max(...data.monthlySignups.map((w) => w.count), 1)
   const donutSegments = data.paymentBreakdown.map((item) => ({
     label: item.label,
     count: item.count,
     color: paymentColors[item.label] ?? C.inkLight,
   }))
   const donutTotal = data.paymentBreakdown.reduce((s, i) => s + i.count, 0)
+  const statusKeyMap: Record<string, string> = {
+    Paid: 'active',
+    Pending: 'pendingPayment',
+    Failed: 'expired',
+  }
+
+  const drawerTitle =
+    drawer?.kind === 'week'
+      ? drawer.weekLabel
+      : drawer?.kind === 'day'
+        ? drawer.day === 'active'
+          ? 'Active Members'
+          : drawer.day === 'pendingPayment'
+            ? 'Pending Payment'
+            : 'Expired Members'
+        : ''
+  const drawerSub =
+    drawer?.kind === 'week'
+      ? `${drawer.count} new members`
+      : drawer?.kind === 'day'
+        ? 'Members with this status'
+        : ''
 
   return (
     <>
@@ -1727,26 +1768,161 @@ function MembersTab({ data }: { data: MembersData }) {
           sub="registration fees"
           barColor="green"
         />
-        <StatCard
-          label="Pending payment"
-          value={data.pendingPayment}
-          sub="awaiting fee"
-          barColor="amber"
-        />
-        <StatCard label="Active accounts" value={data.activeAccounts} barColor="green" />
+        <div
+          onClick={() => openStatus('pendingPayment', 'Pending Payment')}
+          style={{ cursor: 'pointer' }}
+          title="Click to see members"
+        >
+          <StatCard
+            label="Pending payment"
+            value={data.pendingPayment}
+            sub="awaiting fee"
+            barColor="amber"
+          />
+        </div>
+        <div
+          onClick={() => openStatus('active', 'Active Members')}
+          style={{ cursor: 'pointer' }}
+          title="Click to see members"
+        >
+          <StatCard label="Active accounts" value={data.activeAccounts} barColor="green" />
+        </div>
       </StatsGrid>
 
       <Row2>
         <Panel>
-          <PanelHeader title="New registrations — last 6 months" sub="Monthly new member signups" />
+          <PanelHeader
+            title="New registrations — last 6 months"
+            sub="Click a bar to see who joined"
+          />
           <PanelBody>
-            <BarChart data={barData} />
+            <div style={{ width: '100%' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'flex-end',
+                  gap: 10,
+                  height: 160,
+                  paddingTop: 20,
+                  boxSizing: 'border-box',
+                }}
+              >
+                {data.monthlySignups.map((w, i) => {
+                  const pct = (w.count / barMax) * 100
+                  const isActive = w.month === currentMonthShort
+                  return (
+                    <div
+                      key={i}
+                      onClick={() => openMonth(i, w.month + ' ' + now.getFullYear(), w.count)}
+                      style={{
+                        flex: 1,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'flex-end',
+                        height: '100%',
+                        gap: 5,
+                        cursor: 'pointer',
+                      }}
+                      onMouseEnter={(e) => {
+                        const b = e.currentTarget.querySelector('.bar') as HTMLElement
+                        if (b) b.style.background = C.deep
+                      }}
+                      onMouseLeave={(e) => {
+                        const b = e.currentTarget.querySelector('.bar') as HTMLElement
+                        if (b) b.style.background = isActive ? C.deep : C.mid
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontFamily: "'Syne',sans-serif",
+                          fontSize: 11,
+                          fontWeight: 700,
+                          color: C.inkMid,
+                        }}
+                      >
+                        {w.count}
+                      </div>
+                      <div
+                        className="bar"
+                        style={{
+                          height: `${pct}%`,
+                          width: '100%',
+                          borderRadius: '5px 5px 0 0',
+                          background: isActive ? C.deep : C.mid,
+                          minHeight: 4,
+                          transition: 'background .15s',
+                        }}
+                      />
+                      <div
+                        style={{
+                          fontSize: 10,
+                          color: C.inkLight,
+                          textAlign: 'center',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {w.month}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
           </PanelBody>
         </Panel>
         <Panel>
-          <PanelHeader title="Payment status breakdown" sub={monthLabel} />
+          <PanelHeader title="Payment status breakdown" sub="Click a row to see members" />
           <PanelBody>
             <DonutChart segments={donutSegments} total={donutTotal} centerLabel="members" />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginTop: 12 }}>
+              {data.paymentBreakdown.map((item) => {
+                const statusKey = statusKeyMap[item.label]
+                return (
+                  <div
+                    key={item.label}
+                    onClick={() => statusKey && openStatus(statusKey, item.label + ' Members')}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 8,
+                      padding: '6px 8px',
+                      borderRadius: 8,
+                      cursor: statusKey ? 'pointer' : 'default',
+                      transition: 'background .15s',
+                    }}
+                    onMouseEnter={(e) => {
+                      if (statusKey) e.currentTarget.style.background = C.foam
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'transparent'
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: 10,
+                        height: 10,
+                        borderRadius: '50%',
+                        background: paymentColors[item.label] ?? C.inkLight,
+                        flexShrink: 0,
+                      }}
+                    />
+                    <span style={{ fontSize: 13, color: C.ink, flex: 1 }}>{item.label}</span>
+                    <span
+                      style={{
+                        fontFamily: "'Syne',sans-serif",
+                        fontWeight: 700,
+                        fontSize: 13,
+                        color: C.deep,
+                      }}
+                    >
+                      {item.count}
+                    </span>
+                    {statusKey && <span style={{ fontSize: 11, color: C.inkLight }}>›</span>}
+                  </div>
+                )
+              })}
+            </div>
           </PanelBody>
         </Panel>
       </Row2>
@@ -1755,7 +1931,7 @@ function MembersTab({ data }: { data: MembersData }) {
         <Panel>
           <PanelHeader
             title="Recent registrations"
-            sub={`New members this month — sorted by signup date`}
+            sub="Click a row to see members with same status"
             badge={monthLabel}
             badgeColor="blue"
           />
@@ -1763,7 +1939,7 @@ function MembersTab({ data }: { data: MembersData }) {
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
               <thead>
                 <tr>
-                  {['Name', 'Joined', 'Status', 'Registration Date'].map((col) => (
+                  {['Name', 'Joined', 'Status', 'Email'].map((col) => (
                     <th
                       key={col}
                       style={{
@@ -1794,10 +1970,20 @@ function MembersTab({ data }: { data: MembersData }) {
                     </td>
                   </tr>
                 ) : (
-                  data.recentMembers.map((member, i) => {
+                  data.recentMembers.map((member) => {
                     const badge = deriveMemberBadge(member.status)
                     return (
-                      <tr key={member.id} style={{ borderBottom: `1px solid ${C.border}` }}>
+                      <tr
+                        key={member.id}
+                        onClick={() => openStatus(member.status, badge.label + ' Members')}
+                        style={{
+                          borderBottom: `1px solid ${C.border}`,
+                          cursor: 'pointer',
+                          transition: 'background .15s',
+                        }}
+                        onMouseEnter={(e) => (e.currentTarget.style.background = C.foam)}
+                        onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                      >
                         <td style={{ padding: '11px 12px', fontWeight: 500, color: C.ink }}>
                           {member.name} {member.surname}
                         </td>
@@ -1817,6 +2003,117 @@ function MembersTab({ data }: { data: MembersData }) {
           </PanelBody>
         </Panel>
       </RowFull>
+
+      <PoolDrawer open={!!drawer} onClose={closeDrawer} title={drawerTitle} sub={drawerSub}>
+        {drawerLoading ? (
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: 120,
+              color: C.inkLight,
+              fontSize: 13,
+            }}
+          >
+            Loading…
+          </div>
+        ) : (
+          (() => {
+            const members: any[] = drawerData?.members ?? []
+            return (
+              <>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginBottom: 8,
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: 11,
+                      fontWeight: 700,
+                      textTransform: 'uppercase',
+                      letterSpacing: '.6px',
+                      color: C.inkLight,
+                    }}
+                  >
+                    Members
+                  </span>
+                  <span
+                    style={{
+                      fontFamily: "'Syne',sans-serif",
+                      fontWeight: 700,
+                      fontSize: 13,
+                      color: C.deep,
+                    }}
+                  >
+                    {members.length}
+                  </span>
+                </div>
+                {!members.length ? (
+                  <div style={{ fontSize: 13, color: C.inkLight, padding: '12px 0' }}>
+                    No members found.
+                  </div>
+                ) : (
+                  members.map((m: any) => {
+                    const badge = deriveMemberBadge(m.status)
+                    return (
+                      <div
+                        key={m.id}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 12,
+                          padding: '10px 0',
+                          borderBottom: `1px solid ${C.border}`,
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: 34,
+                            height: 34,
+                            borderRadius: '50%',
+                            background: C.pale,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontFamily: "'Syne',sans-serif",
+                            fontWeight: 700,
+                            fontSize: 12,
+                            color: C.deep,
+                            flexShrink: 0,
+                          }}
+                        >
+                          {getInitials(m.name || '?')}
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div
+                            style={{
+                              fontSize: 13,
+                              fontWeight: 600,
+                              color: C.ink,
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+                            }}
+                          >
+                            {m.name}
+                          </div>
+                          <div style={{ fontSize: 11, color: C.inkLight }}>{m.email}</div>
+                        </div>
+                        <Badge label={badge.label} type={badge.type} />
+                      </div>
+                    )
+                  })
+                )}
+              </>
+            )
+          })()
+        )}
+      </PoolDrawer>
     </>
   )
 }
@@ -1824,16 +2121,52 @@ function MembersTab({ data }: { data: MembersData }) {
 // ─── Events tab ───────────────────────────────────────────────────────────────
 
 function EventsTab({ data }: { data: EventsData }) {
-  const enrollmentBarData = data.enrollmentByEvent.map((item) => ({
-    label: item.eventTitle.slice(0, 8),
-    value: item.enrolled,
-    color: C.mid,
-  }))
-  const weeklyBarData = data.weeklySignups.map((item, i, arr) => ({
-    label: item.week,
-    value: item.count,
-    color: i === arr.length - 1 ? C.deep : i >= arr.length - 3 ? C.mid : C.light,
-  }))
+  const [drawer, setDrawer] = React.useState<PoolDrawerContent>(null)
+  const [drawerData, setDrawerData] = React.useState<any>(null)
+  const [drawerLoading, setDrawerLoading] = React.useState(false)
+
+  const openEvent = (eventId: string, title: string, enrolled: number, total: number) => {
+    setDrawer({
+      kind: 'slot',
+      slotId: eventId,
+      day: title,
+      time: `${enrolled}/${total}`,
+      registered: enrolled,
+      capacity: total,
+    })
+    setDrawerData(null)
+    setDrawerLoading(true)
+    fetch(`/api/dashboard/events/event/${eventId}`)
+      .then((r) => r.json())
+      .then(setDrawerData)
+      .finally(() => setDrawerLoading(false))
+  }
+  const openWeek = (i: number, label: string, count: number) => {
+    setDrawer({ kind: 'week', weekIndex: i, weekLabel: label, count })
+    setDrawerData(null)
+    setDrawerLoading(true)
+    fetch(`/api/dashboard/events/week/${i}`)
+      .then((r) => r.json())
+      .then(setDrawerData)
+      .finally(() => setDrawerLoading(false))
+  }
+  const closeDrawer = () => setDrawer(null)
+
+  const enrollmentBarMax = Math.max(...data.enrollmentByEvent.map((e) => e.enrolled), 1)
+  const weeklyBarMax = Math.max(...data.weeklySignups.map((w) => w.count), 1)
+
+  const drawerTitle =
+    drawer?.kind === 'slot'
+      ? drawer.day
+      : drawer?.kind === 'week'
+        ? `Week of ${drawer.weekLabel}`
+        : ''
+  const drawerSub =
+    drawer?.kind === 'slot'
+      ? `${drawer.registered}/${drawer.capacity} enrolled`
+      : drawer?.kind === 'week'
+        ? `${drawer.count} orders`
+        : ''
 
   return (
     <>
@@ -1868,7 +2201,7 @@ function EventsTab({ data }: { data: EventsData }) {
         <Panel>
           <PanelHeader
             title="Active & upcoming events"
-            sub="Sorted by event date — showing registrations and capacity"
+            sub="Click an event to see enrolled attendees"
             badge={`${data.activeEvents} active`}
             badgeColor="green"
           />
@@ -1879,13 +2212,29 @@ function EventsTab({ data }: { data: EventsData }) {
               </p>
             ) : (
               data.events.map((event) => (
-                <EventCard
+                <div
                   key={event.id}
-                  title={event.title}
-                  date={formatDate(event.start)}
-                  enrolledCount={event.enrolledCount}
-                  ticketCount={event.ticketCount}
-                />
+                  onClick={() =>
+                    openEvent(event.id, event.title, event.enrolledCount, event.ticketCount)
+                  }
+                  style={{
+                    cursor: 'pointer',
+                    marginBottom: 12,
+                    borderRadius: 14,
+                    transition: 'box-shadow .15s',
+                  }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.boxShadow = '0 4px 20px rgba(10,74,110,.12)')
+                  }
+                  onMouseLeave={(e) => (e.currentTarget.style.boxShadow = 'none')}
+                >
+                  <EventCard
+                    title={event.title}
+                    date={formatDate(event.start)}
+                    enrolledCount={event.enrolledCount}
+                    ticketCount={event.ticketCount}
+                  />
+                </div>
               ))
             )}
           </PanelBody>
@@ -1894,18 +2243,379 @@ function EventsTab({ data }: { data: EventsData }) {
 
       <Row2>
         <Panel>
-          <PanelHeader title="Enrollment by event" sub="Athletes registered vs capacity" />
+          <PanelHeader title="Enrollment by event" sub="Click a bar to see attendees" />
           <PanelBody>
-            <BarChart data={enrollmentBarData} />
+            <div style={{ width: '100%' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'flex-end',
+                  gap: 10,
+                  height: 160,
+                  paddingTop: 20,
+                  boxSizing: 'border-box',
+                }}
+              >
+                {data.enrollmentByEvent.map((item, i) => {
+                  const pct = (item.enrolled / enrollmentBarMax) * 100
+                  const eventId = data.events[i]?.id
+                  return (
+                    <div
+                      key={i}
+                      onClick={() =>
+                        eventId &&
+                        openEvent(
+                          eventId,
+                          item.eventTitle,
+                          item.enrolled,
+                          data.events[i]?.ticketCount ?? 0,
+                        )
+                      }
+                      style={{
+                        flex: 1,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'flex-end',
+                        height: '100%',
+                        gap: 5,
+                        cursor: eventId ? 'pointer' : 'default',
+                      }}
+                      onMouseEnter={(e) => {
+                        const b = e.currentTarget.querySelector('.bar') as HTMLElement
+                        if (b) b.style.background = C.deep
+                      }}
+                      onMouseLeave={(e) => {
+                        const b = e.currentTarget.querySelector('.bar') as HTMLElement
+                        if (b) b.style.background = C.mid
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontFamily: "'Syne',sans-serif",
+                          fontSize: 11,
+                          fontWeight: 700,
+                          color: C.inkMid,
+                        }}
+                      >
+                        {item.enrolled}
+                      </div>
+                      <div
+                        className="bar"
+                        style={{
+                          height: `${pct}%`,
+                          width: '100%',
+                          borderRadius: '5px 5px 0 0',
+                          background: C.mid,
+                          minHeight: 4,
+                          transition: 'background .15s',
+                        }}
+                      />
+                      <div
+                        style={{
+                          fontSize: 10,
+                          color: C.inkLight,
+                          textAlign: 'center',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                          width: '100%',
+                        }}
+                      >
+                        {item.eventTitle.slice(0, 8)}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
           </PanelBody>
         </Panel>
         <Panel>
-          <PanelHeader title="Registration timeline" sub="Sign-ups per week — last 6 weeks" />
+          <PanelHeader title="Registration timeline" sub="Click a bar to see orders that week" />
           <PanelBody>
-            <BarChart data={weeklyBarData} />
+            <div style={{ width: '100%' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'flex-end',
+                  gap: 10,
+                  height: 160,
+                  paddingTop: 20,
+                  boxSizing: 'border-box',
+                }}
+              >
+                {data.weeklySignups.map((item, i, arr) => {
+                  const pct = (item.count / weeklyBarMax) * 100
+                  const color =
+                    i === arr.length - 1 ? C.deep : i >= arr.length - 3 ? C.mid : C.light
+                  return (
+                    <div
+                      key={i}
+                      onClick={() => openWeek(i, item.week, item.count)}
+                      style={{
+                        flex: 1,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'flex-end',
+                        height: '100%',
+                        gap: 5,
+                        cursor: 'pointer',
+                      }}
+                      onMouseEnter={(e) => {
+                        const b = e.currentTarget.querySelector('.bar') as HTMLElement
+                        if (b) b.style.background = C.deep
+                      }}
+                      onMouseLeave={(e) => {
+                        const b = e.currentTarget.querySelector('.bar') as HTMLElement
+                        if (b) b.style.background = color
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontFamily: "'Syne',sans-serif",
+                          fontSize: 11,
+                          fontWeight: 700,
+                          color: C.inkMid,
+                        }}
+                      >
+                        {item.count}
+                      </div>
+                      <div
+                        className="bar"
+                        style={{
+                          height: `${pct}%`,
+                          width: '100%',
+                          borderRadius: '5px 5px 0 0',
+                          background: color,
+                          minHeight: 4,
+                          transition: 'background .15s',
+                        }}
+                      />
+                      <div
+                        style={{
+                          fontSize: 10,
+                          color: C.inkLight,
+                          textAlign: 'center',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {item.week}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
           </PanelBody>
         </Panel>
       </Row2>
+
+      <PoolDrawer open={!!drawer} onClose={closeDrawer} title={drawerTitle} sub={drawerSub}>
+        {drawerLoading ? (
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: 120,
+              color: C.inkLight,
+              fontSize: 13,
+            }}
+          >
+            Loading…
+          </div>
+        ) : drawer?.kind === 'slot' ? (
+          (() => {
+            const attendees: any[] = drawerData?.attendees ?? []
+            return (
+              <>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginBottom: 8,
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: 11,
+                      fontWeight: 700,
+                      textTransform: 'uppercase',
+                      letterSpacing: '.6px',
+                      color: C.inkLight,
+                    }}
+                  >
+                    Attendees
+                  </span>
+                  <span
+                    style={{
+                      fontFamily: "'Syne',sans-serif",
+                      fontWeight: 700,
+                      fontSize: 13,
+                      color: C.deep,
+                    }}
+                  >
+                    {attendees.length}
+                  </span>
+                </div>
+                {!attendees.length ? (
+                  <div style={{ fontSize: 13, color: C.inkLight, padding: '12px 0' }}>
+                    No attendees yet.
+                  </div>
+                ) : (
+                  attendees.map((a: any) => (
+                    <div
+                      key={a.orderId}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 12,
+                        padding: '10px 0',
+                        borderBottom: `1px solid ${C.border}`,
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: 34,
+                          height: 34,
+                          borderRadius: '50%',
+                          background: C.pale,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontFamily: "'Syne',sans-serif",
+                          fontWeight: 700,
+                          fontSize: 12,
+                          color: C.deep,
+                          flexShrink: 0,
+                        }}
+                      >
+                        {getInitials(a.name || '?')}
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div
+                          style={{
+                            fontSize: 13,
+                            fontWeight: 600,
+                            color: C.ink,
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          {a.name}
+                        </div>
+                        <div style={{ fontSize: 11, color: C.inkLight }}>{a.email}</div>
+                      </div>
+                      <div style={{ fontSize: 11, color: C.inkLight, flexShrink: 0 }}>
+                        {a.tickets?.map((t: any) => t.name).join(', ')}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </>
+            )
+          })()
+        ) : (
+          (() => {
+            const orders: any[] = drawerData?.orders ?? []
+            return (
+              <>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginBottom: 8,
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: 11,
+                      fontWeight: 700,
+                      textTransform: 'uppercase',
+                      letterSpacing: '.6px',
+                      color: C.inkLight,
+                    }}
+                  >
+                    Orders
+                  </span>
+                  <span
+                    style={{
+                      fontFamily: "'Syne',sans-serif",
+                      fontWeight: 700,
+                      fontSize: 13,
+                      color: C.deep,
+                    }}
+                  >
+                    {orders.length}
+                  </span>
+                </div>
+                {!orders.length ? (
+                  <div style={{ fontSize: 13, color: C.inkLight, padding: '12px 0' }}>
+                    No orders this week.
+                  </div>
+                ) : (
+                  orders.map((o: any) => (
+                    <div
+                      key={o.id}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 12,
+                        padding: '10px 0',
+                        borderBottom: `1px solid ${C.border}`,
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: 34,
+                          height: 34,
+                          borderRadius: '50%',
+                          background: C.pale,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontFamily: "'Syne',sans-serif",
+                          fontWeight: 700,
+                          fontSize: 12,
+                          color: C.deep,
+                          flexShrink: 0,
+                        }}
+                      >
+                        {getInitials(o.name || '?')}
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div
+                          style={{
+                            fontSize: 13,
+                            fontWeight: 600,
+                            color: C.ink,
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          {o.name}
+                        </div>
+                        <div style={{ fontSize: 11, color: C.inkLight }}>
+                          {o.eventTitles?.join(', ')}
+                        </div>
+                      </div>
+                      <div style={{ fontSize: 11, color: C.inkLight, flexShrink: 0 }}>
+                        €{o.total}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </>
+            )
+          })()
+        )}
+      </PoolDrawer>
     </>
   )
 }
