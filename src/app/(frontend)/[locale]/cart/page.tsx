@@ -1,13 +1,10 @@
 import type { Metadata } from 'next'
-
 import { draftMode } from 'next/headers'
 import React from 'react'
-
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { getMyCart } from '@/helpers/cartHelper'
 import { getMeUser } from '@/utilities/getMeUser'
 import { Event, GeneralConfig, Ticket } from '@/payload-types'
-
 import CheckoutSteps from '@/components/Common/CheckoutSteps'
 import { CartTable } from './cart-table'
 import { getTranslations } from 'next-intl/server'
@@ -22,8 +19,11 @@ export type eventTicket = {
     tickets: Ticket[]
     hasTshirt?: boolean | null
     tshirtSizes?: string[] | null
+    date?: string | null
+    location?: string | null
   }
 }
+
 export default async function Cart({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
   const { isEnabled: draft } = await draftMode()
@@ -35,7 +35,7 @@ export default async function Cart({ params }: { params: Promise<{ locale: strin
     redirect(`/${locale}/sign-in?callbackUrl=/${locale}/cart`)
   }
 
-  if (user.status !== 'active') {
+  if (user?.status !== 'active') {
     redirect(`/${locale}/subscription`)
   }
 
@@ -60,12 +60,15 @@ export default async function Cart({ params }: { params: Promise<{ locale: strin
   })
 
   return (
-    <main className="pt-[104px] pb-24">
+    <main className="pt-[104px] pb-24 bg-[#fdf8f3] min-h-screen">
       <CartPageClient />
       {draft && <LivePreviewListener />}
-      <section className="prose container max-w-screen-xl mx-auto mt-4 h-full">
+      <section className="container max-w-screen-xl mx-auto px-4 mt-6">
         <CheckoutSteps current={0} />
-        <h1 className="my-4">{t('title')}</h1>
+        <div className="mb-6">
+          <h1 className="text-2xl font-extrabold text-[#0a4a6e]">{t('title')}</h1>
+          <p className="text-sm text-[#3d5a70] mt-1">{t('cartSubtitle')}</p>
+        </div>
         <CartTable eventsTickets={eventsTickets} total={cart?.totalPrice} />
       </section>
     </main>
@@ -87,10 +90,7 @@ export async function generateMetadata({
 
   const clubTitle = globalConfig?.clubName || t('Club')
   const cart = globalConfig?.settings?.fixedPages?.cart
-
   const cartTitle = cart?.title || t('Cart')
 
-  return {
-    title: `${clubTitle} - ${cartTitle}`,
-  }
+  return { title: `${clubTitle} - ${cartTitle}` }
 }

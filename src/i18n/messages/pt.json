@@ -128,6 +128,7 @@
   },
   "Cart": {
     "title": "Meu Carrinho",
+    "cartSubtitle": "Reveja os seus bilhetes antes de prosseguir para o pagamento",
     "emptyCart": "Carrinho vazio",
     "goToCart": "Ir para o carrinho",
     "removeFromCart": "Remover do carrinho",
@@ -136,6 +137,8 @@
     "eventTotalPrice": "Preço (total: {price, number, currency})",
     "totalPrice": "Total do carrinho: {price, number, currency}",
     "ticket": "Bilhete",
+    "tickets": "Bilhetes",
+    "events": "eventos",
     "removedFromCartSuccess": "Bilhete removido do carrinho",
     "errorRemovingTicket": "Erro ao remover bilhete do carrinho",
     "addedToCartSuccess": "Bilhete adicionado ao carrinho",
@@ -143,8 +146,14 @@
     "cartNotFound": "Carrinho não encontrado",
     "tShirtSize": "Tamanho da T-shirt",
     "proceedToPayment": "Ir para o pagamento",
+    "backToCart": "Voltar ao carrinho",
     "addToCart": "Adicionar ao carrinho",
-    "ticketNotFound": "Bilhete não encontrado no carrinho"
+    "ticketNotFound": "Bilhete não encontrado no carrinho",
+    "orderSummary": "Resumo da encomenda",
+    "processingFee": "Taxa de processamento",
+    "total": "Total",
+    "secureNote": "Protegido por Stripe · Encriptação SSL",
+    "reservationNotice": "Os bilhetes estão reservados enquanto conclui o checkout. Remova os itens que já não precisa antes de prosseguir."
   },
   "CheckoutSteps": {
     "cart": "Carrinho",
@@ -195,6 +204,20 @@
   },
   "Order": {
     "title": "Confirmação de Encomenda",
+    "heroTitle": "Encomenda confirmada — obrigado",
+    "heroSubtitle": "Os seus bilhetes estão garantidos. Uma confirmação e os seus recibos foram enviados para o seu email.",
+    "paymentSuccessful": "Pagamento efetuado",
+    "orderIdLabel": "ID da Encomenda",
+    "receiptSent": "Recibo enviado para o seu email",
+    "distance": "Distância",
+    "price": "Preço",
+    "status": "Estado",
+    "confirmed": "Confirmado",
+    "totalPaid": "Total pago",
+    "infoBox": "Os seus bilhetes também aparecem em A minha conta → Os meus eventos. Apresente o email de confirmação ou QR code no check-in do evento.",
+    "goToAccount": "Ir para a minha conta",
+    "browseEvents": "Ver mais eventos",
+    "securityNote": "Pagamento protegido por Stripe · Encriptação SSL 256-bit",
     "orderId": "(ID da Encomenda {orderId})",
     "totalSpent": "Total gasto: {price, number, currency}",
     "description": "Obrigado pela sua compra! Aqui estão os detalhes da sua encomenda:",
@@ -202,14 +225,17 @@
     "contactEmail": "geral@clube-swim4fun.pt"
   },
   "Payment": {
-    "title": "Método de Pagamento",
+    "title": "Pagamento",
+    "subtitle": "Escolha o seu método de pagamento e conclua a encomenda",
     "payButton": "Pagar",
     "payButtonLoading": "A pagar...",
     "initialising": "A preparar pagamento...",
     "paymentFailed": "O pagamento falhou. Por favor tente novamente.",
     "validationError": "Erro de validação. Verifique os dados introduzidos.",
     "mbwayPendingTitle": "Confirmação pendente no MB Way",
-    "mbwayPendingDescription": "Foi enviada uma notificação para o seu telemóvel. Aceite o pagamento na app MB Way para concluir."
+    "mbwayPendingDescription": "Foi enviada uma notificação para o seu telemóvel. Aceite o pagamento na app MB Way para concluir.",
+    "securePaymentTitle": "Pagamento seguro por cartão",
+    "securePaymentSub": "Os seus dados são encriptados e nunca armazenados"
   },
   "Posts": {
     "title": "Blog",

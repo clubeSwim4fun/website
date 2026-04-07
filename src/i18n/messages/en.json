@@ -128,12 +128,15 @@
   },
   "Cart": {
     "title": "My Cart",
+    "cartSubtitle": "Review your tickets before proceeding to payment",
     "emptyCart": "Empty cart",
     "goToCart": "Go to cart",
     "removeFromCart": "Remove from cart",
     "cartUpdated": "Cart updated",
     "errorUpdatingCart": "Error updating cart",
     "ticket": "Ticket",
+    "tickets": "Tickets",
+    "events": "events",
     "eventTotalPrice": "Price (total: {price, number, currency})",
     "totalPrice": "Cart total: {price, number, currency}",
     "removedFromCartSuccess": "Ticket removed from cart",
@@ -143,8 +146,14 @@
     "cartNotFound": "Cart not found",
     "tShirtSize": "T-shirt size",
     "proceedToPayment": "Proceed to payment",
+    "backToCart": "Back to cart",
     "addToCart": "Adicionar ao carrinho",
-    "ticketNotFound": "Ticket not found in cart"
+    "ticketNotFound": "Ticket not found in cart",
+    "orderSummary": "Order summary",
+    "processingFee": "Processing fee",
+    "total": "Total",
+    "secureNote": "Secured by Stripe · SSL encrypted",
+    "reservationNotice": "Tickets are reserved while you complete your checkout. Remove items you no longer need before proceeding."
   },
   "CheckoutSteps": {
     "cart": "Cart",
@@ -195,6 +204,20 @@
   },
   "Order": {
     "title": "Order Confirmation",
+    "heroTitle": "Order confirmed — thank you",
+    "heroSubtitle": "Your tickets have been secured. A confirmation and your receipts have been sent to your email address.",
+    "paymentSuccessful": "Payment successful",
+    "orderIdLabel": "Order ID",
+    "receiptSent": "Receipt sent to your email",
+    "distance": "Distance",
+    "price": "Price",
+    "status": "Status",
+    "confirmed": "Confirmed",
+    "totalPaid": "Total paid",
+    "infoBox": "Your tickets will also appear in My Account → My Events. Bring your confirmation email or QR code to the event check-in.",
+    "goToAccount": "Go to my account",
+    "browseEvents": "Browse more events",
+    "securityNote": "Payment secured by Stripe · 256-bit SSL encryption",
     "orderId": "(Order ID {orderId})",
     "totalSpent": "Total spent: {price, number, currency}",
     "description": "Thank you for your purchase! Here are the details of your order:",
@@ -202,14 +225,17 @@
     "contactEmail": "geral@clube-swim4fun.pt"
   },
   "Payment": {
-    "title": "Payment Method",
+    "title": "Payment",
+    "subtitle": "Choose your payment method and complete your order",
     "payButton": "Pay",
     "payButtonLoading": "Paying...",
     "initialising": "Preparing payment...",
     "paymentFailed": "Payment failed. Please try again.",
     "validationError": "Validation error. Please check your details.",
     "mbwayPendingTitle": "Waiting for MB Way confirmation",
-    "mbwayPendingDescription": "A notification was sent to your phone. Accept the payment in the MB Way app to complete."
+    "mbwayPendingDescription": "A notification was sent to your phone. Accept the payment in the MB Way app to complete.",
+    "securePaymentTitle": "Secure card payment",
+    "securePaymentSub": "Your data is encrypted and never stored"
   },
   "Posts": {
     "title": "Blog",
