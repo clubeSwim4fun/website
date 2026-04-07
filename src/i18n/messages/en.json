@@ -403,6 +403,7 @@
     "legend_available": "Available",
     "legend_limited": "Limited spots",
     "legend_full": "Full",
+    "legend_closed": "Closed",
     "legend_selected": "Selected",
     "legend_waitlist": "Waitlist",
     "enrolled": "enrolled",

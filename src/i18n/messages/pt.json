@@ -403,6 +403,7 @@
     "legend_available": "Disponível",
     "legend_limited": "Vagas limitadas",
     "legend_full": "Esgotado",
+    "legend_closed": "Encerrado",
     "legend_selected": "Selecionado",
     "legend_waitlist": "Lista de espera",
     "enrolled": "inscritos",

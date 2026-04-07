@@ -8,13 +8,14 @@ import { Link } from '@/i18n/routing'
 import { SubscribeInline } from './subscribe-inline.client'
 import { cn } from '@/utilities/ui'
 
-type SlotAvailability = 'available' | 'limited' | 'full'
+type SlotAvailability = 'available' | 'limited' | 'full' | 'closed'
 
 // Same dot colors as slot-selector.client.tsx / weekly-slot-selector.client.tsx
 const DOT_COLORS: Record<SlotAvailability, string> = {
   available: 'bg-[#22c55e]',
   limited: 'bg-[#f59e0b]',
   full: 'bg-[#ef4444]',
+  closed: 'bg-muted-foreground/40',
 }
 
 // Outlined badge using the same teal/amber/red tokens
@@ -22,6 +23,7 @@ const BADGE_COLORS: Record<SlotAvailability, string> = {
   available: 'border border-[#22c55e] text-[#22c55e]',
   limited: 'border border-[#f59e0b] text-[#f59e0b]',
   full: 'border border-[#ef4444] text-[#ef4444]',
+  closed: 'border border-muted-foreground/40 text-muted-foreground/60',
 }
 
 type Props = {
@@ -57,23 +59,31 @@ export const PoolPageClient: React.FC<Props> = ({
     )
   }
 
-  const firstWeekSlots = cycle.weeks?.[0]?.slots ?? []
+  const weeks = (cycle.weeks ?? []) as Array<{
+    startDate: string
+    endDate: string
+    slots: Array<{ slotId?: string | null; day: string; time: string; maxAttendance: number }>
+  }>
   const legacySlots = (cycle.availableSlots ?? []).map((s) => ({
     slotId: s.slotId ?? '',
     day: s.day ?? '',
     time: s.time ?? '',
     maxAttendance: s.maxAttendance ?? 0,
   }))
-  const displaySlots = firstWeekSlots.length > 0 ? firstWeekSlots : legacySlots
 
-  const uniqueSlots = displaySlots.reduce(
-    (acc, slot) => {
+  // For sessionsPerWeek stat — use first week or legacy
+  const firstWeekSlots = weeks[0]?.slots ?? legacySlots
+  const uniqueSlots = firstWeekSlots.reduce(
+    (acc: Array<{ day: string; time: string }>, slot: { day: string; time: string }) => {
       const key = `${slot.day}-${slot.time}`
-      if (!acc.find((s) => `${s.day}-${s.time}` === key)) acc.push(slot as any)
+      if (!acc.find((s) => `${s.day}-${s.time}` === key)) acc.push(slot)
       return acc
     },
-    [] as Array<{ slotId?: string | null; day: string; time: string; maxAttendance: number }>,
+    [],
   )
+
+  const formatDate = (iso: string) =>
+    new Date(iso).toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit' })
 
   const monthName = new Date(cycle.year, cycle.month - 1).toLocaleString('default', {
     month: 'long',
@@ -163,40 +173,85 @@ export const PoolPageClient: React.FC<Props> = ({
           </div>
 
           {/* Training slots */}
-          {uniqueSlots.length > 0 && (
+          {(weeks.length > 0 || legacySlots.length > 0) && (
             <div>
               <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">
                 {t('availableSlotsLabel')}
               </p>
-              <div className="flex flex-col divide-y divide-border/50">
-                {uniqueSlots.map((slot, i) => {
-                  // Without real per-slot counts we default to 'available'
-                  const avail: SlotAvailability = 'available'
-                  return (
-                    <div key={i} className="flex items-center gap-3 py-3">
-                      {/* Color dot — same as legend dots in slot-selector */}
-                      <span
-                        className={cn('w-2.5 h-2.5 rounded-full shrink-0', DOT_COLORS[avail])}
-                      />
-                      {/* Day */}
-                      <span className="font-bold text-sm uppercase tracking-wide w-28">
-                        {slot.day}
-                      </span>
-                      {/* Time */}
-                      <span className="text-sm text-muted-foreground flex-1">{slot.time}</span>
-                      {/* Outlined availability badge */}
-                      <span
-                        className={cn(
-                          'text-xs font-bold uppercase tracking-wide px-3 py-1 rounded-full',
-                          BADGE_COLORS[avail],
-                        )}
-                      >
-                        {t(`legend_${avail}`)}
-                      </span>
-                    </div>
-                  )
-                })}
-              </div>
+              {weeks.length > 0 ? (
+                <div className="flex flex-col gap-4">
+                  {weeks.map((week, wi) => {
+                    const isPast = new Date(week.endDate) < new Date(new Date().toDateString())
+                    return (
+                      <div key={wi}>
+                        <p className="text-xs text-muted-foreground font-medium mb-1">
+                          {formatDate(week.startDate)} – {formatDate(week.endDate)}
+                        </p>
+                        <div className="flex flex-col divide-y divide-border/50">
+                          {week.slots.map((slot, si) => {
+                            const avail: SlotAvailability = isPast ? 'closed' : 'available'
+                            return (
+                              <div
+                                key={si}
+                                className={cn(
+                                  'flex items-center gap-3 py-2.5',
+                                  isPast && 'opacity-50',
+                                )}
+                              >
+                                <span
+                                  className={cn(
+                                    'w-2.5 h-2.5 rounded-full shrink-0',
+                                    DOT_COLORS[avail],
+                                  )}
+                                />
+                                <span className="font-bold text-sm uppercase tracking-wide w-28">
+                                  {slot.day}
+                                </span>
+                                <span className="text-sm text-muted-foreground flex-1">
+                                  {slot.time}
+                                </span>
+                                <span
+                                  className={cn(
+                                    'text-xs font-bold uppercase tracking-wide px-3 py-1 rounded-full',
+                                    BADGE_COLORS[avail],
+                                  )}
+                                >
+                                  {t(`legend_${avail}`)}
+                                </span>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              ) : (
+                <div className="flex flex-col divide-y divide-border/50">
+                  {legacySlots.map((slot, i) => {
+                    const avail: SlotAvailability = 'available'
+                    return (
+                      <div key={i} className="flex items-center gap-3 py-2.5">
+                        <span
+                          className={cn('w-2.5 h-2.5 rounded-full shrink-0', DOT_COLORS[avail])}
+                        />
+                        <span className="font-bold text-sm uppercase tracking-wide w-28">
+                          {slot.day}
+                        </span>
+                        <span className="text-sm text-muted-foreground flex-1">{slot.time}</span>
+                        <span
+                          className={cn(
+                            'text-xs font-bold uppercase tracking-wide px-3 py-1 rounded-full',
+                            BADGE_COLORS[avail],
+                          )}
+                        >
+                          {t(`legend_${avail}`)}
+                        </span>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
             </div>
           )}
 
