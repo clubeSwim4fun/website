@@ -6,11 +6,36 @@ import { getMeUser } from '@/utilities/getMeUser'
 import { resolveRecipients } from '@/helpers/newsletterHelper'
 import { sendEmail } from '@/helpers/emailHelper'
 import { render } from '@react-email/components'
-import { convertLexicalToHTML, defaultHTMLConverters } from '@payloadcms/richtext-lexical'
 import React from 'react'
 
 type SendResult = { success: boolean; message: string }
 type PreviewResult = { html: string; estimatedCount: number } | { success: false; message: string }
+
+async function convertContentToHtml(
+  content: unknown,
+  payload: Awaited<ReturnType<typeof getPayload>>,
+): Promise<string> {
+  const { convertLexicalToHTMLAsync, defaultHTMLConvertersAsync } = await import(
+    '@payloadcms/richtext-lexical/html-async'
+  )
+  const { ctaBlockToHtml, postsBlockToHtml, layoutBlockToHtml } = await import(
+    '@/blocks/newsletter/htmlConverters'
+  )
+
+  return convertLexicalToHTMLAsync({
+    converters: {
+      ...defaultHTMLConvertersAsync,
+      blocks: {
+        newsletterCta: async ({ node }) => ctaBlockToHtml(node.fields as Record<string, unknown>),
+        newsletterPosts: async ({ node }) =>
+          postsBlockToHtml(node.fields as Record<string, unknown>, payload),
+        newsletterLayout: async ({ node }) =>
+          layoutBlockToHtml(node.fields as Record<string, unknown>, payload),
+      },
+    },
+    data: content as Parameters<typeof convertLexicalToHTMLAsync>[0]['data'],
+  })
+}
 
 export async function sendNewsletter(newsletterId: string): Promise<SendResult> {
   const { user } = await getMeUser()
@@ -59,15 +84,9 @@ export async function sendNewsletter(newsletterId: string): Promise<SendResult> 
 
   let contentHtml: string
   try {
-    contentHtml = await convertLexicalToHTML({
-      converters: defaultHTMLConverters,
-      data: newsletter.content as Parameters<typeof convertLexicalToHTML>[0]['data'],
-      payload,
-    })
+    contentHtml = await convertContentToHtml(newsletter.content, payload)
   } catch (err) {
-    payload.logger.error(
-      `[sendNewsletter] Lexical to HTML conversion failed: ${JSON.stringify(err)}`,
-    )
+    payload.logger.error(`[sendNewsletter] Content conversion failed: ${JSON.stringify(err)}`)
     return { success: false, message: 'Failed to convert content to HTML' }
   }
 
@@ -130,15 +149,9 @@ export async function previewNewsletter(newsletterId: string): Promise<PreviewRe
 
   let contentHtml: string
   try {
-    contentHtml = await convertLexicalToHTML({
-      converters: defaultHTMLConverters,
-      data: newsletter.content as Parameters<typeof convertLexicalToHTML>[0]['data'],
-      payload,
-    })
+    contentHtml = await convertContentToHtml(newsletter.content, payload)
   } catch (err) {
-    payload.logger.error(
-      `[previewNewsletter] Lexical to HTML conversion failed: ${JSON.stringify(err)}`,
-    )
+    payload.logger.error(`[previewNewsletter] Content conversion failed: ${JSON.stringify(err)}`)
     return { success: false, message: 'Failed to convert content to HTML' }
   }
 

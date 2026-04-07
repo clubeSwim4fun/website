@@ -1,8 +1,17 @@
 import type { CollectionConfig } from 'payload'
-import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import {
+  BlocksFeature,
+  FixedToolbarFeature,
+  HeadingFeature,
+  InlineToolbarFeature,
+  lexicalEditor,
+} from '@payloadcms/richtext-lexical'
 import { isAdmin } from '@/access/isAdmin'
 import { isAdminOrEditor } from '@/access/isAdminOrEditor'
 import { sendNewsletter, previewNewsletter } from '@/actions/newsletter'
+import { NewsletterPostsBlock } from '@/blocks/newsletter/PostsBlock/config'
+import { NewsletterCtaBlock } from '@/blocks/newsletter/CtaBlock/config'
+import { NewsletterLayoutBlock } from '@/blocks/newsletter/LayoutBlock/config'
 
 export const Newsletters: CollectionConfig = {
   slug: 'newsletters',
@@ -43,7 +52,17 @@ export const Newsletters: CollectionConfig = {
       name: 'content',
       label: { en: 'Content', pt: 'Conteúdo' },
       type: 'richText',
-      editor: lexicalEditor({}),
+      editor: lexicalEditor({
+        features: ({ rootFeatures }) => [
+          ...rootFeatures,
+          HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
+          FixedToolbarFeature(),
+          InlineToolbarFeature(),
+          BlocksFeature({
+            blocks: [NewsletterPostsBlock, NewsletterCtaBlock, NewsletterLayoutBlock],
+          }),
+        ],
+      }),
     },
     {
       name: 'status',
@@ -168,13 +187,31 @@ export const Newsletters: CollectionConfig = {
           const { convertLexicalToHTMLAsync, defaultHTMLConvertersAsync } = await import(
             '@payloadcms/richtext-lexical/html-async'
           )
+          const { getPayload } = await import('payload')
+          const payloadConfig = await import('@payload-config')
+          const payload = await getPayload({ config: payloadConfig.default })
+
+          const { ctaBlockToHtml, postsBlockToHtml, layoutBlockToHtml } = await import(
+            '@/blocks/newsletter/htmlConverters'
+          )
+
           const { render } = await import('@react-email/components')
           const React = await import('react')
           const { NewsletterEmail } = await import('@/email/newsletter')
 
           const contentHtml = content
             ? await convertLexicalToHTMLAsync({
-                converters: { ...defaultHTMLConvertersAsync, unknown: async () => '' },
+                converters: {
+                  ...defaultHTMLConvertersAsync,
+                  blocks: {
+                    newsletterCta: async ({ node }) =>
+                      ctaBlockToHtml(node.fields as Record<string, unknown>),
+                    newsletterPosts: async ({ node }) =>
+                      postsBlockToHtml(node.fields as Record<string, unknown>, payload),
+                    newsletterLayout: async ({ node }) =>
+                      layoutBlockToHtml(node.fields as Record<string, unknown>, payload),
+                  },
+                },
                 data: content as Parameters<typeof convertLexicalToHTMLAsync>[0]['data'],
               })
             : ''

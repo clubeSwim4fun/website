@@ -4491,6 +4491,65 @@ export interface BannerBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "NewsletterPostsBlock".
+ */
+export interface NewsletterPostsBlock {
+  title?: string | null;
+  populateBy?: ('selection' | 'category') | null;
+  selectedPosts?: (string | Post)[] | null;
+  category?: (string | null) | Category;
+  limit?: number | null;
+  showImage?: boolean | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'newsletterPosts';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "NewsletterCtaBlock".
+ */
+export interface NewsletterCtaBlock {
+  title: string;
+  text?: string | null;
+  buttonLabel: string;
+  buttonUrl: string;
+  buttonColor?: ('blue' | 'green' | 'red') | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'newsletterCta';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "NewsletterLayoutBlock".
+ */
+export interface NewsletterLayoutBlock {
+  columns?:
+    | {
+        size?: ('oneThird' | 'half' | 'twoThirds' | 'full') | null;
+        richText?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'newsletterLayout';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "auth".
  */
 export interface Auth {
