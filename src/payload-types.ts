@@ -2467,6 +2467,11 @@ export interface Newsletter {
         user?: (string | null) | User;
         email?: string | null;
         deliveredAt?: string | null;
+        trackingToken?: string | null;
+        openedAt?: string | null;
+        openCount?: number | null;
+        clickedAt?: string | null;
+        clickCount?: number | null;
         id?: string | null;
       }[]
     | null;
@@ -3658,6 +3663,11 @@ export interface NewslettersSelect<T extends boolean = true> {
         user?: T;
         email?: T;
         deliveredAt?: T;
+        trackingToken?: T;
+        openedAt?: T;
+        openCount?: T;
+        clickedAt?: T;
+        clickCount?: T;
         id?: T;
       };
   updatedAt?: T;

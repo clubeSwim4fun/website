@@ -52,6 +52,7 @@ import {
 } from './admin/endpoints/dashboardMembersDetail'
 import { dashboardEvents } from './admin/endpoints/dashboardEvents'
 import { dashboardEventDetail, dashboardEventsWeek } from './admin/endpoints/dashboardEventsDetail'
+import { dashboardNewsletter } from './admin/endpoints/dashboardNewsletter'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -71,6 +72,7 @@ export default buildConfig({
     dashboardEvents,
     dashboardEventDetail,
     dashboardEventsWeek,
+    dashboardNewsletter,
   ],
   admin: {
     suppressHydrationWarning: true,
@@ -83,6 +85,10 @@ export default buildConfig({
         ClubDashboard: {
           Component: '@/admin/views/ClubDashboard#default',
           path: '/dashboard',
+        },
+        NewsletterDashboard: {
+          Component: '@/admin/views/NewsletterDashboard#default',
+          path: '/newsletter-analytics',
         },
       },
       afterNavLinks: ['@/admin/components/DashboardNavLinks#default'],

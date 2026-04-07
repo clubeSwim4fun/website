@@ -9,8 +9,16 @@ type RecipientFilter = {
   groups?: (string | { relationTo: string; value: string })[]
 }
 
-function extractId(entry: string | { relationTo: string; value: string }): string {
-  return typeof entry === 'string' ? entry : entry.value
+function extractId(
+  entry: string | { relationTo: string; value: string | { id: string } } | { id: string },
+): string {
+  if (typeof entry === 'string') return entry
+  if ('value' in entry) {
+    const v = entry.value
+    return typeof v === 'string' ? v : v.id
+  }
+  if ('id' in entry) return entry.id
+  return ''
 }
 
 export async function resolveRecipients(
@@ -37,7 +45,9 @@ export async function resolveRecipients(
     orConditions.push({ 'groups.value': { in: groupIds } })
   }
 
-  const where: Where = orConditions.length > 0 ? { or: orConditions } : {}
+  if (orConditions.length === 0) return []
+
+  const where: Where = { or: orConditions }
 
   let allDocs: { id: string; email: string }[] = []
   let page = 1

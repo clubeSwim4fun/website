@@ -4,9 +4,12 @@ import React from 'react'
 import { NavGroup, useAuth, useTranslation } from '@payloadcms/ui'
 import Link from 'next/link'
 
-const labels: Record<string, { pool: string; members: string; events: string }> = {
-  en: { pool: 'Pool', members: 'Members', events: 'Events' },
-  pt: { pool: 'Piscina', members: 'Membros', events: 'Eventos' },
+const labels: Record<
+  string,
+  { pool: string; members: string; events: string; newsletter: string }
+> = {
+  en: { pool: 'Pool', members: 'Members', events: 'Events', newsletter: 'Newsletter' },
+  pt: { pool: 'Piscina', members: 'Membros', events: 'Eventos', newsletter: 'Newsletter' },
 }
 
 export default function DashboardNavLinks() {
@@ -24,6 +27,7 @@ export default function DashboardNavLinks() {
         <Link href="/admin/dashboard?tab=pool">{t.pool}</Link>
         <Link href="/admin/dashboard?tab=members">{t.members}</Link>
         <Link href="/admin/dashboard?tab=events">{t.events}</Link>
+        <Link href="/admin/newsletter-analytics">{t.newsletter}</Link>
       </div>
     </NavGroup>
   )

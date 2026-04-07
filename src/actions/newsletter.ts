@@ -7,6 +7,31 @@ import { resolveRecipients } from '@/helpers/newsletterHelper'
 import { sendEmail } from '@/helpers/emailHelper'
 import { render } from '@react-email/components'
 import React from 'react'
+import { randomBytes } from 'crypto'
+
+function generateToken(): string {
+  return randomBytes(16).toString('hex')
+}
+
+function injectTracking(contentHtml: string, recipientToken: string, baseUrl: string): string {
+  const trackBase = `${baseUrl}/api/newsletter/track`
+
+  // Rewrite all <a href="..."> links to tracked redirect URLs
+  const withTrackedLinks = contentHtml.replace(
+    /<a\s([^>]*?)href="([^"]+)"([^>]*?)>/gi,
+    (match, before, url, after) => {
+      // Skip mailto: and already-tracked links
+      if (url.startsWith('mailto:') || url.includes('/api/newsletter/track/')) return match
+      const encoded = encodeURIComponent(url)
+      const trackedUrl = `${trackBase}/click?token=${recipientToken}&url=${encoded}`
+      return `<a ${before}href="${trackedUrl}"${after}>`
+    },
+  )
+
+  // Append tracking pixel
+  const pixel = `<img src="${trackBase}/open?token=${recipientToken}" width="1" height="1" alt="" style="display:block;width:1px;height:1px;border:0;" />`
+  return withTrackedLinks + pixel
+}
 
 type SendResult = { success: boolean; message: string }
 type PreviewResult = { html: string; estimatedCount: number } | { success: false; message: string }
@@ -18,13 +43,14 @@ async function convertContentToHtml(
   const { convertLexicalToHTMLAsync, defaultHTMLConvertersAsync } = await import(
     '@payloadcms/richtext-lexical/html-async'
   )
-  const { ctaBlockToHtml, postsBlockToHtml, layoutBlockToHtml } = await import(
+  const { ctaBlockToHtml, postsBlockToHtml, layoutBlockToHtml, buildLinkConverters } = await import(
     '@/blocks/newsletter/htmlConverters'
   )
 
   return convertLexicalToHTMLAsync({
     converters: {
       ...defaultHTMLConvertersAsync,
+      ...buildLinkConverters(),
       blocks: {
         newsletterCta: async ({ node }) => ctaBlockToHtml(node.fields as Record<string, unknown>),
         newsletterPosts: async ({ node }) =>
@@ -92,17 +118,32 @@ export async function sendNewsletter(newsletterId: string): Promise<SendResult> 
 
   const { NewsletterEmail } = await import('@/email/newsletter')
   const subject = newsletter.subject
+  const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL ?? ''
 
-  const recipientRecords: { user: string; email: string; deliveredAt: string }[] = []
+  const recipientRecords: {
+    user: string
+    email: string
+    deliveredAt: string
+    trackingToken: string
+    openCount: number
+    clickCount: number
+  }[] = []
 
   for (const recipient of recipients) {
     try {
-      const emailHtml = await render(React.createElement(NewsletterEmail, { subject, contentHtml }))
+      const token = generateToken()
+      const trackedContentHtml = injectTracking(contentHtml, token, baseUrl)
+      const emailHtml = await render(
+        React.createElement(NewsletterEmail, { subject, contentHtml: trackedContentHtml }),
+      )
       await sendEmail({ to: recipient.email, subject, emailHtml })
       recipientRecords.push({
         user: recipient.userId,
         email: recipient.email,
         deliveredAt: new Date().toISOString(),
+        trackingToken: token,
+        openCount: 0,
+        clickCount: 0,
       })
     } catch (err) {
       payload.logger.error(
@@ -112,6 +153,9 @@ export async function sendNewsletter(newsletterId: string): Promise<SendResult> 
         user: recipient.userId,
         email: recipient.email,
         deliveredAt: new Date().toISOString(),
+        trackingToken: generateToken(),
+        openCount: 0,
+        clickCount: 0,
       })
     }
   }

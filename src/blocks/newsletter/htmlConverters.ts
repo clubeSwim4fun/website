@@ -14,6 +14,34 @@ const colWidths: Record<string, string> = {
   full: '100%',
 }
 
+const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL ?? ''
+
+function internalDocToUrl(relationTo: string, value: unknown): string {
+  const slug = typeof value === 'object' && value !== null ? (value as any).slug : null
+  if (!slug) return baseUrl
+  return relationTo === 'posts' ? `${baseUrl}/posts/${slug}` : `${baseUrl}/${slug}`
+}
+
+export function buildLinkConverters() {
+  return {
+    link: async ({ node, nodesToHTML }: any): Promise<string> => {
+      const fields = node.fields ?? {}
+      const children = await nodesToHTML({ nodes: node.children ?? [] })
+
+      let href: string
+      if (fields.linkType === 'internal' && fields.doc) {
+        const { relationTo, value } = fields.doc
+        href = internalDocToUrl(relationTo, value)
+      } else {
+        href = fields.url ?? '#'
+      }
+
+      const target = fields.newTab ? ' target="_blank" rel="noopener noreferrer"' : ''
+      return `<a href="${href}"${target} style="color:#2D6CB3;">${children}</a>`
+    },
+  }
+}
+
 export function ctaBlockToHtml(fields: Record<string, unknown>): string {
   const color = buttonColors[(fields.buttonColor as string) ?? 'blue'] ?? buttonColors.blue
   const text = fields.text
@@ -112,6 +140,7 @@ export async function layoutBlockToHtml(
         ? await convertLexicalToHTMLAsync({
             converters: {
               ...defaultHTMLConvertersAsync,
+              ...buildLinkConverters(),
               blocks: {
                 newsletterCta: async ({ node }) =>
                   ctaBlockToHtml(node.fields as Record<string, unknown>),

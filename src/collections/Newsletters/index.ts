@@ -54,7 +54,7 @@ export const Newsletters: CollectionConfig = {
       type: 'richText',
       editor: lexicalEditor({
         features: ({ rootFeatures }) => [
-          ...rootFeatures,
+          ...rootFeatures.filter((f) => (f as any).key !== 'relationship'),
           HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
           FixedToolbarFeature(),
           InlineToolbarFeature(),
@@ -172,6 +172,38 @@ export const Newsletters: CollectionConfig = {
           label: { en: 'Delivered at', pt: 'Entregue em' },
           type: 'date',
         },
+        {
+          name: 'trackingToken',
+          label: { en: 'Tracking token', pt: 'Token de rastreio' },
+          type: 'text',
+          admin: { readOnly: true },
+        },
+        {
+          name: 'openedAt',
+          label: { en: 'First opened at', pt: 'Aberto em' },
+          type: 'date',
+          admin: { readOnly: true },
+        },
+        {
+          name: 'openCount',
+          label: { en: 'Open count', pt: 'Nº de aberturas' },
+          type: 'number',
+          defaultValue: 0,
+          admin: { readOnly: true },
+        },
+        {
+          name: 'clickedAt',
+          label: { en: 'First clicked at', pt: 'Clicado em' },
+          type: 'date',
+          admin: { readOnly: true },
+        },
+        {
+          name: 'clickCount',
+          label: { en: 'Click count', pt: 'Nº de cliques' },
+          type: 'number',
+          defaultValue: 0,
+          admin: { readOnly: true },
+        },
       ],
     },
   ],
@@ -191,9 +223,8 @@ export const Newsletters: CollectionConfig = {
           const payloadConfig = await import('@payload-config')
           const payload = await getPayload({ config: payloadConfig.default })
 
-          const { ctaBlockToHtml, postsBlockToHtml, layoutBlockToHtml } = await import(
-            '@/blocks/newsletter/htmlConverters'
-          )
+          const { ctaBlockToHtml, postsBlockToHtml, layoutBlockToHtml, buildLinkConverters } =
+            await import('@/blocks/newsletter/htmlConverters')
 
           const { render } = await import('@react-email/components')
           const React = await import('react')
@@ -203,6 +234,7 @@ export const Newsletters: CollectionConfig = {
             ? await convertLexicalToHTMLAsync({
                 converters: {
                   ...defaultHTMLConvertersAsync,
+                  ...buildLinkConverters(),
                   blocks: {
                     newsletterCta: async ({ node }) =>
                       ctaBlockToHtml(node.fields as Record<string, unknown>),

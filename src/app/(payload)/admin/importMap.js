@@ -41,6 +41,7 @@ import { default as default_34050e5a126b1eec5bd865e5633105a1 } from '@/admin/com
 import { default as default_ca5ea65eb6962f532c953db4c94e7813 } from '@/admin/components/DashboardNavLinks'
 import { S3ClientUploadHandler as S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24 } from '@payloadcms/storage-s3/client'
 import { default as default_fb14f7428be2cf85b9daaa3562b259ab } from '@/admin/views/ClubDashboard'
+import { default as default_aae5fb3cef470e0c0cf8472427cd9e5f } from '@/admin/views/NewsletterDashboard'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 export const importMap = {
@@ -87,5 +88,6 @@ export const importMap = {
   "@/admin/components/DashboardNavLinks#default": default_ca5ea65eb6962f532c953db4c94e7813,
   "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24,
   "@/admin/views/ClubDashboard#default": default_fb14f7428be2cf85b9daaa3562b259ab,
+  "@/admin/views/NewsletterDashboard#default": default_aae5fb3cef470e0c0cf8472427cd9e5f,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }
