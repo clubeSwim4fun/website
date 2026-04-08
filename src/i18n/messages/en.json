@@ -41,7 +41,8 @@
       "zipcode": "Postal Code:",
       "editProfile": "Edit My Profile",
       "birthday": "Birthday:",
-      "email": "Email:"
+      "email": "Email:",
+      "communications": "Communications"
     },
     "Profile": {
       "profileTitle": "User Profile",
@@ -272,6 +273,25 @@
     "title": "404 - Not Found",
     "description": "The page you are looking for does not exist.",
     "goHome": "Go to home page"
+  },
+  "Communications": {
+    "title": "Communication preferences",
+    "subtitle": "Manage how and when we contact you",
+    "emailTitle": "Email notifications",
+    "emailDesc": "Training reminders, schedule changes, news and club updates",
+    "emailTags": "Training reminders · Slot changes · Club news · Invoices & receipts",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "saving": "Saving...",
+    "saved": "Saved"
+  },
+    "successTitle": "Unsubscribed successfully",
+    "successMessage": "We've removed your email address from our newsletter list. You can re-enable notifications at any time from your profile.",
+    "invalidTitle": "Invalid link",
+    "invalidMessage": "This unsubscribe link is invalid or has already expired. If you'd like to unsubscribe, please visit your profile.",
+    "managePreferences": "Manage preferences",
+    "backHome": "Back to home",
+    "infoNote": "You will still receive transactional emails related to your account, such as payment confirmations and status updates."
   },
   "Subscription": {
     "title": "Subscription Payment",

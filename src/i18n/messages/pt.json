@@ -41,7 +41,8 @@
       "zipcode": "Código Postal:",
       "editProfile": "Editar Meu Perfil",
       "birthday": "Data de Nascimento:",
-      "email": "E-mail:"
+      "email": "E-mail:",
+      "communications": "Comunicações"
     },
     "Profile": {
       "profileTitle": "Perfil do Utilizador",
@@ -272,6 +273,25 @@
     "title": "404 - Página não encontrada",
     "description": "Desculpe, a página que está à procura não existe.",
     "goHome": "Voltar para a página inicial"
+  },
+  "Communications": {
+    "title": "Preferências de comunicação",
+    "subtitle": "Gerir como e quando entramos em contacto consigo",
+    "emailTitle": "Notificações por email",
+    "emailDesc": "Lembretes de treino, alterações de horário, novidades e atualizações do clube",
+    "emailTags": "Lembretes de treino · Alterações de slots · Novidades do clube · Faturas",
+    "enabled": "Ativo",
+    "disabled": "Inativo",
+    "saving": "A guardar...",
+    "saved": "Guardado"
+  },
+    "successTitle": "Subscrição cancelada",
+    "successMessage": "Removemos o seu endereço de email da nossa lista de newsletters. Pode reativar as notificações a qualquer momento no seu perfil.",
+    "invalidTitle": "Ligação inválida",
+    "invalidMessage": "Este link de cancelamento é inválido ou já expirou. Se pretende cancelar a subscrição, aceda ao seu perfil.",
+    "managePreferences": "Gerir preferências",
+    "backHome": "Voltar ao início",
+    "infoNote": "Continuará a receber emails transacionais relacionados com a sua conta, como confirmações de pagamento e atualizações de estado."
   },
   "Subscription": {
     "title": "Pagamento de Subscrição",

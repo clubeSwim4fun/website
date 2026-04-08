@@ -78,14 +78,20 @@ export async function resolveRecipients(
     }
   }
 
-  // Apply consent gate — only users with emailNotificationsEnabled === true
+  // Apply consent gate — exclude users who have explicitly opted out (false)
+  // null/undefined means never set → treat as opted in
   const deduplicatedIds = Array.from(seen.keys())
   if (deduplicatedIds.length === 0) return []
 
   const consentWhere: Where = {
     and: [
       { id: { in: deduplicatedIds } } as Where,
-      { emailNotificationsEnabled: { equals: true } } as Where,
+      {
+        or: [
+          { emailNotificationsEnabled: { equals: true } },
+          { emailNotificationsEnabled: { exists: false } },
+        ],
+      } as Where,
     ],
   }
 

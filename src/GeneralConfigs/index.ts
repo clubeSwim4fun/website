@@ -364,6 +364,46 @@ export const GeneralConfigs: GlobalConfig = {
             },
           ],
         },
+        {
+          name: 'newsletter',
+          label: {
+            en: 'Newsletter',
+            pt: 'Newsletter',
+          },
+          fields: [
+            {
+              name: 'footerSignoff',
+              label: { en: 'Sign-off text', pt: 'Texto de despedida' },
+              type: 'text',
+              localized: true,
+              admin: {
+                description: {
+                  en: 'e.g. "Thank you and happy swimming, Club Direction"',
+                  pt: 'ex: "Obrigado e boas braçadas, Direção do Clube"',
+                },
+              },
+            },
+            {
+              name: 'footerEmail',
+              label: { en: 'Contact email shown in footer', pt: 'Email de contacto no rodapé' },
+              type: 'email',
+            },
+            {
+              name: 'unsubscribeLabel',
+              label: { en: 'Unsubscribe link label', pt: 'Texto do link de cancelamento' },
+              type: 'text',
+              localized: true,
+              defaultValue: 'Cancelar subscrição',
+            },
+            {
+              name: 'manageLabel',
+              label: { en: 'Manage subscription link label', pt: 'Texto do link de gestão' },
+              type: 'text',
+              localized: true,
+              defaultValue: 'Gerir a sua subscrição',
+            },
+          ],
+        },
       ],
     },
   ],

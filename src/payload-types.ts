@@ -4241,6 +4241,15 @@ export interface GeneralConfig {
     limitDate: number;
     periodicity: '1' | '3' | '12';
   };
+  newsletter?: {
+    /**
+     * e.g. "Thank you and happy swimming, Club Direction"
+     */
+    footerSignoff?: string | null;
+    footerEmail?: string | null;
+    unsubscribeLabel?: string | null;
+    manageLabel?: string | null;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -4416,6 +4425,14 @@ export interface GeneralConfigsSelect<T extends boolean = true> {
         monthlyFee?: T;
         limitDate?: T;
         periodicity?: T;
+      };
+  newsletter?:
+    | T
+    | {
+        footerSignoff?: T;
+        footerEmail?: T;
+        unsubscribeLabel?: T;
+        manageLabel?: T;
       };
   updatedAt?: T;
   createdAt?: T;

@@ -105,7 +105,12 @@ export async function sendNewsletter(newsletterId: string): Promise<SendResult> 
   )
 
   if (recipients.length === 0) {
-    return { success: false, message: 'No eligible recipients' }
+    await payload.update({
+      collection: 'newsletters',
+      id: newsletterId,
+      data: { status: 'sent', sentAt: new Date().toISOString(), recipientCount: 0, recipients: [] },
+    })
+    return { success: true, message: 'Newsletter sent (0 eligible recipients)' }
   }
 
   let contentHtml: string
@@ -134,7 +139,11 @@ export async function sendNewsletter(newsletterId: string): Promise<SendResult> 
       const token = generateToken()
       const trackedContentHtml = injectTracking(contentHtml, token, baseUrl)
       const emailHtml = await render(
-        React.createElement(NewsletterEmail, { subject, contentHtml: trackedContentHtml }),
+        React.createElement(NewsletterEmail, {
+          subject,
+          contentHtml: trackedContentHtml,
+          trackingToken: token,
+        }),
       )
       await sendEmail({ to: recipient.email, subject, emailHtml })
       recipientRecords.push({
