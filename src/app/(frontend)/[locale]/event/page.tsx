@@ -12,7 +12,7 @@ export default async function EventsPage({ params }: Args) {
   const { locale } = await params
 
   return (
-    <div className="pt-[104px] pb-24">
+    <div className=" pb-24">
       <div className="container mb-10">
         <h1 className="text-3xl font-bold">Calendário de Provas</h1>
       </div>

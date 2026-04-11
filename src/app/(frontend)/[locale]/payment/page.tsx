@@ -78,7 +78,7 @@ export default async function Payment({ params }: { params: Promise<{ locale: st
   const paymentDescription = lineItems.map((i) => i.description).join(', ')
 
   return (
-    <main className="pt-[104px] pb-24 bg-[#fdf8f3] min-h-screen">
+    <main className=" pb-24 bg-[#fdf8f3] min-h-screen">
       {draft && <LivePreviewListener />}
       <section className="container max-w-screen-xl mx-auto px-4 mt-6">
         <CheckoutSteps current={1} />

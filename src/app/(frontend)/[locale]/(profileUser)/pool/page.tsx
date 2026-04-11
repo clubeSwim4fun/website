@@ -54,7 +54,7 @@ const PoolPage = async ({
   const waitlistPosition = state.variant === 'already-waitlisted' ? state.position : undefined
 
   return (
-    <section className="pt-[104px] pb-24 container mx-auto max-w-2xl">
+    <section className=" pb-24 container mx-auto max-w-2xl">
       <PoolPageClient
         cycle={cycle}
         activeCount={activeCount}

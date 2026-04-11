@@ -170,3 +170,36 @@ html[data-theme='light'] {
 .animate-fade-up-5 {
   animation: fadeUp 0.6s ease 0.5s both;
 }
+
+/* ── Hero rich text ─────────────────────────────────────────────────────────
+   Renders inside the gradient hero background.
+   h1 → large white Syne heading
+   p  → smaller white/78 DM Sans body
+   Any text the editor marks as a custom colour (blue) → brand --light
+   ────────────────────────────────────────────────────────────────────────── */
+.hero-richtext-inner h1 {
+  font-family: var(--font-syne), 'Syne', sans-serif;
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: #fff;
+  margin-bottom: 1rem;
+}
+
+.hero-richtext-inner p {
+  font-size: 1.0625rem;
+  color: rgba(255, 255, 255, 0.78);
+  line-height: 1.65;
+  max-width: 460px;
+  margin-bottom: 0;
+}
+
+/* Lexical TextStateFeature outputs inline style="color:#3bb8d8" for Brand Blue.
+   Map it to the --light CSS variable so it stays consistent with the design token. */
+.hero-richtext-inner [style*='color: #3bb8d8'],
+.hero-richtext-inner [style*='color:#3bb8d8'],
+.hero-richtext-inner [style*='color: rgb(59, 184, 216)'],
+.hero-richtext-inner [style*='color:rgb(59,184,216)'] {
+  color: hsl(var(--light)) !important;
+}

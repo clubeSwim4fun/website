@@ -28,14 +28,14 @@ const UserSubscriptionPage = async ({ params }: { params: Promise<{ locale: stri
 
   if (user.status === 'pendingPayment' || user.status === 'expired') {
     return (
-      <section className="pt-[104px] pb-24 container max-w-2xl mx-auto">
+      <section className=" pb-24 container max-w-2xl mx-auto">
         <PaymentForm user={user} associationFees={globalConfig.associationFees} />
       </section>
     )
   }
 
   return (
-    <section className="pt-[104px] pb-24 container max-w-5xl m-auto">
+    <section className=" pb-24 container max-w-5xl m-auto">
       <div className="flex mt-6 justify-center items-center">
         <div className="w-1/3 border-r-2 border-gray-600 flex items-center justify-center">
           {user.status === 'pendingUpdate' ? (

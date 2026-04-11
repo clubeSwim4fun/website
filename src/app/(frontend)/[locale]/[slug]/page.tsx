@@ -73,7 +73,7 @@ export default async function Page({ params: paramsPromise }: Args) {
   const { hero, layout } = page
 
   return (
-    <article className="pt-[104px] pb-24">
+    <article className=" pb-24">
       <PageClient />
       {canSeePage.success ? (
         <>

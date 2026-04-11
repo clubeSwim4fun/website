@@ -16,7 +16,7 @@ export default async function NewsletterUnsubscribePage({ params, searchParams }
   const isSuccess = status === 'success'
 
   return (
-    <main className="pt-[104px] pb-24 bg-[#fdf8f3] min-h-screen">
+    <main className=" pb-24 bg-[#fdf8f3] min-h-screen">
       <section className="container max-w-screen-sm mx-auto px-4 mt-10">
         <div className="bg-white border-2 border-[#d4eaf2] rounded-xl overflow-hidden">
           <div

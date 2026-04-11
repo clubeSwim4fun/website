@@ -29,7 +29,7 @@ const PoolSubscribePage = async ({ params }: { params: Promise<{ locale: string 
   const t = await getTranslations({ locale, namespace: 'PoolSubscription' })
 
   return (
-    <section className="pt-[104px] pb-24 container mx-auto max-w-5xl">
+    <section className=" pb-24 container mx-auto max-w-5xl">
       <h1 className="text-3xl font-bold mb-8">{t('subscribeTitle')}</h1>
 
       <div className="flex flex-col gap-4 mb-8">

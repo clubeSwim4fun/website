@@ -26,7 +26,7 @@ const MySubscriptionPage = async ({ params }: { params: Promise<{ locale: string
   const weeks = isActive ? await getWeekSlotData(cycle!, user!.id) : []
 
   return (
-    <section className="pt-[104px] pb-24 container mx-auto max-w-3xl">
+    <section className=" pb-24 container mx-auto max-w-3xl">
       <h1 className="text-3xl font-bold mb-2">{t('mySubscriptionTitle')}</h1>
       <p className="text-muted-foreground mb-8">{t('mySubscriptionSubtitle')}</p>
 

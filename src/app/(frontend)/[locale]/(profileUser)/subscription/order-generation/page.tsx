@@ -56,7 +56,7 @@ const UserSubscriptionConfirmationPage = async ({
   ]
 
   return (
-    <section className="pt-[104px] pb-24 container max-w-2xl mx-auto">
+    <section className=" pb-24 container max-w-2xl mx-auto">
       {/* Breadcrumb */}
       <p className="text-xs text-muted-foreground mb-5">
         {t('Subscription.breadcrumbAccount')} ›{' '}

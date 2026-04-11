@@ -41,7 +41,7 @@ const UserPage = async ({ params }: { params: Promise<{ locale: string }> }) => 
   const poolSubCount = subsResult.rows.filter((r) => r.kind === 'pool').length
 
   return (
-    <section className="pt-[104px] pb-24 min-h-screen" style={{ background: '#fdf8f3' }}>
+    <section className=" pb-24 min-h-screen" style={{ background: '#fdf8f3' }}>
       <div className="container mx-auto max-w-4xl px-4 flex flex-col gap-6">
         <UserProfileHeader
           user={user}

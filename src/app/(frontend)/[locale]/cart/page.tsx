@@ -60,7 +60,7 @@ export default async function Cart({ params }: { params: Promise<{ locale: strin
   })
 
   return (
-    <main className="pt-[104px] pb-24 bg-[#fdf8f3] min-h-screen">
+    <main className=" pb-24 bg-[#fdf8f3] min-h-screen">
       <CartPageClient />
       {draft && <LivePreviewListener />}
       <section className="container max-w-screen-xl mx-auto px-4 mt-6">

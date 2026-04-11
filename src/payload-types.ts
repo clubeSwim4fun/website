@@ -195,7 +195,14 @@ export interface Page {
   id: string;
   title: string;
   hero: {
-    type: 'none' | 'highImpact' | 'mediumImpact' | 'lowImpact';
+    type: 'imageLeft' | 'imageRight' | 'noImage';
+    /**
+     * Small pill shown above the title (e.g. "Clube de Natação")
+     */
+    badge?: string | null;
+    /**
+     * Use Heading 1 for the title. Text coloured blue in the editor will render as the brand light-blue accent.
+     */
     richText?: {
       root: {
         type: string;
@@ -214,7 +221,7 @@ export interface Page {
     links?:
       | {
           link: {
-            type?: ('reference' | 'custom' | 'subscription') | null;
+            type?: ('reference' | 'custom') | null;
             newTab?: boolean | null;
             reference?:
               | ({
@@ -225,31 +232,28 @@ export interface Page {
                   relationTo: 'posts';
                   value: string | Post;
                 } | null);
-            /**
-             * Select the group that this subscription will be linked to.
-             */
-            subscriptionGroup?: (string | null) | Group;
             url?: string | null;
             label: string;
-            hasChildren?: boolean | null;
-            childrenPages?:
-              | {
-                  reference: {
-                    relationTo: 'pages';
-                    value: string | Page;
-                  };
-                  label: string;
-                  id?: string | null;
-                }[]
-              | null;
-            /**
-             * Choose how the link should be rendered.
-             */
-            appearance?: ('default' | 'outline') | null;
+            appearance?: ('primary' | 'secondary') | null;
+            icon?: ('none' | 'arrow' | 'calendar' | 'flag' | 'user' | 'star') | null;
+            iconRight?: boolean | null;
           };
           id?: string | null;
         }[]
       | null;
+    /**
+     * Up to 4 stats shown below the CTAs (e.g. "6 / Sessões/semana")
+     */
+    stats?:
+      | {
+          value: string;
+          label: string;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Required for Image Left / Image Right layouts.
+     */
     media?: (string | null) | Media;
   };
   layout: (CallToActionBlock | ContentBlock | MediaBlock | ArchiveBlock | FormBlock | Calendar | SponsorsBlock)[];
@@ -2882,6 +2886,7 @@ export interface PagesSelect<T extends boolean = true> {
     | T
     | {
         type?: T;
+        badge?: T;
         richText?: T;
         links?:
           | T
@@ -2892,19 +2897,19 @@ export interface PagesSelect<T extends boolean = true> {
                     type?: T;
                     newTab?: T;
                     reference?: T;
-                    subscriptionGroup?: T;
                     url?: T;
                     label?: T;
-                    hasChildren?: T;
-                    childrenPages?:
-                      | T
-                      | {
-                          reference?: T;
-                          label?: T;
-                          id?: T;
-                        };
                     appearance?: T;
+                    icon?: T;
+                    iconRight?: T;
                   };
+              id?: T;
+            };
+        stats?:
+          | T
+          | {
+              value?: T;
+              label?: T;
               id?: T;
             };
         media?: T;

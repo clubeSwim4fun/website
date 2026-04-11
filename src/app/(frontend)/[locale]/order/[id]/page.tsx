@@ -54,7 +54,7 @@ export default async function OrderPage({ params: paramsPromise }: Args) {
   const events = (order.events ?? []) as OrderEvent[]
 
   return (
-    <main className="pt-[104px] pb-24 bg-[#fdf8f3] min-h-screen">
+    <main className=" pb-24 bg-[#fdf8f3] min-h-screen">
       <OrderPageClient />
       <section className="container max-w-screen-xl mx-auto px-4 mt-6">
         <CheckoutSteps current={2} />

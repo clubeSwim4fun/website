@@ -32,10 +32,7 @@ const GroupSubscriptionPageClient = ({
 
   return (
     <section
-      className={cn(
-        'pt-[104px] pb-24 container max-w-5xl',
-        `${user.status !== 'active' ? 'mx' : 'm'}-auto`,
-      )}
+      className={cn(' pb-24 container max-w-5xl', `${user.status !== 'active' ? 'mx' : 'm'}-auto`)}
     >
       <FormBlockClient
         enableIntro={false}
