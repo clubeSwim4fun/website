@@ -1761,6 +1761,7 @@ export interface ArchiveBlock {
       | null;
   };
   blockBackground?: ('transparent' | 'fill' | 'brand') | null;
+  subtitle?: string | null;
   introContent?: {
     root: {
       type: string;
@@ -3125,6 +3126,7 @@ export interface ArchiveBlockSelect<T extends boolean = true> {
         allowedGroups?: T;
       };
   blockBackground?: T;
+  subtitle?: T;
   introContent?: T;
   populateBy?: T;
   relationTo?: T;

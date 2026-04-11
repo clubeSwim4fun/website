@@ -11,6 +11,11 @@ export const Archive: Block = {
     blockVisibilityDynamicField,
     blockBackgroundField,
     {
+      name: 'subtitle',
+      type: 'text',
+      label: 'Subtitle (eyebrow label)',
+    },
+    {
       name: 'introContent',
       type: 'richText',
       editor: defaultLexical,

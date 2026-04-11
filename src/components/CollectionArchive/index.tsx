@@ -7,25 +7,18 @@ export type Props = {
   posts: CardPostData[]
 }
 
-export const CollectionArchive: React.FC<Props> = (props) => {
-  const { posts } = props
-
+export const CollectionArchive: React.FC<Props> = ({ posts }) => {
   return (
     <div className={cn('container')}>
-      <div>
-        <div className="grid grid-cols-4 sm:grid-cols-8 lg:grid-cols-12 gap-y-4 gap-x-4 lg:gap-y-8 lg:gap-x-8 xl:gap-x-8">
-          {posts?.map((result, index) => {
-            if (typeof result === 'object' && result !== null) {
-              return (
-                <div className="col-span-4" key={index}>
-                  <Card className="h-full" doc={result} relationTo="posts" showCategories />
-                </div>
-              )
-            }
-
-            return null
-          })}
-        </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        {posts?.map((result, index) => {
+          if (typeof result === 'object' && result !== null) {
+            return (
+              <Card key={index} className="h-full" doc={result} relationTo="posts" showCategories />
+            )
+          }
+          return null
+        })}
       </div>
     </div>
   )

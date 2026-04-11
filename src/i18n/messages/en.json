@@ -253,6 +253,10 @@
     "securePaymentTitle": "Secure card payment",
     "securePaymentSub": "Your data is encrypted and never stored"
   },
+  "ArchiveBlock": {
+    "readMore": "Read more",
+    "viewAll": "View all posts"
+  },
   "Posts": {
     "title": "Blog",
     "noResults": "Search produced no results.",

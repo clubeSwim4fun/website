@@ -253,6 +253,10 @@
     "securePaymentTitle": "Pagamento seguro por cartão",
     "securePaymentSub": "Os seus dados são encriptados e nunca armazenados"
   },
+  "ArchiveBlock": {
+    "readMore": "Ler mais",
+    "viewAll": "Ver todas as notícias"
+  },
   "Posts": {
     "title": "Blog",
     "noResults": "A pesquisa não produziu resultados.",
