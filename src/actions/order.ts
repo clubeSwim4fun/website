@@ -149,13 +149,22 @@ export const createOrder = async (locale: TypedLocale, stripePaymentIntentId: st
           const ticket = item.selectedTicket as Ticket
           const eventFor = ticket.eventFor as Event
           const key = `${eventFor.title}__${ticket.name}`
+          // localized fields may be objects when fetched without a locale
+          const resolveLocalized = (val: unknown): string => {
+            if (typeof val === 'string') return val
+            if (val && typeof val === 'object') {
+              const obj = val as Record<string, string>
+              return obj[locale] ?? obj['pt'] ?? obj['en'] ?? Object.values(obj)[0] ?? ''
+            }
+            return String(val ?? '')
+          }
           const existing = lineItemMap.get(key)
           if (existing) {
             existing.quantity += 1
           } else {
             lineItemMap.set(key, {
-              name: typeof eventFor.title === 'string' ? eventFor.title : String(eventFor.title),
-              description: typeof ticket.name === 'string' ? ticket.name : String(ticket.name),
+              name: resolveLocalized(eventFor.title),
+              description: resolveLocalized(ticket.name),
               unit_price: ticket.price.toFixed(2),
               quantity: 1,
               tax: { name: 'IVA0' },

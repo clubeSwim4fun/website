@@ -145,5 +145,5 @@ missing support for block components so it can add posts from blog for example.
 | 11 | Event JSON-LD structured data | Low | ❌ Open |
 | 12 | Ticket capacity/limit | Low | ❌ Open |
 | 13 | Admin participant export | Low | ❌ Open |
-| 14 | Blog comments & reactions | Low | ❌ Open |
-| 15 | Newsletter | Low | ❌ Open |
+| 14 | Blog comments & reactions | Low | ✅ Done |
+| 15 | Newsletter | Low | ✅ Done |

@@ -16,6 +16,8 @@ export type UserEvents = {
   tshirtSize?: string | null
   eventPurchaseId?: string | null
   ticket: Ticket
+  orderId?: string | null
+  stripePaymentIntentId?: string | null
 }
 
 export type FeesType = {
@@ -79,6 +81,8 @@ export const getUserFutureEvents = async ({
           tshirtSize: ticketData.tshirtSize,
           eventPurchaseId: ticketData.eventPurchaseId,
           eventUrl: event.slug,
+          orderId: doc.id,
+          stripePaymentIntentId: doc.stripePaymentIntentId ?? null,
         }
         userEvents.push(purchasedEvent)
       })

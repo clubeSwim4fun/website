@@ -7,10 +7,11 @@ import { notFound } from 'next/navigation'
 import { OrderPageClient } from './page.client'
 import CheckoutSteps from '@/components/Common/CheckoutSteps'
 import { Order, Ticket, Event } from '@/payload-types'
-import { Check, CalendarDays, MapPin, Mail, User, ArrowRight, Download } from 'lucide-react'
+import { Check, CalendarDays, Mail, User } from 'lucide-react'
 import { Link } from '@/i18n/routing'
 import { convertMtoKm } from '@/utilities/util'
 import { cn } from '@/utilities/ui'
+import { InvoiceDownloadButton } from './InvoiceDownloadButton'
 
 const EVENT_BAR_COLORS = ['bg-green-500', 'bg-[#0e7ea8]', 'bg-amber-500', 'bg-purple-500']
 
@@ -273,6 +274,9 @@ export default async function OrderPage({ params: paramsPromise }: Args) {
             <CalendarDays className="w-4 h-4" />
             {t('browseEvents')}
           </Link>
+          {order.paymentStatus === 'paid' && order.stripePaymentIntentId && (
+            <InvoiceDownloadButton paymentIntentId={order.stripePaymentIntentId} />
+          )}
         </div>
 
         <p className="flex items-center gap-1.5 text-[10px] text-[#8aaabb] mb-6">

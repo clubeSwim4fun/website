@@ -164,7 +164,7 @@ export async function createDraftInvoice(
 
 /**
  * Fetches the InvoiceXpress invoice for a Stripe PaymentIntent.
- * Flow: PI → expand latest_charge → strip 'ch_'/'py_' prefix → search InvoiceXpress by reference.
+ * The PaymentIntent ID is stored directly as the invoice reference.
  */
 export async function getReceiptByPaymentIntentId(
   paymentIntentId: string,
@@ -172,29 +172,8 @@ export async function getReceiptByPaymentIntentId(
   try {
     const { accountName, apiKey } = getInvoiceXpressConfig()
 
-    // Step 1: resolve the charge ID from Stripe
-    const stripeKey = process.env.STRIPE_SECRET_KEY
-    if (!stripeKey) return { receipt: undefined, error: 'Stripe is not configured' }
-
-    const stripeRes = await fetch(
-      `https://api.stripe.com/v1/payment_intents/${paymentIntentId}?expand[]=latest_charge`,
-      { headers: { Authorization: `Bearer ${stripeKey}` } },
-    )
-    if (!stripeRes.ok) {
-      return { receipt: undefined, error: 'Failed to retrieve payment from Stripe' }
-    }
-    const pi = await stripeRes.json()
-    const chargeId: string | undefined = pi.latest_charge?.id ?? pi.latest_charge
-    if (!chargeId) {
-      return { receipt: undefined, error: 'No charge associated with this payment' }
-    }
-
-    // Step 2: strip 'ch_' or 'py_' prefix — InvoiceXpress uses the bare charge ID as reference
-    const reference = /^(ch_|py_)/.test(chargeId) ? chargeId.slice(3) : chargeId
-
-    // Step 3: search InvoiceXpress
     const params = new URLSearchParams({
-      reference,
+      reference: paymentIntentId,
       non_archived: 'true',
       api_key: apiKey,
     })

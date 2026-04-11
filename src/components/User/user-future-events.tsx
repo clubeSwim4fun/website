@@ -11,8 +11,10 @@ import {
 } from '@/helpers/userHelper'
 import { EVENTS_PAGE_SIZE } from '@/helpers/userHelperConstants'
 import { useFormatter, useTranslations } from 'next-intl'
-import { ArrowUp, ArrowDown, Loader, Search, X, Calendar } from 'lucide-react'
+import { ArrowUp, ArrowDown, Loader, Search, X, Calendar, FileDown } from 'lucide-react'
 import { FrontPagination } from '../FrontPagination'
+import { fetchReceiptForPaymentIntent } from '@/actions/invoice'
+import { useToast } from '@/hooks/use-toast'
 
 const PAGE_SIZE = EVENTS_PAGE_SIZE
 
@@ -21,6 +23,7 @@ type Args = { userId: string }
 export const UserFutureEvents: React.FC<Args> = ({ userId }) => {
   const t = useTranslations('User.Events')
   const format = useFormatter()
+  const { toast } = useToast()
 
   const [userEvents, setUserEvents] = useState<UserEventsType[]>([])
   const [currentPage, setCurrentPage] = useState(1)
@@ -28,6 +31,7 @@ export const UserFutureEvents: React.FC<Args> = ({ userId }) => {
   const [filteredCount, setFilteredCount] = useState(0)
   const [isLoadingPage, setIsLoadingPage] = useState(true)
   const [isPending, startTransition] = useTransition()
+  const [downloadingId, setDownloadingId] = useState<string | null>(null)
 
   const [dateFilter, setDateFilter] = useState<EventDateFilter>('future')
   const [sortOrder, setSortOrder] = useState<EventSortOrder>('asc')
@@ -74,6 +78,18 @@ export const UserFutureEvents: React.FC<Args> = ({ userId }) => {
   const handleSearchClear = () => {
     setNameSearch('')
     setCurrentPage(1)
+  }
+
+  const handleDownloadInvoice = async (paymentIntentId: string, rowId: string) => {
+    setDownloadingId(rowId)
+    const result = await fetchReceiptForPaymentIntent(paymentIntentId)
+    setDownloadingId(null)
+    if (result.error || !result.receipt) {
+      toast({ variant: 'destructive', description: t('invoiceNotAvailable') })
+      return
+    }
+    if (result.receipt.permalink)
+      window.open(result.receipt.permalink, '_blank', 'noopener,noreferrer')
   }
 
   const showPagination =
@@ -186,38 +202,43 @@ export const UserFutureEvents: React.FC<Args> = ({ userId }) => {
         <table className="w-full border-collapse text-[13px]">
           <thead>
             <tr>
-              {[t('date'), t('event'), t('ticketName'), t('distance'), t('dorsal')].map(
-                (col, i) => (
-                  <th
-                    key={i}
-                    className="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-[.6px] whitespace-nowrap"
-                    style={{
-                      color: '#8aaabb',
-                      borderBottom: '1.5px solid #d4eaf2',
-                      background: '#f0fafd',
-                      cursor: i === 0 ? 'pointer' : 'default',
-                    }}
-                    onClick={i === 0 ? handleSortToggle : undefined}
-                  >
-                    {col}
-                    {i === 0 && (
-                      <span className="ml-1 opacity-60 text-[10px]">
-                        {sortOrder === 'asc' ? '↑' : '↓'}
-                      </span>
-                    )}
-                  </th>
-                ),
-              )}
+              {[
+                t('date'),
+                t('event'),
+                t('ticketName'),
+                t('distance'),
+                t('dorsal'),
+                t('invoice'),
+              ].map((col, i) => (
+                <th
+                  key={i}
+                  className="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-[.6px] whitespace-nowrap"
+                  style={{
+                    color: '#8aaabb',
+                    borderBottom: '1.5px solid #d4eaf2',
+                    background: '#f0fafd',
+                    cursor: i === 0 ? 'pointer' : 'default',
+                  }}
+                  onClick={i === 0 ? handleSortToggle : undefined}
+                >
+                  {col}
+                  {i === 0 && (
+                    <span className="ml-1 opacity-60 text-[10px]">
+                      {sortOrder === 'asc' ? '↑' : '↓'}
+                    </span>
+                  )}
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>
             {isPending ? (
               <tr>
-                <td colSpan={5}>{loadingState}</td>
+                <td colSpan={6}>{loadingState}</td>
               </tr>
             ) : userEvents.length === 0 ? (
               <tr>
-                <td colSpan={5}>{emptyState}</td>
+                <td colSpan={6}>{emptyState}</td>
               </tr>
             ) : (
               userEvents.map((ev, i) => (
@@ -256,6 +277,36 @@ export const UserFutureEvents: React.FC<Args> = ({ userId }) => {
                   </td>
                   <td className="px-4 py-[13px]" style={{ color: '#3d5a70' }}>
                     {ev.eventPurchaseId ?? '—'}
+                  </td>
+                  <td className="px-4 py-[13px]">
+                    {ev.stripePaymentIntentId && (
+                      <button
+                        onClick={() =>
+                          handleDownloadInvoice(
+                            ev.stripePaymentIntentId!,
+                            ev.stripePaymentIntentId!,
+                          )
+                        }
+                        disabled={downloadingId === ev.stripePaymentIntentId}
+                        title={t('downloadInvoice')}
+                        className="w-7 h-7 rounded-[7px] flex items-center justify-center transition-all disabled:opacity-50"
+                        style={{ border: '1px solid #d4eaf2', background: 'transparent' }}
+                        onMouseEnter={(e) => {
+                          ;(e.currentTarget as HTMLButtonElement).style.background = '#e0f5fb'
+                          ;(e.currentTarget as HTMLButtonElement).style.borderColor = '#3bb8d8'
+                        }}
+                        onMouseLeave={(e) => {
+                          ;(e.currentTarget as HTMLButtonElement).style.background = 'transparent'
+                          ;(e.currentTarget as HTMLButtonElement).style.borderColor = '#d4eaf2'
+                        }}
+                      >
+                        {downloadingId === ev.stripePaymentIntentId ? (
+                          <Loader className="w-3 h-3 animate-spin" style={{ stroke: '#3d5a70' }} />
+                        ) : (
+                          <FileDown className="w-3 h-3" style={{ stroke: '#3d5a70' }} />
+                        )}
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))
@@ -339,6 +390,29 @@ export const UserFutureEvents: React.FC<Args> = ({ userId }) => {
                         >
                           {ev.ticket.name}
                         </span>
+                        {ev.stripePaymentIntentId && (
+                          <button
+                            onClick={() =>
+                              handleDownloadInvoice(
+                                ev.stripePaymentIntentId!,
+                                ev.stripePaymentIntentId!,
+                              )
+                            }
+                            disabled={downloadingId === ev.stripePaymentIntentId}
+                            title={t('downloadInvoice')}
+                            className="mt-2 w-7 h-7 rounded-[7px] flex items-center justify-center transition-all disabled:opacity-50"
+                            style={{ border: '1px solid #d4eaf2', background: 'transparent' }}
+                          >
+                            {downloadingId === ev.stripePaymentIntentId ? (
+                              <Loader
+                                className="w-3 h-3 animate-spin"
+                                style={{ stroke: '#3d5a70' }}
+                              />
+                            ) : (
+                              <FileDown className="w-3 h-3" style={{ stroke: '#3d5a70' }} />
+                            )}
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>

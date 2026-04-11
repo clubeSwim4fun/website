@@ -64,7 +64,10 @@
       "searchPlaceholder": "Pesquisar evento...",
       "sortAsc": "Data ↑",
       "sortDesc": "Data ↓",
-      "noResults": "Nenhum evento encontrado."
+      "noResults": "Nenhum evento encontrado.",
+      "invoice": "Fatura",
+      "downloadInvoice": "Descarregar fatura",
+      "invoiceNotAvailable": "A fatura ainda não está disponível. Tenta novamente mais tarde."
     },
     "pendingPayment": "Pagamento de inscrição pendente",
     "pendingAnalysis": "Nossa equipe está analisando seu registo, por favor aguarde a confirmação.",
@@ -285,6 +288,7 @@
     "saving": "A guardar...",
     "saved": "Guardado"
   },
+  "NewsletterUnsubscribe": {
     "successTitle": "Subscrição cancelada",
     "successMessage": "Removemos o seu endereço de email da nossa lista de newsletters. Pode reativar as notificações a qualquer momento no seu perfil.",
     "invalidTitle": "Ligação inválida",

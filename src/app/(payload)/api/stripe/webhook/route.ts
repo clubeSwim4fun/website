@@ -98,14 +98,20 @@ async function handlePaymentSuccess(
           }
         >()
         order.events?.forEach((eventEntry) => {
-          const event = eventEntry.event as { title?: string } | null
+          const event = eventEntry.event as { title?: unknown } | null
           eventEntry.tickets?.forEach((ticketEntry) => {
-            const ticket = ticketEntry.ticket as { name?: string; price?: number } | null
+            const ticket = ticketEntry.ticket as { name?: unknown; price?: number } | null
             if (!event || !ticket) return
-            const eventTitle =
-              typeof event.title === 'string' ? event.title : String(event.title ?? '')
-            const ticketName =
-              typeof ticket.name === 'string' ? ticket.name : String(ticket.name ?? '')
+            const resolveLocalized = (val: unknown): string => {
+              if (typeof val === 'string') return val
+              if (val && typeof val === 'object') {
+                const obj = val as Record<string, string>
+                return obj['pt'] ?? obj['en'] ?? Object.values(obj)[0] ?? ''
+              }
+              return String(val ?? '')
+            }
+            const eventTitle = resolveLocalized(event.title)
+            const ticketName = resolveLocalized(ticket.name)
             const key = `${eventTitle}__${ticketName}`
             const existing = lineItemMap.get(key)
             if (existing) {

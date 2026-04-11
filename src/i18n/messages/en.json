@@ -64,7 +64,10 @@
       "searchPlaceholder": "Search event...",
       "sortAsc": "Date ↑",
       "sortDesc": "Date ↓",
-      "noResults": "No events found."
+      "noResults": "No events found.",
+      "invoice": "Invoice",
+      "downloadInvoice": "Download invoice",
+      "invoiceNotAvailable": "Invoice is not available yet. Please try again later."
     },
     "pendingPayment": "Pending registration payment",
     "pendingAnalysis": "Our team is reviewing your registration, please wait for confirmation.",
@@ -285,6 +288,7 @@
     "saving": "Saving...",
     "saved": "Saved"
   },
+  "NewsletterUnsubscribe": {
     "successTitle": "Unsubscribed successfully",
     "successMessage": "We've removed your email address from our newsletter list. You can re-enable notifications at any time from your profile.",
     "invalidTitle": "Invalid link",
