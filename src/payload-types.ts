@@ -1530,7 +1530,7 @@ export interface CallToActionBlock {
         )[]
       | null;
   };
-  blockBackground?: ('transparent' | 'fill') | null;
+  blockBackground?: ('transparent' | 'fill' | 'brand') | null;
   richText?: {
     root: {
       type: string;
@@ -1615,7 +1615,7 @@ export interface ContentBlock {
         )[]
       | null;
   };
-  blockBackground?: ('transparent' | 'fill') | null;
+  blockBackground?: ('transparent' | 'fill' | 'brand') | null;
   columns?:
     | {
         useMedia?: boolean | null;
@@ -1646,7 +1646,7 @@ export interface ContentBlock {
           };
           [k: string]: unknown;
         } | null;
-        perksStyle?: ('icons' | 'cards') | null;
+        perksStyle?: ('icons' | 'cards' | 'bars') | null;
         perks?:
           | {
               icon?:
@@ -1662,6 +1662,13 @@ export interface ContentBlock {
               cardColor?: ('blue' | 'amber' | 'coral') | null;
               title: string;
               text?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        perkBars?:
+          | {
+              text: string;
+              highlighted?: boolean | null;
               id?: string | null;
             }[]
           | null;
@@ -1721,7 +1728,7 @@ export interface MediaBlock {
         )[]
       | null;
   };
-  blockBackground?: ('transparent' | 'fill') | null;
+  blockBackground?: ('transparent' | 'fill' | 'brand') | null;
   media: string | Media;
   id?: string | null;
   blockName?: string | null;
@@ -1753,7 +1760,7 @@ export interface ArchiveBlock {
         )[]
       | null;
   };
-  blockBackground?: ('transparent' | 'fill') | null;
+  blockBackground?: ('transparent' | 'fill' | 'brand') | null;
   introContent?: {
     root: {
       type: string;
@@ -1809,7 +1816,7 @@ export interface FormBlock {
         )[]
       | null;
   };
-  blockBackground?: ('transparent' | 'fill') | null;
+  blockBackground?: ('transparent' | 'fill' | 'brand') | null;
   /**
    * Select the form to display in this block
    */
@@ -1861,7 +1868,7 @@ export interface Calendar {
         )[]
       | null;
   };
-  blockBackground?: ('transparent' | 'fill') | null;
+  blockBackground?: ('transparent' | 'fill' | 'brand') | null;
   defaultView?: ('timeGridDay' | 'timeGridWeek' | 'dayGridMonth' | 'listMonth') | null;
   id?: string | null;
   blockName?: string | null;
@@ -1893,7 +1900,7 @@ export interface SponsorsBlock {
         )[]
       | null;
   };
-  blockBackground?: ('transparent' | 'fill') | null;
+  blockBackground?: ('transparent' | 'fill' | 'brand') | null;
   title?: string | null;
   sponsors?:
     | {
@@ -3059,6 +3066,13 @@ export interface ContentBlockSelect<T extends boolean = true> {
               cardColor?: T;
               title?: T;
               text?: T;
+              id?: T;
+            };
+        perkBars?:
+          | T
+          | {
+              text?: T;
+              highlighted?: T;
               id?: T;
             };
         links?:
@@ -4684,7 +4698,7 @@ export interface BannerBlock {
         )[]
       | null;
   };
-  blockBackground?: ('transparent' | 'fill') | null;
+  blockBackground?: ('transparent' | 'fill' | 'brand') | null;
   style: 'info' | 'warning' | 'error' | 'success';
   content: {
     root: {

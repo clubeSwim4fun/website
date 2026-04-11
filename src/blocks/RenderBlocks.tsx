@@ -47,13 +47,62 @@ export const RenderBlocks: React.FC<{
                 return null
               }
 
-              const isFill = (block as any)?.blockBackground === 'fill'
+              const bg = (block as any)?.blockBackground as string | undefined
+              const isFill = bg === 'fill'
+              const isBrand = bg === 'brand'
 
               return (
-                <div key={index} className={isFill ? 'bg-gray-100' : ''}>
-                  <div className={isFill ? 'py-16' : 'my-16'}>
+                <div
+                  key={index}
+                  className={
+                    isBrand
+                      ? 'relative bg-gradient-to-br from-deep to-mid overflow-hidden'
+                      : isFill
+                        ? 'bg-gray-100'
+                        : ''
+                  }
+                >
+                  {isBrand && (
+                    <svg
+                      className="absolute inset-0 w-full h-full pointer-events-none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      aria-hidden
+                    >
+                      <defs>
+                        <pattern
+                          id="cross-bg"
+                          x="0"
+                          y="0"
+                          width="60"
+                          height="60"
+                          patternUnits="userSpaceOnUse"
+                        >
+                          <line
+                            x1="30"
+                            y1="24"
+                            x2="30"
+                            y2="36"
+                            stroke="rgba(255,255,255,0.07)"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                          />
+                          <line
+                            x1="24"
+                            y1="30"
+                            x2="36"
+                            y2="30"
+                            stroke="rgba(255,255,255,0.07)"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                          />
+                        </pattern>
+                      </defs>
+                      <rect width="100%" height="100%" fill="url(#cross-bg)" />
+                    </svg>
+                  )}
+                  <div className={`relative z-10 ${isFill || isBrand ? 'py-16' : 'my-16'}`}>
                     {/* @ts-expect-error there may be some mismatch between the expected types here */}
-                    <Block {...block} disableInnerContainer />
+                    <Block {...block} disableInnerContainer blockBackground={bg} />
                   </div>
                 </div>
               )

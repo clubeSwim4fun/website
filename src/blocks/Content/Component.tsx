@@ -40,6 +40,7 @@ const CARD_COLORS: Record<string, { bar: string; text: string }> = {
 type Column = NonNullable<ContentBlockProps['columns']>[number]
 type Perk = NonNullable<Column['perks']>[number]
 type PerkCard = NonNullable<Column['perkCards']>[number]
+type PerkBar = NonNullable<Column['perkBars']>[number]
 
 // ── Icons list ───────────────────────────────────────────────────────────────
 const PerkIcons: React.FC<{ perks: Perk[] }> = ({ perks }) => (
@@ -82,7 +83,27 @@ const PerkCards: React.FC<{ cards: PerkCard[] }> = ({ cards }) => (
   </div>
 )
 
-// ── Media column ─────────────────────────────────────────────────────────────
+// ── Bars list ────────────────────────────────────────────────────────────────
+const PerkBars: React.FC<{ bars: PerkBar[]; onDark?: boolean }> = ({ bars, onDark }) => (
+  <div className="flex flex-col gap-2 mb-8">
+    {bars.map((bar, i) => (
+      <div
+        key={i}
+        className={`text-base leading-snug pl-4 border-l-2 ${
+          bar.highlighted
+            ? onDark
+              ? 'border-light text-white font-semibold'
+              : 'border-mid text-ink font-semibold'
+            : onDark
+              ? 'border-white/20 text-white/80'
+              : 'border-white/20 text-ink-mid'
+        }`}
+      >
+        {bar.text}
+      </div>
+    ))}
+  </div>
+)
 const MediaColumn: React.FC<{ col: Column }> = ({ col }) => (
   <div className="relative rounded-2xl overflow-hidden h-[420px] md:h-full min-h-[320px]">
     {col.media && typeof col.media === 'object' && (
@@ -104,7 +125,11 @@ const MediaColumn: React.FC<{ col: Column }> = ({ col }) => (
 )
 
 // ── Content column ───────────────────────────────────────────────────────────
-const ContentColumn: React.FC<{ col: Column; pairedMedia?: Column }> = ({ col, pairedMedia }) => {
+const ContentColumn: React.FC<{ col: Column; pairedMedia?: Column; onDark?: boolean }> = ({
+  col,
+  pairedMedia,
+  onDark,
+}) => {
   const links = col.links ?? []
 
   return (
@@ -112,8 +137,10 @@ const ContentColumn: React.FC<{ col: Column; pairedMedia?: Column }> = ({ col, p
       {/* Sub-title / section label */}
       {col.subTitle && (
         <div className="flex items-center gap-2 mb-4">
-          <span className="w-6 h-0.5 bg-mid rounded-full" />
-          <span className="text-[11px] font-bold uppercase tracking-[1.2px] text-mid">
+          <span className={`w-6 h-0.5 rounded-full ${onDark ? 'bg-light' : 'bg-mid'}`} />
+          <span
+            className={`text-[11px] font-bold uppercase tracking-[1.2px] ${onDark ? 'text-light' : 'text-mid'}`}
+          >
             {col.subTitle}
           </span>
         </div>
@@ -141,7 +168,9 @@ const ContentColumn: React.FC<{ col: Column; pairedMedia?: Column }> = ({ col, p
       {/* Perks list */}
       {col.perksStyle === 'cards'
         ? (col.perkCards?.length ?? 0) > 0 && <PerkCards cards={col.perkCards!} />
-        : (col.perks?.length ?? 0) > 0 && <PerkIcons perks={col.perks!} />}
+        : col.perksStyle === 'bars'
+          ? (col.perkBars?.length ?? 0) > 0 && <PerkBars bars={col.perkBars!} onDark={onDark} />
+          : (col.perks?.length ?? 0) > 0 && <PerkIcons perks={col.perks!} />}
 
       {/* CTAs */}
       {links.length > 0 && (
@@ -150,7 +179,7 @@ const ContentColumn: React.FC<{ col: Column; pairedMedia?: Column }> = ({ col, p
             <CtaButton
               key={i}
               link={item.link as any}
-              context="light"
+              context={onDark ? 'dark' : 'light'}
               className="w-full sm:w-auto"
             />
           ))}
@@ -161,9 +190,13 @@ const ContentColumn: React.FC<{ col: Column; pairedMedia?: Column }> = ({ col, p
 }
 
 // ── Block ────────────────────────────────────────────────────────────────────
-export const ContentBlock: React.FC<ContentBlockProps> = ({ columns }) => {
+export const ContentBlock: React.FC<ContentBlockProps & { blockBackground?: string }> = ({
+  columns,
+  blockBackground,
+}) => {
   if (!columns?.length) return null
 
+  const onDark = blockBackground === 'brand'
   const cols = columns.slice(0, 2)
   const isSingle = cols.length === 1
 
@@ -171,7 +204,7 @@ export const ContentBlock: React.FC<ContentBlockProps> = ({ columns }) => {
     const col = cols[0]!
     return (
       <section className="container py-16 md:py-20">
-        {col.useMedia ? <MediaColumn col={col} /> : <ContentColumn col={col} />}
+        {col.useMedia ? <MediaColumn col={col} /> : <ContentColumn col={col} onDark={onDark} />}
       </section>
     )
   }
@@ -182,19 +215,26 @@ export const ContentBlock: React.FC<ContentBlockProps> = ({ columns }) => {
   return (
     <section className="container py-16 md:py-20">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
-        {/* Always hidden on mobile when media — rendered inline inside the paired ContentColumn */}
         <div className={left.useMedia ? 'hidden md:block' : undefined}>
           {left.useMedia ? (
             <MediaColumn col={left} />
           ) : (
-            <ContentColumn col={left} pairedMedia={right.useMedia ? right : undefined} />
+            <ContentColumn
+              col={left}
+              pairedMedia={right.useMedia ? right : undefined}
+              onDark={onDark}
+            />
           )}
         </div>
         <div className={right.useMedia ? 'hidden md:block' : undefined}>
           {right.useMedia ? (
             <MediaColumn col={right} />
           ) : (
-            <ContentColumn col={right} pairedMedia={left.useMedia ? left : undefined} />
+            <ContentColumn
+              col={right}
+              pairedMedia={left.useMedia ? left : undefined}
+              onDark={onDark}
+            />
           )}
         </div>
       </div>

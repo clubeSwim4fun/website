@@ -76,6 +76,7 @@ const columnFields: Field[] = [
     options: [
       { label: { en: 'Icons (default)', pt: 'Ícones (padrão)' }, value: 'icons' },
       { label: { en: 'Cards', pt: 'Cartões' }, value: 'cards' },
+      { label: { en: 'Bars', pt: 'Barras' }, value: 'bars' },
     ],
   },
   // Icons variant
@@ -85,7 +86,7 @@ const columnFields: Field[] = [
     label: { en: 'Feature list', pt: 'Lista de funcionalidades' },
     maxRows: 6,
     admin: {
-      condition: (_, s) => !s?.useMedia && s?.perksStyle !== 'cards',
+      condition: (_, s) => !s?.useMedia && s?.perksStyle !== 'cards' && s?.perksStyle !== 'bars',
       initCollapsed: true,
     },
     fields: [
@@ -169,6 +170,40 @@ const columnFields: Field[] = [
             localized: true,
             label: { en: 'Description', pt: 'Descrição' },
             admin: { width: '37%' },
+          },
+        ],
+      },
+    ],
+  },
+
+  // Bars variant
+  {
+    name: 'perkBars',
+    type: 'array',
+    label: { en: 'Bars list', pt: 'Lista de barras' },
+    maxRows: 8,
+    admin: {
+      condition: (_, s) => !s?.useMedia && s?.perksStyle === 'bars',
+      initCollapsed: true,
+    },
+    fields: [
+      {
+        type: 'row',
+        fields: [
+          {
+            name: 'text',
+            type: 'text',
+            localized: true,
+            required: true,
+            label: { en: 'Text', pt: 'Texto' },
+            admin: { width: '75%' },
+          },
+          {
+            name: 'highlighted',
+            type: 'checkbox',
+            defaultValue: false,
+            label: { en: 'Highlighted', pt: 'Destacado' },
+            admin: { width: '25%', style: { alignSelf: 'flex-end' } },
           },
         ],
       },

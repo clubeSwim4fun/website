@@ -17,5 +17,9 @@ export const blockBackgroundField: Field = {
       label: { en: 'Light Gray', pt: 'Cinza Claro' },
       value: 'fill',
     },
+    {
+      label: { en: 'Brand Blue (with pattern)', pt: 'Azul Marca (com padrão)' },
+      value: 'brand',
+    },
   ],
 }
