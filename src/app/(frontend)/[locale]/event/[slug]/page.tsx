@@ -8,6 +8,7 @@ import React, { cache } from 'react'
 import RichText from '@/components/RichText'
 
 import { generateMeta } from '@/utilities/generateMeta'
+import { generateEventJsonLd } from '@/utilities/generateEventJsonLd'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { EventHero } from '@/heros/EventHero'
 import { EventDetails } from '@/components/EventDetails'
@@ -78,9 +79,14 @@ export default async function Event({ params: paramsPromise }: Args) {
   })
 
   const { description, slug: eventSlug } = event
+  const jsonLd = generateEventJsonLd(event, locale)
 
   return (
     <main className="pb-24">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 

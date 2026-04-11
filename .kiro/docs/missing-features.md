@@ -67,8 +67,7 @@ Mapped by comparing the original WordPress site (`clube-swim4fun.pt`) with the c
 
 ## 6. Event Listing Page
 
-- Route `/event` now shows a calendar view (`CalendarBlock`) ✅
-- No filtering by category, date, or location ❌
+- No dedicated `/event` listing route with filtering by category, date, or location ❌
 - No pagination ❌
 - No "past events" vs "upcoming events" separation ❌
 - No event image thumbnails in the listing ❌
@@ -96,7 +95,7 @@ Mapped by comparing the original WordPress site (`clube-swim4fun.pt`) with the c
 
 ## 9. SEO / Structured Data
 
-- No `Event` JSON-LD structured data on event detail pages ❌
+- `Event` JSON-LD structured data on event detail pages ✅ (`src/utilities/generateEventJsonLd.ts`, injected in event page)
 - No Open Graph image per event (uses static fallback) ❌
 
 ---
@@ -109,7 +108,7 @@ Mapped by comparing the original WordPress site (`clube-swim4fun.pt`) with the c
 
 ## 11. Blog — Comments and Reactions
 
-❌ Not done. No comments or reactions on blog posts.
+✅ Done. `post-comments` and `post-likes` collections exist. Actions in `src/actions/post-interactions.ts` handle create/delete comment and toggle like.
 
 ---
 
@@ -123,8 +122,7 @@ Mapped by comparing the original WordPress site (`clube-swim4fun.pt`) with the c
 
 ## 13. Newsletter Feature
 
-In progress. No newsletter collection, subscription form, or email broadcast capability.
-missing support for block components so it can add posts from blog for example.
+✅ Done. `newsletters` collection exists with Lexical editor and block support (`NewsletterPostsBlock`, `NewsletterCtaBlock`, `NewsletterLayoutBlock`). Send/preview actions in `src/actions/newsletter.ts`. Admin send button component. Email template at `src/email/newsletter`.
 
 ---
 
@@ -133,7 +131,7 @@ missing support for block components so it can add posts from blog for example.
 | # | Feature | Priority | Status |
 |---|---|---|---|
 | 1 | External registration URL on events | High | ✅ Done |
-| 2 | Payment — order action refactor (`payload.init` → `getPayload`) | High | ❌ Open |
+| 2 | Payment — order action refactor (`payload.init` → `getPayload`) | High | ✅ Done |
 | 3 | Event image upload | High | ✅ Done |
 | 4 | Distance detail breakdown per category | Medium | ✅ Done |
 | 5 | Promo code + member discount display | Medium | ✅ Done (display only) |
@@ -142,7 +140,7 @@ missing support for block components so it can add posts from blog for example.
 | 8 | Event listing improvements (filter, pagination) | Medium | ❌ Open |
 | 9 | Team/pair registration | Low | ❌ Open |
 | 10 | Locations collection | Low | ❌ Open |
-| 11 | Event JSON-LD structured data | Low | ❌ Open |
+| 11 | Event JSON-LD structured data | Low | ✅ Done |
 | 12 | Ticket capacity/limit | Low | ❌ Open |
 | 13 | Admin participant export | Low | ❌ Open |
 | 14 | Blog comments & reactions | Low | ✅ Done |
