@@ -11,7 +11,7 @@ import {
 export const defaultLexical: Config['editor'] = lexicalEditor({
   features: ({ defaultFeatures }) => {
     return [
-      ...defaultFeatures,
+      ...defaultFeatures.filter((f) => (f as any).key !== 'upload'),
       ParagraphFeature(),
       UnderlineFeature(),
       BoldFeature(),

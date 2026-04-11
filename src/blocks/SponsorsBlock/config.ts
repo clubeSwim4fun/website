@@ -1,5 +1,6 @@
 import type { Block } from 'payload'
 import { blockVisibilityDynamicField } from '@/fields/blockVisibilityDynamic'
+import { blockBackgroundField } from '@/fields/blockBackground'
 
 export const SponsorsBlock: Block = {
   slug: 'sponsorsBlock',
@@ -10,6 +11,7 @@ export const SponsorsBlock: Block = {
   },
   fields: [
     blockVisibilityDynamicField,
+    blockBackgroundField,
     {
       name: 'title',
       type: 'text',

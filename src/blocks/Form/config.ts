@@ -1,12 +1,14 @@
 import type { Block } from 'payload'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { blockVisibilityDynamicField } from '@/fields/blockVisibilityDynamic'
+import { blockBackgroundField } from '@/fields/blockBackground'
 
 export const FormBlock: Block = {
   slug: 'formBlock',
   interfaceName: 'FormBlock',
   fields: [
     blockVisibilityDynamicField,
+    blockBackgroundField,
     {
       name: 'form',
       type: 'relationship',

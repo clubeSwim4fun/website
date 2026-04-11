@@ -2,12 +2,14 @@ import type { Block } from 'payload'
 
 import { defaultLexical } from '@/fields/defaultLexical'
 import { blockVisibilityDynamicField } from '@/fields/blockVisibilityDynamic'
+import { blockBackgroundField } from '@/fields/blockBackground'
 
 export const Archive: Block = {
   slug: 'archive',
   interfaceName: 'ArchiveBlock',
   fields: [
     blockVisibilityDynamicField,
+    blockBackgroundField,
     {
       name: 'introContent',
       type: 'richText',

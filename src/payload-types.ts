@@ -1526,6 +1526,7 @@ export interface CallToActionBlock {
         )[]
       | null;
   };
+  blockBackground?: ('transparent' | 'fill') | null;
   richText?: {
     root: {
       type: string;
@@ -1610,6 +1611,7 @@ export interface ContentBlock {
         )[]
       | null;
   };
+  blockBackground?: ('transparent' | 'fill') | null;
   columns?:
     | {
         size?: ('oneThird' | 'half' | 'twoThirds' | 'full') | null;
@@ -1697,6 +1699,7 @@ export interface MediaBlock {
         )[]
       | null;
   };
+  blockBackground?: ('transparent' | 'fill') | null;
   media: string | Media;
   id?: string | null;
   blockName?: string | null;
@@ -1728,6 +1731,7 @@ export interface ArchiveBlock {
         )[]
       | null;
   };
+  blockBackground?: ('transparent' | 'fill') | null;
   introContent?: {
     root: {
       type: string;
@@ -1783,6 +1787,7 @@ export interface FormBlock {
         )[]
       | null;
   };
+  blockBackground?: ('transparent' | 'fill') | null;
   /**
    * Select the form to display in this block
    */
@@ -1834,6 +1839,7 @@ export interface Calendar {
         )[]
       | null;
   };
+  blockBackground?: ('transparent' | 'fill') | null;
   defaultView?: ('timeGridDay' | 'timeGridWeek' | 'dayGridMonth' | 'listMonth') | null;
   id?: string | null;
   blockName?: string | null;
@@ -1865,6 +1871,7 @@ export interface SponsorsBlock {
         )[]
       | null;
   };
+  blockBackground?: ('transparent' | 'fill') | null;
   title?: string | null;
   sponsors?:
     | {
@@ -2965,6 +2972,7 @@ export interface CallToActionBlockSelect<T extends boolean = true> {
         visibilityType?: T;
         allowedGroups?: T;
       };
+  blockBackground?: T;
   richText?: T;
   links?:
     | T
@@ -3004,6 +3012,7 @@ export interface ContentBlockSelect<T extends boolean = true> {
         visibilityType?: T;
         allowedGroups?: T;
       };
+  blockBackground?: T;
   columns?:
     | T
     | {
@@ -3046,6 +3055,7 @@ export interface MediaBlockSelect<T extends boolean = true> {
         visibilityType?: T;
         allowedGroups?: T;
       };
+  blockBackground?: T;
   media?: T;
   id?: T;
   blockName?: T;
@@ -3061,6 +3071,7 @@ export interface ArchiveBlockSelect<T extends boolean = true> {
         visibilityType?: T;
         allowedGroups?: T;
       };
+  blockBackground?: T;
   introContent?: T;
   populateBy?: T;
   relationTo?: T;
@@ -3081,6 +3092,7 @@ export interface FormBlockSelect<T extends boolean = true> {
         visibilityType?: T;
         allowedGroups?: T;
       };
+  blockBackground?: T;
   form?: T;
   isRegistrationForm?: T;
   enableIntro?: T;
@@ -3099,6 +3111,7 @@ export interface CalendarSelect<T extends boolean = true> {
         visibilityType?: T;
         allowedGroups?: T;
       };
+  blockBackground?: T;
   defaultView?: T;
   id?: T;
   blockName?: T;
@@ -3114,6 +3127,7 @@ export interface SponsorsBlockSelect<T extends boolean = true> {
         visibilityType?: T;
         allowedGroups?: T;
       };
+  blockBackground?: T;
   title?: T;
   sponsors?:
     | T
@@ -4559,6 +4573,7 @@ export interface BannerBlock {
         )[]
       | null;
   };
+  blockBackground?: ('transparent' | 'fill') | null;
   style: 'info' | 'warning' | 'error' | 'success';
   content: {
     root: {

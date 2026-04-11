@@ -25,6 +25,8 @@ const config = {
     'bg-success/30',
     'border-warning',
     'bg-warning/30',
+    'bg-gray-100',
+    'py-16',
   ],
   theme: {
     container: {

@@ -9,12 +9,14 @@ import {
 
 import { linkGroup } from '../../fields/linkGroup'
 import { blockVisibilityDynamicField } from '@/fields/blockVisibilityDynamic'
+import { blockBackgroundField } from '@/fields/blockBackground'
 
 export const CallToAction: Block = {
   slug: 'cta',
   interfaceName: 'CallToActionBlock',
   fields: [
     blockVisibilityDynamicField,
+    blockBackgroundField,
     {
       name: 'richText',
       localized: true,
