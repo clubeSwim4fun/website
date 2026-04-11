@@ -8,6 +8,7 @@ import { ContentBlock } from '@/blocks/Content/Component'
 import { FormBlock } from '@/blocks/Form/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import { CalendarBlock } from './Calendar/Component'
+import { SponsorsBlockComponent } from './SponsorsBlock/Component'
 import { shouldShowBlock, type BlockVisibilityConfig } from '@/helpers/blockVisibilityHelper'
 
 const blockComponents = {
@@ -17,6 +18,7 @@ const blockComponents = {
   formBlock: FormBlock,
   mediaBlock: MediaBlock,
   calendarBlock: CalendarBlock,
+  sponsorsBlock: SponsorsBlockComponent,
 }
 
 export const RenderBlocks: React.FC<{

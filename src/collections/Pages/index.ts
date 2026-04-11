@@ -21,6 +21,7 @@ import {
 import { isAdminOrEditor } from '@/access/isAdminOrEditor'
 import { isAdminEditorOrPublished } from '@/access/isAdminEditorOrPublished'
 import { CalendarBlock } from '@/blocks/Calendar/config'
+import { SponsorsBlock } from '@/blocks/SponsorsBlock/config'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { link } from '@/fields/link'
 
@@ -96,7 +97,15 @@ export const Pages: CollectionConfig<'pages'> = {
             {
               name: 'layout',
               type: 'blocks',
-              blocks: [CallToAction, Content, MediaBlock, Archive, FormBlock, CalendarBlock],
+              blocks: [
+                CallToAction,
+                Content,
+                MediaBlock,
+                Archive,
+                FormBlock,
+                CalendarBlock,
+                SponsorsBlock,
+              ],
               required: true,
               admin: {
                 initCollapsed: true,
