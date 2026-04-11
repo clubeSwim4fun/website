@@ -7,7 +7,7 @@ import { routing } from '@/i18n/routing'
 
 import { cn } from '@/utilities/ui'
 import { GeistMono } from 'geist/font/mono'
-import { GeistSans } from 'geist/font/sans'
+import { Syne, DM_Sans } from 'next/font/google'
 import React from 'react'
 
 import { AdminBar } from '@/components/AdminBar'
@@ -22,8 +22,22 @@ import './globals.css'
 import { getServerSideURL } from '@/utilities/getURL'
 import { getMeUser } from '@/utilities/getMeUser'
 import { Toaster } from '@/components/ui/toaster'
-import { Cart } from '@/components/Cart'
 import { TypedLocale } from 'payload'
+
+const syne = Syne({
+  subsets: ['latin'],
+  weight: ['400', '600', '700', '800'],
+  variable: '--font-syne',
+  display: 'swap',
+})
+
+const dmSans = DM_Sans({
+  subsets: ['latin'],
+  weight: ['300', '400', '500'],
+  style: ['normal', 'italic'],
+  variable: '--font-dm-sans',
+  display: 'swap',
+})
 
 export default async function RootLayout({
   children,
@@ -47,7 +61,7 @@ export default async function RootLayout({
 
   return (
     <html
-      className={cn(GeistSans.variable, GeistMono.variable)}
+      className={cn(syne.variable, dmSans.variable, GeistMono.variable)}
       lang={locale}
       suppressHydrationWarning
     >
@@ -68,10 +82,7 @@ export default async function RootLayout({
               />
             )}
             <Header locale={locale as unknown as TypedLocale} />
-            {children}
-            <div className="fixed bottom-2 right-4 z-50 bg-white rounded-full p-4 md:hidden dark:bg-slate-800 shadow-xl border border-slate-300">
-              <Cart />
-            </div>
+            <div className="pt-[68px]">{children}</div>
             <Footer locale={locale as unknown as TypedLocale} />
           </Providers>
         </NextIntlClientProvider>

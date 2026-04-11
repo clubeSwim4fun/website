@@ -1,4 +1,16 @@
 {
+  "Nav": {
+    "login": "Login",
+    "logout": "Logout",
+    "myAccount": "My account",
+    "register": "Register",
+    "search": "Search",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "home": "Home",
+    "calendar": "Calendar",
+    "account": "Account"
+  },
   "Sign-in": {
     "email": "Email",
     "password": "Password",

@@ -13,78 +13,99 @@
   }
 
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* ── Brand palette (from design system) ── */
+    --deep: 205 82% 23%; /* #0a4a6e */
+    --mid: 199 82% 36%; /* #0e7ea8 */
+    --light: 193 62% 54%; /* #3bb8d8 */
+    --pale: 196 73% 93%; /* #e0f5fb */
+    --foam: 196 60% 97%; /* #f0fafd */
+    --sand: 36 67% 97%; /* #fdf8f3 */
+    --coral: 5 76% 60%; /* #e85d4a */
+    --coral-light: 8 86% 97%; /* #fdf0ee */
+    --amber: 38 87% 53%; /* #f0a020 */
+    --amber-light: 44 100% 95%; /* #fef6e4 */
+    --green: 145 63% 49%; /* #2ecc71 */
+    --green-light: 145 55% 95%; /* #e8f8f0 */
+    --green-dark: 145 70% 35%; /* #1a9950 */
+    --ink: 210 50% 12%; /* #0f1f2e */
+    --ink-mid: 205 30% 34%; /* #3d5a70 */
+    --ink-light: 197 22% 64%; /* #8aaabb */
+    --swim-border: 199 52% 83%; /* #d4eaf2 */
 
-    --card: 240 5% 96%;
-    --card-foreground: 222.2 84% 4.9%;
+    /* ── shadcn/ui tokens (mapped to brand) ── */
+    --background: 36 67% 97%; /* sand */
+    --foreground: 210 50% 12%; /* ink */
+
+    --card: 0 0% 100%;
+    --card-foreground: 210 50% 12%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 210 50% 12%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 205 82% 23%; /* deep */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 196 73% 93%; /* pale */
+    --secondary-foreground: 205 82% 23%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 196 60% 97%; /* foam */
+    --muted-foreground: 197 22% 64%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 196 60% 97%;
+    --accent-foreground: 205 82% 23%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 5 76% 60%; /* coral */
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 240 6% 80%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 199 52% 83%; /* swim-border */
+    --input: 199 52% 83%;
+    --ring: 199 82% 36%; /* mid */
 
-    --radius: 0.2rem;
+    --radius: 0.875rem; /* 14px */
 
-    --success: 196 52% 74%;
-    --warning: 34 89% 85%;
-    --error: 10 100% 86%;
+    --success: 145 63% 49%;
+    --warning: 38 87% 53%;
+    --error: 5 76% 60%;
 
-    --blue-swim: 193, 51%, 46%;
+    /* legacy alias kept for backward compat */
+    --blue-swim: 199, 82%, 36%;
     --slot-waitlist: 271 81% 56%;
   }
 
   [data-theme='dark-old'] {
-    --background: 0 0% 0%;
-    --foreground: 210 40% 98%;
+    --background: 210 50% 7%;
+    --foreground: 196 60% 97%;
 
-    --card: 0 0% 4%;
-    --card-foreground: 210 40% 98%;
+    --card: 210 50% 10%;
+    --card-foreground: 196 60% 97%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 210 50% 7%;
+    --popover-foreground: 196 60% 97%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 193 62% 54%;
+    --primary-foreground: 210 50% 7%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 205 30% 20%;
+    --secondary-foreground: 196 60% 97%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 205 30% 20%;
+    --muted-foreground: 197 22% 64%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 205 30% 20%;
+    --accent-foreground: 196 60% 97%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 5 76% 60%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 0, 0%, 15%, 0.8;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --border: 205 30% 20%;
+    --input: 205 30% 20%;
+    --ring: 193 62% 54%;
 
-    --success: 196 100% 14%;
-    --warning: 34 51% 25%;
-    --error: 10 39% 43%;
+    --success: 145 70% 35%;
+    --warning: 38 60% 40%;
+    --error: 5 50% 45%;
 
-    --blue-swim: 193, 51%, 46%;
+    --blue-swim: 193, 62%, 54%;
   }
 }
 
@@ -94,11 +115,21 @@
   }
   body {
     @apply bg-background text-foreground min-h-[100vh] flex flex-col;
+    font-family: var(--font-dm-sans), 'DM Sans', sans-serif;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-syne), 'Syne', sans-serif;
   }
 }
 
 html {
   opacity: 0;
+  scroll-behavior: smooth;
 }
 
 html[data-theme='dark'],
@@ -108,4 +139,34 @@ html[data-theme='light'] {
 
 .no-scroll {
   overflow: hidden;
+}
+
+/* ── Fade-up animation (used in hero and other sections) ── */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fade-up {
+  animation: fadeUp 0.6s ease both;
+}
+.animate-fade-up-1 {
+  animation: fadeUp 0.6s ease 0.1s both;
+}
+.animate-fade-up-2 {
+  animation: fadeUp 0.6s ease 0.2s both;
+}
+.animate-fade-up-3 {
+  animation: fadeUp 0.6s ease 0.3s both;
+}
+.animate-fade-up-4 {
+  animation: fadeUp 0.6s ease 0.4s both;
+}
+.animate-fade-up-5 {
+  animation: fadeUp 0.6s ease 0.5s both;
 }

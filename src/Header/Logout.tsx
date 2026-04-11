@@ -4,41 +4,35 @@ import { logout } from '@/actions/logout'
 import { Button } from '@/components/ui/button'
 import { LoaderCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 
 export default function LogoutButton() {
   const [isPending, setIsPending] = useState(false)
   const [, setError] = useState<string | null>(null)
   const router = useRouter()
+  const t = useTranslations('Nav')
 
   async function handleLogout() {
     setIsPending(true)
     setError(null)
-
     const result = await logout()
-
     if (result.success) {
-      // Redirect to home page after successful logout
       router.push('/')
       setIsPending(false)
     } else {
-      // Display error message
-      // TODO - Add toast error
       setError(result.error || 'Logout failed')
     }
   }
 
   return (
     <Button
-      variant={'link'}
-      size={'clear'}
+      variant="link"
+      size="clear"
       onClick={handleLogout}
-      className="text-black dark:text-white group flex flex-col items-center"
+      className="text-sm font-medium text-ink-mid px-3.5 py-2 rounded-lg hover:bg-foam hover:text-mid transition-colors duration-150"
     >
-      {/* TODO - Add label  */}
-
-      {/* Add label */}
-      {isPending ? <LoaderCircle className="animate-spin" /> : 'Logout'}
+      {isPending ? <LoaderCircle size={16} className="animate-spin" /> : t('logout')}
     </Button>
   )
 }

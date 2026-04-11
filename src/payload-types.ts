@@ -4204,12 +4204,52 @@ export interface Footer {
      */
     youtube?: string | null;
   };
-  company: {
-    label: string;
+  company?: {
     /**
-     * e.g. Copyright © 2026 Clube Swim4fun
+     * e.g. © 2026 Clube Swim4fun. All rights reserved.
      */
     copyright?: string | null;
+  };
+  navCol1: {
+    label: string;
+    navItems?:
+      | {
+          link: {
+            type?: ('reference' | 'custom' | 'subscription') | null;
+            newTab?: boolean | null;
+            reference?:
+              | ({
+                  relationTo: 'pages';
+                  value: string | Page;
+                } | null)
+              | ({
+                  relationTo: 'posts';
+                  value: string | Post;
+                } | null);
+            /**
+             * Select the group that this subscription will be linked to.
+             */
+            subscriptionGroup?: (string | null) | Group;
+            url?: string | null;
+            label: string;
+            hasChildren?: boolean | null;
+            childrenPages?:
+              | {
+                  reference: {
+                    relationTo: 'pages';
+                    value: string | Page;
+                  };
+                  label: string;
+                  id?: string | null;
+                }[]
+              | null;
+          };
+          id?: string | null;
+        }[]
+      | null;
+  };
+  navCol2?: {
+    label?: string | null;
     navItems?:
       | {
           link: {
@@ -4391,8 +4431,40 @@ export interface FooterSelect<T extends boolean = true> {
   company?:
     | T
     | {
-        label?: T;
         copyright?: T;
+      };
+  navCol1?:
+    | T
+    | {
+        label?: T;
+        navItems?:
+          | T
+          | {
+              link?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    reference?: T;
+                    subscriptionGroup?: T;
+                    url?: T;
+                    label?: T;
+                    hasChildren?: T;
+                    childrenPages?:
+                      | T
+                      | {
+                          reference?: T;
+                          label?: T;
+                          id?: T;
+                        };
+                  };
+              id?: T;
+            };
+      };
+  navCol2?:
+    | T
+    | {
+        label?: T;
         navItems?:
           | T
           | {

@@ -95,10 +95,37 @@ const config = {
         error: 'hsl(var(--error))',
         warning: 'hsl(var(--warning))',
         blueSwim: 'hsl(var(--blue-swim))',
+        // ── Brand design system tokens ──
+        deep: 'hsl(var(--deep))',
+        mid: 'hsl(var(--mid))',
+        light: 'hsl(var(--light))',
+        pale: 'hsl(var(--pale))',
+        foam: 'hsl(var(--foam))',
+        sand: 'hsl(var(--sand))',
+        coral: {
+          DEFAULT: 'hsl(var(--coral))',
+          light: 'hsl(var(--coral-light))',
+        },
+        amber: {
+          DEFAULT: 'hsl(var(--amber))',
+          light: 'hsl(var(--amber-light))',
+        },
+        green: {
+          DEFAULT: 'hsl(var(--green))',
+          light: 'hsl(var(--green-light))',
+          dark: 'hsl(var(--green-dark))',
+        },
+        ink: {
+          DEFAULT: 'hsl(var(--ink))',
+          mid: 'hsl(var(--ink-mid))',
+          light: 'hsl(var(--ink-light))',
+        },
+        'swim-border': 'hsl(var(--swim-border))',
       },
       fontFamily: {
         mono: ['var(--font-geist-mono)'],
-        sans: ['var(--font-geist-sans)'],
+        sans: ['var(--font-dm-sans)', 'DM Sans', 'sans-serif'],
+        syne: ['var(--font-syne)', 'Syne', 'sans-serif'],
       },
       keyframes: {
         'accordion-down': {
