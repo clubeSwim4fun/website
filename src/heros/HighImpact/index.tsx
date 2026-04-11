@@ -3,7 +3,7 @@
 import React from 'react'
 import type { Page } from '@/payload-types'
 import { Media } from '@/components/Media'
-import RichText from '@/components/RichText'
+import RichText from '@/components/RichText/HeroRichText'
 import Link from 'next/link'
 import { ArrowRight, Calendar, Flag, User, Star } from 'lucide-react'
 import { cn } from '@/utilities/ui'
@@ -179,22 +179,19 @@ export const HighImpactHero: React.FC<Page['hero']> = (hero) => {
     <section className="relative overflow-hidden bg-gradient-to-br from-deep to-mid min-h-[calc(100vh-68px)] grid grid-cols-1 md:grid-cols-2">
       <CrossPattern />
 
-      {/* Content — always rendered, order swaps via CSS */}
+      {/* Content — always second on mobile (below image), order swaps on desktop */}
       <div
         className={cn(
-          'relative z-10 flex items-center',
+          'relative z-10 flex items-center order-2',
           imageOnRight ? 'md:order-1' : 'md:order-2',
         )}
       >
         <HeroContent hero={hero} />
       </div>
 
-      {/* Image */}
+      {/* Image — always first on mobile (top), position swaps on desktop */}
       <div
-        className={cn(
-          'relative min-h-[320px] md:min-h-full overflow-hidden',
-          imageOnRight ? 'md:order-2' : 'md:order-1',
-        )}
+        className={cn('relative min-h-[320px] order-1', imageOnRight ? 'md:order-2' : 'md:order-1')}
       >
         {/* gradient overlay blending into the bg */}
         <div
