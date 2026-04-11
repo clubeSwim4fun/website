@@ -234,7 +234,7 @@ export interface Page {
                 } | null);
             url?: string | null;
             label: string;
-            appearance?: ('primary' | 'secondary') | null;
+            appearance?: ('primary' | 'primaryDark' | 'secondary') | null;
             icon?: ('none' | 'arrow' | 'calendar' | 'flag' | 'user' | 'star') | null;
             iconRight?: boolean | null;
           };
@@ -1618,8 +1618,19 @@ export interface ContentBlock {
   blockBackground?: ('transparent' | 'fill') | null;
   columns?:
     | {
-        size?: ('oneThird' | 'half' | 'twoThirds' | 'full') | null;
-        verticalAlignment?: ('top' | 'middle' | 'bottom') | null;
+        useMedia?: boolean | null;
+        media?: (string | null) | Media;
+        /**
+         * Optional green pill shown over the image. Leave empty to hide.
+         */
+        mediaBadge?: string | null;
+        /**
+         * Small label shown above the title with a decorative line (e.g. "Associação")
+         */
+        subTitle?: string | null;
+        /**
+         * Use Heading 2 for the title. Coloured text (Brand Blue / Deep Blue) is supported.
+         */
         richText?: {
           root: {
             type: string;
@@ -1635,41 +1646,39 @@ export interface ContentBlock {
           };
           [k: string]: unknown;
         } | null;
-        enableLink?: boolean | null;
-        link?: {
-          type?: ('reference' | 'custom' | 'subscription') | null;
-          newTab?: boolean | null;
-          reference?:
-            | ({
-                relationTo: 'pages';
-                value: string | Page;
-              } | null)
-            | ({
-                relationTo: 'posts';
-                value: string | Post;
-              } | null);
-          /**
-           * Select the group that this subscription will be linked to.
-           */
-          subscriptionGroup?: (string | null) | Group;
-          url?: string | null;
-          label: string;
-          hasChildren?: boolean | null;
-          childrenPages?:
-            | {
-                reference: {
-                  relationTo: 'pages';
-                  value: string | Page;
-                };
+        perks?:
+          | {
+              icon?:
+                | ('users' | 'clock' | 'cloud' | 'star' | 'flag' | 'calendar' | 'arrow' | 'heart' | 'trophy' | 'mapPin')
+                | null;
+              title: string;
+              text?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        links?:
+          | {
+              link: {
+                type?: ('reference' | 'custom') | null;
+                newTab?: boolean | null;
+                reference?:
+                  | ({
+                      relationTo: 'pages';
+                      value: string | Page;
+                    } | null)
+                  | ({
+                      relationTo: 'posts';
+                      value: string | Post;
+                    } | null);
+                url?: string | null;
                 label: string;
-                id?: string | null;
-              }[]
-            | null;
-          /**
-           * Choose how the link should be rendered.
-           */
-          appearance?: ('default' | 'outline') | null;
-        };
+                appearance?: ('primary' | 'primaryDark' | 'secondary') | null;
+                icon?: ('none' | 'arrow' | 'calendar' | 'flag' | 'user' | 'star') | null;
+                iconRight?: boolean | null;
+              };
+              id?: string | null;
+            }[]
+          | null;
         id?: string | null;
       }[]
     | null;
@@ -3021,28 +3030,35 @@ export interface ContentBlockSelect<T extends boolean = true> {
   columns?:
     | T
     | {
-        size?: T;
-        verticalAlignment?: T;
+        useMedia?: T;
+        media?: T;
+        mediaBadge?: T;
+        subTitle?: T;
         richText?: T;
-        enableLink?: T;
-        link?:
+        perks?:
           | T
           | {
-              type?: T;
-              newTab?: T;
-              reference?: T;
-              subscriptionGroup?: T;
-              url?: T;
-              label?: T;
-              hasChildren?: T;
-              childrenPages?:
+              icon?: T;
+              title?: T;
+              text?: T;
+              id?: T;
+            };
+        links?:
+          | T
+          | {
+              link?:
                 | T
                 | {
+                    type?: T;
+                    newTab?: T;
                     reference?: T;
+                    url?: T;
                     label?: T;
-                    id?: T;
+                    appearance?: T;
+                    icon?: T;
+                    iconRight?: T;
                   };
-              appearance?: T;
+              id?: T;
             };
         id?: T;
       };

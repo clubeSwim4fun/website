@@ -1,5 +1,6 @@
 import type { Field } from 'payload'
-import { heroLexical } from '@/fields/heroLexical'
+import { richTextWithColor } from '@/fields/richTextWithColor'
+import { ctaLinkFields } from '@/fields/ctaLink'
 
 export const hero: Field = {
   name: 'hero',
@@ -44,7 +45,7 @@ export const hero: Field = {
     {
       name: 'richText',
       type: 'richText',
-      editor: heroLexical,
+      editor: richTextWithColor,
       label: {
         en: 'Content (title & description)',
         pt: 'Conteúdo (título e descrição)',
@@ -61,122 +62,10 @@ export const hero: Field = {
     {
       name: 'links',
       type: 'array',
-      label: {
-        en: 'Call-to-action buttons',
-        pt: 'Botões de ação',
-      },
+      label: { en: 'Call-to-action buttons', pt: 'Botões de ação' },
       maxRows: 3,
-      admin: {
-        initCollapsed: true,
-      },
-      fields: [
-        {
-          name: 'link',
-          type: 'group',
-          admin: { hideGutter: true },
-          fields: [
-            // Link destination
-            {
-              type: 'row',
-              fields: [
-                {
-                  name: 'type',
-                  type: 'radio',
-                  defaultValue: 'custom',
-                  admin: { layout: 'horizontal', width: '50%' },
-                  options: [
-                    { label: 'Internal link', value: 'reference' },
-                    { label: 'Custom URL', value: 'custom' },
-                  ],
-                },
-                {
-                  name: 'newTab',
-                  type: 'checkbox',
-                  label: 'Open in new tab',
-                  admin: { width: '50%', style: { alignSelf: 'flex-end' } },
-                },
-              ],
-            },
-            {
-              name: 'reference',
-              type: 'relationship',
-              relationTo: ['pages', 'posts'],
-              required: true,
-              admin: {
-                condition: (_, s) => s?.type === 'reference',
-              },
-              label: { en: 'Page', pt: 'Página' },
-            },
-            {
-              name: 'url',
-              type: 'text',
-              required: true,
-              admin: {
-                condition: (_, s) => s?.type === 'custom',
-              },
-              label: { en: 'Custom URL', pt: 'URL personalizada' },
-            },
-            // Label + appearance
-            {
-              type: 'row',
-              fields: [
-                {
-                  name: 'label',
-                  type: 'text',
-                  localized: true,
-                  required: true,
-                  label: { en: 'Label', pt: 'Rótulo' },
-                  admin: { width: '50%' },
-                },
-                {
-                  name: 'appearance',
-                  type: 'select',
-                  defaultValue: 'primary',
-                  label: { en: 'Style', pt: 'Estilo' },
-                  admin: { width: '50%' },
-                  options: [
-                    {
-                      label: { en: 'Primary (white fill)', pt: 'Primário (fundo branco)' },
-                      value: 'primary',
-                    },
-                    {
-                      label: { en: 'Secondary (outline)', pt: 'Secundário (contorno)' },
-                      value: 'secondary',
-                    },
-                  ],
-                },
-              ],
-            },
-            // Icon
-            {
-              type: 'row',
-              fields: [
-                {
-                  name: 'icon',
-                  type: 'select',
-                  label: { en: 'Icon', pt: 'Ícone' },
-                  admin: { width: '50%' },
-                  options: [
-                    { label: { en: 'None', pt: 'Nenhum' }, value: 'none' },
-                    { label: { en: 'Arrow →', pt: 'Seta →' }, value: 'arrow' },
-                    { label: { en: 'Calendar', pt: 'Calendário' }, value: 'calendar' },
-                    { label: { en: 'Flag / Check', pt: 'Bandeira / Check' }, value: 'flag' },
-                    { label: { en: 'User', pt: 'Utilizador' }, value: 'user' },
-                    { label: { en: 'Star', pt: 'Estrela' }, value: 'star' },
-                  ],
-                },
-                {
-                  name: 'iconRight',
-                  type: 'checkbox',
-                  defaultValue: false,
-                  label: { en: 'Icon on the right', pt: 'Ícone à direita' },
-                  admin: { width: '50%', style: { alignSelf: 'flex-end' } },
-                },
-              ],
-            },
-          ],
-        },
-      ],
+      admin: { initCollapsed: true },
+      fields: ctaLinkFields,
     },
 
     // ── Stats ───────────────────────────────────────────────────────

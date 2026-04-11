@@ -203,3 +203,30 @@ html[data-theme='light'] {
 .hero-richtext-inner [style*='color:rgb(59,184,216)'] {
   color: hsl(var(--light)) !important;
 }
+
+/* ── Content block rich text ────────────────────────────────────────────────
+   h2 → large deep-blue Syne heading
+   p  → ink-mid body copy
+   ────────────────────────────────────────────────────────────────────────── */
+.content-richtext-inner h2 {
+  font-family: var(--font-syne), 'Syne', sans-serif;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: hsl(var(--deep));
+  margin-bottom: 1rem;
+}
+
+.content-richtext-inner p {
+  font-size: 1rem;
+  color: hsl(var(--ink-mid));
+  line-height: 1.7;
+  margin-bottom: 0;
+}
+
+/* TextStateFeature deep-blue in content */
+.content-richtext-inner [style*='color: #0a4a6e'],
+.content-richtext-inner [style*='color:#0a4a6e'] {
+  color: hsl(var(--deep)) !important;
+}

@@ -4,19 +4,8 @@ import React from 'react'
 import type { Page } from '@/payload-types'
 import { Media } from '@/components/Media'
 import RichText from '@/components/RichText/HeroRichText'
-import Link from 'next/link'
-import { ArrowRight, Calendar, Flag, User, Star } from 'lucide-react'
+import { CtaButton } from '@/components/CtaButton'
 import { cn } from '@/utilities/ui'
-
-// ── Icon map ────────────────────────────────────────────────────────────────
-const ICONS = {
-  arrow: <ArrowRight size={15} strokeWidth={2.5} />,
-  calendar: <Calendar size={15} strokeWidth={2} />,
-  flag: <Flag size={15} strokeWidth={2} />,
-  user: <User size={15} strokeWidth={2} />,
-  star: <Star size={15} strokeWidth={2} />,
-  none: null,
-} as const
 
 // ── Cross-hatch background SVG (inline, matches design) ─────────────────────
 const CrossPattern = () => (
@@ -53,43 +42,10 @@ const CrossPattern = () => (
 
 type HeroLink = NonNullable<Page['hero']['links']>[number]
 
-// ── Resolve href from link ───────────────────────────────────────────────────
-function resolveHref(link: HeroLink['link']): string {
-  if (link.type === 'reference' && link.reference && typeof link.reference.value === 'object') {
-    const slug = (link.reference.value as { slug?: string }).slug ?? ''
-    return link.reference.relationTo === 'pages'
-      ? `/${slug}`
-      : `/${link.reference.relationTo}/${slug}`
-  }
-  return link.url ?? '#'
-}
-
 // ── CTA Button ───────────────────────────────────────────────────────────────
-const HeroButton: React.FC<{ item: HeroLink }> = ({ item }) => {
-  const { link } = item
-  const href = resolveHref(link)
-  const iconKey = (link.icon ?? 'none') as keyof typeof ICONS
-  const icon = iconKey !== 'none' ? ICONS[iconKey] : null
-  const isPrimary = !link.appearance || link.appearance === 'primary'
-
-  return (
-    <Link
-      href={href}
-      target={link.newTab ? '_blank' : undefined}
-      rel={link.newTab ? 'noopener noreferrer' : undefined}
-      className={cn(
-        'inline-flex items-center gap-2 rounded-xl px-6 py-3.5 font-syne font-bold text-sm transition-all duration-200 no-underline',
-        isPrimary
-          ? 'bg-white text-deep hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(0,0,0,0.2)]'
-          : 'border border-white/35 text-white hover:bg-white/10 hover:border-white/60',
-      )}
-    >
-      {icon && !link.iconRight && <span className="flex-shrink-0">{icon}</span>}
-      {link.label}
-      {icon && link.iconRight && <span className="flex-shrink-0">{icon}</span>}
-    </Link>
-  )
-}
+const HeroButton: React.FC<{ item: HeroLink }> = ({ item }) => (
+  <CtaButton link={item.link as any} context="dark" />
+)
 
 // ── Content pane ─────────────────────────────────────────────────────────────
 const HeroContent: React.FC<{ hero: Page['hero']; centered?: boolean }> = ({ hero, centered }) => {
