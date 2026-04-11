@@ -30,7 +30,57 @@ const PERK_ICONS: Record<string, React.ReactNode> = {
   mapPin: <MapPin size={18} strokeWidth={1.8} />,
 }
 
+// ── Card colour map ──────────────────────────────────────────────────────────
+const CARD_COLORS: Record<string, { bar: string; text: string }> = {
+  blue: { bar: 'bg-mid', text: 'text-mid' },
+  amber: { bar: 'bg-amber', text: 'text-amber' },
+  coral: { bar: 'bg-coral', text: 'text-coral' },
+}
+
 type Column = NonNullable<ContentBlockProps['columns']>[number]
+type Perk = NonNullable<Column['perks']>[number]
+type PerkCard = NonNullable<Column['perkCards']>[number]
+
+// ── Icons list ───────────────────────────────────────────────────────────────
+const PerkIcons: React.FC<{ perks: Perk[] }> = ({ perks }) => (
+  <div className="flex flex-col gap-3.5 mb-8">
+    {perks.map((perk, i) => (
+      <div key={i} className="flex items-start gap-3.5">
+        <div className="w-10 h-10 rounded-xl bg-pale flex items-center justify-center flex-shrink-0 text-mid">
+          {perk.icon ? (PERK_ICONS[perk.icon] ?? null) : null}
+        </div>
+        <div>
+          <p className="text-sm font-semibold text-ink leading-snug">{perk.title}</p>
+          {perk.text && (
+            <p className="text-[13px] text-ink-light leading-snug mt-0.5">{perk.text}</p>
+          )}
+        </div>
+      </div>
+    ))}
+  </div>
+)
+
+// ── Cards list ───────────────────────────────────────────────────────────────
+const PerkCards: React.FC<{ cards: PerkCard[] }> = ({ cards }) => (
+  <div className="grid grid-cols-2 gap-3 mb-8">
+    {cards.map((card, i) => {
+      const color = CARD_COLORS[card.cardColor ?? 'blue']!
+      return (
+        <div key={i} className="bg-white border-2 border-swim-border rounded-xl overflow-hidden">
+          <div className="grid grid-cols-[4px_1fr]">
+            <div className={`${color.bar} self-stretch`} />
+            <div className="p-3.5">
+              <p className="font-syne text-[11px] font-bold uppercase tracking-[0.6px] text-deep mb-1">
+                {card.title}
+              </p>
+              {card.text && <p className="text-[12px] text-ink-mid leading-snug">{card.text}</p>}
+            </div>
+          </div>
+        </div>
+      )
+    })}
+  </div>
+)
 
 // ── Media column ─────────────────────────────────────────────────────────────
 const MediaColumn: React.FC<{ col: Column }> = ({ col }) => (
@@ -54,8 +104,7 @@ const MediaColumn: React.FC<{ col: Column }> = ({ col }) => (
 )
 
 // ── Content column ───────────────────────────────────────────────────────────
-const ContentColumn: React.FC<{ col: Column }> = ({ col }) => {
-  const perks = col.perks ?? []
+const ContentColumn: React.FC<{ col: Column; pairedMedia?: Column }> = ({ col, pairedMedia }) => {
   const links = col.links ?? []
 
   return (
@@ -82,30 +131,28 @@ const ContentColumn: React.FC<{ col: Column }> = ({ col }) => {
         </div>
       )}
 
-      {/* Perks list */}
-      {perks.length > 0 && (
-        <div className="flex flex-col gap-3.5 mb-8">
-          {perks.map((perk, i) => (
-            <div key={i} className="flex items-start gap-3.5">
-              <div className="w-10 h-10 rounded-xl bg-pale flex items-center justify-center flex-shrink-0 text-mid">
-                {perk.icon ? (PERK_ICONS[perk.icon] ?? null) : null}
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-ink leading-snug">{perk.title}</p>
-                {perk.text && (
-                  <p className="text-[13px] text-ink-light leading-snug mt-0.5">{perk.text}</p>
-                )}
-              </div>
-            </div>
-          ))}
+      {/* Paired image — visible only on mobile, sits between richText and list */}
+      {pairedMedia && (
+        <div className="md:hidden mb-6">
+          <MediaColumn col={pairedMedia} />
         </div>
       )}
 
+      {/* Perks list */}
+      {col.perksStyle === 'cards'
+        ? (col.perkCards?.length ?? 0) > 0 && <PerkCards cards={col.perkCards!} />
+        : (col.perks?.length ?? 0) > 0 && <PerkIcons perks={col.perks!} />}
+
       {/* CTAs */}
       {links.length > 0 && (
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-col sm:flex-row flex-wrap gap-3">
           {links.map((item, i) => (
-            <CtaButton key={i} link={item.link as any} context="light" />
+            <CtaButton
+              key={i}
+              link={item.link as any}
+              context="light"
+              className="w-full sm:w-auto"
+            />
           ))}
         </div>
       )}
@@ -135,8 +182,21 @@ export const ContentBlock: React.FC<ContentBlockProps> = ({ columns }) => {
   return (
     <section className="container py-16 md:py-20">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
-        <div>{left.useMedia ? <MediaColumn col={left} /> : <ContentColumn col={left} />}</div>
-        <div>{right.useMedia ? <MediaColumn col={right} /> : <ContentColumn col={right} />}</div>
+        {/* Always hidden on mobile when media — rendered inline inside the paired ContentColumn */}
+        <div className={left.useMedia ? 'hidden md:block' : undefined}>
+          {left.useMedia ? (
+            <MediaColumn col={left} />
+          ) : (
+            <ContentColumn col={left} pairedMedia={right.useMedia ? right : undefined} />
+          )}
+        </div>
+        <div className={right.useMedia ? 'hidden md:block' : undefined}>
+          {right.useMedia ? (
+            <MediaColumn col={right} />
+          ) : (
+            <ContentColumn col={right} pairedMedia={left.useMedia ? left : undefined} />
+          )}
+        </div>
       </div>
     </section>
   )

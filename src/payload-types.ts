@@ -1646,11 +1646,20 @@ export interface ContentBlock {
           };
           [k: string]: unknown;
         } | null;
+        perksStyle?: ('icons' | 'cards') | null;
         perks?:
           | {
               icon?:
                 | ('users' | 'clock' | 'cloud' | 'star' | 'flag' | 'calendar' | 'arrow' | 'heart' | 'trophy' | 'mapPin')
                 | null;
+              title: string;
+              text?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        perkCards?:
+          | {
+              cardColor?: ('blue' | 'amber' | 'coral') | null;
               title: string;
               text?: string | null;
               id?: string | null;
@@ -3035,10 +3044,19 @@ export interface ContentBlockSelect<T extends boolean = true> {
         mediaBadge?: T;
         subTitle?: T;
         richText?: T;
+        perksStyle?: T;
         perks?:
           | T
           | {
               icon?: T;
+              title?: T;
+              text?: T;
+              id?: T;
+            };
+        perkCards?:
+          | T
+          | {
+              cardColor?: T;
               title?: T;
               text?: T;
               id?: T;

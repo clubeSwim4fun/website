@@ -66,12 +66,26 @@ const columnFields: Field[] = [
 
   // ── Perks / feature list ────────────────────────────────────────
   {
+    name: 'perksStyle',
+    type: 'select',
+    defaultValue: 'icons',
+    label: { en: 'List style', pt: 'Estilo da lista' },
+    admin: {
+      condition: (_, s) => !s?.useMedia,
+    },
+    options: [
+      { label: { en: 'Icons (default)', pt: 'Ícones (padrão)' }, value: 'icons' },
+      { label: { en: 'Cards', pt: 'Cartões' }, value: 'cards' },
+    ],
+  },
+  // Icons variant
+  {
     name: 'perks',
     type: 'array',
     label: { en: 'Feature list', pt: 'Lista de funcionalidades' },
     maxRows: 6,
     admin: {
-      condition: (_, s) => !s?.useMedia,
+      condition: (_, s) => !s?.useMedia && s?.perksStyle !== 'cards',
       initCollapsed: true,
     },
     fields: [
@@ -82,7 +96,7 @@ const columnFields: Field[] = [
             name: 'icon',
             type: 'select',
             label: { en: 'Icon', pt: 'Ícone' },
-            admin: { width: '33%' },
+            admin: { width: '25%' },
             options: [
               { label: { en: 'People / Users', pt: 'Pessoas / Utilizadores' }, value: 'users' },
               { label: { en: 'Clock / Time', pt: 'Relógio / Tempo' }, value: 'clock' },
@@ -102,14 +116,59 @@ const columnFields: Field[] = [
             localized: true,
             required: true,
             label: { en: 'Title', pt: 'Título' },
-            admin: { width: '33%' },
+            admin: { width: '37%' },
           },
           {
             name: 'text',
             type: 'text',
             localized: true,
             label: { en: 'Description', pt: 'Descrição' },
-            admin: { width: '33%' },
+            admin: { width: '37%' },
+          },
+        ],
+      },
+    ],
+  },
+  // Cards variant
+  {
+    name: 'perkCards',
+    type: 'array',
+    label: { en: 'Cards list', pt: 'Lista de cartões' },
+    maxRows: 6,
+    admin: {
+      condition: (_, s) => !s?.useMedia && s?.perksStyle === 'cards',
+      initCollapsed: true,
+    },
+    fields: [
+      {
+        type: 'row',
+        fields: [
+          {
+            name: 'cardColor',
+            type: 'select',
+            defaultValue: 'blue',
+            label: { en: 'Accent colour', pt: 'Cor de destaque' },
+            admin: { width: '25%' },
+            options: [
+              { label: { en: 'Blue', pt: 'Azul' }, value: 'blue' },
+              { label: { en: 'Yellow / Amber', pt: 'Amarelo / Âmbar' }, value: 'amber' },
+              { label: { en: 'Red / Coral', pt: 'Vermelho / Coral' }, value: 'coral' },
+            ],
+          },
+          {
+            name: 'title',
+            type: 'text',
+            localized: true,
+            required: true,
+            label: { en: 'Title', pt: 'Título' },
+            admin: { width: '37%' },
+          },
+          {
+            name: 'text',
+            type: 'text',
+            localized: true,
+            label: { en: 'Description', pt: 'Descrição' },
+            admin: { width: '37%' },
           },
         ],
       },
