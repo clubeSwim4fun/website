@@ -64,6 +64,11 @@ async function handlePaymentSuccess(
 
   if (!type || !recordId) return
 
+  if (type === 'form-payment') {
+    await handleFormPaymentSuccess(payload, intent)
+    return
+  }
+
   if (type === 'order') {
     await payload.update({
       collection: 'orders',
@@ -382,4 +387,111 @@ async function handlePaymentFailure(
       data: { paymentStatus: 'failed' },
     })
   }
+}
+
+async function handleFormPaymentSuccess(
+  payload: Awaited<ReturnType<typeof getPayload>>,
+  intent: Stripe.PaymentIntent,
+) {
+  const { recordId } = intent.metadata || {}
+  if (!recordId) return
+
+  const record = await payload.findByID({
+    collection: 'form-payments',
+    id: recordId,
+    depth: 2,
+  })
+
+  if (!record) return
+
+  // Mark as paid
+  await payload.update({
+    collection: 'form-payments',
+    id: recordId,
+    data: { paymentStatus: 'paid', stripePaymentIntentId: intent.id },
+  })
+
+  // Assign user to group/subgroup if configured
+  const assignToGroup = record.assignToGroup as
+    | { relationTo: 'groups' | 'group-categories'; value: { id: string } | string }
+    | null
+    | undefined
+
+  const userId = typeof record.user === 'string' ? record.user : record.user?.id
+
+  if (assignToGroup && userId) {
+    try {
+      const user = await payload.findByID({ collection: 'users', id: userId, depth: 0 })
+      const existingGroups: { relationTo: string; value: string }[] = (
+        (user.groups as any[]) ?? []
+      ).map((g: any) =>
+        typeof g === 'string'
+          ? { relationTo: 'groups', value: g }
+          : {
+              relationTo: g.relationTo ?? 'groups',
+              value: typeof g.value === 'string' ? g.value : g.value?.id,
+            },
+      )
+
+      const groupId =
+        typeof assignToGroup.value === 'string' ? assignToGroup.value : assignToGroup.value?.id
+
+      const alreadyAssigned = existingGroups.some(
+        (g) => g.relationTo === assignToGroup.relationTo && g.value === groupId,
+      )
+
+      if (!alreadyAssigned) {
+        await payload.update({
+          collection: 'users',
+          id: userId,
+          data: {
+            groups: [
+              ...existingGroups,
+              { relationTo: assignToGroup.relationTo, value: groupId },
+            ] as any,
+          },
+        })
+      }
+    } catch (err) {
+      console.error('[webhook] form-payment group assignment failed:', err)
+    }
+  }
+
+  // Fire-and-forget invoice creation
+  ;(async () => {
+    try {
+      const { createDraftInvoice } = await import('@/helpers/invoiceHelper')
+      const user = userId
+        ? await payload.findByID({ collection: 'users', id: userId, depth: 0 })
+        : null
+
+      const description =
+        typeof record.form === 'object'
+          ? ((record.form as any)?.title ?? 'Form payment')
+          : 'Form payment'
+
+      await createDraftInvoice({
+        user: {
+          name: user?.name ?? '',
+          surname: user?.surname ?? '',
+          email: user?.email ?? '',
+          associateId: user?.associateId ?? '',
+          nif: user?.nif,
+        },
+        lineItems: [
+          {
+            name: description,
+            description,
+            unit_price: ((record as any).amount ?? 0).toFixed(2),
+            quantity: 1,
+            tax: { name: 'IVA0' },
+          },
+        ],
+        context: 'form-payment',
+        stripePaymentIntentId: intent.id,
+      })
+    } catch (err) {
+      console.error('[webhook] form-payment invoice creation failed:', err)
+    }
+  })()
 }

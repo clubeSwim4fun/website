@@ -11,6 +11,7 @@ import { Phone } from './Phone'
 import { Media } from './Media'
 import { DatePicker } from './Date'
 import { Address } from './Address'
+import { PaymentFormField } from './Payment'
 
 export const fields = {
   checkbox: Checkbox,
@@ -26,4 +27,5 @@ export const fields = {
   media: Media,
   datePicker: DatePicker,
   address: Address,
+  stripePayment: PaymentFormField,
 }

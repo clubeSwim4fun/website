@@ -59,7 +59,7 @@ export type CreateDraftInvoiceArgs = {
     nif?: string | null
   }
   lineItems: InvoiceLineItem[]
-  context: 'order' | 'subscription' | 'group-subscription'
+  context: 'order' | 'subscription' | 'group-subscription' | 'form-payment'
   stripePaymentIntentId?: string
 }
 

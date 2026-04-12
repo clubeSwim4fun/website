@@ -25,6 +25,7 @@ import { Select } from '@/blocks/Form/Select/config'
 import { Address } from '@/blocks/Form/Address/config'
 import { DatePicker } from '@/blocks/Form/Date/config'
 import { Email } from '@/blocks/Form/Email/config'
+import { Payment } from '@/blocks/Form/Payment/config'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { TemplateEmail } from '@/email/template'
 
@@ -92,6 +93,7 @@ export const plugins: Plugin[] = [
       address: Address,
       date: DatePicker,
       email: Email,
+      stripePayment: Payment,
       state: false,
     },
     formOverrides: {
@@ -106,15 +108,29 @@ export const plugins: Plugin[] = [
         },
       },
       fields: ({ defaultFields }) => {
-        return defaultFields.map((field: Field) => {
-          if ('name' in field && field.name === 'confirmationMessage') {
-            return {
-              ...field,
-              editor: defaultLexical,
+        return [
+          {
+            name: 'isRegistrationForm',
+            type: 'checkbox',
+            label: { en: 'Registration Form?', pt: 'Formulário de Registo?' },
+            defaultValue: false,
+            admin: {
+              description: {
+                en: 'When enabled, shows registration-specific fields (relatesTo, wizard step) on each field.',
+                pt: 'Quando ativado, mostra campos específicos de registo (relatesTo, passo do wizard) em cada campo.',
+              },
+            },
+          },
+          ...defaultFields.map((field: Field) => {
+            if ('name' in field && field.name === 'confirmationMessage') {
+              return {
+                ...field,
+                editor: defaultLexical,
+              }
             }
-          }
-          return field
-        })
+            return field
+          }),
+        ]
       },
     },
     formSubmissionOverrides: {

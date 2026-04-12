@@ -44,6 +44,7 @@ import { PostComments } from './collections/Posts/PostComments'
 import { PostLikes } from './collections/Posts/PostLikes'
 import { Newsletters } from './collections/Newsletters'
 import { Sponsors } from './collections/Sponsors'
+import { FormPayments } from './collections/FormPayments'
 import { dashboardPool } from './admin/endpoints/dashboardPool'
 import { dashboardPoolSlot, dashboardPoolWeek } from './admin/endpoints/dashboardPoolSlot'
 import { dashboardMembers } from './admin/endpoints/dashboardMembers'
@@ -150,6 +151,7 @@ export default buildConfig({
     PostLikes,
     Newsletters,
     Sponsors,
+    FormPayments,
   ],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer, GeneralConfigs],

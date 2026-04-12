@@ -93,6 +93,7 @@ export interface Config {
     'post-likes': PostLike;
     newsletters: Newsletter;
     sponsors: Sponsor;
+    'form-payments': FormPayment;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -131,6 +132,7 @@ export interface Config {
     'post-likes': PostLikesSelect<false> | PostLikesSelect<true>;
     newsletters: NewslettersSelect<false> | NewslettersSelect<true>;
     sponsors: SponsorsSelect<false> | SponsorsSelect<true>;
+    'form-payments': FormPaymentsSelect<false> | FormPaymentsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -499,7 +501,7 @@ export interface Media {
 export interface Category {
   id: string;
   title: string;
-  color?: ('#B2E0B2' | '#AEC6E4' | '#FFD1DC') | null;
+  color?: ('mid' | 'green-dark' | 'amber' | 'coral' | 'purple' | 'deep' | 'light') | null;
   slug?: string | null;
   slugLock?: boolean | null;
   parent?: (string | null) | Category;
@@ -915,6 +917,10 @@ export interface Group {
  */
 export interface Form {
   id: string;
+  /**
+   * When enabled, shows registration-specific fields (relatesTo, wizard step) on each field.
+   */
+  isRegistrationForm?: boolean | null;
   title: string;
   fields?:
     | (
@@ -959,6 +965,7 @@ export interface Form {
         | MediaUpload
         | Address
         | DateField
+        | StripePaymentField
       )[]
     | null;
   submitButtonLabel?: string | null;
@@ -1030,6 +1037,7 @@ export interface Checkbox {
   required?: boolean | null;
   relatesTo?:
     | (
+        | 'email'
         | 'name'
         | 'surname'
         | 'nationality'
@@ -1059,6 +1067,45 @@ export interface Checkbox {
         | 'Address'
       )
     | null;
+  /**
+   * When a user is logged in, prefill this field with the selected user property.
+   */
+  prefillFromUser?:
+    | (
+        | 'email'
+        | 'name'
+        | 'surname'
+        | 'nationality'
+        | 'phone'
+        | 'identity'
+        | 'identityFile'
+        | 'associateId'
+        | 'federationId'
+        | 'profilePicture'
+        | 'role'
+        | 'nif'
+        | 'gender'
+        | 'groups'
+        | 'birthDate'
+        | 'disability'
+        | 'emailNotificationsEnabled'
+        | 'wantsToBeFederado'
+        | 'emergencyContact'
+        | 'emergencyPhone'
+        | 'wantsInvoiceWithNif'
+        | 'sportInsurance'
+        | 'tshirtSize'
+        | 'heardAboutClub'
+        | 'status'
+        | 'validated'
+        | 'fieldsToUpdate'
+        | 'Address'
+      )
+    | null;
+  /**
+   * Prevents the user from editing this field. Prefilled values cannot be changed.
+   */
+  readOnly?: boolean | null;
   size?: ('full' | 'half' | 'one-third') | null;
   wizardStep?: ('1' | '2' | '3' | '4') | null;
   id?: string | null;
@@ -1075,6 +1122,7 @@ export interface Country {
   required?: boolean | null;
   relatesTo?:
     | (
+        | 'email'
         | 'name'
         | 'surname'
         | 'nationality'
@@ -1104,6 +1152,45 @@ export interface Country {
         | 'Address'
       )
     | null;
+  /**
+   * When a user is logged in, prefill this field with the selected user property.
+   */
+  prefillFromUser?:
+    | (
+        | 'email'
+        | 'name'
+        | 'surname'
+        | 'nationality'
+        | 'phone'
+        | 'identity'
+        | 'identityFile'
+        | 'associateId'
+        | 'federationId'
+        | 'profilePicture'
+        | 'role'
+        | 'nif'
+        | 'gender'
+        | 'groups'
+        | 'birthDate'
+        | 'disability'
+        | 'emailNotificationsEnabled'
+        | 'wantsToBeFederado'
+        | 'emergencyContact'
+        | 'emergencyPhone'
+        | 'wantsInvoiceWithNif'
+        | 'sportInsurance'
+        | 'tshirtSize'
+        | 'heardAboutClub'
+        | 'status'
+        | 'validated'
+        | 'fieldsToUpdate'
+        | 'Address'
+      )
+    | null;
+  /**
+   * Prevents the user from editing this field. Prefilled values cannot be changed.
+   */
+  readOnly?: boolean | null;
   size?: ('full' | 'half' | 'one-third') | null;
   wizardStep?: ('1' | '2' | '3' | '4') | null;
   id?: string | null;
@@ -1119,6 +1206,45 @@ export interface Email {
   label: string;
   defaultValue?: string | null;
   required?: boolean | null;
+  /**
+   * When a user is logged in, prefill this field with the selected user property.
+   */
+  prefillFromUser?:
+    | (
+        | 'email'
+        | 'name'
+        | 'surname'
+        | 'nationality'
+        | 'phone'
+        | 'identity'
+        | 'identityFile'
+        | 'associateId'
+        | 'federationId'
+        | 'profilePicture'
+        | 'role'
+        | 'nif'
+        | 'gender'
+        | 'groups'
+        | 'birthDate'
+        | 'disability'
+        | 'emailNotificationsEnabled'
+        | 'wantsToBeFederado'
+        | 'emergencyContact'
+        | 'emergencyPhone'
+        | 'wantsInvoiceWithNif'
+        | 'sportInsurance'
+        | 'tshirtSize'
+        | 'heardAboutClub'
+        | 'status'
+        | 'validated'
+        | 'fieldsToUpdate'
+        | 'Address'
+      )
+    | null;
+  /**
+   * Prevents the user from editing this field. Prefilled values cannot be changed.
+   */
+  readOnly?: boolean | null;
   size?: ('full' | 'half' | 'one-third') | null;
   wizardStep?: ('1' | '2' | '3' | '4') | null;
   id?: string | null;
@@ -1136,6 +1262,7 @@ export interface Number {
   required?: boolean | null;
   relatesTo?:
     | (
+        | 'email'
         | 'name'
         | 'surname'
         | 'nationality'
@@ -1165,6 +1292,45 @@ export interface Number {
         | 'Address'
       )
     | null;
+  /**
+   * When a user is logged in, prefill this field with the selected user property.
+   */
+  prefillFromUser?:
+    | (
+        | 'email'
+        | 'name'
+        | 'surname'
+        | 'nationality'
+        | 'phone'
+        | 'identity'
+        | 'identityFile'
+        | 'associateId'
+        | 'federationId'
+        | 'profilePicture'
+        | 'role'
+        | 'nif'
+        | 'gender'
+        | 'groups'
+        | 'birthDate'
+        | 'disability'
+        | 'emailNotificationsEnabled'
+        | 'wantsToBeFederado'
+        | 'emergencyContact'
+        | 'emergencyPhone'
+        | 'wantsInvoiceWithNif'
+        | 'sportInsurance'
+        | 'tshirtSize'
+        | 'heardAboutClub'
+        | 'status'
+        | 'validated'
+        | 'fieldsToUpdate'
+        | 'Address'
+      )
+    | null;
+  /**
+   * Prevents the user from editing this field. Prefilled values cannot be changed.
+   */
+  readOnly?: boolean | null;
   size?: ('full' | 'half' | 'one-third') | null;
   wizardStep?: ('1' | '2' | '3' | '4') | null;
   id?: string | null;
@@ -1191,6 +1357,7 @@ export interface Select {
   required?: boolean | null;
   relatesTo?:
     | (
+        | 'email'
         | 'name'
         | 'surname'
         | 'nationality'
@@ -1220,6 +1387,45 @@ export interface Select {
         | 'Address'
       )
     | null;
+  /**
+   * When a user is logged in, prefill this field with the selected user property.
+   */
+  prefillFromUser?:
+    | (
+        | 'email'
+        | 'name'
+        | 'surname'
+        | 'nationality'
+        | 'phone'
+        | 'identity'
+        | 'identityFile'
+        | 'associateId'
+        | 'federationId'
+        | 'profilePicture'
+        | 'role'
+        | 'nif'
+        | 'gender'
+        | 'groups'
+        | 'birthDate'
+        | 'disability'
+        | 'emailNotificationsEnabled'
+        | 'wantsToBeFederado'
+        | 'emergencyContact'
+        | 'emergencyPhone'
+        | 'wantsInvoiceWithNif'
+        | 'sportInsurance'
+        | 'tshirtSize'
+        | 'heardAboutClub'
+        | 'status'
+        | 'validated'
+        | 'fieldsToUpdate'
+        | 'Address'
+      )
+    | null;
+  /**
+   * Prevents the user from editing this field. Prefilled values cannot be changed.
+   */
+  readOnly?: boolean | null;
   size?: ('full' | 'half' | 'one-third') | null;
   wizardStep?: ('1' | '2' | '3' | '4') | null;
   id?: string | null;
@@ -1237,6 +1443,7 @@ export interface Text {
   required?: boolean | null;
   relatesTo?:
     | (
+        | 'email'
         | 'name'
         | 'surname'
         | 'nationality'
@@ -1266,6 +1473,45 @@ export interface Text {
         | 'Address'
       )
     | null;
+  /**
+   * When a user is logged in, prefill this field with the selected user property.
+   */
+  prefillFromUser?:
+    | (
+        | 'email'
+        | 'name'
+        | 'surname'
+        | 'nationality'
+        | 'phone'
+        | 'identity'
+        | 'identityFile'
+        | 'associateId'
+        | 'federationId'
+        | 'profilePicture'
+        | 'role'
+        | 'nif'
+        | 'gender'
+        | 'groups'
+        | 'birthDate'
+        | 'disability'
+        | 'emailNotificationsEnabled'
+        | 'wantsToBeFederado'
+        | 'emergencyContact'
+        | 'emergencyPhone'
+        | 'wantsInvoiceWithNif'
+        | 'sportInsurance'
+        | 'tshirtSize'
+        | 'heardAboutClub'
+        | 'status'
+        | 'validated'
+        | 'fieldsToUpdate'
+        | 'Address'
+      )
+    | null;
+  /**
+   * Prevents the user from editing this field. Prefilled values cannot be changed.
+   */
+  readOnly?: boolean | null;
   size?: ('full' | 'half' | 'one-third') | null;
   wizardStep?: ('1' | '2' | '3' | '4') | null;
   id?: string | null;
@@ -1297,6 +1543,7 @@ export interface Phone {
   required?: boolean | null;
   relatesTo?:
     | (
+        | 'email'
         | 'name'
         | 'surname'
         | 'nationality'
@@ -1326,6 +1573,45 @@ export interface Phone {
         | 'Address'
       )
     | null;
+  /**
+   * When a user is logged in, prefill this field with the selected user property.
+   */
+  prefillFromUser?:
+    | (
+        | 'email'
+        | 'name'
+        | 'surname'
+        | 'nationality'
+        | 'phone'
+        | 'identity'
+        | 'identityFile'
+        | 'associateId'
+        | 'federationId'
+        | 'profilePicture'
+        | 'role'
+        | 'nif'
+        | 'gender'
+        | 'groups'
+        | 'birthDate'
+        | 'disability'
+        | 'emailNotificationsEnabled'
+        | 'wantsToBeFederado'
+        | 'emergencyContact'
+        | 'emergencyPhone'
+        | 'wantsInvoiceWithNif'
+        | 'sportInsurance'
+        | 'tshirtSize'
+        | 'heardAboutClub'
+        | 'status'
+        | 'validated'
+        | 'fieldsToUpdate'
+        | 'Address'
+      )
+    | null;
+  /**
+   * Prevents the user from editing this field. Prefilled values cannot be changed.
+   */
+  readOnly?: boolean | null;
   size?: ('full' | 'half' | 'one-third') | null;
   wizardStep?: ('1' | '2' | '3' | '4') | null;
   id?: string | null;
@@ -1343,6 +1629,7 @@ export interface MediaUpload {
   required?: boolean | null;
   relatesTo?:
     | (
+        | 'email'
         | 'name'
         | 'surname'
         | 'nationality'
@@ -1387,6 +1674,7 @@ export interface Address {
   label: string;
   relatesTo?:
     | (
+        | 'email'
         | 'name'
         | 'surname'
         | 'nationality'
@@ -1416,6 +1704,45 @@ export interface Address {
         | 'Address'
       )
     | null;
+  /**
+   * When a user is logged in, prefill this field with the selected user property.
+   */
+  prefillFromUser?:
+    | (
+        | 'email'
+        | 'name'
+        | 'surname'
+        | 'nationality'
+        | 'phone'
+        | 'identity'
+        | 'identityFile'
+        | 'associateId'
+        | 'federationId'
+        | 'profilePicture'
+        | 'role'
+        | 'nif'
+        | 'gender'
+        | 'groups'
+        | 'birthDate'
+        | 'disability'
+        | 'emailNotificationsEnabled'
+        | 'wantsToBeFederado'
+        | 'emergencyContact'
+        | 'emergencyPhone'
+        | 'wantsInvoiceWithNif'
+        | 'sportInsurance'
+        | 'tshirtSize'
+        | 'heardAboutClub'
+        | 'status'
+        | 'validated'
+        | 'fieldsToUpdate'
+        | 'Address'
+      )
+    | null;
+  /**
+   * Prevents the user from editing this field. Prefilled values cannot be changed.
+   */
+  readOnly?: boolean | null;
   address?: {
     streetLabel?: string | null;
     streetSize?: ('full' | 'half' | 'one-third') | null;
@@ -1446,6 +1773,7 @@ export interface DateField {
   required?: boolean | null;
   relatesTo?:
     | (
+        | 'email'
         | 'name'
         | 'surname'
         | 'nationality'
@@ -1475,11 +1803,84 @@ export interface DateField {
         | 'Address'
       )
     | null;
+  /**
+   * When a user is logged in, prefill this field with the selected user property.
+   */
+  prefillFromUser?:
+    | (
+        | 'email'
+        | 'name'
+        | 'surname'
+        | 'nationality'
+        | 'phone'
+        | 'identity'
+        | 'identityFile'
+        | 'associateId'
+        | 'federationId'
+        | 'profilePicture'
+        | 'role'
+        | 'nif'
+        | 'gender'
+        | 'groups'
+        | 'birthDate'
+        | 'disability'
+        | 'emailNotificationsEnabled'
+        | 'wantsToBeFederado'
+        | 'emergencyContact'
+        | 'emergencyPhone'
+        | 'wantsInvoiceWithNif'
+        | 'sportInsurance'
+        | 'tshirtSize'
+        | 'heardAboutClub'
+        | 'status'
+        | 'validated'
+        | 'fieldsToUpdate'
+        | 'Address'
+      )
+    | null;
+  /**
+   * Prevents the user from editing this field. Prefilled values cannot be changed.
+   */
+  readOnly?: boolean | null;
   size?: ('full' | 'half' | 'one-third') | null;
   wizardStep?: ('1' | '2' | '3' | '4') | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'datePicker';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StripePaymentField".
+ */
+export interface StripePaymentField {
+  /**
+   * Internal field name (must be unique within the form).
+   */
+  name: string;
+  label?: string | null;
+  /**
+   * Fixed payment amount in EUR.
+   */
+  amount: number;
+  /**
+   * Shown on the Stripe payment form and receipt.
+   */
+  description?: string | null;
+  /**
+   * When payment is confirmed, the user will be added to this group or subgroup.
+   */
+  assignToGroup?:
+    | ({
+        relationTo: 'groups';
+        value: string | Group;
+      } | null)
+    | ({
+        relationTo: 'group-categories';
+        value: string | GroupCategory;
+      } | null);
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'stripePayment';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2728,6 +3129,36 @@ export interface Sponsor {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "form-payments".
+ */
+export interface FormPayment {
+  id: string;
+  form: string | Form;
+  user?: (string | null) | User;
+  paymentStatus?: ('pending' | 'paid' | 'failed') | null;
+  amount?: number | null;
+  stripePaymentIntentId?: string | null;
+  assignToGroup?:
+    | ({
+        relationTo: 'groups';
+        value: string | Group;
+      } | null)
+    | ({
+        relationTo: 'group-categories';
+        value: string | GroupCategory;
+      } | null);
+  submissionData?:
+    | {
+        field?: string | null;
+        value?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -3019,6 +3450,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'sponsors';
         value: string | Sponsor;
+      } | null)
+    | ({
+        relationTo: 'form-payments';
+        value: string | FormPayment;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -4047,6 +4482,27 @@ export interface SponsorsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "form-payments_select".
+ */
+export interface FormPaymentsSelect<T extends boolean = true> {
+  form?: T;
+  user?: T;
+  paymentStatus?: T;
+  amount?: T;
+  stripePaymentIntentId?: T;
+  assignToGroup?: T;
+  submissionData?:
+    | T
+    | {
+        field?: T;
+        value?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects_select".
  */
 export interface RedirectsSelect<T extends boolean = true> {
@@ -4066,6 +4522,7 @@ export interface RedirectsSelect<T extends boolean = true> {
  * via the `definition` "forms_select".
  */
 export interface FormsSelect<T extends boolean = true> {
+  isRegistrationForm?: T;
   title?: T;
   fields?:
     | T
@@ -4099,6 +4556,7 @@ export interface FormsSelect<T extends boolean = true> {
         media?: T | MediaUploadSelect<T>;
         address?: T | AddressSelect<T>;
         datePicker?: T | DateFieldSelect<T>;
+        stripePayment?: T | StripePaymentFieldSelect<T>;
       };
   submitButtonLabel?: T;
   confirmationType?: T;
@@ -4133,6 +4591,8 @@ export interface CheckboxSelect<T extends boolean = true> {
   defaultValue?: T;
   required?: T;
   relatesTo?: T;
+  prefillFromUser?: T;
+  readOnly?: T;
   size?: T;
   wizardStep?: T;
   id?: T;
@@ -4147,6 +4607,8 @@ export interface CountrySelect<T extends boolean = true> {
   label?: T;
   required?: T;
   relatesTo?: T;
+  prefillFromUser?: T;
+  readOnly?: T;
   size?: T;
   wizardStep?: T;
   id?: T;
@@ -4161,6 +4623,8 @@ export interface EmailSelect<T extends boolean = true> {
   label?: T;
   defaultValue?: T;
   required?: T;
+  prefillFromUser?: T;
+  readOnly?: T;
   size?: T;
   wizardStep?: T;
   id?: T;
@@ -4176,6 +4640,8 @@ export interface NumberSelect<T extends boolean = true> {
   defaultValue?: T;
   required?: T;
   relatesTo?: T;
+  prefillFromUser?: T;
+  readOnly?: T;
   size?: T;
   wizardStep?: T;
   id?: T;
@@ -4200,6 +4666,8 @@ export interface SelectSelect<T extends boolean = true> {
       };
   required?: T;
   relatesTo?: T;
+  prefillFromUser?: T;
+  readOnly?: T;
   size?: T;
   wizardStep?: T;
   id?: T;
@@ -4215,6 +4683,8 @@ export interface TextSelect<T extends boolean = true> {
   defaultValue?: T;
   required?: T;
   relatesTo?: T;
+  prefillFromUser?: T;
+  readOnly?: T;
   size?: T;
   wizardStep?: T;
   id?: T;
@@ -4243,6 +4713,8 @@ export interface PhoneSelect<T extends boolean = true> {
   label?: T;
   required?: T;
   relatesTo?: T;
+  prefillFromUser?: T;
+  readOnly?: T;
   size?: T;
   wizardStep?: T;
   id?: T;
@@ -4271,6 +4743,8 @@ export interface AddressSelect<T extends boolean = true> {
   name?: T;
   label?: T;
   relatesTo?: T;
+  prefillFromUser?: T;
+  readOnly?: T;
   address?:
     | T
     | {
@@ -4301,8 +4775,23 @@ export interface DateFieldSelect<T extends boolean = true> {
   placeholder?: T;
   required?: T;
   relatesTo?: T;
+  prefillFromUser?: T;
+  readOnly?: T;
   size?: T;
   wizardStep?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StripePaymentField_select".
+ */
+export interface StripePaymentFieldSelect<T extends boolean = true> {
+  name?: T;
+  label?: T;
+  amount?: T;
+  description?: T;
+  assignToGroup?: T;
   id?: T;
   blockName?: T;
 }

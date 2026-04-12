@@ -18,8 +18,8 @@ const GroupSubscriptionPageClient = ({
   groupSlug: string
 }) => {
   const handleSubmit = async (
-    formData: { [key: string]: any }[],
-  ): Promise<{ error: string | undefined }> => {
+    formData: Record<string, any>,
+  ): Promise<{ error?: string; redirectUrl?: string }> => {
     const response = await createGroupSubscription({
       data: formData,
       groupSlug,

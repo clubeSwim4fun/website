@@ -55,6 +55,9 @@ export const Password: Block = {
       label: { en: 'Wizard Step', pt: 'Passo do Formulário' },
       type: 'select',
       defaultValue: '1',
+      admin: {
+        condition: (data) => Boolean(data?.isRegistrationForm),
+      },
       options: [
         { label: { en: 'Step 1 — Account', pt: 'Passo 1 — Conta' }, value: '1' },
         { label: { en: 'Step 2 — Personal', pt: 'Passo 2 — Pessoal' }, value: '2' },

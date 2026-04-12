@@ -14,7 +14,7 @@ export const createGroupSubscription = async ({
   data,
   groupSlug,
 }: {
-  data: { [key: string]: any }[]
+  data: Record<string, any>
   groupSlug: string
 }) => {
   const user = (await getMeUser()).user

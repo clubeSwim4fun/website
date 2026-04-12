@@ -3,7 +3,8 @@ import { Field, Option } from 'payload'
 
 const userCollection = Users
 
-const userCollectionFieldsName: Option[] = []
+// `email` is injected by Payload auth and not present in Users.fields
+const userCollectionFieldsName: Option[] = [{ value: 'email', label: { en: 'Email', pt: 'Email' } }]
 
 const checkFields = (fields: Field[]) => {
   fields.forEach((field) => {

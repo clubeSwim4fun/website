@@ -1,11 +1,12 @@
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import React from 'react'
 
-import type { GeneralConfig } from '@/payload-types'
+import type { GeneralConfig, User } from '@/payload-types'
 import { TypedLocale } from 'payload'
 import { FormBlockClient, FormBlockType } from './Component.client'
 import { getLocale } from 'next-intl/server'
 import { RegistrationWizard } from '@/components/RegistrationWizard'
+import { getMeUser } from '@/utilities/getMeUser'
 
 export async function FormBlock(props: { id?: string } & FormBlockType) {
   const locale = (await getLocale()) as TypedLocale
@@ -15,7 +16,6 @@ export async function FormBlock(props: { id?: string } & FormBlockType) {
     locale,
   )()) as GeneralConfig
 
-  // If no form is selected, don't render anything
   if (!props.form) {
     return null
   }
@@ -30,5 +30,7 @@ export async function FormBlock(props: { id?: string } & FormBlockType) {
     )
   }
 
-  return <FormBlockClient {...props} generalConfigData={generalConfigData} />
+  const { user } = await getMeUser()
+
+  return <FormBlockClient {...props} generalConfigData={generalConfigData} currentUser={user} />
 }

@@ -2,7 +2,7 @@
 import type { Form as FormType } from '@payloadcms/plugin-form-builder/types'
 
 import { useRouter } from 'next/navigation'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useForm, FormProvider } from 'react-hook-form'
 import RichText from '@/components/RichText'
 import { Button } from '@/components/ui/button'
@@ -10,9 +10,8 @@ import type { SerializedEditorState } from '@payloadcms/richtext-lexical/lexical
 
 import { fields } from './fields'
 import { getClientSideURL } from '@/utilities/getURL'
-import { GeneralConfig, UserMedia } from '@/payload-types'
-import { createUser, CreateUserRequestType } from '@/actions/createUser'
-import { CustomFormFieldBlock, getRelationalField } from '@/utilities/getRelationalField'
+import { GeneralConfig, User } from '@/payload-types'
+import { CustomFormFieldBlock } from '@/utilities/getRelationalField'
 import { useToast } from '@/hooks/use-toast'
 import { LoaderCircle } from 'lucide-react'
 import { cn } from '@/utilities/ui'
@@ -26,30 +25,17 @@ export type FormBlockType = {
   form?: FormType
   introContent?: SerializedEditorState
   isRegistrationForm?: boolean
-  onSubmit?: (data: { [key: string]: any }[]) => Promise<{ error?: string; redirectUrl?: string }>
+  currentUser?: User
+  onSubmit?: (data: Record<string, any>) => Promise<{ error?: string; redirectUrl?: string }>
 }
 
-export type CreateUserMediaType = {
-  file: Omit<UserMedia, 'id' | 'createdAt' | 'updatedAt'>
-  relatesTo?: string
-}
-
-export type ProfileFile = {
-  file: File
-  relatesTo?: string
-}
-
-export const FormBlockClient: React.FC<
-  {
-    id?: string
-  } & FormBlockType
-> = (props) => {
+export const FormBlockClient: React.FC<{ id?: string } & FormBlockType> = (props) => {
   const {
     enableIntro,
     form: formFromProps,
     introContent,
-    isRegistrationForm,
     generalConfigData,
+    currentUser,
     onSubmit: onSubmitFromProps,
   } = props
 
@@ -61,138 +47,161 @@ export const FormBlockClient: React.FC<
     submitButtonLabel,
   } = formFromProps || {}
 
-  const formMethods = useForm({
-    defaultValues: formFromProps?.fields,
-  })
+  // Build defaultValues from prefillFromUser
+  const defaultValues = React.useMemo(() => {
+    const base: Record<string, any> = {}
+    for (const field of (formFromProps?.fields ?? []) as CustomFormFieldBlock[]) {
+      if (!field.name) continue
+      const prefill = (field as any).prefillFromUser as string | undefined
+      if (prefill && currentUser) {
+        const val = (currentUser as any)[prefill]
+        if (val !== undefined && val !== null) base[field.name] = val
+      }
+    }
+    return base
+  }, [formFromProps?.fields, currentUser])
+
+  // Split fields: regular fields go inside <form>, payment field goes outside
+  const { regularFields, paymentField } = useMemo(() => {
+    const all = (formFromProps?.fields ?? []) as CustomFormFieldBlock[]
+    return {
+      regularFields: all.filter((f) => (f.blockType as string) !== 'stripePayment'),
+      paymentField: all.find((f) => (f.blockType as string) === 'stripePayment'),
+    }
+  }, [formFromProps?.fields])
+
+  const hasPayment = Boolean(paymentField)
+
+  const formMethods = useForm({ defaultValues })
   const {
     control,
     formState: { errors },
     handleSubmit,
+    getValues,
     register,
   } = formMethods
 
   const [isLoading, setIsLoading] = useState(false)
-  const [hasSubmitted, setHasSubmitted] = useState<boolean>()
+  const [hasSubmitted, setHasSubmitted] = useState(false)
   const [error, setError] = useState<{ message: string; status?: string } | undefined>()
   const router = useRouter()
   const t = useTranslations()
   const { toast } = useToast()
 
   /* eslint-disable @typescript-eslint/no-explicit-any */
-  const onSubmit = useCallback(
-    (data: { [key: string]: any }[]) => {
-      setIsLoading(true)
+  const submitToPayload = useCallback(
+    async (data: Record<string, any>) => {
+      setError(undefined)
 
-      const submitForm = async () => {
-        setError(undefined)
+      if (onSubmitFromProps) {
+        const { error, redirectUrl } = await onSubmitFromProps(data)
+        if (error) setError({ message: error })
+        if (redirectUrl) router.push(redirectUrl)
+        return
+      }
 
-        if (onSubmitFromProps) {
-          const { error, redirectUrl } = await onSubmitFromProps(data)
-          if (error) setError({ message: error || '' })
-          if (redirectUrl) router.push(redirectUrl)
+      try {
+        const req = await fetch(`${getClientSideURL()}/api/form-submissions`, {
+          body: JSON.stringify({
+            form: formID,
+            submissionData: Object.entries(data).map(([field, value]) => ({ field, value })),
+          }),
+          headers: { 'Content-Type': 'application/json' },
+          method: 'POST',
+        })
 
+        const res = await req.json()
+
+        if (req.status >= 400) {
+          setError({
+            message: res.errors?.[0]?.message || t('Common.unexpectedError'),
+            status: res.status,
+          })
           return
         }
 
-        const fields = formFromProps?.fields as CustomFormFieldBlock[]
+        setHasSubmitted(true)
 
-        const dataToSend: CreateUserRequestType = {}
-
-        Object.entries(data).forEach(([name, value]) => {
-          dataToSend[name] = {
-            value: typeof value === 'string' ? (value as string) : (value as unknown as File[]),
-            relatesTo: getRelationalField({ fields, name }),
-          }
-        })
-
-        if (isRegistrationForm) {
-          const formData = new FormData()
-          const meta: Record<string, { value: string; relatesTo: string }> = {}
-
-          for (const [name, entry] of Object.entries(dataToSend)) {
-            if (Array.isArray(entry.value)) {
-              for (const file of entry.value as File[]) {
-                formData.append(entry.relatesTo, file)
-              }
-            } else {
-              meta[name] = { value: entry.value as string, relatesTo: entry.relatesTo }
-            }
-          }
-
-          formData.append('__meta', JSON.stringify(meta))
-
-          const { error } = await createUser(formData)
-
-          if (error) {
-            setIsLoading(false)
-
-            setError({
-              message: error,
-            })
-
-            return
-          }
+        if (confirmationType === 'redirect' && redirect?.url) {
+          router.push(redirect.url)
         }
-
-        try {
-          const req = await fetch(`${getClientSideURL()}/api/form-submissions`, {
-            body: JSON.stringify({
-              form: formID,
-              submissionData: dataToSend,
-            }),
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            method: 'POST',
-          })
-
-          const res = await req.json()
-
-          if (req.status >= 400) {
-            setIsLoading(false)
-
-            setError({
-              message: res.errors?.[0]?.message || t('Common.unexpectedError'),
-              status: res.status,
-            })
-
-            return
-          }
-
-          setIsLoading(false)
-          setHasSubmitted(true)
-
-          if (confirmationType === 'redirect' && redirect) {
-            const { url } = redirect
-
-            const redirectUrl = url
-
-            if (redirectUrl) router.push(redirectUrl)
-          }
-        } catch (err) {
-          console.warn(err)
-          setIsLoading(false)
-          setError({
-            message: t('Common.unexpectedError'),
-          })
-        }
+      } catch {
+        setError({ message: t('Common.unexpectedError') })
       }
-
-      void submitForm()
     },
-    [router, formID, redirect, confirmationType],
+    [router, formID, redirect, confirmationType, onSubmitFromProps],
+  )
+
+  const onSubmit = useCallback(
+    (data: Record<string, any>) => {
+      setIsLoading(true)
+      void submitToPayload(data).finally(() => setIsLoading(false))
+    },
+    [submitToPayload],
+  )
+
+  // Called by the payment field after Stripe confirms — runs RHF validation first, then submits
+  const handlePaymentSuccess = useCallback(
+    async (_paymentIntentId: string, _formPaymentId: string) => {
+      await new Promise<void>((resolve, reject) => {
+        handleSubmit(
+          async (data) => {
+            try {
+              await submitToPayload(data)
+              resolve()
+            } catch (e) {
+              reject(e)
+            }
+          },
+          () => reject(new Error('validation')),
+        )()
+      })
+    },
+    [handleSubmit, submitToPayload],
   )
 
   useEffect(() => {
-    if (!error) {
-      return
-    }
-
-    toast({
-      variant: 'destructive',
-      description: error?.message || t('Common.unexpectedError'),
-    })
+    if (!error) return
+    toast({ variant: 'destructive', description: error.message || t('Common.unexpectedError') })
   }, [error])
+
+  // Snapshot of form values for the payment intent (captured when payment field mounts)
+  const submissionDataForPayment = useMemo(() => {
+    const data = getValues()
+    return Object.entries(data).map(([field, value]) => ({ field, value: String(value ?? '') }))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const renderField = (field: CustomFormFieldBlock, index: number) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const Field: React.FC<any> = fields?.[field.blockType as keyof typeof fields]
+    if (!Field) return null
+
+    return (
+      <div
+        className={cn(
+          'mb-6 last:mb-0 col-span-6',
+          field.size === 'one-third'
+            ? 'md:col-span-2'
+            : field.size === 'half'
+              ? 'md:col-span-3'
+              : '',
+        )}
+        key={index}
+      >
+        <Field
+          form={formFromProps}
+          {...field}
+          {...formMethods}
+          control={control}
+          errors={errors}
+          register={register}
+          disabled={isLoading || Boolean((field as any).readOnly)}
+          generalConfigData={generalConfigData}
+        />
+      </div>
+    )
+  }
 
   return (
     <div className="container lg:max-w-[48rem]">
@@ -204,55 +213,52 @@ export const FormBlockClient: React.FC<
           {!isLoading && hasSubmitted && confirmationType === 'message' && (
             <RichText data={confirmationMessage} />
           )}
-          {isLoading && !hasSubmitted && <p>Loading, please wait...</p>}
+          {isLoading && !hasSubmitted && (
+            <div className="flex items-center gap-2 text-muted-foreground text-sm py-4">
+              <LoaderCircle className="w-4 h-4 animate-spin" />
+            </div>
+          )}
           {!hasSubmitted && (
-            <form id={formID} onSubmit={handleSubmit(onSubmit)}>
-              <div className="mb-4 last:mb-0 grid grid-cols-6 gap-3">
-                {formFromProps &&
-                  formFromProps.fields &&
-                  formFromProps.fields?.map((field: CustomFormFieldBlock, index) => {
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    const Field: React.FC<any> = fields?.[field.blockType as keyof typeof fields]
-                    if (Field) {
-                      return (
-                        <div
-                          className={cn(
-                            'mb-6 last:mb-0 col-span-6',
-                            field.size === 'one-third'
-                              ? 'md:col-span-2'
-                              : field.size === 'half'
-                                ? 'md:col-span-3'
-                                : '',
-                          )}
-                          key={index}
-                        >
-                          <Field
-                            form={formFromProps}
-                            {...field}
-                            {...formMethods}
-                            control={control}
-                            errors={errors}
-                            register={register}
-                            disabled={isLoading}
-                            generalConfigData={generalConfigData}
-                          />
-                        </div>
-                      )
-                    }
-                    return null
-                  })}
-              </div>
+            <>
+              {/* Regular fields inside <form> */}
+              <form id={formID} onSubmit={handleSubmit(onSubmit)}>
+                <div className="mb-4 last:mb-0 grid grid-cols-6 gap-3">
+                  {regularFields.map((field, index) => renderField(field, index))}
+                </div>
 
-              <Button form={formID} type="submit" variant="default" disabled={isLoading}>
-                {isLoading ? (
-                  <span>
-                    {submitButtonLabel} <LoaderCircle className="animate-spin inline ml-2" />
-                  </span>
-                ) : (
-                  submitButtonLabel
+                {!hasPayment && (
+                  <Button form={formID} type="submit" variant="default" disabled={isLoading}>
+                    {isLoading ? (
+                      <span>
+                        {submitButtonLabel} <LoaderCircle className="animate-spin inline ml-2" />
+                      </span>
+                    ) : (
+                      submitButtonLabel
+                    )}
+                  </Button>
                 )}
-              </Button>
-            </form>
+              </form>
+
+              {/* Payment field rendered outside <form> to avoid nested <form> */}
+              {paymentField &&
+                (() => {
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  const PaymentField: React.FC<any> =
+                    fields?.['stripePayment' as keyof typeof fields]
+                  if (!PaymentField) return null
+                  return (
+                    <div className="mt-6">
+                      <PaymentField
+                        {...paymentField}
+                        formId={formID}
+                        submissionData={submissionDataForPayment}
+                        onSuccess={handlePaymentSuccess}
+                        disabled={isLoading}
+                      />
+                    </div>
+                  )
+                })()}
+            </>
           )}
         </FormProvider>
       </div>

@@ -44,20 +44,15 @@ export const Categories: CollectionConfig = {
       },
       type: 'select',
       options: [
-        {
-          label: 'Verde',
-          value: '#B2E0B2',
-        },
-        {
-          label: 'Azul',
-          value: '#AEC6E4',
-        },
-        {
-          label: 'Vermelho',
-          value: '#FFD1DC',
-        },
+        { label: { en: 'Blue (SwimRun)', pt: 'Azul (SwimRun)' }, value: 'mid' },
+        { label: { en: 'Green (Pool)', pt: 'Verde (Piscina)' }, value: 'green-dark' },
+        { label: { en: 'Amber (Open Water)', pt: 'Âmbar (Águas Abertas)' }, value: 'amber' },
+        { label: { en: 'Coral (CNAA)', pt: 'Coral (CNAA)' }, value: 'coral' },
+        { label: { en: 'Purple (Special)', pt: 'Roxo (Especial)' }, value: 'purple' },
+        { label: { en: 'Deep Blue', pt: 'Azul Escuro' }, value: 'deep' },
+        { label: { en: 'Light Blue', pt: 'Azul Claro' }, value: 'light' },
       ],
-      defaultValue: '#AEC6E4',
+      defaultValue: 'mid',
     },
     ...slugField(),
   ],
