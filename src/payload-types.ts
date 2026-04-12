@@ -262,7 +262,16 @@ export interface Page {
      */
     floatingImage?: boolean | null;
   };
-  layout: (CallToActionBlock | ContentBlock | MediaBlock | ArchiveBlock | FormBlock | Calendar | SponsorsBlock)[];
+  layout: (
+    | CallToActionBlock
+    | ContentBlock
+    | MediaBlock
+    | ArchiveBlock
+    | FormBlock
+    | Calendar
+    | SponsorsBlock
+    | TeamBlock
+  )[];
   meta?: {
     title?: string | null;
     /**
@@ -1979,6 +1988,95 @@ export interface SponsorsBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TeamBlock".
+ */
+export interface TeamBlock {
+  blockVisibility?: {
+    /**
+     * Choose who can see this block
+     */
+    visibilityType?: ('everyone' | 'loggedIn' | 'notLoggedIn' | 'active' | 'admin' | 'specificGroups') | null;
+    /**
+     * Select which groups and/or subgroups can see this block
+     */
+    allowedGroups?:
+      | (
+          | {
+              relationTo: 'groups';
+              value: string | Group;
+            }
+          | {
+              relationTo: 'group-categories';
+              value: string | GroupCategory;
+            }
+        )[]
+      | null;
+  };
+  blockBackground?: ('transparent' | 'fill' | 'brand') | null;
+  /**
+   * Small label with decorative line, e.g. "Quem somos"
+   */
+  subtitle?: string | null;
+  richText?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  sections?:
+    | {
+        title: string;
+        members?:
+          | {
+              photo?: (string | null) | Media;
+              /**
+               * Leave empty to hide the badge
+               */
+              badge?: string | null;
+              name: string;
+              richText?: {
+                root: {
+                  type: string;
+                  children: {
+                    type: any;
+                    version: number;
+                    [k: string]: unknown;
+                  }[];
+                  direction: ('ltr' | 'rtl') | null;
+                  format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                  indent: number;
+                  version: number;
+                };
+                [k: string]: unknown;
+              } | null;
+              socialLinks?:
+                | {
+                    platform: 'instagram' | 'linkedin' | 'twitter' | 'facebook' | 'youtube' | 'website';
+                    url: string;
+                    id?: string | null;
+                  }[]
+                | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'teamBlock';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "federationHistory".
  */
 export interface FederationHistory {
@@ -3029,6 +3127,7 @@ export interface PagesSelect<T extends boolean = true> {
         formBlock?: T | FormBlockSelect<T>;
         calendarBlock?: T | CalendarSelect<T>;
         sponsorsBlock?: T | SponsorsBlockSelect<T>;
+        teamBlock?: T | TeamBlockSelect<T>;
       };
   meta?:
     | T
@@ -3282,6 +3381,45 @@ export interface SponsorsBlockSelect<T extends boolean = true> {
               label?: T;
               id?: T;
             };
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TeamBlock_select".
+ */
+export interface TeamBlockSelect<T extends boolean = true> {
+  blockVisibility?:
+    | T
+    | {
+        visibilityType?: T;
+        allowedGroups?: T;
+      };
+  blockBackground?: T;
+  subtitle?: T;
+  richText?: T;
+  sections?:
+    | T
+    | {
+        title?: T;
+        members?:
+          | T
+          | {
+              photo?: T;
+              badge?: T;
+              name?: T;
+              richText?: T;
+              socialLinks?:
+                | T
+                | {
+                    platform?: T;
+                    url?: T;
+                    id?: T;
+                  };
+              id?: T;
+            };
+        id?: T;
       };
   id?: T;
   blockName?: T;

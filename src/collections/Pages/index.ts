@@ -22,6 +22,7 @@ import { isAdminOrEditor } from '@/access/isAdminOrEditor'
 import { isAdminEditorOrPublished } from '@/access/isAdminEditorOrPublished'
 import { CalendarBlock } from '@/blocks/Calendar/config'
 import { SponsorsBlock } from '@/blocks/SponsorsBlock/config'
+import { TeamBlock } from '@/blocks/TeamBlock/config'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { link } from '@/fields/link'
 
@@ -105,6 +106,7 @@ export const Pages: CollectionConfig<'pages'> = {
                 FormBlock,
                 CalendarBlock,
                 SponsorsBlock,
+                TeamBlock,
               ],
               required: true,
               admin: {

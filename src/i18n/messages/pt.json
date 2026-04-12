@@ -630,5 +630,9 @@
     "errorProfilePicture": "A fotografia é obrigatória",
     "errorConsent": "Deve aceitar os termos para continuar",
     "errorServer": "Ocorreu um erro. Por favor tente novamente."
+  },
+  "TeamBlock": {
+    "readMore": "Ver mais",
+    "readLess": "Ver menos"
   }
 }
