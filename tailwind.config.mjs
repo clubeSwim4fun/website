@@ -144,7 +144,7 @@ const config = {
               '--tw-prose-body': 'var(--text)',
               '--tw-prose-headings': 'var(--text)',
               h1: {
-                fontWeight: 'normal',
+                fontWeight: '800',
                 marginTop: 'unset',
                 marginBottom: '0.25em',
                 fontSize: '2.5rem',
@@ -152,46 +152,42 @@ const config = {
               h2: {
                 marginTop: 'unset',
                 marginBottom: 'unset',
+                fontSize: '1.75rem',
+                fontWeight: '700',
               },
               h3: {
                 marginBottom: 'unset',
                 marginTop: 'unset',
+                fontSize: '1.375rem',
+                fontWeight: '700',
               },
               h4: {
-                h2: {
-                  marginTop: 'unset',
-                  marginBottom: 'unset',
-                },
+                marginTop: 'unset',
+                marginBottom: 'unset',
+                fontSize: '1.125rem',
+                fontWeight: '600',
               },
-              p: {
-                // marginBottom: 'unset',
-                // marginTop: 'unset',
-              },
+              p: {},
             },
           ],
         },
         base: {
           css: [
             {
-              h1: {
-                fontSize: '2.5rem',
-              },
-              h2: {
-                fontSize: '1.25rem',
-                fontWeight: 600,
-              },
+              h1: { fontSize: '2.5rem' },
+              h2: { fontSize: '1.75rem' },
+              h3: { fontSize: '1.375rem' },
+              h4: { fontSize: '1.125rem' },
             },
           ],
         },
         md: {
           css: [
             {
-              h1: {
-                fontSize: '3.5rem',
-              },
-              h2: {
-                fontSize: '1.5rem',
-              },
+              h1: { fontSize: '3.5rem' },
+              h2: { fontSize: '2rem' },
+              h3: { fontSize: '1.5rem' },
+              h4: { fontSize: '1.25rem' },
             },
           ],
         },
