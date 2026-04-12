@@ -82,7 +82,9 @@ export default async function RootLayout({
               />
             )}
             <Header locale={locale as unknown as TypedLocale} />
-            <div className="pt-[68px]">{children}</div>
+            <div className="pt-[52px] md:pt-[68px] [padding-top:calc(52px+env(safe-area-inset-top))] md:[padding-top:calc(68px+env(safe-area-inset-top))]">
+              {children}
+            </div>
             <Footer locale={locale as unknown as TypedLocale} />
           </Providers>
         </NextIntlClientProvider>

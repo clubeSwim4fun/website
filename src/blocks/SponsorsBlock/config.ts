@@ -1,6 +1,7 @@
 import type { Block } from 'payload'
 import { blockVisibilityDynamicField } from '@/fields/blockVisibilityDynamic'
 import { blockBackgroundField } from '@/fields/blockBackground'
+import { link } from '@/fields/link'
 
 export const SponsorsBlock: Block = {
   slug: 'sponsorsBlock',
@@ -12,37 +13,20 @@ export const SponsorsBlock: Block = {
   fields: [
     blockVisibilityDynamicField,
     blockBackgroundField,
-    {
-      name: 'title',
-      type: 'text',
-      localized: true,
-      label: { en: 'Section Title', pt: 'Título da Secção' },
-    },
-    {
-      name: 'sponsors',
-      type: 'array',
-      label: { en: 'Sponsors', pt: 'Patrocinadores' },
-      minRows: 1,
-      fields: [
-        {
-          name: 'logo',
-          type: 'upload',
-          relationTo: 'media',
-          required: true,
-          label: { en: 'Logo', pt: 'Logótipo' },
+    link({
+      appearances: false,
+      overrides: {
+        name: 'ctaLink',
+        required: false,
+        label: { en: 'Become a Sponsor CTA', pt: 'CTA Tornar-se Patrocinador' },
+        admin: {
+          hideGutter: true,
+          description: {
+            en: 'Link for the "Become a sponsor" button below the marquee.',
+            pt: 'Link para o botão "Tornar-se patrocinador" abaixo do marquee.',
+          },
         },
-        {
-          name: 'name',
-          type: 'text',
-          required: true,
-          label: { en: 'Sponsor Name', pt: 'Nome do Patrocinador' },
-        },
-        {
-          name: 'url',
-          type: 'text',
-          label: { en: 'Website URL', pt: 'URL do Website' },
-        },
-      ],
-    },
+      },
+    }),
   ],
 }

@@ -44,8 +44,9 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, user, register
       className={`fixed top-0 left-0 right-0 z-50 bg-white border-b border-swim-border transition-transform duration-300 ${
         visible ? 'translate-y-0' : '-translate-y-full'
       }`}
+      style={{ paddingTop: 'env(safe-area-inset-top)' }}
     >
-      <div className="max-w-[86rem] mx-auto px-6 md:px-12 h-[68px] flex items-center justify-between">
+      <div className="max-w-[86rem] mx-auto px-6 md:px-12 h-[52px] md:h-[68px] flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2.5 no-underline">
           <Logo media={data.logo} />
         </Link>

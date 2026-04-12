@@ -121,7 +121,7 @@ export const HighImpactHero: React.FC<Page['hero']> = (hero) => {
   // No image — full-width centered
   if (type === 'noImage' || !hasImage) {
     return (
-      <section className="relative overflow-hidden bg-gradient-to-br from-deep to-mid min-h-[calc(100vh-68px)] flex items-center justify-center">
+      <section className="relative overflow-hidden bg-gradient-to-br from-deep to-mid min-h-[calc(100vh-52px)] md:min-h-[calc(100vh-68px)] flex items-center justify-center">
         <CrossPattern />
         <HeroContent hero={hero} centered />
       </section>
@@ -132,7 +132,7 @@ export const HighImpactHero: React.FC<Page['hero']> = (hero) => {
   const imageOnRight = type === 'imageRight'
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-deep to-mid min-h-[calc(100vh-68px)] grid grid-cols-1 md:grid-cols-2">
+    <section className="relative overflow-hidden bg-gradient-to-br from-deep to-mid min-h-[calc(100vh-52px)] md:min-h-[calc(100vh-68px)] grid grid-cols-1 md:grid-cols-2">
       <CrossPattern />
 
       {/* Content — always second on mobile (below image), order swaps on desktop */}

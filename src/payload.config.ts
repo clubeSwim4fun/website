@@ -43,6 +43,7 @@ import { PoolSlotWaitlist } from '@/collections/Pool/PoolSlotWaitlist'
 import { PostComments } from './collections/Posts/PostComments'
 import { PostLikes } from './collections/Posts/PostLikes'
 import { Newsletters } from './collections/Newsletters'
+import { Sponsors } from './collections/Sponsors'
 import { dashboardPool } from './admin/endpoints/dashboardPool'
 import { dashboardPoolSlot, dashboardPoolWeek } from './admin/endpoints/dashboardPoolSlot'
 import { dashboardMembers } from './admin/endpoints/dashboardMembers'
@@ -148,6 +149,7 @@ export default buildConfig({
     PostComments,
     PostLikes,
     Newsletters,
+    Sponsors,
   ],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer, GeneralConfigs],

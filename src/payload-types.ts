@@ -92,6 +92,7 @@ export interface Config {
     'post-comments': PostComment;
     'post-likes': PostLike;
     newsletters: Newsletter;
+    sponsors: Sponsor;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -129,6 +130,7 @@ export interface Config {
     'post-comments': PostCommentsSelect<false> | PostCommentsSelect<true>;
     'post-likes': PostLikesSelect<false> | PostLikesSelect<true>;
     newsletters: NewslettersSelect<false> | NewslettersSelect<true>;
+    sponsors: SponsorsSelect<false> | SponsorsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -1902,15 +1904,39 @@ export interface SponsorsBlock {
       | null;
   };
   blockBackground?: ('transparent' | 'fill' | 'brand') | null;
-  title?: string | null;
-  sponsors?:
-    | {
-        logo: string | Media;
-        name: string;
-        url?: string | null;
-        id?: string | null;
-      }[]
-    | null;
+  /**
+   * Link for the "Become a sponsor" button below the marquee.
+   */
+  ctaLink: {
+    type?: ('reference' | 'custom' | 'subscription') | null;
+    newTab?: boolean | null;
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: string | Page;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: string | Post;
+        } | null);
+    /**
+     * Select the group that this subscription will be linked to.
+     */
+    subscriptionGroup?: (string | null) | Group;
+    url?: string | null;
+    label: string;
+    hasChildren?: boolean | null;
+    childrenPages?:
+      | {
+          reference: {
+            relationTo: 'pages';
+            value: string | Page;
+          };
+          label: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
   id?: string | null;
   blockName?: string | null;
   blockType: 'sponsorsBlock';
@@ -2556,6 +2582,18 @@ export interface Newsletter {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sponsors".
+ */
+export interface Sponsor {
+  id: string;
+  name: string;
+  logo: string | Media;
+  url: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -2843,6 +2881,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'newsletters';
         value: string | Newsletter;
+      } | null)
+    | ({
+        relationTo: 'sponsors';
+        value: string | Sponsor;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -3183,14 +3225,23 @@ export interface SponsorsBlockSelect<T extends boolean = true> {
         allowedGroups?: T;
       };
   blockBackground?: T;
-  title?: T;
-  sponsors?:
+  ctaLink?:
     | T
     | {
-        logo?: T;
-        name?: T;
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        subscriptionGroup?: T;
         url?: T;
-        id?: T;
+        label?: T;
+        hasChildren?: T;
+        childrenPages?:
+          | T
+          | {
+              reference?: T;
+              label?: T;
+              id?: T;
+            };
       };
   id?: T;
   blockName?: T;
@@ -3802,6 +3853,17 @@ export interface NewslettersSelect<T extends boolean = true> {
         clickCount?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sponsors_select".
+ */
+export interface SponsorsSelect<T extends boolean = true> {
+  name?: T;
+  logo?: T;
+  url?: T;
   updatedAt?: T;
   createdAt?: T;
 }

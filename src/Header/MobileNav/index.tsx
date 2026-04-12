@@ -101,12 +101,12 @@ const MobileHeaderNav: React.FC<{
       {/* ── Slide-down drawer ── */}
       <div
         className={`md:hidden fixed inset-x-0 top-[68px] bg-white border-b border-swim-border shadow-lg z-40 transition-all duration-300 overflow-hidden ${
-          isOpen ? 'max-h-[calc(100vh-68px)] opacity-100' : 'max-h-0 opacity-0'
+          isOpen ? 'max-h-[calc(100vh-52px)] opacity-100' : 'max-h-0 opacity-0'
         }`}
       >
         <nav
           aria-label="Mobile navigation"
-          className="flex flex-col overflow-y-auto max-h-[calc(100vh-68px)] pb-6"
+          className="flex flex-col overflow-y-auto max-h-[calc(100vh-52px)] pb-6"
         >
           {filteredNavItems.map(({ link }, i) => {
             const id = `${link.label}-${i}`

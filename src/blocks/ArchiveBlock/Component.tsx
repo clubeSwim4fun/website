@@ -92,8 +92,10 @@ export const ArchiveBlock: React.FC<ArchiveBlockProps & { id?: string }> = async
 
         {/* Grid: (limit - 1) post cards + 1 view-all card */}
         <div
-          className="grid gap-5"
-          style={{ gridTemplateColumns: `repeat(${limit}, minmax(0, 1fr))` }}
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5"
+          style={
+            limit > 3 ? { gridTemplateColumns: `repeat(${limit}, minmax(0, 1fr))` } : undefined
+          }
         >
           {posts.map((post) => (
             <Card key={post.id} doc={post} relationTo="posts" showCategories />
