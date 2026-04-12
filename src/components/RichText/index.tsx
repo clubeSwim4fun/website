@@ -36,6 +36,11 @@ const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
 const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) => ({
   ...defaultConverters,
   ...LinkJSXConverter({ internalDocToHref }),
+  quote: ({ node, nodesToJSX }) => (
+    <blockquote className="border-l-[3px] border-light pl-5 my-6 italic text-lg leading-relaxed">
+      {nodesToJSX({ nodes: node.children })}
+    </blockquote>
+  ),
   blocks: {
     banner: ({ node }) => <BannerBlock className="col-start-2 mb-4" {...node.fields} />,
     mediaBlock: ({ node }) => (

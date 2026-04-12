@@ -115,7 +115,7 @@ const HeroContent: React.FC<{ hero: Page['hero']; centered?: boolean }> = ({ her
 
 // ── Main Hero ─────────────────────────────────────────────────────────────────
 export const HighImpactHero: React.FC<Page['hero']> = (hero) => {
-  const { type, media } = hero
+  const { type, media, floatingImage } = hero
   const hasImage = (type === 'imageLeft' || type === 'imageRight') && media
 
   // No image — full-width centered
@@ -128,9 +128,60 @@ export const HighImpactHero: React.FC<Page['hero']> = (hero) => {
     )
   }
 
-  // Image left or right
   const imageOnRight = type === 'imageRight'
 
+  // Floating image layout — image anchored to bottom with rounded top corners
+  if (floatingImage) {
+    return (
+      <section className="relative overflow-hidden bg-gradient-to-br from-deep to-mid grid grid-cols-1 md:grid-cols-2 md:items-end">
+        <CrossPattern />
+
+        {/* Content */}
+        <div
+          className={cn(
+            'relative z-10 flex items-center order-2',
+            imageOnRight ? 'md:order-1' : 'md:order-2',
+          )}
+        >
+          <HeroContent hero={hero} />
+        </div>
+
+        {/* Floating image — full width on mobile (normal), anchored bottom on desktop */}
+        <div
+          className={cn(
+            'relative order-1 min-h-[280px] md:min-h-0',
+            imageOnRight ? 'md:order-2' : 'md:order-1',
+          )}
+        >
+          {/* Mobile: full bleed image */}
+          <div className="relative w-full h-[280px] md:hidden">
+            {typeof media === 'object' && media && (
+              <Media
+                fill
+                imgClassName="object-cover opacity-70 saturate-[1.2]"
+                priority
+                resource={media}
+              />
+            )}
+          </div>
+
+          {/* Desktop: floating image anchored to bottom */}
+          {typeof media === 'object' && media && (
+            <div className="hidden md:block ml-4 mr-16 rounded-t-[20px] overflow-hidden h-[340px] relative">
+              <Media
+                fill
+                imgClassName="object-cover object-top saturate-[1.2]"
+                priority
+                resource={media}
+              />
+            </div>
+          )}
+        </div>
+      </section>
+    )
+  }
+
+  // Default: image left or right (full bleed)
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-deep to-mid min-h-[calc(100vh-52px)] md:min-h-[calc(100vh-68px)] grid grid-cols-1 md:grid-cols-2">
       <CrossPattern />

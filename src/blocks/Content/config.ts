@@ -3,6 +3,7 @@ import { richTextWithColor } from '@/fields/richTextWithColor'
 import { ctaLinkFields } from '@/fields/ctaLink'
 import { blockVisibilityDynamicField } from '@/fields/blockVisibilityDynamic'
 import { blockBackgroundField } from '@/fields/blockBackground'
+import { ICON_OPTIONS } from '@/fields/iconOptions'
 
 const columnFields: Field[] = [
   // ── Optional media ──────────────────────────────────────────────
@@ -37,17 +38,38 @@ const columnFields: Field[] = [
 
   // ── Text content (shown when useMedia is false) ─────────────────
   {
-    name: 'subTitle',
-    type: 'text',
-    localized: true,
-    label: { en: 'Sub-title / section label', pt: 'Sub-título / rótulo de secção' },
-    admin: {
-      condition: (_, s) => !s?.useMedia,
-      description: {
-        en: 'Small label shown above the title with a decorative line (e.g. "Associação")',
-        pt: 'Rótulo pequeno acima do título com linha decorativa (ex: "Associação")',
+    type: 'row',
+    fields: [
+      {
+        name: 'subTitle',
+        type: 'text',
+        localized: true,
+        label: { en: 'Sub-title / section label', pt: 'Sub-título / rótulo de secção' },
+        admin: {
+          condition: (_, s) => !s?.useMedia,
+          width: '50%',
+          description: {
+            en: 'Small label shown above the title with a decorative line (e.g. "Associação")',
+            pt: 'Rótulo pequeno acima do título com linha decorativa (ex: "Associação")',
+          },
+        },
       },
-    },
+      {
+        name: 'verticalAlign',
+        type: 'select',
+        defaultValue: 'center',
+        label: { en: 'Vertical alignment', pt: 'Alinhamento vertical' },
+        admin: {
+          condition: (_, s) => !s?.useMedia,
+          width: '50%',
+        },
+        options: [
+          { label: { en: 'Top', pt: 'Topo' }, value: 'top' },
+          { label: { en: 'Center (default)', pt: 'Centro (padrão)' }, value: 'center' },
+          { label: { en: 'Bottom', pt: 'Fundo' }, value: 'bottom' },
+        ],
+      },
+    ],
   },
   {
     name: 'richText',
@@ -66,17 +88,37 @@ const columnFields: Field[] = [
 
   // ── Perks / feature list ────────────────────────────────────────
   {
-    name: 'perksStyle',
-    type: 'select',
-    defaultValue: 'icons',
-    label: { en: 'List style', pt: 'Estilo da lista' },
-    admin: {
-      condition: (_, s) => !s?.useMedia,
-    },
-    options: [
-      { label: { en: 'Icons (default)', pt: 'Ícones (padrão)' }, value: 'icons' },
-      { label: { en: 'Cards', pt: 'Cartões' }, value: 'cards' },
-      { label: { en: 'Bars', pt: 'Barras' }, value: 'bars' },
+    type: 'row',
+    fields: [
+      {
+        name: 'perksStyle',
+        type: 'select',
+        defaultValue: 'icons',
+        label: { en: 'List style', pt: 'Estilo da lista' },
+        admin: {
+          condition: (_, s) => !s?.useMedia,
+          width: '50%',
+        },
+        options: [
+          { label: { en: 'Icons (default)', pt: 'Ícones (padrão)' }, value: 'icons' },
+          { label: { en: 'Cards', pt: 'Cartões' }, value: 'cards' },
+          { label: { en: 'Bars', pt: 'Barras' }, value: 'bars' },
+        ],
+      },
+      {
+        name: 'cardsPerRow',
+        type: 'select',
+        defaultValue: '2',
+        label: { en: 'Cards per row', pt: 'Cartões por linha' },
+        admin: {
+          condition: (_, s) => !s?.useMedia && s?.perksStyle === 'cards',
+          width: '50%',
+        },
+        options: [
+          { label: { en: '2 (default)', pt: '2 (padrão)' }, value: '2' },
+          { label: { en: '1 (full width)', pt: '1 (largura total)' }, value: '1' },
+        ],
+      },
     ],
   },
   // Icons variant
@@ -98,18 +140,7 @@ const columnFields: Field[] = [
             type: 'select',
             label: { en: 'Icon', pt: 'Ícone' },
             admin: { width: '25%' },
-            options: [
-              { label: { en: 'People / Users', pt: 'Pessoas / Utilizadores' }, value: 'users' },
-              { label: { en: 'Clock / Time', pt: 'Relógio / Tempo' }, value: 'clock' },
-              { label: { en: 'Cloud / Upload', pt: 'Nuvem / Upload' }, value: 'cloud' },
-              { label: { en: 'Star', pt: 'Estrela' }, value: 'star' },
-              { label: { en: 'Flag / Check', pt: 'Bandeira / Check' }, value: 'flag' },
-              { label: { en: 'Calendar', pt: 'Calendário' }, value: 'calendar' },
-              { label: { en: 'Arrow', pt: 'Seta' }, value: 'arrow' },
-              { label: { en: 'Heart', pt: 'Coração' }, value: 'heart' },
-              { label: { en: 'Trophy', pt: 'Troféu' }, value: 'trophy' },
-              { label: { en: 'Map Pin', pt: 'Localização' }, value: 'mapPin' },
-            ],
+            options: ICON_OPTIONS.filter((o) => (o as any).value !== 'none'),
           },
           {
             name: 'title',
@@ -152,9 +183,17 @@ const columnFields: Field[] = [
             admin: { width: '25%' },
             options: [
               { label: { en: 'Blue', pt: 'Azul' }, value: 'blue' },
+              { label: { en: 'Green', pt: 'Verde' }, value: 'green' },
               { label: { en: 'Yellow / Amber', pt: 'Amarelo / Âmbar' }, value: 'amber' },
               { label: { en: 'Red / Coral', pt: 'Vermelho / Coral' }, value: 'coral' },
             ],
+          },
+          {
+            name: 'cardIcon',
+            type: 'select',
+            label: { en: 'Icon', pt: 'Ícone' },
+            admin: { width: '25%' },
+            options: ICON_OPTIONS,
           },
           {
             name: 'title',
@@ -162,14 +201,14 @@ const columnFields: Field[] = [
             localized: true,
             required: true,
             label: { en: 'Title', pt: 'Título' },
-            admin: { width: '37%' },
+            admin: { width: '25%' },
           },
           {
             name: 'text',
             type: 'text',
             localized: true,
             label: { en: 'Description', pt: 'Descrição' },
-            admin: { width: '37%' },
+            admin: { width: '25%' },
           },
         ],
       },

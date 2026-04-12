@@ -3,38 +3,14 @@ import type { ContentBlock as ContentBlockProps } from '@/payload-types'
 import { Media } from '@/components/Media'
 import RichTextColor from '@/components/RichText/RichTextColor'
 import { CtaButton } from '@/components/CtaButton'
-import {
-  Users,
-  Clock,
-  Cloud,
-  Star,
-  Flag,
-  Calendar,
-  ArrowRight,
-  Heart,
-  Trophy,
-  MapPin,
-} from 'lucide-react'
-
-// ── Perk icon map ────────────────────────────────────────────────────────────
-const PERK_ICONS: Record<string, React.ReactNode> = {
-  users: <Users size={18} strokeWidth={1.8} />,
-  clock: <Clock size={18} strokeWidth={1.8} />,
-  cloud: <Cloud size={18} strokeWidth={1.8} />,
-  star: <Star size={18} strokeWidth={1.8} />,
-  flag: <Flag size={18} strokeWidth={1.8} />,
-  calendar: <Calendar size={18} strokeWidth={1.8} />,
-  arrow: <ArrowRight size={18} strokeWidth={1.8} />,
-  heart: <Heart size={18} strokeWidth={1.8} />,
-  trophy: <Trophy size={18} strokeWidth={1.8} />,
-  mapPin: <MapPin size={18} strokeWidth={1.8} />,
-}
+import { ICON_MAP } from '@/components/IconMap'
 
 // ── Card colour map ──────────────────────────────────────────────────────────
-const CARD_COLORS: Record<string, { bar: string; text: string }> = {
-  blue: { bar: 'bg-mid', text: 'text-mid' },
-  amber: { bar: 'bg-amber', text: 'text-amber' },
-  coral: { bar: 'bg-coral', text: 'text-coral' },
+const CARD_COLORS: Record<string, { bar: string; iconBg: string; iconText: string }> = {
+  blue: { bar: 'bg-mid', iconBg: 'bg-pale', iconText: 'text-mid' },
+  green: { bar: 'bg-green', iconBg: 'bg-green-light', iconText: 'text-green-dark' },
+  amber: { bar: 'bg-amber', iconBg: 'bg-amber-light', iconText: 'text-amber' },
+  coral: { bar: 'bg-coral', iconBg: 'bg-coral-light', iconText: 'text-coral' },
 }
 
 type Column = NonNullable<ContentBlockProps['columns']>[number]
@@ -48,7 +24,7 @@ const PerkIcons: React.FC<{ perks: Perk[] }> = ({ perks }) => (
     {perks.map((perk, i) => (
       <div key={i} className="flex items-start gap-3.5">
         <div className="w-10 h-10 rounded-xl bg-pale flex items-center justify-center flex-shrink-0 text-mid">
-          {perk.icon ? (PERK_ICONS[perk.icon] ?? null) : null}
+          {perk.icon ? (ICON_MAP[perk.icon] ?? null) : null}
         </div>
         <div>
           <p className="text-sm font-semibold text-ink leading-snug">{perk.title}</p>
@@ -62,15 +38,49 @@ const PerkIcons: React.FC<{ perks: Perk[] }> = ({ perks }) => (
 )
 
 // ── Cards list ───────────────────────────────────────────────────────────────
-const PerkCards: React.FC<{ cards: PerkCard[] }> = ({ cards }) => (
-  <div className="grid grid-cols-2 gap-3 mb-8">
+const PerkCards: React.FC<{ cards: PerkCard[]; perRow?: string }> = ({ cards, perRow = '2' }) => (
+  <div className={`grid gap-3 mb-8 ${perRow === '1' ? 'grid-cols-1' : 'grid-cols-2'}`}>
     {cards.map((card, i) => {
       const color = CARD_COLORS[card.cardColor ?? 'blue']!
+      const icon = card.cardIcon && card.cardIcon !== 'none' ? ICON_MAP[card.cardIcon] : null
+
+      if (perRow === '1') {
+        // Full-width card with icon — matches the design
+        return (
+          <div key={i} className="bg-white border-2 border-swim-border rounded-xl overflow-hidden">
+            <div className="grid grid-cols-[6px_1fr]">
+              <div className={`${color.bar} self-stretch`} />
+              <div className="p-4 md:p-5">
+                {icon && (
+                  <div
+                    className={`w-9 h-9 rounded-lg ${color.iconBg} ${color.iconText} flex items-center justify-center mb-3`}
+                  >
+                    {icon}
+                  </div>
+                )}
+                <p className="font-syne text-[13px] font-bold text-deep mb-1.5">{card.title}</p>
+                {card.text && (
+                  <p className="text-[13px] text-ink-mid leading-relaxed">{card.text}</p>
+                )}
+              </div>
+            </div>
+          </div>
+        )
+      }
+
+      // 2-per-row compact card
       return (
         <div key={i} className="bg-white border-2 border-swim-border rounded-xl overflow-hidden">
           <div className="grid grid-cols-[4px_1fr]">
             <div className={`${color.bar} self-stretch`} />
             <div className="p-3.5">
+              {icon && (
+                <div
+                  className={`w-8 h-8 rounded-lg ${color.iconBg} ${color.iconText} flex items-center justify-center mb-2`}
+                >
+                  {icon}
+                </div>
+              )}
               <p className="font-syne text-[11px] font-bold uppercase tracking-[0.6px] text-deep mb-1">
                 {card.title}
               </p>
@@ -124,6 +134,12 @@ const MediaColumn: React.FC<{ col: Column }> = ({ col }) => (
   </div>
 )
 
+const VALIGN: Record<string, string> = {
+  top: 'justify-start',
+  center: 'justify-center',
+  bottom: 'justify-end',
+}
+
 // ── Content column ───────────────────────────────────────────────────────────
 const ContentColumn: React.FC<{ col: Column; pairedMedia?: Column; onDark?: boolean }> = ({
   col,
@@ -131,9 +147,10 @@ const ContentColumn: React.FC<{ col: Column; pairedMedia?: Column; onDark?: bool
   onDark,
 }) => {
   const links = col.links ?? []
+  const valign = VALIGN[col.verticalAlign ?? 'center']!
 
   return (
-    <div className="flex flex-col justify-center gap-0">
+    <div className={`h-full flex flex-col ${valign} gap-0`}>
       {/* Sub-title / section label */}
       {col.subTitle && (
         <div className="flex items-center gap-2 mb-4">
@@ -167,7 +184,9 @@ const ContentColumn: React.FC<{ col: Column; pairedMedia?: Column; onDark?: bool
 
       {/* Perks list */}
       {col.perksStyle === 'cards'
-        ? (col.perkCards?.length ?? 0) > 0 && <PerkCards cards={col.perkCards!} />
+        ? (col.perkCards?.length ?? 0) > 0 && (
+            <PerkCards cards={col.perkCards!} perRow={col.cardsPerRow ?? '2'} />
+          )
         : col.perksStyle === 'bars'
           ? (col.perkBars?.length ?? 0) > 0 && <PerkBars bars={col.perkBars!} onDark={onDark} />
           : (col.perks?.length ?? 0) > 0 && <PerkIcons perks={col.perks!} />}
@@ -214,8 +233,8 @@ export const ContentBlock: React.FC<ContentBlockProps & { blockBackground?: stri
 
   return (
     <section className="container py-16 md:py-20">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
-        <div className={left.useMedia ? 'hidden md:block' : undefined}>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-stretch">
+        <div className={`${left.useMedia ? 'hidden md:block' : 'h-full'}`}>
           {left.useMedia ? (
             <MediaColumn col={left} />
           ) : (
@@ -226,7 +245,7 @@ export const ContentBlock: React.FC<ContentBlockProps & { blockBackground?: stri
             />
           )}
         </div>
-        <div className={right.useMedia ? 'hidden md:block' : undefined}>
+        <div className={`${right.useMedia ? 'hidden md:block' : 'h-full'}`}>
           {right.useMedia ? (
             <MediaColumn col={right} />
           ) : (

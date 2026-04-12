@@ -122,5 +122,20 @@ export const hero: Field = {
         },
       },
     },
+
+    // ── Floating image ──────────────────────────────────────────────
+    {
+      name: 'floatingImage',
+      type: 'checkbox',
+      label: { en: 'Floating image', pt: 'Imagem flutuante' },
+      defaultValue: false,
+      admin: {
+        condition: (_, { type } = {}) => type === 'imageLeft' || type === 'imageRight',
+        description: {
+          en: 'Image sits at the bottom of the hero, cropped at the top with rounded top corners — no effect on mobile.',
+          pt: 'A imagem fica na base do hero, cortada no topo com cantos superiores arredondados — sem efeito no mobile.',
+        },
+      },
+    },
   ],
 }

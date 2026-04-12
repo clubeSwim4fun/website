@@ -257,6 +257,10 @@ export interface Page {
      * Required for Image Left / Image Right layouts.
      */
     media?: (string | null) | Media;
+    /**
+     * Image sits at the bottom of the hero, cropped at the top with rounded top corners — no effect on mobile.
+     */
+    floatingImage?: boolean | null;
   };
   layout: (CallToActionBlock | ContentBlock | MediaBlock | ArchiveBlock | FormBlock | Calendar | SponsorsBlock)[];
   meta?: {
@@ -1630,6 +1634,7 @@ export interface ContentBlock {
          * Small label shown above the title with a decorative line (e.g. "Associação")
          */
         subTitle?: string | null;
+        verticalAlign?: ('top' | 'center' | 'bottom') | null;
         /**
          * Use Heading 2 for the title. Coloured text (Brand Blue / Deep Blue) is supported.
          */
@@ -1649,10 +1654,24 @@ export interface ContentBlock {
           [k: string]: unknown;
         } | null;
         perksStyle?: ('icons' | 'cards' | 'bars') | null;
+        cardsPerRow?: ('2' | '1') | null;
         perks?:
           | {
               icon?:
-                | ('users' | 'clock' | 'cloud' | 'star' | 'flag' | 'calendar' | 'arrow' | 'heart' | 'trophy' | 'mapPin')
+                | (
+                    | 'shield'
+                    | 'activity'
+                    | 'star'
+                    | 'users'
+                    | 'heart'
+                    | 'trophy'
+                    | 'clock'
+                    | 'calendar'
+                    | 'mapPin'
+                    | 'flag'
+                    | 'arrow'
+                    | 'cloud'
+                  )
                 | null;
               title: string;
               text?: string | null;
@@ -1661,7 +1680,24 @@ export interface ContentBlock {
           | null;
         perkCards?:
           | {
-              cardColor?: ('blue' | 'amber' | 'coral') | null;
+              cardColor?: ('blue' | 'green' | 'amber' | 'coral') | null;
+              cardIcon?:
+                | (
+                    | 'none'
+                    | 'shield'
+                    | 'activity'
+                    | 'star'
+                    | 'users'
+                    | 'heart'
+                    | 'trophy'
+                    | 'clock'
+                    | 'calendar'
+                    | 'mapPin'
+                    | 'flag'
+                    | 'arrow'
+                    | 'cloud'
+                  )
+                | null;
               title: string;
               text?: string | null;
               id?: string | null;
@@ -2981,6 +3017,7 @@ export interface PagesSelect<T extends boolean = true> {
               id?: T;
             };
         media?: T;
+        floatingImage?: T;
       };
   layout?:
     | T
@@ -3093,8 +3130,10 @@ export interface ContentBlockSelect<T extends boolean = true> {
         media?: T;
         mediaBadge?: T;
         subTitle?: T;
+        verticalAlign?: T;
         richText?: T;
         perksStyle?: T;
+        cardsPerRow?: T;
         perks?:
           | T
           | {
@@ -3107,6 +3146,7 @@ export interface ContentBlockSelect<T extends boolean = true> {
           | T
           | {
               cardColor?: T;
+              cardIcon?: T;
               title?: T;
               text?: T;
               id?: T;
