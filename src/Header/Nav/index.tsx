@@ -99,7 +99,7 @@ export const HeaderNav: React.FC<{
         <Search size={16} />
       </Link>
 
-      <Cart />
+      {user && <Cart />}
 
       {!user && registerSlug && (
         <Link

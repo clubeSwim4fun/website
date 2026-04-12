@@ -88,7 +88,7 @@ const MobileHeaderNav: React.FC<{
     <>
       {/* ── Top-right menu button (mobile only) ── */}
       <div className="flex md:hidden items-center gap-2">
-        <Cart />
+        {user && <Cart />}
         <button
           onClick={toggleMenu}
           className="w-9 h-9 flex items-center justify-center rounded-lg bg-foam border border-swim-border text-ink-mid"
