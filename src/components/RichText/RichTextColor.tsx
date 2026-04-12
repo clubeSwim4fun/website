@@ -27,6 +27,7 @@ import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { cn } from '@/utilities/ui'
 
 export const COLOR_STYLES: Record<string, React.CSSProperties> = {
+  black: { color: '#0f1f2e' },
   'brand-blue': { color: '#3bb8d8' },
   'deep-blue': { color: '#0a4a6e' },
   white: { color: '#ffffff' },

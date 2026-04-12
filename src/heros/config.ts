@@ -18,6 +18,7 @@ export const hero: Field = {
       defaultValue: 'imageLeft',
       required: true,
       options: [
+        { label: { en: 'None (hidden)', pt: 'Nenhum (oculto)' }, value: 'none' },
         { label: { en: 'Image on Left', pt: 'Imagem à Esquerda' }, value: 'imageLeft' },
         { label: { en: 'Image on Right', pt: 'Imagem à Direita' }, value: 'imageRight' },
         { label: { en: 'No Image (Centered)', pt: 'Sem Imagem (Centrado)' }, value: 'noImage' },
@@ -34,6 +35,7 @@ export const hero: Field = {
         pt: 'Texto do badge',
       },
       admin: {
+        condition: (_, { type } = {}) => type !== 'none',
         description: {
           en: 'Small pill shown above the title (e.g. "Clube de Natação")',
           pt: 'Pequena etiqueta acima do título (ex: "Clube de Natação")',
@@ -51,6 +53,7 @@ export const hero: Field = {
         pt: 'Conteúdo (título e descrição)',
       },
       admin: {
+        condition: (_, { type } = {}) => type !== 'none',
         description: {
           en: 'Use Heading 1 for the title. Text coloured blue in the editor will render as the brand light-blue accent.',
           pt: 'Use Título 1 para o título. Texto colorido de azul no editor será renderizado como azul claro da marca.',
@@ -64,7 +67,7 @@ export const hero: Field = {
       type: 'array',
       label: { en: 'Call-to-action buttons', pt: 'Botões de ação' },
       maxRows: 3,
-      admin: { initCollapsed: true },
+      admin: { initCollapsed: true, condition: (_, { type } = {}) => type !== 'none' },
       fields: ctaLinkFields,
     },
 
@@ -79,6 +82,7 @@ export const hero: Field = {
       maxRows: 4,
       admin: {
         initCollapsed: true,
+        condition: (_, { type } = {}) => type !== 'none',
         description: {
           en: 'Up to 4 stats shown below the CTAs (e.g. "6 / Sessões/semana")',
           pt: 'Até 4 estatísticas abaixo dos botões (ex: "6 / Sessões/semana")',

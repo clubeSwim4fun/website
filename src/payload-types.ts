@@ -197,7 +197,7 @@ export interface Page {
   id: string;
   title: string;
   hero: {
-    type: 'imageLeft' | 'imageRight' | 'noImage';
+    type: 'none' | 'imageLeft' | 'imageRight' | 'noImage';
     /**
      * Small pill shown above the title (e.g. "Clube de Natação")
      */

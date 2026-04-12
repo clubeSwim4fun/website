@@ -124,7 +124,7 @@ export const link: LinkType = ({ appearances, disableLabel = false, overrides = 
         {
           name: 'reference',
           type: 'relationship',
-          label: 'Page to related to aaaaaa',
+          label: 'Page to related to',
           admin: {
             width: '50%',
           },

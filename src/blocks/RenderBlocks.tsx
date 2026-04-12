@@ -26,8 +26,9 @@ const blockComponents = {
 export const RenderBlocks: React.FC<{
   blocks: Page['layout'][0][]
   user?: User
+  noHero?: boolean
 }> = (props) => {
-  const { blocks, user } = props
+  const { blocks, user, noHero } = props
 
   const hasBlocks = blocks && Array.isArray(blocks) && blocks.length > 0
 
@@ -102,7 +103,9 @@ export const RenderBlocks: React.FC<{
                       <rect width="100%" height="100%" fill="url(#cross-bg)" />
                     </svg>
                   )}
-                  <div className={`relative z-10 ${isFill || isBrand ? 'py-16' : 'my-16'}`}>
+                  <div
+                    className={`relative z-10 ${isFill || isBrand ? 'py-16' : 'my-16'} ${noHero && index === 0 ? '!pt-0 !mt-0' : ''}`}
+                  >
                     {/* @ts-expect-error there may be some mismatch between the expected types here */}
                     <Block {...block} disableInnerContainer blockBackground={bg} />
                   </div>

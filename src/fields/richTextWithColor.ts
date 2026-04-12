@@ -43,6 +43,7 @@ export const richTextWithColor: Config['editor'] = lexicalEditor({
     TextStateFeature({
       state: {
         color: {
+          black: { css: { color: '#0f1f2e' }, label: 'Black (default)' },
           'brand-blue': { css: { color: '#3bb8d8' }, label: 'Brand Blue' },
           'deep-blue': { css: { color: '#0a4a6e' }, label: 'Deep Blue' },
           white: { css: { color: '#ffffff' }, label: 'White' },

@@ -80,7 +80,11 @@ export default async function Page({ params: paramsPromise }: Args) {
           <PayloadRedirects disableNotFound url={url} />
           {draft && <LivePreviewListener />}
           <RenderHero {...hero} />
-          <RenderBlocks blocks={layout} user={userObject} />
+          <RenderBlocks
+            blocks={layout}
+            user={userObject}
+            noHero={hero?.type === 'none' || !hero?.type}
+          />
         </>
       ) : (
         <RenderPermissionError data={canSeePage} content={page.visibility} />
