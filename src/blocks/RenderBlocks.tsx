@@ -10,6 +10,9 @@ import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import { CalendarBlock } from './Calendar/Component'
 import { SponsorsBlockComponent } from './SponsorsBlock/Component'
 import { TeamBlockComponent } from './TeamBlock/Component'
+import { SectionWithAsideBlock } from './SectionWithAside/Component'
+import { StripePaymentBlockComponent } from './StripePaymentBlock/Component'
+import { PaymentConfirmationBlockComponent } from './PaymentConfirmationBlock/Component'
 import { shouldShowBlock, type BlockVisibilityConfig } from '@/helpers/blockVisibilityHelper'
 
 const blockComponents = {
@@ -21,14 +24,18 @@ const blockComponents = {
   calendarBlock: CalendarBlock,
   sponsorsBlock: SponsorsBlockComponent,
   teamBlock: TeamBlockComponent,
+  sectionWithAside: SectionWithAsideBlock,
+  stripePaymentBlock: StripePaymentBlockComponent,
+  paymentConfirmationBlock: PaymentConfirmationBlockComponent,
 }
 
 export const RenderBlocks: React.FC<{
   blocks: Page['layout'][0][]
   user?: User
   noHero?: boolean
+  compact?: boolean
 }> = (props) => {
-  const { blocks, user, noHero } = props
+  const { blocks, user, noHero, compact } = props
 
   const hasBlocks = blocks && Array.isArray(blocks) && blocks.length > 0
 
@@ -53,6 +60,16 @@ export const RenderBlocks: React.FC<{
               const bg = (block as any)?.blockBackground as string | undefined
               const isFill = bg === 'fill'
               const isBrand = bg === 'brand'
+
+              // In compact mode (inside SectionWithAside) skip outer spacing/bg wrappers
+              if (compact) {
+                return (
+                  <Fragment key={index}>
+                    {/* @ts-expect-error there may be some mismatch between the expected types here */}
+                    <Block {...block} disableInnerContainer blockBackground={bg} />
+                  </Fragment>
+                )
+              }
 
               return (
                 <div

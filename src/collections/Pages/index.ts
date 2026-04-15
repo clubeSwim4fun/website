@@ -23,6 +23,7 @@ import { isAdminEditorOrPublished } from '@/access/isAdminEditorOrPublished'
 import { CalendarBlock } from '@/blocks/Calendar/config'
 import { SponsorsBlock } from '@/blocks/SponsorsBlock/config'
 import { TeamBlock } from '@/blocks/TeamBlock/config'
+import { SectionWithAside } from '@/blocks/SectionWithAside/config'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { link } from '@/fields/link'
 
@@ -101,6 +102,7 @@ export const Pages: CollectionConfig<'pages'> = {
               blocks: [
                 CallToAction,
                 Content,
+                SectionWithAside,
                 MediaBlock,
                 Archive,
                 FormBlock,

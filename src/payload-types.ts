@@ -267,6 +267,7 @@ export interface Page {
   layout: (
     | CallToActionBlock
     | ContentBlock
+    | SectionWithAsideBlock
     | MediaBlock
     | ArchiveBlock
     | FormBlock
@@ -2152,6 +2153,137 @@ export interface ContentBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SectionWithAsideBlock".
+ */
+export interface SectionWithAsideBlock {
+  blockVisibility?: {
+    /**
+     * Choose who can see this block
+     */
+    visibilityType?: ('everyone' | 'loggedIn' | 'notLoggedIn' | 'active' | 'admin' | 'specificGroups') | null;
+    /**
+     * Select which groups and/or subgroups can see this block
+     */
+    allowedGroups?:
+      | (
+          | {
+              relationTo: 'groups';
+              value: string | Group;
+            }
+          | {
+              relationTo: 'group-categories';
+              value: string | GroupCategory;
+            }
+        )[]
+      | null;
+  };
+  navigation?: {
+    /**
+     * Step labels shown in the navigation bar (e.g. "Information", "Registration", "Confirmation")
+     */
+    steps?:
+      | {
+          label: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  /**
+   * Each row is linked to a navigation step and holds one or more blocks.
+   */
+  mainContent?:
+    | {
+        /**
+         * Which step this content belongs to.
+         */
+        step: number;
+        blocks?:
+          | (
+              | CallToActionBlock
+              | ContentBlock
+              | MediaBlock
+              | ArchiveBlock
+              | FormBlock
+              | Calendar
+              | SponsorsBlock
+              | TeamBlock
+              | BannerBlock
+              | StripePaymentBlock
+              | PaymentConfirmationBlock
+            )[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  aside?: {
+    showPriceCard?: boolean | null;
+    priceLabel?: string | null;
+    /**
+     * Numeric value in EUR (e.g. 30)
+     */
+    priceAmount?: number | null;
+    pricePeriod?: string | null;
+    /**
+     * Checklist items shown below the price (e.g. "Access to 15 national races")
+     */
+    summaryItems?:
+      | {
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
+    richText?: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+    /**
+     * Action buttons shown at the bottom of the sidebar.
+     */
+    links?:
+      | {
+          link: {
+            type?: ('reference' | 'custom') | null;
+            newTab?: boolean | null;
+            reference?:
+              | ({
+                  relationTo: 'pages';
+                  value: string | Page;
+                } | null)
+              | ({
+                  relationTo: 'posts';
+                  value: string | Post;
+                } | null);
+            url?: string | null;
+            label: string;
+            appearance?: ('primary' | 'primaryDark' | 'secondary') | null;
+            icon?: ('none' | 'arrow' | 'calendar' | 'flag' | 'user' | 'star') | null;
+            iconRight?: boolean | null;
+          };
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Text shown on the "next step" button. Hidden on the last step.
+     */
+    nextStepLabel?: string | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'sectionWithAside';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "MediaBlock".
  */
 export interface MediaBlock {
@@ -2475,6 +2607,137 @@ export interface TeamBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'teamBlock';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "BannerBlock".
+ */
+export interface BannerBlock {
+  blockVisibility?: {
+    /**
+     * Choose who can see this block
+     */
+    visibilityType?: ('everyone' | 'loggedIn' | 'notLoggedIn' | 'active' | 'admin' | 'specificGroups') | null;
+    /**
+     * Select which groups and/or subgroups can see this block
+     */
+    allowedGroups?:
+      | (
+          | {
+              relationTo: 'groups';
+              value: string | Group;
+            }
+          | {
+              relationTo: 'group-categories';
+              value: string | GroupCategory;
+            }
+        )[]
+      | null;
+  };
+  blockBackground?: ('transparent' | 'fill' | 'brand') | null;
+  style: 'info' | 'warning' | 'error' | 'success';
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'banner';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StripePaymentBlock".
+ */
+export interface StripePaymentBlock {
+  /**
+   * Payment amount in EUR (e.g. 30 = €30.00)
+   */
+  amount: number;
+  description?: string | null;
+  /**
+   * Key/value pairs sent to Stripe as PaymentIntent metadata (e.g. type, recordId).
+   */
+  metadata?:
+    | {
+        key: string;
+        value: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Line items sent to InvoiceXpress. Leave empty to skip invoice creation.
+   */
+  invoiceLineItems?:
+    | {
+        name: string;
+        description?: string | null;
+        unitPrice: number;
+        quantity: number;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'stripePaymentBlock';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PaymentConfirmationBlock".
+ */
+export interface PaymentConfirmationBlock {
+  title: string;
+  message?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  links?:
+    | {
+        link: {
+          type?: ('reference' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: string | Page;
+              } | null)
+            | ({
+                relationTo: 'posts';
+                value: string | Post;
+              } | null);
+          url?: string | null;
+          label: string;
+          appearance?: ('primary' | 'primaryDark' | 'secondary') | null;
+          icon?: ('none' | 'arrow' | 'calendar' | 'flag' | 'user' | 'star') | null;
+          iconRight?: boolean | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'paymentConfirmationBlock';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -3557,6 +3820,7 @@ export interface PagesSelect<T extends boolean = true> {
     | {
         cta?: T | CallToActionBlockSelect<T>;
         content?: T | ContentBlockSelect<T>;
+        sectionWithAside?: T | SectionWithAsideBlockSelect<T>;
         mediaBlock?: T | MediaBlockSelect<T>;
         archive?: T | ArchiveBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
@@ -3716,6 +3980,84 @@ export interface ContentBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SectionWithAsideBlock_select".
+ */
+export interface SectionWithAsideBlockSelect<T extends boolean = true> {
+  blockVisibility?:
+    | T
+    | {
+        visibilityType?: T;
+        allowedGroups?: T;
+      };
+  navigation?:
+    | T
+    | {
+        steps?:
+          | T
+          | {
+              label?: T;
+              id?: T;
+            };
+      };
+  mainContent?:
+    | T
+    | {
+        step?: T;
+        blocks?:
+          | T
+          | {
+              cta?: T | CallToActionBlockSelect<T>;
+              content?: T | ContentBlockSelect<T>;
+              mediaBlock?: T | MediaBlockSelect<T>;
+              archive?: T | ArchiveBlockSelect<T>;
+              formBlock?: T | FormBlockSelect<T>;
+              calendarBlock?: T | CalendarSelect<T>;
+              sponsorsBlock?: T | SponsorsBlockSelect<T>;
+              teamBlock?: T | TeamBlockSelect<T>;
+              banner?: T | BannerBlockSelect<T>;
+              stripePaymentBlock?: T | StripePaymentBlockSelect<T>;
+              paymentConfirmationBlock?: T | PaymentConfirmationBlockSelect<T>;
+            };
+        id?: T;
+      };
+  aside?:
+    | T
+    | {
+        showPriceCard?: T;
+        priceLabel?: T;
+        priceAmount?: T;
+        pricePeriod?: T;
+        summaryItems?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+        richText?: T;
+        links?:
+          | T
+          | {
+              link?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    reference?: T;
+                    url?: T;
+                    label?: T;
+                    appearance?: T;
+                    icon?: T;
+                    iconRight?: T;
+                  };
+              id?: T;
+            };
+        nextStepLabel?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "MediaBlock_select".
  */
 export interface MediaBlockSelect<T extends boolean = true> {
@@ -3853,6 +4195,76 @@ export interface TeamBlockSelect<T extends boolean = true> {
                     id?: T;
                   };
               id?: T;
+            };
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "BannerBlock_select".
+ */
+export interface BannerBlockSelect<T extends boolean = true> {
+  blockVisibility?:
+    | T
+    | {
+        visibilityType?: T;
+        allowedGroups?: T;
+      };
+  blockBackground?: T;
+  style?: T;
+  content?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StripePaymentBlock_select".
+ */
+export interface StripePaymentBlockSelect<T extends boolean = true> {
+  amount?: T;
+  description?: T;
+  metadata?:
+    | T
+    | {
+        key?: T;
+        value?: T;
+        id?: T;
+      };
+  invoiceLineItems?:
+    | T
+    | {
+        name?: T;
+        description?: T;
+        unitPrice?: T;
+        quantity?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PaymentConfirmationBlock_select".
+ */
+export interface PaymentConfirmationBlockSelect<T extends boolean = true> {
+  title?: T;
+  message?: T;
+  links?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+              appearance?: T;
+              icon?: T;
+              iconRight?: T;
             };
         id?: T;
       };
@@ -5402,53 +5814,6 @@ export interface TaskSchedulePublish {
     user?: (string | null) | User;
   };
   output?: unknown;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "BannerBlock".
- */
-export interface BannerBlock {
-  blockVisibility?: {
-    /**
-     * Choose who can see this block
-     */
-    visibilityType?: ('everyone' | 'loggedIn' | 'notLoggedIn' | 'active' | 'admin' | 'specificGroups') | null;
-    /**
-     * Select which groups and/or subgroups can see this block
-     */
-    allowedGroups?:
-      | (
-          | {
-              relationTo: 'groups';
-              value: string | Group;
-            }
-          | {
-              relationTo: 'group-categories';
-              value: string | GroupCategory;
-            }
-        )[]
-      | null;
-  };
-  blockBackground?: ('transparent' | 'fill' | 'brand') | null;
-  style: 'info' | 'warning' | 'error' | 'success';
-  content: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  };
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'banner';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

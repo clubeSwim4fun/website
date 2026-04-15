@@ -209,20 +209,21 @@ const ContentColumn: React.FC<{ col: Column; pairedMedia?: Column; onDark?: bool
 }
 
 // ── Block ────────────────────────────────────────────────────────────────────
-export const ContentBlock: React.FC<ContentBlockProps & { blockBackground?: string }> = ({
-  columns,
-  blockBackground,
-}) => {
+export const ContentBlock: React.FC<
+  ContentBlockProps & { blockBackground?: string; disableInnerContainer?: boolean }
+> = ({ columns, blockBackground, disableInnerContainer }) => {
   if (!columns?.length) return null
 
   const onDark = blockBackground === 'brand'
+  const sectionClass = disableInnerContainer ? 'container' : 'container py-16 md:py-20'
+  const sectionWithClass = `${sectionClass} block-container`
   const cols = columns.slice(0, 2)
   const isSingle = cols.length === 1
 
   if (isSingle) {
     const col = cols[0]!
     return (
-      <section className="container py-16 md:py-20">
+      <section className={sectionWithClass}>
         {col.useMedia ? <MediaColumn col={col} /> : <ContentColumn col={col} onDark={onDark} />}
       </section>
     )
@@ -232,7 +233,7 @@ export const ContentBlock: React.FC<ContentBlockProps & { blockBackground?: stri
   const right = cols[1]!
 
   return (
-    <section className="container py-16 md:py-20">
+    <section className={sectionWithClass}>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-stretch">
         <div className={`${left.useMedia ? 'hidden md:block' : 'h-full'}`}>
           {left.useMedia ? (
