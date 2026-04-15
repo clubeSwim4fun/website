@@ -91,7 +91,7 @@ export const CardBlockComponent: React.FC<CardBlockProps> = ({
                     key={stat.id ?? i}
                     className="rounded-xl border border-swim-border bg-gray-50 px-4 py-5 text-center"
                   >
-                    <p className="font-syne text-4xl font-extrabold leading-none mb-2 text-ink">
+                    <p className="font-syne text-2xl md:text-4xl font-extrabold leading-none mb-2 text-ink">
                       {stat.number}
                     </p>
                     <p className="text-sm text-ink-light leading-snug">{stat.description}</p>
