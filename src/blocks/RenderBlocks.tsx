@@ -67,8 +67,8 @@ export const RenderBlocks: React.FC<{
               if (compact) {
                 return (
                   <Fragment key={index}>
-                    {/* @ts-expect-error there may be some mismatch between the expected types here */}
-                    <Block {...block} disableInnerContainer blockBackground={bg} user={user} />
+                    {/* @ts-expect-error Block components accept user and compact props */}
+                    <Block {...block} user={user} compact />
                   </Fragment>
                 )
               }
@@ -125,8 +125,8 @@ export const RenderBlocks: React.FC<{
                   <div
                     className={`relative z-10 ${isFill || isBrand ? 'py-16' : 'my-16'} ${noHero && index === 0 ? '!pt-0 !mt-0' : ''}`}
                   >
-                    {/* @ts-expect-error there may be some mismatch between the expected types here */}
-                    <Block {...block} disableInnerContainer blockBackground={bg} user={user} />
+                    {/* @ts-expect-error Block components accept user prop */}
+                    <Block {...block} user={user} />
                   </div>
                 </div>
               )

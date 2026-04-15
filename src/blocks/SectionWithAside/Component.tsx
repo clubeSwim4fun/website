@@ -14,11 +14,22 @@ const Aside: React.FC<{ aside: SectionWithAsideBlockProps['aside']; user?: User 
   user,
 }) => {
   if (!aside) return null
-  const { showPriceCard, priceLabel, priceAmount, pricePeriod, summaryItems, richText, links } =
-    aside
+  const {
+    showPriceCard,
+    priceLabel,
+    priceAmount,
+    pricePeriod,
+    priceSubtitle,
+    priceAmount2,
+    priceSubtitle2,
+    summaryItems,
+    cards,
+    richText,
+    links,
+  } = aside
 
   return (
-    <aside className="flex flex-col gap-4">
+    <aside className="flex flex-col gap-4 section-with-aside-sidebar">
       {showPriceCard && (
         <div className="bg-white rounded-2xl border border-swim-border shadow-sm overflow-hidden">
           <div className="bg-deep px-6 py-5 text-center">
@@ -27,13 +38,39 @@ const Aside: React.FC<{ aside: SectionWithAsideBlockProps['aside']; user?: User 
                 {priceLabel}
               </p>
             )}
-            {priceAmount != null && (
-              <p className="font-syne font-extrabold text-white leading-none">
-                <sup className="text-xl font-semibold align-super">€</sup>
-                <span className="text-5xl">{priceAmount}</span>
-              </p>
+            {/* Two-price layout */}
+            {priceAmount2 != null ? (
+              <div className="flex items-center justify-center gap-4">
+                <div className="flex flex-col items-center">
+                  <p className="font-syne font-extrabold text-white leading-none">
+                    <sup className="text-xl font-semibold align-super">€</sup>
+                    <span className="text-5xl">{priceAmount}</span>
+                  </p>
+                  {priceSubtitle && <p className="text-xs text-white/60 mt-1.5">{priceSubtitle}</p>}
+                </div>
+                <div className="w-px self-stretch bg-white/20" />
+                <div className="flex flex-col items-center">
+                  <p className="font-syne font-extrabold text-white leading-none">
+                    <sup className="text-xl font-semibold align-super">€</sup>
+                    <span className="text-5xl">{priceAmount2}</span>
+                  </p>
+                  {priceSubtitle2 && (
+                    <p className="text-xs text-white/60 mt-1.5">{priceSubtitle2}</p>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <>
+                {priceAmount != null && (
+                  <p className="font-syne font-extrabold text-white leading-none">
+                    <sup className="text-xl font-semibold align-super">€</sup>
+                    <span className="text-5xl">{priceAmount}</span>
+                  </p>
+                )}
+                {priceSubtitle && <p className="text-xs text-white/60 mt-1.5">{priceSubtitle}</p>}
+              </>
             )}
-            {pricePeriod && <p className="text-xs text-white/50 mt-1.5">{pricePeriod}</p>}
+            {pricePeriod && <p className="text-xs text-white/50 mt-3">{pricePeriod}</p>}
           </div>
 
           {!!summaryItems?.length && (
@@ -66,6 +103,9 @@ const Aside: React.FC<{ aside: SectionWithAsideBlockProps['aside']; user?: User 
           </ul>
         </div>
       )}
+
+      {/* Card blocks */}
+      {!!cards?.length && <RenderBlocks blocks={cards as any} user={user} compact />}
 
       {richText && (
         <div className="bg-white rounded-2xl border border-swim-border shadow-sm p-5">
@@ -119,7 +159,11 @@ export const SectionWithAsideBlock: React.FC<SectionWithAsideBlockProps & { user
     const hasStripe = (mainContent ?? [])
       .filter((row) => row.step === stepNumber)
       .flatMap((row) => row.blocks ?? [])
-      .some((b) => (b as any).blockType === 'stripePaymentBlock')
+      .some(
+        (b) =>
+          (b as any).blockType === 'stripePaymentBlock' ||
+          ((b as any).blockType === 'cardBlock' && (b as any).variant === 'payment'),
+      )
     if (hasStripe) acc.push(stepIndex)
     return acc
   }, [])

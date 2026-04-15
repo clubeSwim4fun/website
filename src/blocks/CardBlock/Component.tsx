@@ -5,6 +5,8 @@ import { Media } from '@/components/Media'
 import RichTextColor from '@/components/RichText/RichTextColor'
 import { Download } from 'lucide-react'
 import { cn } from '@/utilities/ui'
+import { FormBlock } from '@/blocks/Form/Component'
+import { CardPaymentVariant } from './Component.client'
 
 // ── Color map ────────────────────────────────────────────────────────────────
 const COLOR_MAP: Record<string, { bar: string; iconBg: string; iconText: string }> = {
@@ -40,7 +42,7 @@ const DownloadItem: React.FC<{ file: MediaType; label: string }> = ({ file, labe
 }
 
 // ── Main component ───────────────────────────────────────────────────────────
-export const CardBlockComponent: React.FC<CardBlockProps> = ({
+export const CardBlockComponent: React.FC<CardBlockProps> = async ({
   cardColor = 'blue',
   icon,
   title,
@@ -50,9 +52,17 @@ export const CardBlockComponent: React.FC<CardBlockProps> = ({
   listItems,
   image,
   downloads,
+  form,
+  paymentAmount,
+  paymentDescription,
+  paymentMetadata,
+  paymentHideButton,
+  paymentSuccessMessage,
 }) => {
   const colors = COLOR_MAP[cardColor ?? 'blue'] ?? COLOR_MAP.blue!
   const iconNode = icon && icon !== 'none' ? ICON_MAP[icon] : null
+
+  const metadataMap = Object.fromEntries((paymentMetadata ?? []).map((m) => [m.key, m.value]))
 
   return (
     <div className="container mb-4">
@@ -124,6 +134,32 @@ export const CardBlockComponent: React.FC<CardBlockProps> = ({
               <div className="rounded-xl overflow-hidden border border-swim-border">
                 <Media resource={image} imgClassName="w-full h-auto object-cover" />
               </div>
+            )}
+
+            {/* Variant: form — renders form without submit button; payment field handles submission */}
+            {variant === 'form' && form && typeof form === 'object' && (
+              <div className="-mx-2">
+                <FormBlock
+                  form={form as any}
+                  enableIntro={false}
+                  blockType="formBlock"
+                  hideSubmitButton
+                  noContainer
+                />
+              </div>
+            )}
+
+            {/* Variant: payment */}
+            {variant === 'payment' && paymentAmount != null && (
+              <CardPaymentVariant
+                amount={paymentAmount}
+                description={
+                  typeof paymentDescription === 'string' ? paymentDescription : undefined
+                }
+                metadata={metadataMap}
+                hideButton={paymentHideButton ?? false}
+                successMessage={(paymentSuccessMessage as any) ?? null}
+              />
             )}
 
             {/* Downloads */}

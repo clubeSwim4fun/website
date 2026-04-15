@@ -60,9 +60,10 @@ type Props = {
   generalConfig: GeneralConfig
   form?: Form
   submitButtonLabel?: string | null
+  compact?: boolean
 }
 
-export function RegistrationWizard({ generalConfig, form, submitButtonLabel }: Props) {
+export function RegistrationWizard({ generalConfig, form, submitButtonLabel, compact }: Props) {
   const t = useTranslations('Registration')
   const fieldMap = buildFieldMap(form)
 
@@ -234,7 +235,9 @@ export function RegistrationWizard({ generalConfig, form, submitButtonLabel }: P
   const currentStepConfig = STEPS.find((s) => s.id === step)!
 
   return (
-    <div className="flex flex-col gap-6 w-full max-w-2xl mx-auto px-4 md:px-0">
+    <div
+      className={`flex flex-col gap-6 w-full px-4 md:px-0 ${compact ? '' : 'max-w-2xl mx-auto'}`}
+    >
       <ProgressBanner currentStep={step} steps={STEPS} done={done} />
 
       {done ? (

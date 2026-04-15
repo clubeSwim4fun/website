@@ -136,16 +136,66 @@ export const SectionWithAside: Block = {
           },
         },
         {
-          name: 'priceAmount',
-          type: 'number',
-          label: { en: 'Price (€)', pt: 'Preço (€)' },
-          admin: {
-            condition: (_, s) => Boolean(s?.showPriceCard),
-            description: {
-              en: 'Numeric value in EUR (e.g. 30)',
-              pt: 'Valor numérico em EUR (ex: 30)',
+          type: 'row',
+          fields: [
+            {
+              name: 'priceAmount',
+              type: 'number',
+              label: { en: 'Price (€)', pt: 'Preço (€)' },
+              admin: {
+                condition: (_, s) => Boolean(s?.showPriceCard),
+                width: '50%',
+                description: {
+                  en: 'Numeric value in EUR (e.g. 30)',
+                  pt: 'Valor numérico em EUR (ex: 30)',
+                },
+              },
             },
-          },
+            {
+              name: 'priceSubtitle',
+              type: 'text',
+              localized: true,
+              label: {
+                en: 'Price subtitle (e.g. "one-time fee")',
+                pt: 'Subtítulo do preço (ex: "jóia única")',
+              },
+              admin: {
+                condition: (_, s) => Boolean(s?.showPriceCard),
+                width: '50%',
+              },
+            },
+          ],
+        },
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'priceAmount2',
+              type: 'number',
+              label: { en: 'Second price (€)', pt: 'Segundo preço (€)' },
+              admin: {
+                condition: (_, s) => Boolean(s?.showPriceCard),
+                width: '50%',
+                description: {
+                  en: 'Optional second price value (e.g. monthly fee)',
+                  pt: 'Segundo valor opcional (ex: quota mensal)',
+                },
+              },
+            },
+            {
+              name: 'priceSubtitle2',
+              type: 'text',
+              localized: true,
+              label: {
+                en: 'Second price subtitle (e.g. "per month")',
+                pt: 'Subtítulo do segundo preço (ex: "por mês")',
+              },
+              admin: {
+                condition: (_, s) => Boolean(s?.showPriceCard),
+                width: '50%',
+              },
+            },
+          ],
         },
         {
           name: 'pricePeriod',
@@ -177,6 +227,20 @@ export const SectionWithAside: Block = {
             description: {
               en: 'Checklist items shown below the price (e.g. "Access to 15 national races")',
               pt: 'Itens da lista mostrados abaixo do preço (ex: "Acesso a 15 provas nacionais")',
+            },
+          },
+        },
+        // Card blocks
+        {
+          name: 'cards',
+          type: 'blocks',
+          label: { en: 'Card Blocks', pt: 'Blocos de Cartão' },
+          blocks: [CardBlock],
+          admin: {
+            initCollapsed: true,
+            description: {
+              en: 'Card blocks shown in the sidebar after summary items.',
+              pt: 'Blocos de cartão mostrados na barra lateral após os itens de resumo.',
             },
           },
         },

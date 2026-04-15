@@ -26,6 +26,8 @@ export type FormBlockType = {
   introContent?: SerializedEditorState
   isRegistrationForm?: boolean
   currentUser?: User
+  hideSubmitButton?: boolean
+  noContainer?: boolean
   onSubmit?: (data: Record<string, any>) => Promise<{ error?: string; redirectUrl?: string }>
 }
 
@@ -36,6 +38,8 @@ export const FormBlockClient: React.FC<{ id?: string } & FormBlockType> = (props
     introContent,
     generalConfigData,
     currentUser,
+    hideSubmitButton,
+    noContainer,
     onSubmit: onSubmitFromProps,
   } = props
 
@@ -204,11 +208,11 @@ export const FormBlockClient: React.FC<{ id?: string } & FormBlockType> = (props
   }
 
   return (
-    <div className="container lg:max-w-[48rem]">
+    <div className={noContainer ? undefined : 'container lg:max-w-[48rem]'}>
       {enableIntro && introContent && !hasSubmitted && (
         <RichText className="mb-8 lg:mb-12" data={introContent} enableGutter={false} />
       )}
-      <div className="p-4 lg:p-6 border border-border rounded-[0.8rem]">
+      <div className={noContainer ? undefined : 'p-4 lg:p-6 border border-border rounded-[0.8rem]'}>
         <FormProvider {...formMethods}>
           {!isLoading && hasSubmitted && confirmationType === 'message' && (
             <RichText data={confirmationMessage} />
@@ -226,7 +230,7 @@ export const FormBlockClient: React.FC<{ id?: string } & FormBlockType> = (props
                   {regularFields.map((field, index) => renderField(field, index))}
                 </div>
 
-                {!hasPayment && (
+                {!hasPayment && !hideSubmitButton && (
                   <Button form={formID} type="submit" variant="default" disabled={isLoading}>
                     {isLoading ? (
                       <span>

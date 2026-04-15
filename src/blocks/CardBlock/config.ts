@@ -51,6 +51,8 @@ export const CardBlock: Block = {
             { label: { en: 'Stats', pt: 'Estatísticas' }, value: 'stats' },
             { label: { en: 'List', pt: 'Lista' }, value: 'list' },
             { label: { en: 'Image', pt: 'Imagem' }, value: 'image' },
+            { label: { en: 'Form', pt: 'Formulário' }, value: 'form' },
+            { label: { en: 'Payment', pt: 'Pagamento' }, value: 'payment' },
           ],
           admin: { width: '33%' },
         },
@@ -136,6 +138,105 @@ export const CardBlock: Block = {
       label: { en: 'Image', pt: 'Imagem' },
       admin: {
         condition: (_, s) => s?.variant === 'image',
+      },
+    },
+
+    // ── Variant: form ──────────────────────────────────────────────
+    {
+      name: 'form',
+      type: 'relationship',
+      relationTo: 'forms',
+      label: { en: 'Form', pt: 'Formulário' },
+      admin: {
+        condition: (_, s) => s?.variant === 'form',
+        description: {
+          en: "The submit button is hidden — payment is handled by the form's payment field.",
+          pt: 'O botão de submissão está oculto — o pagamento é tratado pelo campo de pagamento do formulário.',
+        },
+      },
+    },
+
+    // ── Variant: payment ───────────────────────────────────────────
+    {
+      name: 'paymentAmount',
+      type: 'number',
+      label: { en: 'Amount (€)', pt: 'Valor (€)' },
+      min: 0.5,
+      admin: {
+        condition: (_, s) => s?.variant === 'payment',
+        description: {
+          en: 'Payment amount in EUR.',
+          pt: 'Valor do pagamento em EUR.',
+        },
+      },
+    },
+    {
+      name: 'paymentDescription',
+      type: 'text',
+      localized: true,
+      label: { en: 'Payment description', pt: 'Descrição do pagamento' },
+      admin: {
+        condition: (_, s) => s?.variant === 'payment',
+      },
+    },
+    {
+      name: 'paymentMetadata',
+      type: 'array',
+      label: { en: 'Stripe metadata', pt: 'Metadados Stripe' },
+      admin: {
+        condition: (_, s) => s?.variant === 'payment',
+        initCollapsed: true,
+        description: {
+          en: 'Key/value pairs sent to Stripe as PaymentIntent metadata.',
+          pt: 'Pares chave/valor enviados ao Stripe como metadados do PaymentIntent.',
+        },
+      },
+      fields: [
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'key',
+              type: 'text',
+              required: true,
+              label: { en: 'Key', pt: 'Chave' },
+              admin: { width: '50%' },
+            },
+            {
+              name: 'value',
+              type: 'text',
+              required: true,
+              label: { en: 'Value', pt: 'Valor' },
+              admin: { width: '50%' },
+            },
+          ],
+        },
+      ],
+    },
+    {
+      name: 'paymentHideButton',
+      type: 'checkbox',
+      label: { en: 'Hide pay button', pt: 'Ocultar botão de pagamento' },
+      defaultValue: false,
+      admin: {
+        condition: (_, s) => s?.variant === 'payment',
+        description: {
+          en: 'When checked, the pay button is not rendered (useful when an external trigger submits the payment).',
+          pt: 'Quando marcado, o botão de pagamento não é exibido.',
+        },
+      },
+    },
+    {
+      name: 'paymentSuccessMessage',
+      type: 'richText',
+      localized: true,
+      label: { en: 'Success message', pt: 'Mensagem de sucesso' },
+      admin: {
+        condition: (_, s) => s?.variant === 'payment',
+        description: {
+          en: 'Shown after successful payment.',
+          pt: 'Mostrado após pagamento bem-sucedido.',
+        },
       },
     },
 

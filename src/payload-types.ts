@@ -2268,6 +2268,12 @@ export interface SectionWithAsideBlock {
      * Numeric value in EUR (e.g. 30)
      */
     priceAmount?: number | null;
+    priceSubtitle?: string | null;
+    /**
+     * Optional second price value (e.g. monthly fee)
+     */
+    priceAmount2?: number | null;
+    priceSubtitle2?: string | null;
     pricePeriod?: string | null;
     /**
      * Checklist items shown below the price (e.g. "Access to 15 national races")
@@ -2278,6 +2284,10 @@ export interface SectionWithAsideBlock {
           id?: string | null;
         }[]
       | null;
+    /**
+     * Card blocks shown in the sidebar after summary items.
+     */
+    cards?: CardBlock[] | null;
     richText?: {
       root: {
         type: string;
@@ -2871,7 +2881,7 @@ export interface CardBlock {
         | 'cloud'
       )
     | null;
-  variant: 'text' | 'stats' | 'list' | 'image';
+  variant: 'text' | 'stats' | 'list' | 'image' | 'form' | 'payment';
   title: string;
   richText?: {
     root: {
@@ -2919,6 +2929,47 @@ export interface CardBlock {
       }[]
     | null;
   image?: (string | null) | Media;
+  /**
+   * The submit button is hidden — payment is handled by the form's payment field.
+   */
+  form?: (string | null) | Form;
+  /**
+   * Payment amount in EUR.
+   */
+  paymentAmount?: number | null;
+  paymentDescription?: string | null;
+  /**
+   * Key/value pairs sent to Stripe as PaymentIntent metadata.
+   */
+  paymentMetadata?:
+    | {
+        key: string;
+        value: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * When checked, the pay button is not rendered (useful when an external trigger submits the payment).
+   */
+  paymentHideButton?: boolean | null;
+  /**
+   * Shown after successful payment.
+   */
+  paymentSuccessMessage?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   /**
    * Optional files shown as download buttons at the bottom of the card.
    */
@@ -4234,12 +4285,20 @@ export interface SectionWithAsideBlockSelect<T extends boolean = true> {
         showPriceCard?: T;
         priceLabel?: T;
         priceAmount?: T;
+        priceSubtitle?: T;
+        priceAmount2?: T;
+        priceSubtitle2?: T;
         pricePeriod?: T;
         summaryItems?:
           | T
           | {
               text?: T;
               id?: T;
+            };
+        cards?:
+          | T
+          | {
+              cardBlock?: T | CardBlockSelect<T>;
             };
         richText?: T;
         links?:
@@ -4521,6 +4580,18 @@ export interface CardBlockSelect<T extends boolean = true> {
         id?: T;
       };
   image?: T;
+  form?: T;
+  paymentAmount?: T;
+  paymentDescription?: T;
+  paymentMetadata?:
+    | T
+    | {
+        key?: T;
+        value?: T;
+        id?: T;
+      };
+  paymentHideButton?: T;
+  paymentSuccessMessage?: T;
   downloads?:
     | T
     | {

@@ -239,6 +239,16 @@ html[data-theme='light'] {
   padding-right: 0;
 }
 
+/* SectionWithAside — remove CardBlock padding when inside sidebar */
+.section-with-aside-sidebar .container {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.section-with-aside-sidebar .container > div > div:last-child {
+  padding: 0;
+}
+
 /* SectionWithAside — step transition animations */
 @keyframes step-in-right {
   from {
