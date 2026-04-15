@@ -1,9 +1,11 @@
 import React from 'react'
 import type { ContentBlock as ContentBlockProps } from '@/payload-types'
+import type { User } from '@/payload-types'
 import { Media } from '@/components/Media'
 import RichTextColor from '@/components/RichText/RichTextColor'
 import { CtaButton } from '@/components/CtaButton'
 import { ICON_MAP } from '@/components/IconMap'
+import { shouldShowBlock } from '@/helpers/blockVisibilityHelper'
 
 // ── Card colour map ──────────────────────────────────────────────────────────
 const CARD_COLORS: Record<string, { bar: string; iconBg: string; iconText: string }> = {
@@ -141,12 +143,15 @@ const VALIGN: Record<string, string> = {
 }
 
 // ── Content column ───────────────────────────────────────────────────────────
-const ContentColumn: React.FC<{ col: Column; pairedMedia?: Column; onDark?: boolean }> = ({
-  col,
-  pairedMedia,
-  onDark,
-}) => {
-  const links = col.links ?? []
+const ContentColumn: React.FC<{
+  col: Column
+  pairedMedia?: Column
+  onDark?: boolean
+  user?: User
+}> = ({ col, pairedMedia, onDark, user }) => {
+  const links = (col.links ?? []).filter((item) =>
+    shouldShowBlock((item as any).linkVisibility, user),
+  )
   const valign = VALIGN[col.verticalAlign ?? 'center']!
 
   return (
@@ -210,8 +215,8 @@ const ContentColumn: React.FC<{ col: Column; pairedMedia?: Column; onDark?: bool
 
 // ── Block ────────────────────────────────────────────────────────────────────
 export const ContentBlock: React.FC<
-  ContentBlockProps & { blockBackground?: string; disableInnerContainer?: boolean }
-> = ({ columns, blockBackground, disableInnerContainer }) => {
+  ContentBlockProps & { blockBackground?: string; disableInnerContainer?: boolean; user?: User }
+> = ({ columns, blockBackground, disableInnerContainer, user }) => {
   if (!columns?.length) return null
 
   const onDark = blockBackground === 'brand'
@@ -224,7 +229,11 @@ export const ContentBlock: React.FC<
     const col = cols[0]!
     return (
       <section className={sectionWithClass}>
-        {col.useMedia ? <MediaColumn col={col} /> : <ContentColumn col={col} onDark={onDark} />}
+        {col.useMedia ? (
+          <MediaColumn col={col} />
+        ) : (
+          <ContentColumn col={col} onDark={onDark} user={user} />
+        )}
       </section>
     )
   }
@@ -243,6 +252,7 @@ export const ContentBlock: React.FC<
               col={left}
               pairedMedia={right.useMedia ? right : undefined}
               onDark={onDark}
+              user={user}
             />
           )}
         </div>
@@ -254,6 +264,7 @@ export const ContentBlock: React.FC<
               col={right}
               pairedMedia={left.useMedia ? left : undefined}
               onDark={onDark}
+              user={user}
             />
           )}
         </div>

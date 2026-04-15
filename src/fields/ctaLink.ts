@@ -4,7 +4,57 @@
  */
 import type { Field } from 'payload'
 
+const linkVisibilityField: Field = {
+  name: 'linkVisibility',
+  label: { en: 'Visibility', pt: 'Visibilidade' },
+  type: 'group',
+  admin: { hideGutter: true },
+  fields: [
+    {
+      name: 'visibilityType',
+      label: { en: 'Visibility Type', pt: 'Tipo de Visibilidade' },
+      type: 'select',
+      defaultValue: 'everyone',
+      options: [
+        { label: { en: 'Everyone', pt: 'Todos' }, value: 'everyone' },
+        {
+          label: { en: 'Logged In Users Only', pt: 'Apenas Utilizadores Autenticados' },
+          value: 'loggedIn',
+        },
+        { label: { en: 'Not Logged In', pt: 'Não Autenticados' }, value: 'notLoggedIn' },
+        { label: { en: 'Active Members Only', pt: 'Apenas Membros Ativos' }, value: 'active' },
+        { label: { en: 'Admins Only', pt: 'Apenas Administradores' }, value: 'admin' },
+        {
+          label: { en: 'Specific Groups/Subgroups', pt: 'Grupos/Sub-grupos Específicos' },
+          value: 'specificGroups',
+        },
+      ],
+      admin: {
+        description: {
+          en: 'Choose who can see this button',
+          pt: 'Escolha quem pode ver este botão',
+        },
+      },
+    },
+    {
+      name: 'allowedGroups',
+      label: { en: 'Allowed Groups & Subgroups', pt: 'Grupos e Sub-grupos Permitidos' },
+      type: 'relationship',
+      relationTo: ['groups', 'group-categories'],
+      hasMany: true,
+      admin: {
+        condition: (_, { visibilityType }) => visibilityType === 'specificGroups',
+        description: {
+          en: 'Select which groups and/or subgroups can see this button',
+          pt: 'Selecione quais grupos e/ou sub-grupos podem ver este botão',
+        },
+      },
+    },
+  ],
+}
+
 export const ctaLinkFields: Field[] = [
+  linkVisibilityField,
   {
     name: 'link',
     type: 'group',

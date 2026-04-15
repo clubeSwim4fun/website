@@ -1,11 +1,12 @@
 'use client'
 
 import React from 'react'
-import type { Page } from '@/payload-types'
+import type { Page, User } from '@/payload-types'
 import { Media } from '@/components/Media'
 import RichText from '@/components/RichText/HeroRichText'
 import { CtaButton } from '@/components/CtaButton'
 import { cn } from '@/utilities/ui'
+import { shouldShowBlock } from '@/helpers/blockVisibilityHelper'
 
 // ── Cross-hatch background SVG (inline, matches design) ─────────────────────
 const CrossPattern = () => (
@@ -48,8 +49,15 @@ const HeroButton: React.FC<{ item: HeroLink }> = ({ item }) => (
 )
 
 // ── Content pane ─────────────────────────────────────────────────────────────
-const HeroContent: React.FC<{ hero: Page['hero']; centered?: boolean }> = ({ hero, centered }) => {
+const HeroContent: React.FC<{ hero: Page['hero']; centered?: boolean; user?: User }> = ({
+  hero,
+  centered,
+  user,
+}) => {
   const { badge, richText, links, stats } = hero
+  const visibleLinks = (links ?? []).filter((item) =>
+    shouldShowBlock((item as any).linkVisibility, user),
+  )
 
   return (
     <div
@@ -83,9 +91,9 @@ const HeroContent: React.FC<{ hero: Page['hero']; centered?: boolean }> = ({ her
       )}
 
       {/* CTAs */}
-      {Array.isArray(links) && links.length > 0 && (
+      {Array.isArray(links) && visibleLinks.length > 0 && (
         <div className="animate-fade-up-3 flex flex-wrap gap-3 mb-12">
-          {links.map((item, i) => (
+          {visibleLinks.map((item, i) => (
             <HeroButton key={i} item={item} />
           ))}
         </div>
@@ -114,8 +122,8 @@ const HeroContent: React.FC<{ hero: Page['hero']; centered?: boolean }> = ({ her
 }
 
 // ── Main Hero ─────────────────────────────────────────────────────────────────
-export const HighImpactHero: React.FC<Page['hero']> = (hero) => {
-  const { type, media, floatingImage } = hero
+export const HighImpactHero: React.FC<Page['hero'] & { user?: User }> = (hero) => {
+  const { type, media, floatingImage, user } = hero as Page['hero'] & { user?: User }
   const hasImage = (type === 'imageLeft' || type === 'imageRight') && media
 
   // No image — full-width centered
@@ -123,7 +131,7 @@ export const HighImpactHero: React.FC<Page['hero']> = (hero) => {
     return (
       <section className="relative overflow-hidden bg-gradient-to-br from-deep to-mid min-h-[calc(100vh-52px)] md:min-h-[calc(100vh-68px)] flex items-center justify-center">
         <CrossPattern />
-        <HeroContent hero={hero} centered />
+        <HeroContent hero={hero} centered user={user} />
       </section>
     )
   }
@@ -143,7 +151,7 @@ export const HighImpactHero: React.FC<Page['hero']> = (hero) => {
             imageOnRight ? 'md:order-1' : 'md:order-2',
           )}
         >
-          <HeroContent hero={hero} />
+          <HeroContent hero={hero} user={user} />
         </div>
 
         {/* Floating image — full width on mobile (normal), anchored bottom on desktop */}
@@ -193,7 +201,7 @@ export const HighImpactHero: React.FC<Page['hero']> = (hero) => {
           imageOnRight ? 'md:order-1' : 'md:order-2',
         )}
       >
-        <HeroContent hero={hero} />
+        <HeroContent hero={hero} user={user} />
       </div>
 
       {/* Image — always first on mobile (top), position swaps on desktop */}

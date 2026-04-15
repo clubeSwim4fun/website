@@ -66,7 +66,7 @@ export const RenderBlocks: React.FC<{
                 return (
                   <Fragment key={index}>
                     {/* @ts-expect-error there may be some mismatch between the expected types here */}
-                    <Block {...block} disableInnerContainer blockBackground={bg} />
+                    <Block {...block} disableInnerContainer blockBackground={bg} user={user} />
                   </Fragment>
                 )
               }
@@ -124,7 +124,7 @@ export const RenderBlocks: React.FC<{
                     className={`relative z-10 ${isFill || isBrand ? 'py-16' : 'my-16'} ${noHero && index === 0 ? '!pt-0 !mt-0' : ''}`}
                   >
                     {/* @ts-expect-error there may be some mismatch between the expected types here */}
-                    <Block {...block} disableInnerContainer blockBackground={bg} />
+                    <Block {...block} disableInnerContainer blockBackground={bg} user={user} />
                   </div>
                 </div>
               )

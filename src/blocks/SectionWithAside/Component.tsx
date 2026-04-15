@@ -1,13 +1,18 @@
 import React from 'react'
 import type { SectionWithAsideBlock as SectionWithAsideBlockProps } from '@/payload-types'
+import type { User } from '@/payload-types'
 import RichText from '@/components/RichText'
 import { CtaButton } from '@/components/CtaButton'
 import { CheckCircle2 } from 'lucide-react'
 import { RenderBlocks } from '@/blocks/RenderBlocks'
 import { SectionWithAsideClient } from './Component.client'
+import { shouldShowBlock } from '@/helpers/blockVisibilityHelper'
 
 // ── Aside / Sidebar (server) ─────────────────────────────────────────────────
-const Aside: React.FC<{ aside: SectionWithAsideBlockProps['aside'] }> = ({ aside }) => {
+const Aside: React.FC<{ aside: SectionWithAsideBlockProps['aside']; user?: User }> = ({
+  aside,
+  user,
+}) => {
   if (!aside) return null
   const { showPriceCard, priceLabel, priceAmount, pricePeriod, summaryItems, richText, links } =
     aside
@@ -70,14 +75,16 @@ const Aside: React.FC<{ aside: SectionWithAsideBlockProps['aside'] }> = ({ aside
 
       {!!links?.length && (
         <div className="flex flex-col gap-2">
-          {links.map((item, i) => (
-            <CtaButton
-              key={item.id ?? i}
-              link={item.link}
-              context="light"
-              className="w-full justify-center"
-            />
-          ))}
+          {links
+            .filter((item) => shouldShowBlock((item as any).linkVisibility, user))
+            .map((item, i) => (
+              <CtaButton
+                key={item.id ?? i}
+                link={item.link}
+                context="light"
+                className="w-full justify-center"
+              />
+            ))}
         </div>
       )}
     </aside>
@@ -85,10 +92,11 @@ const Aside: React.FC<{ aside: SectionWithAsideBlockProps['aside'] }> = ({ aside
 }
 
 // ── Main export (server component) ───────────────────────────────────────────
-export const SectionWithAsideBlock: React.FC<SectionWithAsideBlockProps> = ({
+export const SectionWithAsideBlock: React.FC<SectionWithAsideBlockProps & { user?: User }> = ({
   navigation,
   mainContent,
   aside,
+  user,
 }) => {
   const steps = navigation?.steps ?? []
 
@@ -121,7 +129,7 @@ export const SectionWithAsideBlock: React.FC<SectionWithAsideBlockProps> = ({
       steps={steps}
       nextStepLabel={aside?.nextStepLabel ?? undefined}
       stripeSteps={stripeSteps}
-      aside={<Aside aside={aside} />}
+      aside={<Aside aside={aside} user={user} />}
     >
       {stepPanels}
     </SectionWithAsideClient>

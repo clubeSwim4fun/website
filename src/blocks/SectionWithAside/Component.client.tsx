@@ -4,6 +4,7 @@ import React, { useState, useRef } from 'react'
 import { cn } from '@/utilities/ui'
 import { ChevronRight, ArrowLeft, Loader, CheckCircle2 } from 'lucide-react'
 import { StepPaymentProvider, useStepPayment } from './StepPaymentContext'
+import { useToast } from '@/hooks/use-toast'
 
 type Step = { label?: string; id?: string | null }
 
@@ -27,6 +28,7 @@ const StripeStepLayout: React.FC<{
   animClass?: string
 }> = ({ panel, asideStatic, nextStepLabel, isLast, onNext, prevStepLabel, onBack, animClass }) => {
   const ctx = useStepPayment()!
+  const { toast } = useToast()
   const isProcessing = ctx.status === 'processing'
   const isSuccess = ctx.status === 'success'
 
@@ -37,11 +39,9 @@ const StripeStepLayout: React.FC<{
     if (result.error) {
       ctx.setStatus('error')
       ctx.setErrorMessage(result.error)
+      toast({ variant: 'destructive', description: result.error })
     } else if (!result.error) {
-      // success is set inside the stripe component via ctx.setStatus('success')
-      // if there's a next step, auto-advance
       if (!isLast) {
-        // small delay so the success state is visible briefly
         setTimeout(onNext, 600)
       }
     }
@@ -68,13 +68,6 @@ const StripeStepLayout: React.FC<{
       {/* Aside */}
       <div className="lg:sticky lg:top-24 flex flex-col gap-4">
         {asideStatic}
-
-        {/* Error */}
-        {ctx.errorMessage && (
-          <p role="alert" className="text-sm text-destructive px-1">
-            {ctx.errorMessage}
-          </p>
-        )}
 
         {/* Success notice — only shown when there is NO next step */}
         {isSuccess && isLast && (

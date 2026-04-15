@@ -79,7 +79,7 @@ export default async function Page({ params: paramsPromise }: Args) {
         <>
           <PayloadRedirects disableNotFound url={url} />
           {draft && <LivePreviewListener />}
-          <RenderHero {...hero} />
+          <RenderHero {...hero} user={userObject} />
           <RenderBlocks
             blocks={layout}
             user={userObject}

@@ -224,6 +224,27 @@ export interface Page {
     } | null;
     links?:
       | {
+          linkVisibility?: {
+            /**
+             * Choose who can see this button
+             */
+            visibilityType?: ('everyone' | 'loggedIn' | 'notLoggedIn' | 'active' | 'admin' | 'specificGroups') | null;
+            /**
+             * Select which groups and/or subgroups can see this button
+             */
+            allowedGroups?:
+              | (
+                  | {
+                      relationTo: 'groups';
+                      value: string | Group;
+                    }
+                  | {
+                      relationTo: 'group-categories';
+                      value: string | GroupCategory;
+                    }
+                )[]
+              | null;
+          };
           link: {
             type?: ('reference' | 'custom') | null;
             newTab?: boolean | null;
@@ -357,50 +378,20 @@ export interface Page {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "posts".
+ * via the `definition` "groups".
  */
-export interface Post {
+export interface Group {
   id: string;
   title: string;
-  heroImage?: (string | null) | Media;
-  content: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  };
-  relatedPosts?: (string | Post)[] | null;
-  categories?: (string | Category)[] | null;
-  meta?: {
-    title?: string | null;
-    /**
-     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
-     */
-    image?: (string | null) | Media;
-    description?: string | null;
-  };
-  publishedAt?: string | null;
-  authors?: (string | User)[] | null;
-  populatedAuthors?:
-    | {
-        id?: string | null;
-        name?: string | null;
-      }[]
-    | null;
+  badge?: (string | null) | Media;
+  hasSubscription?: boolean | null;
+  subscriptionPrice: number;
+  subscriptionPeriod: 'monthly' | 'yearly';
+  subscriptionForm: string | Form;
   slug?: string | null;
   slugLock?: boolean | null;
   updatedAt: string;
   createdAt: string;
-  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -494,423 +485,6 @@ export interface Media {
       filename?: string | null;
     };
   };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "categories".
- */
-export interface Category {
-  id: string;
-  title: string;
-  color?: ('mid' | 'green-dark' | 'amber' | 'coral' | 'purple' | 'deep' | 'light') | null;
-  slug?: string | null;
-  slugLock?: boolean | null;
-  parent?: (string | null) | Category;
-  breadcrumbs?:
-    | {
-        doc?: (string | null) | Category;
-        url?: string | null;
-        label?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users".
- */
-export interface User {
-  id: string;
-  name: string;
-  surname: string;
-  nationality?:
-    | (
-        | 'Portugal'
-        | 'Brasil'
-        | 'Afghanistan'
-        | 'Albania'
-        | 'Algeria'
-        | 'American Samoa'
-        | 'Andorra'
-        | 'Angola'
-        | 'Anguilla'
-        | 'Antarctica'
-        | 'Antigua and Barbuda'
-        | 'Argentina'
-        | 'Armenia'
-        | 'Aruba'
-        | 'Australia'
-        | 'Austria'
-        | 'Azerbaijan'
-        | 'Bahamas (the)'
-        | 'Bahrain'
-        | 'Bangladesh'
-        | 'Barbados'
-        | 'Belarus'
-        | 'Belgium'
-        | 'Belize'
-        | 'Benin'
-        | 'Bermuda'
-        | 'Bhutan'
-        | 'Bolivia (Plurinational State of)'
-        | 'Bonaire, Sint Eustatius and Saba'
-        | 'Bosnia and Herzegovina'
-        | 'Botswana'
-        | 'Bouvet Island'
-        | 'British Indian Ocean Territory (the)'
-        | 'Brunei Darussalam'
-        | 'Bulgaria'
-        | 'Burkina Faso'
-        | 'Burundi'
-        | 'Cabo Verde'
-        | 'Cambodia'
-        | 'Cameroon'
-        | 'Canada'
-        | 'Cayman Islands (the)'
-        | 'Central African Republic (the)'
-        | 'Chad'
-        | 'Chile'
-        | 'China'
-        | 'Christmas Island'
-        | 'Cocos (Keeling) Islands (the)'
-        | 'Colombia'
-        | 'Comoros (the)'
-        | 'Congo (the Democratic Republic of the)'
-        | 'Congo (the)'
-        | 'Cook Islands (the)'
-        | 'Costa Rica'
-        | 'Croatia'
-        | 'Cuba'
-        | 'Curaçao'
-        | 'Cyprus'
-        | 'Czechia'
-        | "Côte d'Ivoire"
-        | 'Denmark'
-        | 'Djibouti'
-        | 'Dominica'
-        | 'Dominican Republic (the)'
-        | 'Ecuador'
-        | 'Egypt'
-        | 'El Salvador'
-        | 'Equatorial Guinea'
-        | 'Eritrea'
-        | 'Estonia'
-        | 'Eswatini'
-        | 'Ethiopia'
-        | 'Falkland Islands (the) [Malvinas]'
-        | 'Faroe Islands (the)'
-        | 'Fiji'
-        | 'Finland'
-        | 'France'
-        | 'French Guiana'
-        | 'French Polynesia'
-        | 'French Southern Territories (the)'
-        | 'Gabon'
-        | 'Gambia (the)'
-        | 'Georgia'
-        | 'Germany'
-        | 'Ghana'
-        | 'Gibraltar'
-        | 'Greece'
-        | 'Greenland'
-        | 'Grenada'
-        | 'Guadeloupe'
-        | 'Guam'
-        | 'Guatemala'
-        | 'Guernsey'
-        | 'Guinea'
-        | 'Guinea-Bissau'
-        | 'Guyana'
-        | 'Haiti'
-        | 'Heard Island and McDonald Islands'
-        | 'Holy See (the)'
-        | 'Honduras'
-        | 'Hong Kong'
-        | 'Hungary'
-        | 'Iceland'
-        | 'India'
-        | 'Indonesia'
-        | 'Iran (Islamic Republic of)'
-        | 'Iraq'
-        | 'Ireland'
-        | 'Isle of Man'
-        | 'Israel'
-        | 'Italy'
-        | 'Jamaica'
-        | 'Japan'
-        | 'Jersey'
-        | 'Jordan'
-        | 'Kazakhstan'
-        | 'Kenya'
-        | 'Kiribati'
-        | "Korea (the Democratic People's Republic of)"
-        | 'Korea (the Republic of)'
-        | 'Kuwait'
-        | 'Kyrgyzstan'
-        | "Lao People's Democratic Republic (the)"
-        | 'Latvia'
-        | 'Lebanon'
-        | 'Lesotho'
-        | 'Liberia'
-        | 'Libya'
-        | 'Liechtenstein'
-        | 'Lithuania'
-        | 'Luxembourg'
-        | 'Macao'
-        | 'Madagascar'
-        | 'Malawi'
-        | 'Malaysia'
-        | 'Maldives'
-        | 'Mali'
-        | 'Malta'
-        | 'Marshall Islands (the)'
-        | 'Martinique'
-        | 'Mauritania'
-        | 'Mauritius'
-        | 'Mayotte'
-        | 'Mexico'
-        | 'Micronesia (Federated States of)'
-        | 'Moldova (the Republic of)'
-        | 'Monaco'
-        | 'Mongolia'
-        | 'Montenegro'
-        | 'Montserrat'
-        | 'Morocco'
-        | 'Mozambique'
-        | 'Myanmar'
-        | 'Namibia'
-        | 'Nauru'
-        | 'Nepal'
-        | 'Netherlands (the)'
-        | 'New Caledonia'
-        | 'New Zealand'
-        | 'Nicaragua'
-        | 'Niger (the)'
-        | 'Nigeria'
-        | 'Niue'
-        | 'Norfolk Island'
-        | 'Northern Mariana Islands (the)'
-        | 'Norway'
-        | 'Oman'
-        | 'Pakistan'
-        | 'Palau'
-        | 'Palestine, State of'
-        | 'Panama'
-        | 'Papua New Guinea'
-        | 'Paraguay'
-        | 'Peru'
-        | 'Philippines (the)'
-        | 'Pitcairn'
-        | 'Poland'
-        | 'Puerto Rico'
-        | 'Qatar'
-        | 'Republic of North Macedonia'
-        | 'Romania'
-        | 'Russian Federation (the)'
-        | 'Rwanda'
-        | 'Réunion'
-        | 'Saint Barthélemy'
-        | 'Saint Helena, Ascension and Tristan da Cunha'
-        | 'Saint Kitts and Nevis'
-        | 'Saint Lucia'
-        | 'Saint Martin (French part)'
-        | 'Saint Pierre and Miquelon'
-        | 'Saint Vincent and the Grenadines'
-        | 'Samoa'
-        | 'San Marino'
-        | 'Sao Tome and Principe'
-        | 'Saudi Arabia'
-        | 'Senegal'
-        | 'Serbia'
-        | 'Seychelles'
-        | 'Sierra Leone'
-        | 'Singapore'
-        | 'Sint Maarten (Dutch part)'
-        | 'Slovakia'
-        | 'Slovenia'
-        | 'Solomon Islands'
-        | 'Somalia'
-        | 'South Africa'
-        | 'South Georgia and the South Sandwich Islands'
-        | 'South Sudan'
-        | 'Spain'
-        | 'Sri Lanka'
-        | 'Sudan (the)'
-        | 'Suriname'
-        | 'Svalbard and Jan Mayen'
-        | 'Sweden'
-        | 'Switzerland'
-        | 'Syrian Arab Republic'
-        | 'Taiwan'
-        | 'Tajikistan'
-        | 'Tanzania, United Republic of'
-        | 'Thailand'
-        | 'Timor-Leste'
-        | 'Togo'
-        | 'Tokelau'
-        | 'Tonga'
-        | 'Trinidad and Tobago'
-        | 'Tunisia'
-        | 'Turkey'
-        | 'Turkmenistan'
-        | 'Turks and Caicos Islands (the)'
-        | 'Tuvalu'
-        | 'Uganda'
-        | 'Ukraine'
-        | 'United Arab Emirates (the)'
-        | 'United Kingdom of Great Britain and Northern Ireland (the)'
-        | 'United States Minor Outlying Islands (the)'
-        | 'United States of America (the)'
-        | 'Uruguay'
-        | 'Uzbekistan'
-        | 'Vanuatu'
-        | 'Venezuela (Bolivarian Republic of)'
-        | 'Viet Nam'
-        | 'Virgin Islands (British)'
-        | 'Virgin Islands (U.S.)'
-        | 'Wallis and Futuna'
-        | 'Western Sahara'
-        | 'Yemen'
-        | 'Zambia'
-        | 'Zimbabwe'
-        | 'Åland Islands'
-      )
-    | null;
-  phone?: string | null;
-  identity?: string | null;
-  identityFile?: (string | UserMedia)[] | null;
-  associateId?: number | null;
-  federationId?: number | null;
-  profilePicture?: (string | null) | UserMedia;
-  role?: ('admin' | 'editor' | 'default') | null;
-  nif?: string | null;
-  gender?: (string | null) | Gender;
-  groups?:
-    | (
-        | {
-            relationTo: 'groups';
-            value: string | Group;
-          }
-        | {
-            relationTo: 'group-categories';
-            value: string | GroupCategory;
-          }
-      )[]
-    | null;
-  birthDate?: string | null;
-  disability?: (string | Disability)[] | null;
-  emailNotificationsEnabled?: boolean | null;
-  wantsToBeFederado?: boolean | null;
-  emergencyContact?: string | null;
-  emergencyPhone?: string | null;
-  wantsInvoiceWithNif?: boolean | null;
-  sportInsurance?: ('none' | 'fpn' | 'fpt') | null;
-  tshirtSize?: ('XS' | 'S' | 'M' | 'L' | 'XL' | 'XXL' | 'XXXL') | null;
-  heardAboutClub?: (string | null) | AboutClub;
-  status?: ('active' | 'pendingAnalysis' | 'pendingUpdate' | 'pendingPayment' | 'expired') | null;
-  fieldsToUpdate?:
-    | (
-        | 'nationality'
-        | 'phoneNumber'
-        | 'identityCardNumber'
-        | 'identityCardFile'
-        | 'profilePicture'
-        | 'nif'
-        | 'disability'
-        | 'phoneNumber'
-        | 'gender'
-        | 'address'
-        | 'emergencyContact'
-        | 'emergencyPhone'
-        | 'tshirtSize'
-      )[]
-    | null;
-  Address?: {
-    street?: string | null;
-    number?: string | null;
-    state?: string | null;
-    zipcode?: string | null;
-  };
-  updatedAt: string;
-  createdAt: string;
-  email: string;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiration?: string | null;
-  salt?: string | null;
-  hash?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
-  sessions?:
-    | {
-        id: string;
-        createdAt?: string | null;
-        expiresAt: string;
-      }[]
-    | null;
-  password?: string | null;
-  collection: 'users';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "user-media".
- */
-export interface UserMedia {
-  id: string;
-  alt: string;
-  user: string | User;
-  prefix?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
-  sizes?: {
-    square?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-  };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "gender".
- */
-export interface Gender {
-  id: string;
-  label: string;
-  value: string;
-  hiddenId?: string | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "groups".
- */
-export interface Group {
-  id: string;
-  title: string;
-  badge?: (string | null) | Media;
-  hasSubscription?: boolean | null;
-  subscriptionPrice: number;
-  subscriptionPeriod: 'monthly' | 'yearly';
-  subscriptionForm: string | Form;
-  slug?: string | null;
-  slugLock?: boolean | null;
-  updatedAt: string;
-  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1899,6 +1473,453 @@ export interface GroupCategory {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts".
+ */
+export interface Post {
+  id: string;
+  title: string;
+  heroImage?: (string | null) | Media;
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  relatedPosts?: (string | Post)[] | null;
+  categories?: (string | Category)[] | null;
+  meta?: {
+    title?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (string | null) | Media;
+    description?: string | null;
+  };
+  publishedAt?: string | null;
+  authors?: (string | User)[] | null;
+  populatedAuthors?:
+    | {
+        id?: string | null;
+        name?: string | null;
+      }[]
+    | null;
+  slug?: string | null;
+  slugLock?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories".
+ */
+export interface Category {
+  id: string;
+  title: string;
+  color?: ('mid' | 'green-dark' | 'amber' | 'coral' | 'purple' | 'deep' | 'light') | null;
+  slug?: string | null;
+  slugLock?: boolean | null;
+  parent?: (string | null) | Category;
+  breadcrumbs?:
+    | {
+        doc?: (string | null) | Category;
+        url?: string | null;
+        label?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users".
+ */
+export interface User {
+  id: string;
+  name: string;
+  surname: string;
+  nationality?:
+    | (
+        | 'Portugal'
+        | 'Brasil'
+        | 'Afghanistan'
+        | 'Albania'
+        | 'Algeria'
+        | 'American Samoa'
+        | 'Andorra'
+        | 'Angola'
+        | 'Anguilla'
+        | 'Antarctica'
+        | 'Antigua and Barbuda'
+        | 'Argentina'
+        | 'Armenia'
+        | 'Aruba'
+        | 'Australia'
+        | 'Austria'
+        | 'Azerbaijan'
+        | 'Bahamas (the)'
+        | 'Bahrain'
+        | 'Bangladesh'
+        | 'Barbados'
+        | 'Belarus'
+        | 'Belgium'
+        | 'Belize'
+        | 'Benin'
+        | 'Bermuda'
+        | 'Bhutan'
+        | 'Bolivia (Plurinational State of)'
+        | 'Bonaire, Sint Eustatius and Saba'
+        | 'Bosnia and Herzegovina'
+        | 'Botswana'
+        | 'Bouvet Island'
+        | 'British Indian Ocean Territory (the)'
+        | 'Brunei Darussalam'
+        | 'Bulgaria'
+        | 'Burkina Faso'
+        | 'Burundi'
+        | 'Cabo Verde'
+        | 'Cambodia'
+        | 'Cameroon'
+        | 'Canada'
+        | 'Cayman Islands (the)'
+        | 'Central African Republic (the)'
+        | 'Chad'
+        | 'Chile'
+        | 'China'
+        | 'Christmas Island'
+        | 'Cocos (Keeling) Islands (the)'
+        | 'Colombia'
+        | 'Comoros (the)'
+        | 'Congo (the Democratic Republic of the)'
+        | 'Congo (the)'
+        | 'Cook Islands (the)'
+        | 'Costa Rica'
+        | 'Croatia'
+        | 'Cuba'
+        | 'Curaçao'
+        | 'Cyprus'
+        | 'Czechia'
+        | "Côte d'Ivoire"
+        | 'Denmark'
+        | 'Djibouti'
+        | 'Dominica'
+        | 'Dominican Republic (the)'
+        | 'Ecuador'
+        | 'Egypt'
+        | 'El Salvador'
+        | 'Equatorial Guinea'
+        | 'Eritrea'
+        | 'Estonia'
+        | 'Eswatini'
+        | 'Ethiopia'
+        | 'Falkland Islands (the) [Malvinas]'
+        | 'Faroe Islands (the)'
+        | 'Fiji'
+        | 'Finland'
+        | 'France'
+        | 'French Guiana'
+        | 'French Polynesia'
+        | 'French Southern Territories (the)'
+        | 'Gabon'
+        | 'Gambia (the)'
+        | 'Georgia'
+        | 'Germany'
+        | 'Ghana'
+        | 'Gibraltar'
+        | 'Greece'
+        | 'Greenland'
+        | 'Grenada'
+        | 'Guadeloupe'
+        | 'Guam'
+        | 'Guatemala'
+        | 'Guernsey'
+        | 'Guinea'
+        | 'Guinea-Bissau'
+        | 'Guyana'
+        | 'Haiti'
+        | 'Heard Island and McDonald Islands'
+        | 'Holy See (the)'
+        | 'Honduras'
+        | 'Hong Kong'
+        | 'Hungary'
+        | 'Iceland'
+        | 'India'
+        | 'Indonesia'
+        | 'Iran (Islamic Republic of)'
+        | 'Iraq'
+        | 'Ireland'
+        | 'Isle of Man'
+        | 'Israel'
+        | 'Italy'
+        | 'Jamaica'
+        | 'Japan'
+        | 'Jersey'
+        | 'Jordan'
+        | 'Kazakhstan'
+        | 'Kenya'
+        | 'Kiribati'
+        | "Korea (the Democratic People's Republic of)"
+        | 'Korea (the Republic of)'
+        | 'Kuwait'
+        | 'Kyrgyzstan'
+        | "Lao People's Democratic Republic (the)"
+        | 'Latvia'
+        | 'Lebanon'
+        | 'Lesotho'
+        | 'Liberia'
+        | 'Libya'
+        | 'Liechtenstein'
+        | 'Lithuania'
+        | 'Luxembourg'
+        | 'Macao'
+        | 'Madagascar'
+        | 'Malawi'
+        | 'Malaysia'
+        | 'Maldives'
+        | 'Mali'
+        | 'Malta'
+        | 'Marshall Islands (the)'
+        | 'Martinique'
+        | 'Mauritania'
+        | 'Mauritius'
+        | 'Mayotte'
+        | 'Mexico'
+        | 'Micronesia (Federated States of)'
+        | 'Moldova (the Republic of)'
+        | 'Monaco'
+        | 'Mongolia'
+        | 'Montenegro'
+        | 'Montserrat'
+        | 'Morocco'
+        | 'Mozambique'
+        | 'Myanmar'
+        | 'Namibia'
+        | 'Nauru'
+        | 'Nepal'
+        | 'Netherlands (the)'
+        | 'New Caledonia'
+        | 'New Zealand'
+        | 'Nicaragua'
+        | 'Niger (the)'
+        | 'Nigeria'
+        | 'Niue'
+        | 'Norfolk Island'
+        | 'Northern Mariana Islands (the)'
+        | 'Norway'
+        | 'Oman'
+        | 'Pakistan'
+        | 'Palau'
+        | 'Palestine, State of'
+        | 'Panama'
+        | 'Papua New Guinea'
+        | 'Paraguay'
+        | 'Peru'
+        | 'Philippines (the)'
+        | 'Pitcairn'
+        | 'Poland'
+        | 'Puerto Rico'
+        | 'Qatar'
+        | 'Republic of North Macedonia'
+        | 'Romania'
+        | 'Russian Federation (the)'
+        | 'Rwanda'
+        | 'Réunion'
+        | 'Saint Barthélemy'
+        | 'Saint Helena, Ascension and Tristan da Cunha'
+        | 'Saint Kitts and Nevis'
+        | 'Saint Lucia'
+        | 'Saint Martin (French part)'
+        | 'Saint Pierre and Miquelon'
+        | 'Saint Vincent and the Grenadines'
+        | 'Samoa'
+        | 'San Marino'
+        | 'Sao Tome and Principe'
+        | 'Saudi Arabia'
+        | 'Senegal'
+        | 'Serbia'
+        | 'Seychelles'
+        | 'Sierra Leone'
+        | 'Singapore'
+        | 'Sint Maarten (Dutch part)'
+        | 'Slovakia'
+        | 'Slovenia'
+        | 'Solomon Islands'
+        | 'Somalia'
+        | 'South Africa'
+        | 'South Georgia and the South Sandwich Islands'
+        | 'South Sudan'
+        | 'Spain'
+        | 'Sri Lanka'
+        | 'Sudan (the)'
+        | 'Suriname'
+        | 'Svalbard and Jan Mayen'
+        | 'Sweden'
+        | 'Switzerland'
+        | 'Syrian Arab Republic'
+        | 'Taiwan'
+        | 'Tajikistan'
+        | 'Tanzania, United Republic of'
+        | 'Thailand'
+        | 'Timor-Leste'
+        | 'Togo'
+        | 'Tokelau'
+        | 'Tonga'
+        | 'Trinidad and Tobago'
+        | 'Tunisia'
+        | 'Turkey'
+        | 'Turkmenistan'
+        | 'Turks and Caicos Islands (the)'
+        | 'Tuvalu'
+        | 'Uganda'
+        | 'Ukraine'
+        | 'United Arab Emirates (the)'
+        | 'United Kingdom of Great Britain and Northern Ireland (the)'
+        | 'United States Minor Outlying Islands (the)'
+        | 'United States of America (the)'
+        | 'Uruguay'
+        | 'Uzbekistan'
+        | 'Vanuatu'
+        | 'Venezuela (Bolivarian Republic of)'
+        | 'Viet Nam'
+        | 'Virgin Islands (British)'
+        | 'Virgin Islands (U.S.)'
+        | 'Wallis and Futuna'
+        | 'Western Sahara'
+        | 'Yemen'
+        | 'Zambia'
+        | 'Zimbabwe'
+        | 'Åland Islands'
+      )
+    | null;
+  phone?: string | null;
+  identity?: string | null;
+  identityFile?: (string | UserMedia)[] | null;
+  associateId?: number | null;
+  federationId?: number | null;
+  profilePicture?: (string | null) | UserMedia;
+  role?: ('admin' | 'editor' | 'default') | null;
+  nif?: string | null;
+  gender?: (string | null) | Gender;
+  groups?:
+    | (
+        | {
+            relationTo: 'groups';
+            value: string | Group;
+          }
+        | {
+            relationTo: 'group-categories';
+            value: string | GroupCategory;
+          }
+      )[]
+    | null;
+  birthDate?: string | null;
+  disability?: (string | Disability)[] | null;
+  emailNotificationsEnabled?: boolean | null;
+  wantsToBeFederado?: boolean | null;
+  emergencyContact?: string | null;
+  emergencyPhone?: string | null;
+  wantsInvoiceWithNif?: boolean | null;
+  sportInsurance?: ('none' | 'fpn' | 'fpt') | null;
+  tshirtSize?: ('XS' | 'S' | 'M' | 'L' | 'XL' | 'XXL' | 'XXXL') | null;
+  heardAboutClub?: (string | null) | AboutClub;
+  status?: ('active' | 'pendingAnalysis' | 'pendingUpdate' | 'pendingPayment' | 'expired') | null;
+  fieldsToUpdate?:
+    | (
+        | 'nationality'
+        | 'phoneNumber'
+        | 'identityCardNumber'
+        | 'identityCardFile'
+        | 'profilePicture'
+        | 'nif'
+        | 'disability'
+        | 'phoneNumber'
+        | 'gender'
+        | 'address'
+        | 'emergencyContact'
+        | 'emergencyPhone'
+        | 'tshirtSize'
+      )[]
+    | null;
+  Address?: {
+    street?: string | null;
+    number?: string | null;
+    state?: string | null;
+    zipcode?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
+  collection: 'users';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "user-media".
+ */
+export interface UserMedia {
+  id: string;
+  alt: string;
+  user: string | User;
+  prefix?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {
+    square?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "gender".
+ */
+export interface Gender {
+  id: string;
+  label: string;
+  value: string;
+  hiddenId?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "disability".
  */
 export interface Disability {
@@ -2123,6 +2144,29 @@ export interface ContentBlock {
           | null;
         links?:
           | {
+              linkVisibility?: {
+                /**
+                 * Choose who can see this button
+                 */
+                visibilityType?:
+                  | ('everyone' | 'loggedIn' | 'notLoggedIn' | 'active' | 'admin' | 'specificGroups')
+                  | null;
+                /**
+                 * Select which groups and/or subgroups can see this button
+                 */
+                allowedGroups?:
+                  | (
+                      | {
+                          relationTo: 'groups';
+                          value: string | Group;
+                        }
+                      | {
+                          relationTo: 'group-categories';
+                          value: string | GroupCategory;
+                        }
+                    )[]
+                  | null;
+              };
               link: {
                 type?: ('reference' | 'custom') | null;
                 newTab?: boolean | null;
@@ -2252,6 +2296,27 @@ export interface SectionWithAsideBlock {
      */
     links?:
       | {
+          linkVisibility?: {
+            /**
+             * Choose who can see this button
+             */
+            visibilityType?: ('everyone' | 'loggedIn' | 'notLoggedIn' | 'active' | 'admin' | 'specificGroups') | null;
+            /**
+             * Select which groups and/or subgroups can see this button
+             */
+            allowedGroups?:
+              | (
+                  | {
+                      relationTo: 'groups';
+                      value: string | Group;
+                    }
+                  | {
+                      relationTo: 'group-categories';
+                      value: string | GroupCategory;
+                    }
+                )[]
+              | null;
+          };
           link: {
             type?: ('reference' | 'custom') | null;
             newTab?: boolean | null;
@@ -2714,6 +2779,27 @@ export interface PaymentConfirmationBlock {
   } | null;
   links?:
     | {
+        linkVisibility?: {
+          /**
+           * Choose who can see this button
+           */
+          visibilityType?: ('everyone' | 'loggedIn' | 'notLoggedIn' | 'active' | 'admin' | 'specificGroups') | null;
+          /**
+           * Select which groups and/or subgroups can see this button
+           */
+          allowedGroups?:
+            | (
+                | {
+                    relationTo: 'groups';
+                    value: string | Group;
+                  }
+                | {
+                    relationTo: 'group-categories';
+                    value: string | GroupCategory;
+                  }
+              )[]
+            | null;
+        };
         link: {
           type?: ('reference' | 'custom') | null;
           newTab?: boolean | null;
@@ -3791,6 +3877,12 @@ export interface PagesSelect<T extends boolean = true> {
         links?:
           | T
           | {
+              linkVisibility?:
+                | T
+                | {
+                    visibilityType?: T;
+                    allowedGroups?: T;
+                  };
               link?:
                 | T
                 | {
@@ -3959,6 +4051,12 @@ export interface ContentBlockSelect<T extends boolean = true> {
         links?:
           | T
           | {
+              linkVisibility?:
+                | T
+                | {
+                    visibilityType?: T;
+                    allowedGroups?: T;
+                  };
               link?:
                 | T
                 | {
@@ -4037,6 +4135,12 @@ export interface SectionWithAsideBlockSelect<T extends boolean = true> {
         links?:
           | T
           | {
+              linkVisibility?:
+                | T
+                | {
+                    visibilityType?: T;
+                    allowedGroups?: T;
+                  };
               link?:
                 | T
                 | {
@@ -4254,6 +4358,12 @@ export interface PaymentConfirmationBlockSelect<T extends boolean = true> {
   links?:
     | T
     | {
+        linkVisibility?:
+          | T
+          | {
+              visibilityType?: T;
+              allowedGroups?: T;
+            };
         link?:
           | T
           | {
