@@ -20,7 +20,7 @@ const Aside: React.FC<{ aside: SectionWithAsideBlockProps['aside']; user?: User 
   return (
     <aside className="flex flex-col gap-4">
       {showPriceCard && (
-        <div className="bg-white rounded-2xl border border-swim-border shadow-sm overflow-hidden border-l-[6px] border-l-mid">
+        <div className="bg-white rounded-2xl border border-swim-border shadow-sm overflow-hidden">
           <div className="bg-deep px-6 py-5 text-center">
             {priceLabel && (
               <p className="text-xs font-semibold text-white/60 uppercase tracking-widest mb-1">
