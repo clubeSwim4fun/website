@@ -24,6 +24,7 @@ import { CalendarBlock } from '@/blocks/Calendar/config'
 import { SponsorsBlock } from '@/blocks/SponsorsBlock/config'
 import { TeamBlock } from '@/blocks/TeamBlock/config'
 import { SectionWithAside } from '@/blocks/SectionWithAside/config'
+import { CardBlock } from '@/blocks/CardBlock/config'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { link } from '@/fields/link'
 
@@ -109,6 +110,7 @@ export const Pages: CollectionConfig<'pages'> = {
                 CalendarBlock,
                 SponsorsBlock,
                 TeamBlock,
+                CardBlock,
               ],
               required: true,
               admin: {

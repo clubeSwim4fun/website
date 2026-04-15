@@ -295,6 +295,7 @@ export interface Page {
     | Calendar
     | SponsorsBlock
     | TeamBlock
+    | CardBlock
   )[];
   meta?: {
     title?: string | null;
@@ -2254,6 +2255,7 @@ export interface SectionWithAsideBlock {
               | BannerBlock
               | StripePaymentBlock
               | PaymentConfirmationBlock
+              | CardBlock
             )[]
           | null;
         id?: string | null;
@@ -2824,6 +2826,112 @@ export interface PaymentConfirmationBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'paymentConfirmationBlock';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CardBlock".
+ */
+export interface CardBlock {
+  blockVisibility?: {
+    /**
+     * Choose who can see this block
+     */
+    visibilityType?: ('everyone' | 'loggedIn' | 'notLoggedIn' | 'active' | 'admin' | 'specificGroups') | null;
+    /**
+     * Select which groups and/or subgroups can see this block
+     */
+    allowedGroups?:
+      | (
+          | {
+              relationTo: 'groups';
+              value: string | Group;
+            }
+          | {
+              relationTo: 'group-categories';
+              value: string | GroupCategory;
+            }
+        )[]
+      | null;
+  };
+  cardColor: 'blue' | 'green' | 'amber' | 'coral' | 'teal';
+  icon?:
+    | (
+        | 'none'
+        | 'shield'
+        | 'activity'
+        | 'star'
+        | 'users'
+        | 'heart'
+        | 'trophy'
+        | 'clock'
+        | 'calendar'
+        | 'mapPin'
+        | 'flag'
+        | 'arrow'
+        | 'cloud'
+      )
+    | null;
+  variant: 'text' | 'stats' | 'list' | 'image';
+  title: string;
+  richText?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Stats are displayed 2 per row.
+   */
+  stats?:
+    | {
+        number: string;
+        description: string;
+        id?: string | null;
+      }[]
+    | null;
+  listItems?:
+    | {
+        text: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  image?: (string | null) | Media;
+  /**
+   * Optional files shown as download buttons at the bottom of the card.
+   */
+  downloads?:
+    | {
+        file: string | Media;
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'cardBlock';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -3919,6 +4027,7 @@ export interface PagesSelect<T extends boolean = true> {
         calendarBlock?: T | CalendarSelect<T>;
         sponsorsBlock?: T | SponsorsBlockSelect<T>;
         teamBlock?: T | TeamBlockSelect<T>;
+        cardBlock?: T | CardBlockSelect<T>;
       };
   meta?:
     | T
@@ -4115,6 +4224,7 @@ export interface SectionWithAsideBlockSelect<T extends boolean = true> {
               banner?: T | BannerBlockSelect<T>;
               stripePaymentBlock?: T | StripePaymentBlockSelect<T>;
               paymentConfirmationBlock?: T | PaymentConfirmationBlockSelect<T>;
+              cardBlock?: T | CardBlockSelect<T>;
             };
         id?: T;
       };
@@ -4376,6 +4486,46 @@ export interface PaymentConfirmationBlockSelect<T extends boolean = true> {
               icon?: T;
               iconRight?: T;
             };
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CardBlock_select".
+ */
+export interface CardBlockSelect<T extends boolean = true> {
+  blockVisibility?:
+    | T
+    | {
+        visibilityType?: T;
+        allowedGroups?: T;
+      };
+  cardColor?: T;
+  icon?: T;
+  variant?: T;
+  title?: T;
+  richText?: T;
+  stats?:
+    | T
+    | {
+        number?: T;
+        description?: T;
+        id?: T;
+      };
+  listItems?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  image?: T;
+  downloads?:
+    | T
+    | {
+        file?: T;
+        label?: T;
         id?: T;
       };
   id?: T;

@@ -1,0 +1,171 @@
+import type { Block } from 'payload'
+import { ICON_OPTIONS } from '@/fields/iconOptions'
+import { richTextWithColor } from '@/fields/richTextWithColor'
+import { blockVisibilityDynamicField } from '@/fields/blockVisibilityDynamic'
+
+export const CardBlock: Block = {
+  slug: 'cardBlock',
+  interfaceName: 'CardBlock',
+  labels: {
+    singular: { en: 'Card', pt: 'Cartão' },
+    plural: { en: 'Cards', pt: 'Cartões' },
+  },
+  fields: [
+    blockVisibilityDynamicField,
+
+    // ── Header fields ──────────────────────────────────────────────
+    {
+      type: 'row',
+      fields: [
+        {
+          name: 'cardColor',
+          type: 'select',
+          label: { en: 'Card Color', pt: 'Cor do Cartão' },
+          defaultValue: 'blue',
+          required: true,
+          options: [
+            { label: { en: 'Blue', pt: 'Azul' }, value: 'blue' },
+            { label: { en: 'Green', pt: 'Verde' }, value: 'green' },
+            { label: { en: 'Amber', pt: 'Âmbar' }, value: 'amber' },
+            { label: { en: 'Coral', pt: 'Coral' }, value: 'coral' },
+            { label: { en: 'Teal', pt: 'Verde-azulado' }, value: 'teal' },
+          ],
+          admin: { width: '33%' },
+        },
+        {
+          name: 'icon',
+          type: 'select',
+          label: { en: 'Icon', pt: 'Ícone' },
+          defaultValue: 'none',
+          options: ICON_OPTIONS,
+          admin: { width: '33%' },
+        },
+        {
+          name: 'variant',
+          type: 'select',
+          label: { en: 'Variant', pt: 'Variante' },
+          defaultValue: 'text',
+          required: true,
+          options: [
+            { label: { en: 'Text (Rich Text)', pt: 'Texto (Rich Text)' }, value: 'text' },
+            { label: { en: 'Stats', pt: 'Estatísticas' }, value: 'stats' },
+            { label: { en: 'List', pt: 'Lista' }, value: 'list' },
+            { label: { en: 'Image', pt: 'Imagem' }, value: 'image' },
+          ],
+          admin: { width: '33%' },
+        },
+      ],
+    },
+    {
+      name: 'title',
+      type: 'text',
+      localized: true,
+      required: true,
+      label: { en: 'Title', pt: 'Título' },
+    },
+
+    // ── Variant: text ──────────────────────────────────────────────
+    {
+      name: 'richText',
+      type: 'richText',
+      localized: true,
+      editor: richTextWithColor,
+      label: { en: 'Content', pt: 'Conteúdo' },
+      admin: {
+        condition: (_, s) => s?.variant === 'text',
+      },
+    },
+
+    // ── Variant: stats ─────────────────────────────────────────────
+    {
+      name: 'stats',
+      type: 'array',
+      label: { en: 'Statistics', pt: 'Estatísticas' },
+      minRows: 1,
+      fields: [
+        {
+          name: 'number',
+          type: 'text',
+          localized: true,
+          required: true,
+          label: { en: 'Number / Value', pt: 'Número / Valor' },
+        },
+        {
+          name: 'description',
+          type: 'text',
+          localized: true,
+          required: true,
+          label: { en: 'Description', pt: 'Descrição' },
+        },
+      ],
+      admin: {
+        condition: (_, s) => s?.variant === 'stats',
+        description: {
+          en: 'Stats are displayed 2 per row.',
+          pt: 'As estatísticas são exibidas 2 por linha.',
+        },
+      },
+    },
+
+    // ── Variant: list ──────────────────────────────────────────────
+    {
+      name: 'listItems',
+      type: 'array',
+      label: { en: 'List Items', pt: 'Itens da Lista' },
+      minRows: 1,
+      fields: [
+        {
+          name: 'text',
+          type: 'richText',
+          localized: true,
+          editor: richTextWithColor,
+          required: true,
+          label: { en: 'Text', pt: 'Texto' },
+        },
+      ],
+      admin: {
+        condition: (_, s) => s?.variant === 'list',
+      },
+    },
+
+    // ── Variant: image ─────────────────────────────────────────────
+    {
+      name: 'image',
+      type: 'upload',
+      relationTo: 'media',
+      label: { en: 'Image', pt: 'Imagem' },
+      admin: {
+        condition: (_, s) => s?.variant === 'image',
+      },
+    },
+
+    // ── Downloads (all variants) ───────────────────────────────────
+    {
+      name: 'downloads',
+      type: 'array',
+      label: { en: 'Downloadable Files', pt: 'Ficheiros para Download' },
+      fields: [
+        {
+          name: 'file',
+          type: 'upload',
+          relationTo: 'media',
+          required: true,
+          label: { en: 'File', pt: 'Ficheiro' },
+        },
+        {
+          name: 'label',
+          type: 'text',
+          localized: true,
+          required: true,
+          label: { en: 'Label', pt: 'Rótulo' },
+        },
+      ],
+      admin: {
+        description: {
+          en: 'Optional files shown as download buttons at the bottom of the card.',
+          pt: 'Ficheiros opcionais mostrados como botões de download no fundo do cartão.',
+        },
+      },
+    },
+  ],
+}

@@ -13,6 +13,7 @@ import { TeamBlock } from '@/blocks/TeamBlock/config'
 import { Banner } from '@/blocks/Banner/config'
 import { StripePaymentBlock } from '@/blocks/StripePaymentBlock/config'
 import { PaymentConfirmationBlock } from '@/blocks/PaymentConfirmationBlock/config'
+import { CardBlock } from '@/blocks/CardBlock/config'
 
 export const SectionWithAside: Block = {
   slug: 'sectionWithAside',
@@ -100,6 +101,7 @@ export const SectionWithAside: Block = {
             Banner,
             StripePaymentBlock,
             PaymentConfirmationBlock,
+            CardBlock,
           ],
           admin: {
             initCollapsed: true,

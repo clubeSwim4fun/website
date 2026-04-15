@@ -13,6 +13,7 @@ import { TeamBlockComponent } from './TeamBlock/Component'
 import { SectionWithAsideBlock } from './SectionWithAside/Component'
 import { StripePaymentBlockComponent } from './StripePaymentBlock/Component'
 import { PaymentConfirmationBlockComponent } from './PaymentConfirmationBlock/Component'
+import { CardBlockComponent } from './CardBlock/Component'
 import { shouldShowBlock, type BlockVisibilityConfig } from '@/helpers/blockVisibilityHelper'
 
 const blockComponents = {
@@ -27,6 +28,7 @@ const blockComponents = {
   sectionWithAside: SectionWithAsideBlock,
   stripePaymentBlock: StripePaymentBlockComponent,
   paymentConfirmationBlock: PaymentConfirmationBlockComponent,
+  cardBlock: CardBlockComponent,
 }
 
 export const RenderBlocks: React.FC<{
