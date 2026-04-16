@@ -22,6 +22,10 @@ export const hero: Field = {
         { label: { en: 'Image on Left', pt: 'Imagem à Esquerda' }, value: 'imageLeft' },
         { label: { en: 'Image on Right', pt: 'Imagem à Direita' }, value: 'imageRight' },
         { label: { en: 'No Image (Centered)', pt: 'Sem Imagem (Centrado)' }, value: 'noImage' },
+        {
+          label: { en: 'Compact with Side Block', pt: 'Compacto com Bloco Lateral' },
+          value: 'compact',
+        },
       ],
     },
 
@@ -140,6 +144,125 @@ export const hero: Field = {
           pt: 'A imagem fica na base do hero, cortada no topo com cantos superiores arredondados — sem efeito no mobile.',
         },
       },
+    },
+
+    // ── Compact Hero: Bottom Badges ─────────────────────────────────
+    {
+      name: 'bottomBadges',
+      type: 'array',
+      label: { en: 'Bottom Badges', pt: 'Badges Inferiores' },
+      maxRows: 6,
+      admin: {
+        initCollapsed: true,
+        condition: (_, { type } = {}) => type === 'compact',
+        description: {
+          en: 'Badges displayed at the bottom of the compact hero',
+          pt: 'Badges exibidos na parte inferior do hero compacto',
+        },
+      },
+      fields: [
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'text',
+              type: 'text',
+              localized: true,
+              required: true,
+              label: { en: 'Text', pt: 'Texto' },
+              admin: { width: '60%' },
+            },
+            {
+              name: 'icon',
+              type: 'select',
+              label: { en: 'Icon', pt: 'Ícone' },
+              admin: { width: '40%' },
+              options: [
+                { label: { en: 'Trophy', pt: 'Troféu' }, value: 'trophy' },
+                { label: { en: 'Location', pt: 'Localização' }, value: 'location' },
+                { label: { en: 'Euro', pt: 'Euro' }, value: 'euro' },
+                { label: { en: 'Calendar', pt: 'Calendário' }, value: 'calendar' },
+                { label: { en: 'Users', pt: 'Utilizadores' }, value: 'users' },
+                { label: { en: 'Star', pt: 'Estrela' }, value: 'star' },
+                { label: { en: 'Check', pt: 'Verificar' }, value: 'check' },
+                { label: { en: 'Clock', pt: 'Relógio' }, value: 'clock' },
+                { label: { en: 'Heart', pt: 'Coração' }, value: 'heart' },
+                { label: { en: 'Shield', pt: 'Escudo' }, value: 'shield' },
+                { label: { en: 'Waves', pt: 'Ondas' }, value: 'waves' },
+                { label: { en: 'Swimming', pt: 'Natação' }, value: 'swimming' },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+
+    // ── Compact Hero: Side Block ────────────────────────────────────
+    {
+      name: 'sideBlock',
+      type: 'group',
+      label: { en: 'Side Block', pt: 'Bloco Lateral' },
+      admin: {
+        condition: (_, { type } = {}) => type === 'compact',
+        description: {
+          en: 'Content block displayed on the right side of the compact hero',
+          pt: 'Bloco de conteúdo exibido no lado direito do hero compacto',
+        },
+      },
+      fields: [
+        {
+          name: 'title',
+          type: 'text',
+          localized: true,
+          label: { en: 'Title', pt: 'Título' },
+        },
+        {
+          name: 'price',
+          type: 'text',
+          label: { en: 'Price', pt: 'Preço' },
+          admin: {
+            description: {
+              en: 'Main price display (e.g., "€15")',
+              pt: 'Exibição do preço principal (ex: "€15")',
+            },
+          },
+        },
+        {
+          name: 'priceLabel',
+          type: 'text',
+          localized: true,
+          label: { en: 'Price Label', pt: 'Rótulo do Preço' },
+          admin: {
+            description: {
+              en: 'Label below the price (e.g., "Joia de admissão")',
+              pt: 'Rótulo abaixo do preço (ex: "Joia de admissão")',
+            },
+          },
+        },
+        {
+          name: 'secondaryPrice',
+          type: 'text',
+          label: { en: 'Secondary Price', pt: 'Preço Secundário' },
+          admin: {
+            description: {
+              en: 'Secondary price display (e.g., "€3/mês")',
+              pt: 'Exibição do preço secundário (ex: "€3/mês")',
+            },
+          },
+        },
+        {
+          name: 'secondaryPriceLabel',
+          type: 'text',
+          localized: true,
+          label: { en: 'Secondary Price Label', pt: 'Rótulo do Preço Secundário' },
+          admin: {
+            description: {
+              en: 'Label for secondary price (e.g., "quota mensal")',
+              pt: 'Rótulo para o preço secundário (ex: "quota mensal")',
+            },
+          },
+        },
+      ],
     },
   ],
 }

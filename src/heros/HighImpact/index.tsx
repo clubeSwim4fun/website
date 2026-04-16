@@ -7,6 +7,7 @@ import RichText from '@/components/RichText/HeroRichText'
 import { CtaButton } from '@/components/CtaButton'
 import { cn } from '@/utilities/ui'
 import { shouldShowBlock } from '@/helpers/blockVisibilityHelper'
+import { HeroIcon, type HeroIconType } from '@/components/Icons/HeroIcons'
 
 // ── Cross-hatch background SVG (inline, matches design) ─────────────────────
 const CrossPattern = () => (
@@ -121,10 +122,121 @@ const HeroContent: React.FC<{ hero: Page['hero']; centered?: boolean; user?: Use
   )
 }
 
+// ── Compact Hero Content ─────────────────────────────────────────────────────
+const CompactHeroContent: React.FC<{ hero: Page['hero']; user?: User }> = ({ hero, user }) => {
+  const { badge, richText, links, bottomBadges, sideBlock } = hero
+  const visibleLinks = (links ?? []).filter((item) =>
+    shouldShowBlock((item as any).linkVisibility, user),
+  )
+
+  return (
+    <section className="relative overflow-hidden bg-gradient-to-br from-deep to-mid">
+      <CrossPattern />
+
+      <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-8 py-12 md:py-16">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 items-start">
+          {/* Main Content */}
+          <div className="lg:col-span-2">
+            {/* Badge */}
+            {badge && (
+              <div className="animate-fade-up-1 inline-flex items-center gap-2 mb-6 bg-white/12 border border-white/20 rounded-full px-3.5 py-1.5">
+                <span className="w-[7px] h-[7px] rounded-full bg-green flex-shrink-0" />
+                <span className="text-[11px] font-bold text-white/90 uppercase tracking-[0.5px]">
+                  {badge}
+                </span>
+              </div>
+            )}
+
+            {/* Rich text — title + description */}
+            {richText && (
+              <div className="animate-fade-up-2 hero-richtext mb-8">
+                <RichText
+                  data={richText}
+                  enableGutter={false}
+                  enableProse={false}
+                  className="hero-richtext-inner"
+                />
+              </div>
+            )}
+
+            {/* CTAs */}
+            {Array.isArray(links) && visibleLinks.length > 0 && (
+              <div className="animate-fade-up-3 flex flex-wrap gap-3 mb-8">
+                {visibleLinks.map((item, i) => (
+                  <HeroButton key={i} item={item} />
+                ))}
+              </div>
+            )}
+
+            {/* Bottom Badges */}
+            {Array.isArray(bottomBadges) && bottomBadges.length > 0 && (
+              <div className="animate-fade-up-4 flex flex-wrap gap-3">
+                {bottomBadges.map((badge, i) => (
+                  <div
+                    key={i}
+                    className="inline-flex items-center gap-2 bg-white/10 border border-white/15 rounded-full px-4 py-2"
+                  >
+                    {badge.icon && (
+                      <HeroIcon type={badge.icon as HeroIconType} className="text-sm" />
+                    )}
+                    <span className="text-sm font-medium text-white/90">{badge.text}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Side Block */}
+          {sideBlock && (
+            <div className="animate-fade-up-3 lg:col-span-1">
+              <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 text-center">
+                {sideBlock.title && (
+                  <div className="text-sm font-medium text-white/70 mb-2 uppercase tracking-wide">
+                    {sideBlock.title}
+                  </div>
+                )}
+
+                {sideBlock.price && (
+                  <div className="mb-4">
+                    <div className="text-4xl md:text-5xl font-syne font-extrabold text-white leading-none">
+                      {sideBlock.price}
+                    </div>
+                    {sideBlock.priceLabel && (
+                      <div className="text-sm text-white/60 mt-1">{sideBlock.priceLabel}</div>
+                    )}
+                  </div>
+                )}
+
+                {sideBlock.secondaryPrice && (
+                  <div className="border-t border-white/15 pt-4">
+                    <div className="text-2xl font-syne font-bold text-white/90">
+                      {sideBlock.secondaryPrice}
+                    </div>
+                    {sideBlock.secondaryPriceLabel && (
+                      <div className="text-xs text-white/60 mt-1">
+                        {sideBlock.secondaryPriceLabel}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  )
+}
+
 // ── Main Hero ─────────────────────────────────────────────────────────────────
 export const HighImpactHero: React.FC<Page['hero'] & { user?: User }> = (hero) => {
   const { type, media, floatingImage, user } = hero as Page['hero'] & { user?: User }
   const hasImage = (type === 'imageLeft' || type === 'imageRight') && media
+
+  // Compact hero with side block
+  if (type === 'compact') {
+    return <CompactHeroContent hero={hero} user={user} />
+  }
 
   // No image — full-width centered
   if (type === 'noImage' || !hasImage) {

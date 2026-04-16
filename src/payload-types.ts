@@ -199,7 +199,7 @@ export interface Page {
   id: string;
   title: string;
   hero: {
-    type: 'none' | 'imageLeft' | 'imageRight' | 'noImage';
+    type: 'none' | 'imageLeft' | 'imageRight' | 'noImage' | 'compact';
     /**
      * Small pill shown above the title (e.g. "Clube de Natação")
      */
@@ -284,6 +284,53 @@ export interface Page {
      * Image sits at the bottom of the hero, cropped at the top with rounded top corners — no effect on mobile.
      */
     floatingImage?: boolean | null;
+    /**
+     * Badges displayed at the bottom of the compact hero
+     */
+    bottomBadges?:
+      | {
+          text: string;
+          icon?:
+            | (
+                | 'trophy'
+                | 'location'
+                | 'euro'
+                | 'calendar'
+                | 'users'
+                | 'star'
+                | 'check'
+                | 'clock'
+                | 'heart'
+                | 'shield'
+                | 'waves'
+                | 'swimming'
+              )
+            | null;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Content block displayed on the right side of the compact hero
+     */
+    sideBlock?: {
+      title?: string | null;
+      /**
+       * Main price display (e.g., "€15")
+       */
+      price?: string | null;
+      /**
+       * Label below the price (e.g., "Joia de admissão")
+       */
+      priceLabel?: string | null;
+      /**
+       * Secondary price display (e.g., "€3/mês")
+       */
+      secondaryPrice?: string | null;
+      /**
+       * Label for secondary price (e.g., "quota mensal")
+       */
+      secondaryPriceLabel?: string | null;
+    };
   };
   layout: (
     | CallToActionBlock
@@ -4065,6 +4112,22 @@ export interface PagesSelect<T extends boolean = true> {
             };
         media?: T;
         floatingImage?: T;
+        bottomBadges?:
+          | T
+          | {
+              text?: T;
+              icon?: T;
+              id?: T;
+            };
+        sideBlock?:
+          | T
+          | {
+              title?: T;
+              price?: T;
+              priceLabel?: T;
+              secondaryPrice?: T;
+              secondaryPriceLabel?: T;
+            };
       };
   layout?:
     | T

@@ -123,7 +123,7 @@ export const RenderBlocks: React.FC<{
                     </svg>
                   )}
                   <div
-                    className={`relative z-10 ${isFill || isBrand ? 'py-16' : 'my-16'} ${noHero && index === 0 ? '!pt-0 !mt-0' : ''}`}
+                    className={`relative z-10 ${isFill || isBrand ? 'py-16' : 'my-16'} ${noHero && index === 0 ? '!pt-0 !mt-0' : ''} ${!noHero && index === 0 ? '!mt-0' : ''}`}
                   >
                     {/* @ts-expect-error Block components accept user prop */}
                     <Block {...block} user={user} />
