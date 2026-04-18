@@ -1,5 +1,6 @@
 ---
-inclusion: always
+inclusion: fileMatch
+fileMatchPattern: 'src/helpers/invoiceHelper.ts,src/actions/invoice.ts,src/actions/{subscription,pool-subscription,group-subscription,order,form-payment}.ts,src/app/(payload)/api/stripe/webhook/**'
 ---
 
 # Invoicing — InvoiceXpress

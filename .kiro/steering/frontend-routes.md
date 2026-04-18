@@ -1,5 +1,6 @@
 ---
-inclusion: always
+inclusion: fileMatch
+fileMatchPattern: 'src/app/(frontend)/**,src/components/**,src/blocks/**,src/middleware.ts'
 ---
 
 # Frontend Routes

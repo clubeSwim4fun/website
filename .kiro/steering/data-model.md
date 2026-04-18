@@ -1,5 +1,6 @@
 ---
-inclusion: always
+inclusion: fileMatch
+fileMatchPattern: 'src/collections/**,src/payload.config.ts,src/payload-types.ts,src/GeneralConfigs/**,src/Header/**,src/Footer/**'
 ---
 
 # Data Model

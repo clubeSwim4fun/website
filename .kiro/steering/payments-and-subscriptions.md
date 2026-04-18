@@ -1,5 +1,6 @@
 ---
-inclusion: always
+inclusion: fileMatch
+fileMatchPattern: 'src/actions/{subscription,pool-subscription,group-subscription,order,form-payment}.ts,src/components/StripePayment/**,src/app/(frontend)/[locale]/(profileUser)/subscription/**,src/app/(frontend)/[locale]/group-subscription/**,src/app/(frontend)/[locale]/payment/**,src/app/(payload)/api/stripe/**'
 ---
 
 # Payments & Subscriptions

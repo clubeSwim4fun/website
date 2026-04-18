@@ -1,5 +1,6 @@
 ---
-inclusion: always
+inclusion: fileMatch
+fileMatchPattern: 'src/access/**,src/middleware.ts,src/utilities/getMeUser.ts,src/helpers/userHelper.ts,src/actions/{login,logout,createUser}.ts,src/collections/**'
 ---
 
 # Authentication & Access Control

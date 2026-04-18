@@ -1,65 +1,87 @@
 import type { Metadata } from 'next/types'
-
-import { CollectionArchive } from '@/components/CollectionArchive'
-import { PageRange } from '@/components/PageRange'
-import { Pagination } from '@/components/Pagination'
 import configPromise from '@payload-config'
 import { getPayload, TypedLocale } from 'payload'
 import React from 'react'
 import PageClient from './page.client'
 import { getTranslations } from 'next-intl/server'
-import { GeneralConfig } from '@/payload-types'
+import type { Post, GeneralConfig } from '@/payload-types'
 import { getCachedGlobal } from '@/utilities/getGlobals'
+import { BlogPageContent } from './BlogPageContent'
 
 export const dynamic = 'force-static'
 export const revalidate = 600
 
-export default async function Page({ params }: { params: Promise<{ locale: TypedLocale }> }) {
+export default async function Page({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ locale: TypedLocale }>
+  searchParams: Promise<{ category?: string }>
+}) {
   const { locale } = await params
-  const t = await getTranslations({ locale, namespace: 'Posts' })
+  const { category } = await searchParams
   const payload = await getPayload({ config: configPromise })
 
+  // Fetch posts with proper depth for relationships
   const posts = await payload.find({
     collection: 'posts',
-    depth: 1,
-    limit: 12,
+    depth: 2,
+    limit: 10,
     locale,
     overrideAccess: false,
+    where: category
+      ? {
+          categories: {
+            in: [category],
+          },
+        }
+      : undefined,
+    sort: '-publishedAt',
+  })
+
+  // Fetch categories for filter
+  const categories = await payload.find({
+    collection: 'categories',
+    depth: 0,
+    limit: 100,
+    locale,
+    overrideAccess: false,
+    sort: 'title',
+  })
+
+  // Get recent posts for sidebar (excluding featured)
+  const recentPosts = await payload.find({
+    collection: 'posts',
+    depth: 1,
+    limit: 5,
+    locale,
+    overrideAccess: false,
+    sort: '-publishedAt',
     select: {
       title: true,
       slug: true,
-      categories: true,
       meta: true,
+      publishedAt: true,
     },
   })
 
+  // Get featured post (most recent)
+  const featuredPost = posts.docs[0] || null
+
   return (
-    <div className=" pb-24">
+    <>
       <PageClient />
-      <div className="container mb-16">
-        <div className="prose dark:prose-invert max-w-none">
-          <h1>{t('title')}</h1>
-        </div>
-      </div>
-
-      <div className="container mb-8">
-        <PageRange
-          collection="posts"
-          currentPage={posts.page}
-          limit={12}
-          t={t}
-          totalDocs={posts.totalDocs}
-        />
-      </div>
-
-      <CollectionArchive posts={posts.docs} />
-
-      <div className="container">
-        {posts.totalPages > 1 && posts.page && (
-          <Pagination page={posts.page} totalPages={posts.totalPages} />
-        )}
-      </div>
-    </div>
+      <BlogPageContent
+        posts={posts.docs}
+        featuredPost={featuredPost}
+        categories={categories.docs}
+        recentPosts={recentPosts.docs as Post[]}
+        currentPage={posts.page || 1}
+        totalPages={posts.totalPages || 1}
+        totalPosts={posts.totalDocs || 0}
+        activeCategory={category || null}
+      />
+    </>
   )
 }
 

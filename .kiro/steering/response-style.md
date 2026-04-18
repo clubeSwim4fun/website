@@ -30,3 +30,10 @@ inclusion: always
 
 - If the answer fits in one line, use one line
 - Adapt only when the user explicitly asks for more detail
+
+## Audience
+
+- User is a FE Specialist — skip basics, assume full framework/tooling knowledge
+- Give the minimal answer that unblocks; omit what a specialist already knows
+- No step-by-step unless asked — high-level intent + code is enough
+- Details only on request

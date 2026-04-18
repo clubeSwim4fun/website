@@ -141,6 +141,35 @@ html[data-theme='light'] {
   overflow: hidden;
 }
 
+/* ── Blog-specific utilities ── */
+.border-1\.5 {
+  border-width: 1.5px;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-clamp: 3;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-clamp: 2;
+}
+
+.scrollbar-none {
+  scrollbar-width: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
 /* ── Fade-up animation (used in hero and other sections) ── */
 @keyframes fadeUp {
   from {

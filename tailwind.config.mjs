@@ -57,6 +57,22 @@ const config = {
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
       },
+      spacing: {
+        1.25: '0.3125rem', // 5px
+        1.5: '0.375rem', // 6px
+        1.75: '0.4375rem', // 7px
+        2.25: '0.5625rem', // 9px
+        2.5: '0.625rem', // 10px
+        2.75: '0.6875rem', // 11px
+        3.25: '0.8125rem', // 13px
+        3.5: '0.875rem', // 14px
+        4.5: '1.125rem', // 18px
+        5.5: '1.375rem', // 22px
+        6.5: '1.625rem', // 26px
+        9.5: '2.375rem', // 38px
+        15: '3.75rem', // 60px
+        20: '5rem', // 80px
+      },
       colors: {
         accent: {
           DEFAULT: 'hsl(var(--accent))',

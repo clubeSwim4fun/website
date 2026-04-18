@@ -1,5 +1,6 @@
 ---
-inclusion: always
+inclusion: fileMatch
+fileMatchPattern: 'src/collections/Events/**,src/collections/Tickets/**,src/helpers/eventHelper.ts,src/helpers/cartHelper.ts,src/actions/order.ts,src/components/EventDetails/**,src/blocks/Calendar/**,src/app/(frontend)/[locale]/event/**,src/app/(frontend)/[locale]/cart/**,src/app/(frontend)/[locale]/payment/**,src/app/(frontend)/[locale]/order/**,src/admin/views/EventsDashboard/**,src/admin/endpoints/dashboardEvents*'
 ---
 
 # Events
