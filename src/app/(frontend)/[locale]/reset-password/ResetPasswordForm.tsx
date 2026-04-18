@@ -3,11 +3,11 @@
 import React, { FormEvent, ReactElement, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
-import { resetPassword, ResetPasswordResponse } from '@/actions/login'
+import { resetPassword, ResetPasswordResponse, setNewPassword } from '@/actions/login'
 import { Input } from '@/components/ui/input'
 import { LoaderCircle } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Password } from '@/blocks/Form/Password'
 import { useForm } from 'react-hook-form'
 
@@ -18,7 +18,9 @@ export default function ResetPasswordForm(): ReactElement {
   const [showForm, setShowForm] = useState(true)
   const t = useTranslations()
   const searchParams = useSearchParams()
+  const router = useRouter()
   const token = searchParams.get('token')
+  const mustReset = searchParams.get('mustReset') === 'true'
 
   type RequestTokenFormData = { email?: string; password?: string }
 
@@ -38,6 +40,10 @@ export default function ResetPasswordForm(): ReactElement {
 
     if (data.email) {
       result = await resetPassword({ email: data.email })
+    } else if (mustReset && data.password) {
+      const r = await setNewPassword({ password: data.password })
+      result = { success: r.success, message: r.message }
+      if (r.success) router.push('/')
     } else {
       result = await resetPassword({ token: token || '', password: data.password || '' })
     }
@@ -118,7 +124,7 @@ export default function ResetPasswordForm(): ReactElement {
       <div className="text-3xl">{t('Sign-in.resetPassword')}</div>
       {showForm && (
         <div className="w-full mx-auto sm:max-w-lg">
-          {token ? resetPasswordForm() : requestTokenForm()}
+          {token || mustReset ? resetPasswordForm() : requestTokenForm()}
         </div>
       )}
       {message && <div className="text-green-500 mt-4">{message}</div>}

@@ -3,6 +3,7 @@
 import React, { FormEvent, ReactElement, useState } from 'react'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { login, LoginResponse } from '@/actions/login'
 import { Input } from '@/components/ui/input'
@@ -20,6 +21,7 @@ export default function LoginForm({
   const [isPending, setIsPending] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const searchParams = useSearchParams()
+  const router = useRouter()
   const t = useTranslations('Sign-in')
   const registerUrl =
     typeof loginSettings?.registerUrl === 'string'
@@ -38,9 +40,10 @@ export default function LoginForm({
     const result: LoginResponse = await login({ email, password })
 
     if (!result.success) {
-      // Display the error message
       setError(result.error || 'Login failed')
       setIsPending(false)
+    } else if (result.mustResetPassword) {
+      router.push('reset-password?mustReset=true')
     }
   }
 

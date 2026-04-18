@@ -684,6 +684,7 @@ export interface Checkbox {
         | 'sportInsurance'
         | 'tshirtSize'
         | 'heardAboutClub'
+        | 'mustResetPassword'
         | 'status'
         | 'validated'
         | 'fieldsToUpdate'
@@ -719,6 +720,7 @@ export interface Checkbox {
         | 'sportInsurance'
         | 'tshirtSize'
         | 'heardAboutClub'
+        | 'mustResetPassword'
         | 'status'
         | 'validated'
         | 'fieldsToUpdate'
@@ -769,6 +771,7 @@ export interface Country {
         | 'sportInsurance'
         | 'tshirtSize'
         | 'heardAboutClub'
+        | 'mustResetPassword'
         | 'status'
         | 'validated'
         | 'fieldsToUpdate'
@@ -804,6 +807,7 @@ export interface Country {
         | 'sportInsurance'
         | 'tshirtSize'
         | 'heardAboutClub'
+        | 'mustResetPassword'
         | 'status'
         | 'validated'
         | 'fieldsToUpdate'
@@ -858,6 +862,7 @@ export interface Email {
         | 'sportInsurance'
         | 'tshirtSize'
         | 'heardAboutClub'
+        | 'mustResetPassword'
         | 'status'
         | 'validated'
         | 'fieldsToUpdate'
@@ -909,6 +914,7 @@ export interface Number {
         | 'sportInsurance'
         | 'tshirtSize'
         | 'heardAboutClub'
+        | 'mustResetPassword'
         | 'status'
         | 'validated'
         | 'fieldsToUpdate'
@@ -944,6 +950,7 @@ export interface Number {
         | 'sportInsurance'
         | 'tshirtSize'
         | 'heardAboutClub'
+        | 'mustResetPassword'
         | 'status'
         | 'validated'
         | 'fieldsToUpdate'
@@ -1004,6 +1011,7 @@ export interface Select {
         | 'sportInsurance'
         | 'tshirtSize'
         | 'heardAboutClub'
+        | 'mustResetPassword'
         | 'status'
         | 'validated'
         | 'fieldsToUpdate'
@@ -1039,6 +1047,7 @@ export interface Select {
         | 'sportInsurance'
         | 'tshirtSize'
         | 'heardAboutClub'
+        | 'mustResetPassword'
         | 'status'
         | 'validated'
         | 'fieldsToUpdate'
@@ -1090,6 +1099,7 @@ export interface Text {
         | 'sportInsurance'
         | 'tshirtSize'
         | 'heardAboutClub'
+        | 'mustResetPassword'
         | 'status'
         | 'validated'
         | 'fieldsToUpdate'
@@ -1125,6 +1135,7 @@ export interface Text {
         | 'sportInsurance'
         | 'tshirtSize'
         | 'heardAboutClub'
+        | 'mustResetPassword'
         | 'status'
         | 'validated'
         | 'fieldsToUpdate'
@@ -1190,6 +1201,7 @@ export interface Phone {
         | 'sportInsurance'
         | 'tshirtSize'
         | 'heardAboutClub'
+        | 'mustResetPassword'
         | 'status'
         | 'validated'
         | 'fieldsToUpdate'
@@ -1225,6 +1237,7 @@ export interface Phone {
         | 'sportInsurance'
         | 'tshirtSize'
         | 'heardAboutClub'
+        | 'mustResetPassword'
         | 'status'
         | 'validated'
         | 'fieldsToUpdate'
@@ -1276,6 +1289,7 @@ export interface MediaUpload {
         | 'sportInsurance'
         | 'tshirtSize'
         | 'heardAboutClub'
+        | 'mustResetPassword'
         | 'status'
         | 'validated'
         | 'fieldsToUpdate'
@@ -1321,6 +1335,7 @@ export interface Address {
         | 'sportInsurance'
         | 'tshirtSize'
         | 'heardAboutClub'
+        | 'mustResetPassword'
         | 'status'
         | 'validated'
         | 'fieldsToUpdate'
@@ -1356,6 +1371,7 @@ export interface Address {
         | 'sportInsurance'
         | 'tshirtSize'
         | 'heardAboutClub'
+        | 'mustResetPassword'
         | 'status'
         | 'validated'
         | 'fieldsToUpdate'
@@ -1420,6 +1436,7 @@ export interface DateField {
         | 'sportInsurance'
         | 'tshirtSize'
         | 'heardAboutClub'
+        | 'mustResetPassword'
         | 'status'
         | 'validated'
         | 'fieldsToUpdate'
@@ -1455,6 +1472,7 @@ export interface DateField {
         | 'sportInsurance'
         | 'tshirtSize'
         | 'heardAboutClub'
+        | 'mustResetPassword'
         | 'status'
         | 'validated'
         | 'fieldsToUpdate'
@@ -1880,6 +1898,7 @@ export interface User {
   sportInsurance?: ('none' | 'fpn' | 'fpt') | null;
   tshirtSize?: ('XS' | 'S' | 'M' | 'L' | 'XL' | 'XXL' | 'XXXL') | null;
   heardAboutClub?: (string | null) | AboutClub;
+  mustResetPassword?: boolean | null;
   status?: ('active' | 'pendingAnalysis' | 'pendingUpdate' | 'pendingPayment' | 'expired') | null;
   fieldsToUpdate?:
     | (
@@ -4839,6 +4858,7 @@ export interface UsersSelect<T extends boolean = true> {
   sportInsurance?: T;
   tshirtSize?: T;
   heardAboutClub?: T;
+  mustResetPassword?: T;
   status?: T;
   fieldsToUpdate?: T;
   Address?:

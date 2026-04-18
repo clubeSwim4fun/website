@@ -19,6 +19,7 @@ interface LoginParams {
 export interface LoginResponse {
   success: boolean
   user?: User
+  mustResetPassword?: boolean
   error?: string
 }
 
@@ -47,7 +48,7 @@ export async function login({ email, password }: LoginParams): Promise<LoginResp
 
       await verifyUserStatus(result.user)
 
-      return { success: true }
+      return { success: true, mustResetPassword: result.user?.mustResetPassword === true }
     } else {
       return { success: false, error: t('Common.loginError') }
     }
@@ -136,5 +137,34 @@ export async function resetPassword({
       message: t('Sign-in.resetPasswordError'),
       error: error as APIError,
     }
+  }
+}
+
+export async function setNewPassword({
+  password,
+}: {
+  password: string
+}): Promise<{ success: boolean; message: string }> {
+  const payload = await getPayload({ config })
+  const t = await getTranslations()
+
+  try {
+    const cookieStore = await cookies()
+    const token = cookieStore.get('payload-token')?.value
+    if (!token) return { success: false, message: t('Common.loginError') }
+
+    const { user } = await payload.auth({ headers: new Headers({ Authorization: `JWT ${token}` }) })
+    if (!user) return { success: false, message: t('Common.loginError') }
+
+    await payload.update({
+      collection: 'users',
+      id: user.id,
+      data: { password, mustResetPassword: false } as any,
+      overrideAccess: true,
+    })
+
+    return { success: true, message: 'Ok' }
+  } catch {
+    return { success: false, message: t('Common.unexpectedError') }
   }
 }

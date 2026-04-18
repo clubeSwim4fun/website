@@ -370,6 +370,18 @@ export const Users: CollectionConfig = {
       },
     },
     {
+      name: 'mustResetPassword',
+      label: {
+        en: 'Must reset password on next login',
+        pt: 'Deve redefinir a senha no próximo login',
+      },
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
       name: 'status',
       label: {
         en: 'Account status',
