@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Script from 'next/script'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages, setRequestLocale } from 'next-intl/server'
 
@@ -70,6 +71,26 @@ export default async function RootLayout({
         <link href="/favicon.ico" rel="icon" sizes="32x32" type="image/png" />
         <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
         <link href="/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180" />
+        <Script
+          src="https://www.termsfeed.com/public/cookie-consent/4.2.0/cookie-consent.js"
+          strategy="afterInteractive"
+          charSet="UTF-8"
+        />
+        <Script id="cookie-consent-init" strategy="afterInteractive" charSet="UTF-8">
+          {`document.addEventListener('DOMContentLoaded', function () {
+            cookieconsent.run({
+              "notice_banner_type": "headline",
+              "consent_type": "express",
+              "palette": "light",
+              "language": "pt",
+              "page_load_consent_levels": ["strictly-necessary"],
+              "notice_banner_reject_button_hide": false,
+              "preferences_center_close_button_hide": false,
+              "page_refresh_confirmation_buttons": false,
+              "website_name": "Clube Swim4Fun"
+            });
+          });`}
+        </Script>
       </head>
       <body suppressHydrationWarning>
         <NextIntlClientProvider messages={messages} locale={locale} timeZone="Europe/Lisbon">
