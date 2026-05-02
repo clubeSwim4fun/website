@@ -658,5 +658,104 @@
   "TeamBlock": {
     "readMore": "Read more",
     "readLess": "Read less"
+  },
+  "Benefits": {
+    "hero": {
+      "eyebrow": "Members Area",
+      "title": "Member Benefits",
+      "description": "Training, discounts on nutrition, equipment and races — exclusive to Swim4fun Club members.",
+      "statPartners": "Partner brands",
+      "statDiscount": "Maximum discount",
+      "statSwimGP": "SwimGP 2026"
+    },
+    "infoBox": {
+      "text": "These benefits are exclusive to Swim4fun Club members. To use the discounts, identify yourself with the code shown for each partner.",
+      "warning": "Do not share codes outside the club."
+    },
+    "pool": {
+      "memberBadge": "Members only",
+      "sectionLabel": "Training",
+      "title": "Jamor Pool",
+      "description": "Access to the Jamor Swimming Complex with weekly training sessions led by a certified coach.",
+      "cardTitle": "Jamor Swimming Complex",
+      "cardDesc": "6 weekly sessions with a coach for all levels. From learning to swim to preparing for national competitions.",
+      "schedule": "6 weekly sessions · with coach",
+      "location": "Estádio Nacional do Jamor, Cruz Quebrada",
+      "cost": "Included in membership fee",
+      "cta": "View schedule and sign up",
+      "imageAlt": "Jamor Pool"
+    },
+    "nutrition": {
+      "sectionLabel": "Sports Nutrition",
+      "title": "Nutrition partners",
+      "description": "Exclusive discounts on sports nutrition brands with your member code.",
+      "226rs": {
+        "name": "226RS",
+        "description": "Specialised endurance sports nutrition. Supplements and products for swimming and triathlon."
+      },
+      "zumub": {
+        "name": "ZUMUB",
+        "description": "High-quality sports supplements and nutrition. Wide catalogue of proteins, vitamins and energy products."
+      },
+      "perfectPeaks": {
+        "name": "Perfect Peaks",
+        "description": "Craft beers and artisan drinks to celebrate every achievement. Available at perfectpeaksbrews.com/pt."
+      }
+    },
+    "equipment": {
+      "sectionLabel": "Equipment",
+      "title": "Sports gear",
+      "description": "Discounts on swimming and triathlon equipment — wetsuits, goggles, accessories and more.",
+      "z3rod": {
+        "name": "Z3ROD",
+        "description": "High-performance neoprene wetsuits and technical equipment. Direct purchases through Bibiana Farias via the z3r0d.com catalogue.",
+        "disclaimer": "Discount not valid on items already on sale."
+      },
+      "aquaInstinct": {
+        "name": "AquaInstinct",
+        "description": "Specialist equipment for open water swimming. Wetsuits, goggles, safety buoys and accessories."
+      },
+      "buddySwim": {
+        "name": "BuddySwim",
+        "description": "Premium swimming goggles, training suits and accessories for pool and open water."
+      }
+    },
+    "races": {
+      "sectionLabel": "Races",
+      "title": "Competition discounts",
+      "description": "As a club member, you get access to special discounts on races in the national calendar.",
+      "swimgp": {
+        "label": "Official partner 2026",
+        "title": "SwimGP 2026 — 5% discount on distances",
+        "description": "SwimGP is Portugal's largest open water swimming race. As a Swim4fun member, you get a special discount on entries and compete as part of the club team.",
+        "teamCodeLabel": "Team code",
+        "promoCodeLabel": "Promo code"
+      }
+    },
+    "cta": {
+      "title": "Not a member yet?",
+      "description": "Join Swim4fun Club and start enjoying all these benefits — training, discounts and a community passionate about swimming.",
+      "primaryButton": "Become a member",
+      "secondaryButton": "Learn about the club"
+    },
+    "copied": "Copied!",
+    "copyAriaLabel": "Copy code",
+    "codeLabel": "Code",
+    "viaLabel": "Via",
+    "visitLabel": "Visit",
+    "anchorNavAriaLabel": "Section navigation",
+    "bottomNavAriaLabel": "Main navigation",
+    "nav": {
+      "home": "Home",
+      "calendar": "Calendar",
+      "benefits": "Benefits",
+      "account": "Account"
+    },
+    "anchor": {
+      "pool": "Pool",
+      "nutrition": "Nutrition",
+      "equipment": "Equipment",
+      "races": "Races"
+    }
   }
 }

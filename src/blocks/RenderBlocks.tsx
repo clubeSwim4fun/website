@@ -14,6 +14,7 @@ import { SectionWithAsideBlock } from './SectionWithAside/Component'
 import { StripePaymentBlockComponent } from './StripePaymentBlock/Component'
 import { PaymentConfirmationBlockComponent } from './PaymentConfirmationBlock/Component'
 import { CardBlockComponent } from './CardBlock/Component'
+import { BenefitsBlockComponent } from './BenefitsBlock/Component'
 import { shouldShowBlock, type BlockVisibilityConfig } from '@/helpers/blockVisibilityHelper'
 
 const blockComponents = {
@@ -29,6 +30,7 @@ const blockComponents = {
   stripePaymentBlock: StripePaymentBlockComponent,
   paymentConfirmationBlock: PaymentConfirmationBlockComponent,
   cardBlock: CardBlockComponent,
+  benefitsBlock: BenefitsBlockComponent,
 }
 
 export const RenderBlocks: React.FC<{

@@ -343,6 +343,7 @@ export interface Page {
     | SponsorsBlock
     | TeamBlock
     | CardBlock
+    | BenefitsBlock
   )[];
   meta?: {
     title?: string | null;
@@ -3052,6 +3053,108 @@ export interface CardBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "BenefitsBlock".
+ */
+export interface BenefitsBlock {
+  hero: {
+    eyebrow?: string | null;
+    title: string;
+    description?: string | null;
+    stats?:
+      | {
+          value: string;
+          label: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  infoBox?: {
+    content?: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+  };
+  pool?: {
+    sectionLabel?: string | null;
+    title?: string | null;
+    description?: string | null;
+    cardTitle?: string | null;
+    cardDesc?: string | null;
+    schedule?: string | null;
+    location?: string | null;
+    cost?: string | null;
+    cta?: string | null;
+    image?: (string | null) | Media;
+  };
+  nutrition?: {
+    sectionLabel?: string | null;
+    title?: string | null;
+    description?: string | null;
+    partners?:
+      | {
+          name: string;
+          discount: string;
+          color: 'blue' | 'green' | 'amber' | 'coral' | 'purple';
+          icon?:
+            | ('circle' | 'nutrition' | 'drop' | 'heart' | 'waves' | 'star' | 'bolt' | 'leaf' | 'shield' | 'tag')
+            | null;
+          description?: string | null;
+          code?: string | null;
+          href: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  equipment?: {
+    sectionLabel?: string | null;
+    title?: string | null;
+    description?: string | null;
+    partners?:
+      | {
+          name: string;
+          discount: string;
+          color: 'blue' | 'green' | 'amber' | 'coral' | 'purple';
+          icon?:
+            | ('circle' | 'nutrition' | 'drop' | 'heart' | 'waves' | 'star' | 'bolt' | 'leaf' | 'shield' | 'tag')
+            | null;
+          description?: string | null;
+          variant: 'code' | 'contact';
+          codeOrContact?: string | null;
+          href: string;
+          disclaimer?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  races?: {
+    sectionLabel?: string | null;
+    title?: string | null;
+    description?: string | null;
+    swimgpLabel?: string | null;
+    swimgpTitle?: string | null;
+    swimgpDescription?: string | null;
+    teamCodeLabel?: string | null;
+    teamCode?: string | null;
+    promoCodeLabel?: string | null;
+    promoCode?: string | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'benefitsBlock';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "federationHistory".
  */
 export interface FederationHistory {
@@ -4161,6 +4264,7 @@ export interface PagesSelect<T extends boolean = true> {
         sponsorsBlock?: T | SponsorsBlockSelect<T>;
         teamBlock?: T | TeamBlockSelect<T>;
         cardBlock?: T | CardBlockSelect<T>;
+        benefitsBlock?: T | BenefitsBlockSelect<T>;
       };
   meta?:
     | T
@@ -4680,6 +4784,101 @@ export interface CardBlockSelect<T extends boolean = true> {
         file?: T;
         label?: T;
         id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "BenefitsBlock_select".
+ */
+export interface BenefitsBlockSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        description?: T;
+        stats?:
+          | T
+          | {
+              value?: T;
+              label?: T;
+              id?: T;
+            };
+      };
+  infoBox?:
+    | T
+    | {
+        content?: T;
+      };
+  pool?:
+    | T
+    | {
+        sectionLabel?: T;
+        title?: T;
+        description?: T;
+        cardTitle?: T;
+        cardDesc?: T;
+        schedule?: T;
+        location?: T;
+        cost?: T;
+        cta?: T;
+        image?: T;
+      };
+  nutrition?:
+    | T
+    | {
+        sectionLabel?: T;
+        title?: T;
+        description?: T;
+        partners?:
+          | T
+          | {
+              name?: T;
+              discount?: T;
+              color?: T;
+              icon?: T;
+              description?: T;
+              code?: T;
+              href?: T;
+              id?: T;
+            };
+      };
+  equipment?:
+    | T
+    | {
+        sectionLabel?: T;
+        title?: T;
+        description?: T;
+        partners?:
+          | T
+          | {
+              name?: T;
+              discount?: T;
+              color?: T;
+              icon?: T;
+              description?: T;
+              variant?: T;
+              codeOrContact?: T;
+              href?: T;
+              disclaimer?: T;
+              id?: T;
+            };
+      };
+  races?:
+    | T
+    | {
+        sectionLabel?: T;
+        title?: T;
+        description?: T;
+        swimgpLabel?: T;
+        swimgpTitle?: T;
+        swimgpDescription?: T;
+        teamCodeLabel?: T;
+        teamCode?: T;
+        promoCodeLabel?: T;
+        promoCode?: T;
       };
   id?: T;
   blockName?: T;

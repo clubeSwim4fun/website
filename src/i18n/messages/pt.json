@@ -658,5 +658,104 @@
   "TeamBlock": {
     "readMore": "Ver mais",
     "readLess": "Ver menos"
+  },
+  "Benefits": {
+    "hero": {
+      "eyebrow": "Área de sócios",
+      "title": "Benefícios para os Sócios",
+      "description": "Treinos, descontos em nutrição, equipamentos e provas — exclusivo para membros do Clube Swim4fun.",
+      "statPartners": "Marcas parceiras",
+      "statDiscount": "Desconto máximo",
+      "statSwimGP": "SwimGP 2026"
+    },
+    "infoBox": {
+      "text": "Estes benefícios são exclusivos para sócios do Clube Swim4fun. Para usufruir dos descontos, identifique-se com o código indicado em cada parceiro.",
+      "warning": "Não partilhe os códigos fora do clube."
+    },
+    "pool": {
+      "memberBadge": "Exclusivo sócios",
+      "sectionLabel": "Treinos",
+      "title": "Piscina Jamor",
+      "description": "Acesso ao Complexo de Piscina do Jamor com sessões de treino semanais acompanhadas por treinador certificado.",
+      "cardTitle": "Complexo de Piscina do Jamor",
+      "cardDesc": "6 sessões semanais com treinador para todos os níveis. Desde a aprendizagem à preparação para provas nacionais.",
+      "schedule": "6 sessões semanais · com treinador",
+      "location": "Estádio Nacional do Jamor, Cruz Quebrada",
+      "cost": "Incluído na quota de sócio",
+      "cta": "Ver horários e inscrição",
+      "imageAlt": "Piscina Jamor"
+    },
+    "nutrition": {
+      "sectionLabel": "Nutrição Desportiva",
+      "title": "Parceiros de nutrição",
+      "description": "Descontos exclusivos em marcas de nutrição desportiva com código de sócio.",
+      "226rs": {
+        "name": "226RS",
+        "description": "Nutrição desportiva especializada para resistência. Suplementos e produtos para natação e triatlo."
+      },
+      "zumub": {
+        "name": "ZUMUB",
+        "description": "Suplementos e nutrição desportiva de alta qualidade. Amplo catálogo de proteínas, vitaminas e energéticos."
+      },
+      "perfectPeaks": {
+        "name": "Perfect Peaks",
+        "description": "Craft beers e bebidas artesanais para celebrar cada conquista. Disponível em perfectpeaksbrews.com/pt."
+      }
+    },
+    "equipment": {
+      "sectionLabel": "Equipamentos",
+      "title": "Material desportivo",
+      "description": "Descontos em equipamentos de natação e triatlo — fatos, óculos, acessórios e muito mais.",
+      "z3rod": {
+        "name": "Z3ROD",
+        "description": "Fatos de neoprene e equipamento técnico de alta performance. Compras diretas com a Bibiana Farias via catálogo z3r0d.com.",
+        "disclaimer": "Desconto não válido para equipamentos em promoção."
+      },
+      "aquaInstinct": {
+        "name": "AquaInstinct",
+        "description": "Equipamento especializado para natação em águas abertas. Fatos, óculos, bóias de segurança e acessórios."
+      },
+      "buddySwim": {
+        "name": "BuddySwim",
+        "description": "Óculos de natação premium, fatos de treino e acessórios para piscina e águas abertas."
+      }
+    },
+    "races": {
+      "sectionLabel": "Provas",
+      "title": "Descontos em competições",
+      "description": "Como sócio do clube, tens acesso a descontos especiais nas provas do calendário nacional.",
+      "swimgp": {
+        "label": "Parceiro oficial 2026",
+        "title": "SwimGP 2026 — 5% de desconto nas distâncias",
+        "description": "O SwimGP é a maior prova de natação em águas abertas de Portugal. Como sócio do Swim4fun, tens acesso a desconto especial nas inscrições e participas como parte da equipa do clube.",
+        "teamCodeLabel": "Código de equipa",
+        "promoCodeLabel": "Código promocional"
+      }
+    },
+    "cta": {
+      "title": "Ainda não é sócio?",
+      "description": "Junte-se ao Clube Swim4fun e comece a usufruir de todos estes benefícios — treinos, descontos e uma comunidade apaixonada pela natação.",
+      "primaryButton": "Quero ser sócio",
+      "secondaryButton": "Conhecer o clube"
+    },
+    "copied": "Copiado!",
+    "copyAriaLabel": "Copiar código",
+    "codeLabel": "Código",
+    "viaLabel": "Via",
+    "visitLabel": "Visitar",
+    "anchorNavAriaLabel": "Navegação por secções",
+    "bottomNavAriaLabel": "Navegação principal",
+    "nav": {
+      "home": "Início",
+      "calendar": "Calendário",
+      "benefits": "Benefícios",
+      "account": "Conta"
+    },
+    "anchor": {
+      "pool": "Piscina",
+      "nutrition": "Nutrição",
+      "equipment": "Equipamentos",
+      "races": "Provas"
+    }
   }
 }

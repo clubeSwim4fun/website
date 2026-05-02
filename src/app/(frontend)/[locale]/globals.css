@@ -331,3 +331,26 @@ html[data-theme='light'] {
 .step-enter-prev {
   animation: step-in-left 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
+
+/* ── Benefits page color palette ── */
+:root {
+  --benefits-deep: #0a4a6e;
+  --benefits-mid: #0e7ea8;
+  --benefits-light: #1a9dc8;
+  --benefits-pale: #e0f5fb;
+  --benefits-foam: #f0fafd;
+  --benefits-sand: #f8f4ef;
+  --benefits-coral: #e85d4a;
+  --benefits-coral-l: #fdf0ee;
+  --benefits-amber: #f0a020;
+  --benefits-amber-l: #fef6e4;
+  --benefits-green: #2ecc71;
+  --benefits-green-l: #e8f8f0;
+  --benefits-green-d: #1a9950;
+  --benefits-purple: #a78bfa;
+  --benefits-purple-l: #f3f0ff;
+  --benefits-ink: #1a2e3a;
+  --benefits-ink-mid: #4a6a7a;
+  --benefits-ink-light: #8aaabb;
+  --benefits-border: #d4eaf2;
+}

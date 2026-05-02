@@ -25,6 +25,7 @@ import { SponsorsBlock } from '@/blocks/SponsorsBlock/config'
 import { TeamBlock } from '@/blocks/TeamBlock/config'
 import { SectionWithAside } from '@/blocks/SectionWithAside/config'
 import { CardBlock } from '@/blocks/CardBlock/config'
+import { BenefitsBlock } from '@/blocks/BenefitsBlock/config'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { link } from '@/fields/link'
 
@@ -111,6 +112,7 @@ export const Pages: CollectionConfig<'pages'> = {
                 SponsorsBlock,
                 TeamBlock,
                 CardBlock,
+                BenefitsBlock,
               ],
               required: true,
               admin: {
