@@ -27,7 +27,7 @@ export const FormPayments: CollectionConfig = {
           name: 'form',
           type: 'relationship',
           relationTo: 'forms',
-          required: true,
+          required: false,
           admin: { readOnly: true, width: '33%' },
         },
         {

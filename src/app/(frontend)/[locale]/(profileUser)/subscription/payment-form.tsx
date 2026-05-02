@@ -1,6 +1,6 @@
 'use client'
 
-import { createSubscription } from '@/actions/subscription'
+import { createPendingSubscription } from '@/actions/subscription'
 import { StripePaymentForm } from '@/components/StripePayment'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
@@ -12,7 +12,7 @@ import { getClientSideURL } from '@/utilities/getURL'
 import { Lock } from 'lucide-react'
 import { useFormatter, useLocale, useTranslations } from 'next-intl'
 import { useRouter } from '@/i18n/routing'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useRef } from 'react'
 
 type Args = {
   user?: User
@@ -34,14 +34,18 @@ export const PaymentForm: React.FC<Args> = ({ user, associationFees }) => {
   const [isLoading, setIsLoading] = useState(true)
   const [payForCurrentMonth, setPayForCurrentMonth] = useState(false)
   const [fees, setFees] = useState({ amount: 0, startDate: new Date(), endDate: new Date() })
+  // subscriptionId is created before the payment intent so it can be passed as metadata
+  const [subscriptionId, setSubscriptionId] = useState<string | null>(null)
   const [intentKey, setIntentKey] = useState(0)
+  const pendingRef = useRef(false)
 
   const currentDay = new Date().getUTCDate()
 
-  const stripeMetadata = useMemo(
-    () => ({ type: 'subscription', userId: user?.id ?? '' }),
-    [user?.id],
-  )
+  const stripeMetadata = useMemo<Record<string, string>>(() => {
+    const meta: Record<string, string> = { type: 'subscription' }
+    if (subscriptionId) meta.recordId = subscriptionId
+    return meta
+  }, [subscriptionId])
 
   const stripeCustomer = useMemo(
     () =>
@@ -55,33 +59,46 @@ export const PaymentForm: React.FC<Args> = ({ user, associationFees }) => {
     [user?.name, user?.surname, user?.email, user?.nif],
   )
 
-  useEffect(() => {
-    const fetchAmount = async () => {
-      setIsLoading(true)
-      const result = await getUserPaymentAmount({ user, fees: associationFees, payForCurrentMonth })
-      setFees(result)
+  const createPending = async (forCurrentMonth: boolean) => {
+    if (pendingRef.current) return
+    pendingRef.current = true
+    setIsLoading(true)
+
+    const [amountResult, pendingResult] = await Promise.all([
+      getUserPaymentAmount({ user, fees: associationFees, payForCurrentMonth: forCurrentMonth }),
+      createPendingSubscription(forCurrentMonth),
+    ])
+
+    setFees(amountResult)
+
+    if (!pendingResult.success || !pendingResult.subscriptionId) {
+      toast({ variant: 'destructive', description: t('Common.unexpectedError') })
+      pendingRef.current = false
       setIsLoading(false)
-    }
-    fetchAmount()
-  }, [payForCurrentMonth])
-
-  const handleMonthToggle = (checked: boolean) => {
-    setPayForCurrentMonth(checked)
-    setIntentKey((k) => k + 1)
-  }
-
-  const handleSuccess = async (paymentIntentId: string) => {
-    const response = await createSubscription(payForCurrentMonth, paymentIntentId)
-
-    if (!response.success) {
-      toast({
-        variant: 'destructive',
-        description: response.message || t('Common.unexpectedError'),
-      })
       return
     }
 
-    router.push(`/subscription/order-generation?id=${response.stripePaymentIntentId}`)
+    setSubscriptionId(pendingResult.subscriptionId)
+    pendingRef.current = false
+    setIsLoading(false)
+  }
+
+  useEffect(() => {
+    createPending(false)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const handleMonthToggle = async (checked: boolean) => {
+    setPayForCurrentMonth(checked)
+    setSubscriptionId(null)
+    setIntentKey((k) => k + 1)
+    pendingRef.current = false
+    await createPending(checked)
+  }
+
+  const handleSuccess = async (_paymentIntentId: string) => {
+    // Webhook handles DB confirmation — just redirect
+    router.push(`/subscription/order-generation?id=${_paymentIntentId}`)
   }
 
   const amountCents = Math.round(fees.amount * 100)
@@ -152,7 +169,7 @@ export const PaymentForm: React.FC<Args> = ({ user, associationFees }) => {
       )}
 
       {/* Stripe payment form */}
-      {isLoading ? (
+      {isLoading || !subscriptionId ? (
         <div className="space-y-3">
           <Skeleton className="h-12 w-full rounded-xl" />
           <Skeleton className="h-12 w-full rounded-xl" />

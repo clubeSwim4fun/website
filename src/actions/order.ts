@@ -4,14 +4,9 @@ import { getMyCart } from '@/helpers/cartHelper'
 import { TypedLocale } from 'payload'
 import config from '@payload-config'
 import { Event, Ticket } from '@/payload-types'
-import payload from 'payload'
+import { getPayload } from 'payload'
 import { revalidatePath } from 'next/cache'
-import { render } from '@react-email/components'
-import { OrderConfirmationEmail } from '@/email/orderConfirmationEmail'
-import { sendEmail } from '@/helpers/emailHelper'
 import { getMeUser } from '@/utilities/getMeUser'
-import { getTranslations } from 'next-intl/server'
-import React from 'react'
 
 type eventTicket = {
   [key: string]: {
@@ -20,93 +15,62 @@ type eventTicket = {
   }
 }
 
-export const createOrder = async (locale: TypedLocale, stripePaymentIntentId: string) => {
-  // TODO integrate with payment gateway
-
-  const { user } = await getMeUser()
-  const t = await getTranslations({ locale, namespace: 'Email' })
+/**
+ * Creates a pending order record before payment starts.
+ * Pass the returned `orderId` as `recordId` in the Stripe payment intent metadata
+ * with `type: 'order'`.
+ * The webhook confirms payment, sends the confirmation email, and creates the invoice.
+ */
+export const createPendingOrder = async (
+  locale: TypedLocale,
+): Promise<{ success: boolean; orderId?: string; message?: string }> => {
   const cart = await getMyCart()
-  // const payload = await getPayload({ config })
+  const payload = await getPayload({ config })
 
-  await payload.init({ config })
-
-  if (!cart) {
-    return {
-      success: false,
-      message: 'Cart not found',
-    }
-  }
-
-  if (cart.items && cart.items.length === 0) {
-    return {
-      success: false,
-      message: 'Cart is empty',
-    }
-  }
+  if (!cart) return { success: false, message: 'Cart not found' }
+  if (!cart.items?.length) return { success: false, message: 'Cart is empty' }
 
   const transactionID = await payload.db.beginTransaction()
-
-  if (!transactionID) {
-    return {
-      success: false,
-      message: 'Error creating transaction',
-    }
-  }
+  if (!transactionID) return { success: false, message: 'Error creating transaction' }
 
   try {
     const eventsTickets: eventTicket = {}
 
-    cart?.items?.forEach((item) => {
+    cart.items.forEach((item) => {
       const ticket = item.selectedTicket as Ticket
       const eventFor = ticket.eventFor as Event
-
       if (!eventsTickets[eventFor.title]) {
         eventsTickets[eventFor.title] = { id: eventFor.id, tickets: [] }
       }
-
-      eventsTickets[eventFor.title]?.tickets.push(ticket)
+      eventsTickets[eventFor.title]!.tickets.push(ticket)
     })
-
-    const newOrder = {
-      user: cart.user,
-      events: Object.keys(eventsTickets).map((eventTitle) => {
-        return {
-          event: eventsTickets[eventTitle]?.id,
-          tickets: eventsTickets[eventTitle]?.tickets.map((ticket) => {
-            return {
-              ticket: ticket.id,
-              tshirtSize: cart.items?.find(
-                (item) =>
-                  typeof item?.selectedTicket !== 'string' &&
-                  item?.selectedTicket?.id === ticket.id,
-              )?.selectedTshirtSize,
-              ticketPurchased: false,
-            }
-          }),
-        }
-      }),
-      total: cart.totalPrice,
-      stripePaymentIntentId,
-      paymentStatus: 'paid' as const,
-    }
 
     const response = await payload.create({
       collection: 'orders',
-      data: newOrder,
+      data: {
+        user: cart.user,
+        events: Object.keys(eventsTickets).map((eventTitle) => ({
+          event: eventsTickets[eventTitle]?.id,
+          tickets: eventsTickets[eventTitle]?.tickets.map((ticket) => ({
+            ticket: ticket.id,
+            tshirtSize: cart.items?.find(
+              (item) =>
+                typeof item?.selectedTicket !== 'string' && item?.selectedTicket?.id === ticket.id,
+            )?.selectedTshirtSize,
+            ticketPurchased: false,
+          })),
+        })),
+        total: cart.totalPrice,
+        paymentStatus: 'pending' as const,
+      },
       req: { transactionID },
     })
 
-    const cartResponse = await payload.update({
+    // Clear the cart atomically with the order creation
+    await payload.update({
       collection: 'carts',
-      data: {
-        items: [],
-        totalPrice: 0,
-      },
-      where: {
-        id: {
-          equals: cart.id,
-        },
-      },
+      data: { items: [], totalPrice: 0 },
+      where: { id: { equals: cart.id } },
       req: { transactionID },
     })
 
@@ -114,98 +78,15 @@ export const createOrder = async (locale: TypedLocale, stripePaymentIntentId: st
 
     revalidatePath(`/${locale}/payment`)
 
-    // Email is best-effort — don't let it fail the order
-    try {
-      const firstEventTitle = Object.keys(eventsTickets)[0] ?? ''
-      const emailHtml = await render(
-        React.createElement(OrderConfirmationEmail, { order: response }),
-      )
-      await sendEmail({
-        emailHtml,
-        subject: t('OrderConfirmation.subject', { eventName: firstEventTitle }),
-        to: user?.email ?? '',
-      })
-    } catch (emailError) {
-      console.error('Order confirmation email failed:', emailError)
-    }
-
-    // Fire-and-forget invoice creation
-    ;(async () => {
-      try {
-        const { createDraftInvoice } = await import('@/helpers/invoiceHelper')
-
-        // Aggregate line items: one per distinct eventTitle+ticketName pair
-        const lineItemMap = new Map<
-          string,
-          {
-            name: string
-            description: string
-            unit_price: string
-            quantity: number
-            tax: { name: 'IVA0' }
-          }
-        >()
-        cart?.items?.forEach((item) => {
-          const ticket = item.selectedTicket as Ticket
-          const eventFor = ticket.eventFor as Event
-          const key = `${eventFor.title}__${ticket.name}`
-          // localized fields may be objects when fetched without a locale
-          const resolveLocalized = (val: unknown): string => {
-            if (typeof val === 'string') return val
-            if (val && typeof val === 'object') {
-              const obj = val as Record<string, string>
-              return obj[locale] ?? obj['pt'] ?? obj['en'] ?? Object.values(obj)[0] ?? ''
-            }
-            return String(val ?? '')
-          }
-          const existing = lineItemMap.get(key)
-          if (existing) {
-            existing.quantity += 1
-          } else {
-            lineItemMap.set(key, {
-              name: resolveLocalized(eventFor.title),
-              description: resolveLocalized(ticket.name),
-              unit_price: ticket.price.toFixed(2),
-              quantity: 1,
-              tax: { name: 'IVA0' },
-            })
-          }
-        })
-
-        const fullUser = await payload.findByID({
-          collection: 'users',
-          id: typeof cart.user === 'string' ? cart.user : cart.user!.id,
-        })
-
-        await createDraftInvoice({
-          user: {
-            name: fullUser.name,
-            surname: fullUser.surname,
-            email: fullUser.email,
-            associateId: fullUser.associateId ?? '',
-            nif: fullUser.nif,
-          },
-          lineItems: Array.from(lineItemMap.values()),
-          context: 'order',
-          stripePaymentIntentId,
-        })
-      } catch (err) {
-        console.error('[createOrder] Invoice creation failed:', err)
-      }
-    })()
-
-    return {
-      success: true,
-      message: 'Order created successfully',
-      orderId: response.id,
-    }
+    return { success: true, orderId: response.id }
   } catch (error) {
-    // Rollback the transaction
     await payload.db.rollbackTransaction(transactionID)
-
-    return {
-      success: false,
-      message: 'Error creating order: ' + JSON.stringify(error),
-    }
+    return { success: false, message: 'Error creating order: ' + JSON.stringify(error) }
   }
 }
+
+/**
+ * @deprecated Use createPendingOrder + webhook instead.
+ * Kept temporarily — callers should migrate to the pre-create pattern.
+ */
+export const createOrder = createPendingOrder

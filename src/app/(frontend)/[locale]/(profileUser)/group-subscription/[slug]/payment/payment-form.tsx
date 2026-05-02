@@ -1,9 +1,7 @@
 'use client'
 
-import { updateGroupSubscription } from '@/actions/group-subscription'
 import { StripePaymentForm } from '@/components/StripePayment'
 import { getClientSideURL } from '@/utilities/getURL'
-import { useToast } from '@/hooks/use-toast'
 import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 
@@ -29,14 +27,10 @@ export const PaymentForm: React.FC<Props> = ({
   customer,
 }) => {
   const router = useRouter()
-  const { toast } = useToast()
   const t = useTranslations()
 
-  const handleSuccess = async (paymentIntentId: string) => {
-    if (groupSubscriptionId) {
-      await updateGroupSubscription({ id: groupSubscriptionId, transactionId: paymentIntentId })
-    }
-
+  const handleSuccess = async (_paymentIntentId: string) => {
+    // Webhook handles DB confirmation (transactionId + invoice) — just redirect
     router.push(`/group-subscription/${groupSlug}`)
   }
 

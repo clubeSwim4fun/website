@@ -56,6 +56,7 @@ export const CardBlockComponent: React.FC<CardBlockProps> = async ({
   paymentAmount,
   paymentDescription,
   paymentMetadata,
+  paymentAssignToGroup,
   paymentHideButton,
   paymentSuccessMessage,
 }) => {
@@ -157,6 +158,7 @@ export const CardBlockComponent: React.FC<CardBlockProps> = async ({
                   typeof paymentDescription === 'string' ? paymentDescription : undefined
                 }
                 metadata={metadataMap}
+                assignToGroup={(paymentAssignToGroup as any) ?? null}
                 hideButton={paymentHideButton ?? false}
                 successMessage={(paymentSuccessMessage as any) ?? null}
               />

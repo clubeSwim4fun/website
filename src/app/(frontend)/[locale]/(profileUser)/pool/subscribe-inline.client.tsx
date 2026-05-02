@@ -1,16 +1,16 @@
 'use client'
 
-import { createPoolSubscription } from '@/actions/pool-subscription'
+import { createPendingPoolSubscription } from '@/actions/pool-subscription'
 import { StripePaymentForm } from '@/components/StripePayment'
 import { useToast } from '@/hooks/use-toast'
 import { PoolCycle, User } from '@/payload-types'
 import { useRouter } from '@/i18n/routing'
 import { getClientSideURL } from '@/utilities/getURL'
 import { useLocale, useTranslations } from 'next-intl'
-import { getMonthIndex, getMonthLabel } from '@/collections/Pool/PoolCycles'
-import { useMemo, useState } from 'react'
+import { getMonthIndex } from '@/collections/Pool/PoolCycles'
+import { useMemo, useState, useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
-import { ShieldCheck, Lock } from 'lucide-react'
+import { ShieldCheck, Lock, Loader } from 'lucide-react'
 
 type Props = {
   cycle: PoolCycle
@@ -24,23 +24,47 @@ export const SubscribeInline: React.FC<Props> = ({ cycle, user, remainingSpots }
   const router = useRouter()
   const { toast } = useToast()
   const [showPayment, setShowPayment] = useState(false)
+  const [subscriptionId, setSubscriptionId] = useState<string | null>(null)
+  const [isCreating, setIsCreating] = useState(false)
+  const creatingRef = useRef(false)
 
   const amountCents = Math.round(cycle.price * 100)
   const description = `Pool subscription - ${user.name} ${user.surname}`
   const returnUrl = `${getClientSideURL()}/${locale}/pool?confirmed=1`
 
-  const stripeMetadata = useMemo(() => ({ type: 'pool-subscription' }), [])
+  const stripeMetadata = useMemo<Record<string, string>>(() => {
+    const meta: Record<string, string> = { type: 'pool-subscription' }
+    if (subscriptionId) meta.recordId = subscriptionId
+    return meta
+  }, [subscriptionId])
   const stripeCustomer = useMemo(
     () => ({ name: `${user.name} ${user.surname ?? ''}`.trim(), email: user.email }),
     [user.name, user.surname, user.email],
   )
 
-  const handleSuccess = async (paymentIntentId: string) => {
-    const response = await createPoolSubscription(cycle.id, paymentIntentId)
-    if (!response.success) {
-      toast({ variant: 'destructive', description: response.message || t('cycleNotFound') })
+  // Create the pending record as soon as the user clicks "Subscribe"
+  const handleShowPayment = async () => {
+    if (creatingRef.current) return
+    creatingRef.current = true
+    setIsCreating(true)
+    setShowPayment(true)
+
+    const result = await createPendingPoolSubscription(cycle.id)
+    if (!result.success || !result.subscriptionId) {
+      toast({ variant: 'destructive', description: result.message || t('cycleNotFound') })
+      setShowPayment(false)
+      creatingRef.current = false
+      setIsCreating(false)
       return
     }
+
+    setSubscriptionId(result.subscriptionId)
+    creatingRef.current = false
+    setIsCreating(false)
+  }
+
+  const handleSuccess = async (_paymentIntentId: string) => {
+    // Webhook handles DB confirmation — just redirect
     router.push(`/pool?confirmed=1`)
   }
 
@@ -56,7 +80,7 @@ export const SubscribeInline: React.FC<Props> = ({ cycle, user, remainingSpots }
 
   if (!showPayment) {
     return (
-      <Button onClick={() => setShowPayment(true)} size="lg" className="w-full sm:w-fit">
+      <Button onClick={handleShowPayment} size="lg" className="w-full sm:w-fit">
         {t('subscribeButton')}
       </Button>
     )
@@ -75,15 +99,22 @@ export const SubscribeInline: React.FC<Props> = ({ cycle, user, remainingSpots }
 
       {/* Stripe form */}
       <div className="rounded-xl border bg-card p-5">
-        <StripePaymentForm
-          amount={amountCents}
-          description={description}
-          metadata={stripeMetadata}
-          customer={stripeCustomer}
-          onSuccess={handleSuccess}
-          returnUrl={returnUrl}
-          payButtonLabel={`${t('payButton')} ${formattedPrice} — ${t('confirmSubscription')}`}
-        />
+        {isCreating || !subscriptionId ? (
+          <div className="flex items-center gap-2 text-muted-foreground text-sm py-4">
+            <Loader className="w-4 h-4 animate-spin" />
+            <span>A preparar pagamento...</span>
+          </div>
+        ) : (
+          <StripePaymentForm
+            amount={amountCents}
+            description={description}
+            metadata={stripeMetadata}
+            customer={stripeCustomer}
+            onSuccess={handleSuccess}
+            returnUrl={returnUrl}
+            payButtonLabel={`${t('payButton')} ${formattedPrice} — ${t('confirmSubscription')}`}
+          />
+        )}
       </div>
 
       {/* Order summary */}

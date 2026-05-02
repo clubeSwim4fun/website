@@ -10,7 +10,7 @@ type AssignToGroup =
   | { relationTo: 'group-categories'; value: string }
 
 export type CreateFormPaymentArgs = {
-  formId: string
+  formId?: string | null
   amountEur: number
   description?: string
   assignToGroup?: AssignToGroup | null
@@ -35,7 +35,7 @@ export async function createFormPayment({
     const record = await payload.create({
       collection: 'form-payments',
       data: {
-        form: formId,
+        ...(formId ? { form: formId } : {}),
         user: user?.id ?? undefined,
         paymentStatus: 'pending',
         amount: amountEur,
@@ -149,43 +149,7 @@ export async function confirmFormPayment(
       }
     }
 
-    // Fire-and-forget invoice creation
-    ;(async () => {
-      try {
-        const { createDraftInvoice } = await import('@/helpers/invoiceHelper')
-        const user = userId
-          ? await payload.findByID({ collection: 'users', id: userId, depth: 0 })
-          : null
-
-        const description =
-          typeof (record as any).form === 'object'
-            ? ((record as any).form?.title ?? 'Form payment')
-            : 'Form payment'
-
-        await createDraftInvoice({
-          user: {
-            name: user?.name ?? '',
-            surname: user?.surname ?? '',
-            email: user?.email ?? '',
-            associateId: user?.associateId ?? '',
-            nif: user?.nif,
-          },
-          lineItems: [
-            {
-              name: description,
-              description,
-              unit_price: ((record as any).amount ?? 0).toFixed(2),
-              quantity: 1,
-              tax: { name: 'IVA0' },
-            },
-          ],
-          context: 'form-payment',
-          stripePaymentIntentId,
-        })
-      } catch (err) {
-        console.error('[confirmFormPayment] Invoice creation failed:', err)
-      }
-    })()
+    // Invoice creation is handled exclusively by the webhook to avoid duplicates
 
     return { success: true }
   } catch (err) {

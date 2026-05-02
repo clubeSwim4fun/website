@@ -158,17 +158,39 @@ export const CardBlock: Block = {
 
     // ── Variant: payment ───────────────────────────────────────────
     {
-      name: 'paymentAmount',
-      type: 'number',
-      label: { en: 'Amount (€)', pt: 'Valor (€)' },
-      min: 0.5,
-      admin: {
-        condition: (_, s) => s?.variant === 'payment',
-        description: {
-          en: 'Payment amount in EUR.',
-          pt: 'Valor do pagamento em EUR.',
+      type: 'row',
+      admin: { condition: (_, s) => s?.variant === 'payment' },
+      fields: [
+        {
+          name: 'paymentAmount',
+          type: 'number',
+          label: { en: 'Amount (€)', pt: 'Valor (€)' },
+          min: 0.5,
+          admin: {
+            width: '50%',
+            description: {
+              en: 'Payment amount in EUR.',
+              pt: 'Valor do pagamento em EUR.',
+            },
+          },
         },
-      },
+        {
+          name: 'paymentAssignToGroup',
+          type: 'relationship',
+          relationTo: ['groups', 'group-categories'] as const,
+          label: {
+            en: 'Assign user to group/subgroup on payment',
+            pt: 'Atribuir utilizador a grupo/subgrupo após pagamento',
+          },
+          admin: {
+            width: '50%',
+            description: {
+              en: 'User is added to this group when payment is confirmed.',
+              pt: 'Utilizador é adicionado a este grupo quando o pagamento é confirmado.',
+            },
+          },
+        },
+      ],
     },
     {
       name: 'paymentDescription',

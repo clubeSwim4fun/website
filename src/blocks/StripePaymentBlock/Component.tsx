@@ -3,20 +3,21 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { loadStripe } from '@stripe/stripe-js'
 import { Elements, PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js'
-import { createPaymentIntent } from '@/helpers/stripeHelper'
 import { Loader } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { getClientSideURL } from '@/utilities/getURL'
 import { useStepPayment } from '@/blocks/SectionWithAside/StepPaymentContext'
 import { createBlockInvoice } from '@/actions/invoice'
+import { createFormPayment, confirmFormPayment } from '@/actions/form-payment'
 import type { StripePaymentBlock as StripePaymentBlockProps } from '@/payload-types'
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
 
 // ── Inner form ───────────────────────────────────────────────────────────────
 const InnerForm: React.FC<{
-  onSuccess: (id: string) => void
-}> = ({ onSuccess }) => {
+  onSuccess: (paymentIntentId: string) => void
+  formPaymentId: string | null
+}> = ({ onSuccess, formPaymentId }) => {
   const stripe = useStripe()
   const elements = useElements()
   const t = useTranslations('Payment')
@@ -40,6 +41,10 @@ const InnerForm: React.FC<{
 
       const ok = ['succeeded', 'processing', 'requires_action']
       if (paymentIntent && ok.includes(paymentIntent.status)) {
+        // Confirm client-side so group assignment runs immediately (webhook is the fallback)
+        if (formPaymentId) {
+          await confirmFormPayment(formPaymentId, paymentIntent.id)
+        }
         onSuccess(paymentIntent.id)
         return {}
       }
@@ -47,7 +52,7 @@ const InnerForm: React.FC<{
       return { error: t('paymentFailed') }
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stripe, elements])
+  }, [stripe, elements, formPaymentId])
 
   return (
     <div className="flex flex-col gap-4">
@@ -60,31 +65,33 @@ const InnerForm: React.FC<{
 export const StripePaymentBlockComponent: React.FC<StripePaymentBlockProps> = ({
   amount,
   description,
-  metadata,
+  assignToGroup,
   invoiceLineItems,
 }) => {
   const t = useTranslations('Payment')
   const locale = useLocale()
   const ctx = useStepPayment()
   const [clientSecret, setClientSecret] = useState<string | null>(null)
+  const [formPaymentId, setFormPaymentId] = useState<string | null>(null)
   const [initError, setInitError] = useState<string | null>(null)
   const initialized = useRef(false)
-
-  const metadataMap = Object.fromEntries((metadata ?? []).map((m) => [m.key, m.value]))
 
   useEffect(() => {
     if (initialized.current) return
     initialized.current = true
-    createPaymentIntent({
-      amount: Math.round(amount * 100),
+
+    createFormPayment({
+      amountEur: amount,
       description: description ?? undefined,
-      metadata: metadataMap,
+      assignToGroup: (assignToGroup as any) ?? null,
+      submissionData: [],
     }).then((result) => {
       if (result.error) {
         setInitError(result.error)
         return
       }
       setClientSecret(result.clientSecret ?? null)
+      setFormPaymentId(result.formPaymentId ?? null)
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -132,7 +139,7 @@ export const StripePaymentBlockComponent: React.FC<StripePaymentBlockProps> = ({
         stripe={stripePromise}
         options={{ clientSecret, appearance: { theme: 'stripe' }, locale: locale as any }}
       >
-        <InnerForm onSuccess={handleSuccess} />
+        <InnerForm onSuccess={handleSuccess} formPaymentId={formPaymentId} />
       </Elements>
     </div>
   )

@@ -61,6 +61,22 @@ export const StripePaymentBlock: Block = {
     },
     // ── Invoice line items ─────────────────────────────────────────
     {
+      name: 'assignToGroup',
+      type: 'relationship',
+      relationTo: ['groups', 'group-categories'] as const,
+      label: {
+        en: 'Assign user to group/subgroup on payment',
+        pt: 'Atribuir utilizador a grupo/subgrupo após pagamento',
+      },
+      admin: {
+        description: {
+          en: 'When payment is confirmed, the user will be added to this group or subgroup.',
+          pt: 'Quando o pagamento for confirmado, o utilizador será adicionado a este grupo ou subgrupo.',
+        },
+      },
+    },
+    // ── Invoice line items ─────────────────────────────────────────
+    {
       name: 'invoiceLineItems',
       type: 'array',
       label: { en: 'Invoice line items', pt: 'Linhas da fatura' },

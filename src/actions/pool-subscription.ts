@@ -10,11 +10,15 @@ import React from 'react'
 import { notifyWaitlist } from '@/helpers/poolHelper'
 import { PoolCycle, PoolSubscription, User } from '@/payload-types'
 import { revalidatePath } from 'next/cache'
-import { getMonthLabel } from '@/collections/Pool/PoolCycles'
 
-export async function createPoolSubscription(
+/**
+ * Creates a pool subscription record in `pending` state before payment.
+ * Pass the returned `subscriptionId` as `recordId` in the Stripe payment intent metadata
+ * with `type: 'pool-subscription'`.
+ * The webhook confirms payment, sets status to `active`, sends email and creates the invoice.
+ */
+export async function createPendingPoolSubscription(
   cycleId: string,
-  stripePaymentIntentId: string,
 ): Promise<{ success: boolean; subscriptionId?: string; message?: string }> {
   const t = await getTranslations()
   const payload = await getPayload({ config })
@@ -31,7 +35,6 @@ export async function createPoolSubscription(
   }
 
   try {
-    // Fetch and validate the cycle
     const cycle = (await payload.findByID({
       collection: 'pool-cycles',
       id: cycleId,
@@ -43,7 +46,6 @@ export async function createPoolSubscription(
       return { success: false, message: t('Common.unexpectedError') }
     }
 
-    // Check active count < maxAthletes
     const activeResult = await payload.find({
       collection: 'pool-subscriptions',
       where: { and: [{ cycle: { equals: cycleId } }, { status: { equals: 'active' } }] },
@@ -56,7 +58,6 @@ export async function createPoolSubscription(
       return { success: false, message: t('Common.unexpectedError') }
     }
 
-    // Check no existing active/waitlisted sub for this athlete+cycle
     const existingResult = await payload.find({
       collection: 'pool-subscriptions',
       where: {
@@ -75,81 +76,23 @@ export async function createPoolSubscription(
       return { success: false, message: t('Common.unexpectedError') }
     }
 
-    // Create the subscription
     const response = await payload.create({
       collection: 'pool-subscriptions',
       data: {
         athlete: user.id,
         cycle: cycleId,
         status: 'active',
-        paymentStatus: 'paid',
-        stripePaymentIntentId,
+        paymentStatus: 'pending',
       },
       req: { transactionID },
     })
 
     await payload.db.commitTransaction(transactionID)
 
-    // Fire-and-forget confirmation email
-    ;(async () => {
-      try {
-        const { default: PoolSubscriptionConfirmationEmail } = await import(
-          '@/email/poolSubscriptionConfirmation'
-        )
-        const emailHtml = await render(
-          React.createElement(PoolSubscriptionConfirmationEmail, {
-            subscription: response as PoolSubscription,
-          }),
-        )
-        const athlete = user as User
-        if (athlete.email) {
-          await sendEmail({
-            to: athlete.email,
-            subject: 'Pool subscription confirmed',
-            emailHtml,
-          })
-        }
-      } catch (emailError) {
-        payload.logger.error(`[createPoolSubscription] Email failed: ${JSON.stringify(emailError)}`)
-      }
-    })()
-
-    // Fire-and-forget invoice creation
-    ;(async () => {
-      try {
-        const { createDraftInvoice } = await import('@/helpers/invoiceHelper')
-        const monthLabel = getMonthLabel(cycle.month as string, 'pt')
-        await createDraftInvoice({
-          user: {
-            name: user!.name,
-            surname: user!.surname,
-            email: user!.email,
-            associateId: user!.associateId ?? '',
-            nif: user!.nif,
-          },
-          lineItems: [
-            {
-              name: 'Quota de piscina',
-              description: `${monthLabel} ${cycle.year ?? ''}`,
-              unit_price: (cycle.price ?? 0).toFixed(2),
-              quantity: 1,
-              tax: { name: 'IVA0' },
-            },
-          ],
-          context: 'subscription',
-          stripePaymentIntentId,
-        })
-      } catch (err) {
-        payload.logger.error(
-          `[createPoolSubscription] Invoice creation failed: ${JSON.stringify(err)}`,
-        )
-      }
-    })()
-
     return { success: true, subscriptionId: response.id }
   } catch (error) {
     await payload.db.rollbackTransaction(transactionID)
-    payload.logger.error(`[createPoolSubscription] Error: ${JSON.stringify(error)}`)
+    payload.logger.error(`[createPendingPoolSubscription] Error: ${JSON.stringify(error)}`)
     return { success: false, message: t('Common.unexpectedError') }
   }
 }
@@ -175,7 +118,6 @@ export async function joinPoolWaitlist(cycleId: string): Promise<{
   }
 
   try {
-    // Fetch and validate the cycle
     const cycle = (await payload.findByID({
       collection: 'pool-cycles',
       id: cycleId,
@@ -187,7 +129,6 @@ export async function joinPoolWaitlist(cycleId: string): Promise<{
       return { success: false, message: t('Common.unexpectedError') }
     }
 
-    // Check active count >= maxAthletes (cycle must be full)
     const activeResult = await payload.find({
       collection: 'pool-subscriptions',
       where: { and: [{ cycle: { equals: cycleId } }, { status: { equals: 'active' } }] },
@@ -200,7 +141,6 @@ export async function joinPoolWaitlist(cycleId: string): Promise<{
       return { success: false, message: t('Common.unexpectedError') }
     }
 
-    // Check waitlist count < waitlistLimit
     const waitlistResult = await payload.find({
       collection: 'pool-subscriptions',
       where: { and: [{ cycle: { equals: cycleId } }, { status: { equals: 'waitlisted' } }] },
@@ -213,7 +153,6 @@ export async function joinPoolWaitlist(cycleId: string): Promise<{
       return { success: false, message: t('Common.unexpectedError') }
     }
 
-    // Check no existing active/waitlisted sub for this athlete+cycle
     const existingResult = await payload.find({
       collection: 'pool-subscriptions',
       where: {
@@ -232,7 +171,6 @@ export async function joinPoolWaitlist(cycleId: string): Promise<{
       return { success: false, message: t('Common.unexpectedError') }
     }
 
-    // Calculate new waitlist position: max existing position + 1 (or 1 if none)
     const waitlistedSubs = await payload.find({
       collection: 'pool-subscriptions',
       where: { and: [{ cycle: { equals: cycleId } }, { status: { equals: 'waitlisted' } }] },
@@ -247,7 +185,6 @@ export async function joinPoolWaitlist(cycleId: string): Promise<{
 
     const newPosition = maxPosition + 1
 
-    // Create the waitlisted subscription
     const response = await payload.create({
       collection: 'pool-subscriptions',
       data: {
@@ -261,8 +198,6 @@ export async function joinPoolWaitlist(cycleId: string): Promise<{
     })
 
     await payload.db.commitTransaction(transactionID)
-
-    // Fire-and-forget waitlist confirmation email
     ;(async () => {
       try {
         const { default: PoolWaitlistConfirmationEmail } = await import(
@@ -312,7 +247,6 @@ export async function cancelPoolSubscription(
   }
 
   try {
-    // Fetch the subscription
     const subscription = (await payload.findByID({
       collection: 'pool-subscriptions',
       id: subscriptionId,
@@ -325,7 +259,6 @@ export async function cancelPoolSubscription(
       return { success: false, message: t('Common.unexpectedError') }
     }
 
-    // Verify ownership or admin
     const athleteId =
       typeof subscription.athlete === 'string' ? subscription.athlete : subscription.athlete.id
 
@@ -337,7 +270,6 @@ export async function cancelPoolSubscription(
     const cycleId =
       typeof subscription.cycle === 'string' ? subscription.cycle : subscription.cycle.id
 
-    // Update subscription status to cancelled
     await payload.update({
       collection: 'pool-subscriptions',
       id: subscriptionId,
@@ -346,8 +278,6 @@ export async function cancelPoolSubscription(
     })
 
     await payload.db.commitTransaction(transactionID)
-
-    // Fire-and-forget cancellation email
     ;(async () => {
       try {
         const { default: PoolCancellationConfirmationEmail } = await import(
@@ -371,8 +301,6 @@ export async function cancelPoolSubscription(
         payload.logger.error(`[cancelPoolSubscription] Email failed: ${JSON.stringify(emailError)}`)
       }
     })()
-
-    // Fire-and-forget waitlist notification
     ;(async () => {
       try {
         await notifyWaitlist(cycleId)
@@ -428,7 +356,6 @@ export async function selectPoolSlots(
       return { success: false, message: t('Common.unexpectedError') }
     }
 
-    // Flatten all slots from all weeks for lookup
     const allSlots: Array<{ slotId: string; day: string; time: string; maxAttendance: number }> = []
     const weeks = (cycle as any).weeks ?? []
     for (const week of weeks) {
@@ -441,12 +368,10 @@ export async function selectPoolSlots(
         })
       }
     }
-    // Also support legacy flat availableSlots
     for (const slot of (cycle.availableSlots ?? []) as any[]) {
       if (slot.slotId) allSlots.push(slot)
     }
 
-    // Fetch all current registrations for this cycle once
     const existingRegs = await payload.find({
       collection: 'pool-slot-registrations',
       where: { cycle: { equals: cycleId } },
@@ -455,9 +380,8 @@ export async function selectPoolSlots(
       depth: 0,
     })
 
-    // Build maps from the single fetch
     const countsBySlotId: Record<string, number> = {}
-    const athleteRegBySlotId: Record<string, string> = {} // slotId → registration doc id
+    const athleteRegBySlotId: Record<string, string> = {}
 
     for (const reg of existingRegs.docs as any[]) {
       const sid: string = reg.slotId
@@ -473,7 +397,6 @@ export async function selectPoolSlots(
     const toAcquire = slotIds.filter((sid) => !previousSlotIds.includes(sid))
     const toRelease = previousSlotIds.filter((sid) => !slotIds.includes(sid))
 
-    // Capacity check for new slots
     for (const sid of toAcquire) {
       const slotDef = allSlots.find((s) => s.slotId === sid)
       if (!slotDef) {
@@ -485,11 +408,9 @@ export async function selectPoolSlots(
       }
     }
 
-    // Acquire new slots via Payload (handles ObjectIds correctly)
     for (const sid of toAcquire) {
       const slotDef = allSlots.find((s) => s.slotId === sid)!
 
-      // Double-check atomically: re-count just before insert
       const freshCount = await payload.find({
         collection: 'pool-slot-registrations',
         where: { and: [{ cycle: { equals: cycleId } }, { slotId: { equals: sid } }] },
@@ -497,7 +418,6 @@ export async function selectPoolSlots(
         pagination: false,
       })
       if (freshCount.totalDocs >= (slotDef.maxAttendance ?? 0)) {
-        // Roll back any already acquired in this loop
         for (const acquiredSid of toAcquire.slice(0, toAcquire.indexOf(sid))) {
           const newReg = await payload.find({
             collection: 'pool-slot-registrations',
@@ -529,7 +449,6 @@ export async function selectPoolSlots(
       })
     }
 
-    // Release deselected slots
     for (const sid of toRelease) {
       const regId = athleteRegBySlotId[sid]
       if (regId) {
@@ -537,7 +456,6 @@ export async function selectPoolSlots(
       }
     }
 
-    // Keep subscription.selectedSlots in sync for admin visibility
     await payload.update({
       collection: 'pool-subscriptions',
       id: subscriptionId,
@@ -570,7 +488,6 @@ export async function joinSlotWaitlist(
 
   if (!user) return { success: false, message: t('Common.unexpectedError') }
 
-  // Must have an active subscription for this cycle
   const subResult = await payload.find({
     collection: 'pool-subscriptions',
     where: {
@@ -584,7 +501,6 @@ export async function joinSlotWaitlist(
   })
   if (subResult.totalDocs === 0) return { success: false, message: t('Common.unexpectedError') }
 
-  // Check not already on waitlist for this slot
   const existing = await payload.find({
     collection: 'pool-slot-waitlist',
     where: {
@@ -598,7 +514,6 @@ export async function joinSlotWaitlist(
   })
   if (existing.totalDocs > 0) return { success: false, message: t('Common.unexpectedError') }
 
-  // Calculate next position
   const allEntries = await payload.find({
     collection: 'pool-slot-waitlist',
     where: { and: [{ cycle: { equals: cycleId } }, { slotId: { equals: slotId } }] },
@@ -644,7 +559,6 @@ export async function leaveSlotWaitlist(
 
   await payload.delete({ collection: 'pool-slot-waitlist', id: entry.id })
 
-  // Shift down positions for everyone after the removed entry
   const later = await payload.find({
     collection: 'pool-slot-waitlist',
     where: {

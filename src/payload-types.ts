@@ -2820,6 +2820,18 @@ export interface StripePaymentBlock {
       }[]
     | null;
   /**
+   * When payment is confirmed, the user will be added to this group or subgroup.
+   */
+  assignToGroup?:
+    | ({
+        relationTo: 'groups';
+        value: string | Group;
+      } | null)
+    | ({
+        relationTo: 'group-categories';
+        value: string | GroupCategory;
+      } | null);
+  /**
    * Line items sent to InvoiceXpress. Leave empty to skip invoice creation.
    */
   invoiceLineItems?:
@@ -3004,6 +3016,18 @@ export interface CardBlock {
    * Payment amount in EUR.
    */
   paymentAmount?: number | null;
+  /**
+   * User is added to this group when payment is confirmed.
+   */
+  paymentAssignToGroup?:
+    | ({
+        relationTo: 'groups';
+        value: string | Group;
+      } | null)
+    | ({
+        relationTo: 'group-categories';
+        value: string | GroupCategory;
+      } | null);
   paymentDescription?: string | null;
   /**
    * Key/value pairs sent to Stripe as PaymentIntent metadata.
@@ -3810,7 +3834,7 @@ export interface Sponsor {
  */
 export interface FormPayment {
   id: string;
-  form: string | Form;
+  form?: (string | null) | Form;
   user?: (string | null) | User;
   paymentStatus?: ('pending' | 'paid' | 'failed') | null;
   amount?: number | null;
@@ -4691,6 +4715,7 @@ export interface StripePaymentBlockSelect<T extends boolean = true> {
         value?: T;
         id?: T;
       };
+  assignToGroup?: T;
   invoiceLineItems?:
     | T
     | {
@@ -4768,6 +4793,7 @@ export interface CardBlockSelect<T extends boolean = true> {
   image?: T;
   form?: T;
   paymentAmount?: T;
+  paymentAssignToGroup?: T;
   paymentDescription?: T;
   paymentMetadata?:
     | T

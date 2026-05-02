@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { CheckCircle2, Loader } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { getClientSideURL } from '@/utilities/getURL'
-import { createPaymentIntent } from '@/helpers/stripeHelper'
+import { createFormPayment, confirmFormPayment } from '@/actions/form-payment'
 import RichText from '@/components/RichText'
 import type { SerializedEditorState } from '@payloadcms/richtext-lexical/lexical'
 import { useStepPayment } from '@/blocks/SectionWithAside/StepPaymentContext'
@@ -18,6 +18,7 @@ type CardPaymentProps = {
   amount: number
   description?: string
   metadata?: Record<string, string>
+  assignToGroup?: { relationTo: 'groups' | 'group-categories'; value: string } | null
   successMessage?: SerializedEditorState | null
   hideButton?: boolean
 }
@@ -25,9 +26,10 @@ type CardPaymentProps = {
 // ── Inner form ───────────────────────────────────────────────────────────────
 
 const InnerCheckoutForm: React.FC<{
-  onSuccess: () => void
+  onSuccess: (paymentIntentId: string) => void
   hideButton?: boolean
-}> = ({ onSuccess, hideButton }) => {
+  formPaymentId: string | null
+}> = ({ onSuccess, hideButton, formPaymentId }) => {
   const stripe = useStripe()
   const elements = useElements()
   const t = useTranslations('Payment')
@@ -57,7 +59,7 @@ const InnerCheckoutForm: React.FC<{
       if (paymentIntent && ok.includes(paymentIntent.status)) {
         ctx.setPaymentIntentId(paymentIntent.id)
         ctx.setStatus('success')
-        onSuccess()
+        onSuccess(paymentIntent.id)
         return {}
       }
 
@@ -109,7 +111,10 @@ const InnerCheckoutForm: React.FC<{
 
     const ok = ['succeeded', 'processing', 'requires_action']
     if (paymentIntent && ok.includes(paymentIntent.status)) {
-      onSuccess()
+      if (formPaymentId) {
+        await confirmFormPayment(formPaymentId, paymentIntent.id)
+      }
+      onSuccess(paymentIntent.id)
       return
     }
 
@@ -147,6 +152,7 @@ export const CardPaymentVariant: React.FC<CardPaymentProps> = ({
   amount,
   description,
   metadata,
+  assignToGroup,
   successMessage,
   hideButton,
 }) => {
@@ -154,22 +160,25 @@ export const CardPaymentVariant: React.FC<CardPaymentProps> = ({
   const locale = useLocale()
   const initialized = useRef(false)
   const [clientSecret, setClientSecret] = useState<string | null>(null)
+  const [formPaymentId, setFormPaymentId] = useState<string | null>(null)
   const [initError, setInitError] = useState<string | null>(null)
   const [paid, setPaid] = useState(false)
 
   useEffect(() => {
     if (initialized.current) return
     initialized.current = true
-    createPaymentIntent({
-      amount: Math.round(amount * 100),
+    createFormPayment({
+      amountEur: amount,
       description,
-      metadata,
+      assignToGroup: assignToGroup ?? null,
+      submissionData: [],
     }).then((result) => {
       if (result.error) {
         setInitError(result.error)
         return
       }
       setClientSecret(result.clientSecret ?? null)
+      setFormPaymentId(result.formPaymentId ?? null)
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -207,7 +216,11 @@ export const CardPaymentVariant: React.FC<CardPaymentProps> = ({
       stripe={stripePromise}
       options={{ clientSecret, appearance: { theme: 'stripe' }, locale: locale as any }}
     >
-      <InnerCheckoutForm onSuccess={() => setPaid(true)} hideButton={hideButton} />
+      <InnerCheckoutForm
+        onSuccess={() => setPaid(true)}
+        hideButton={hideButton}
+        formPaymentId={formPaymentId}
+      />
     </Elements>
   )
 }

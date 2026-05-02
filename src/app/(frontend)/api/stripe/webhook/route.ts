@@ -7,9 +7,14 @@ import { getMonthLabel } from '@/collections/Pool/PoolCycles'
 /**
  * Stripe webhook handler.
  *
- * Listens for payment_intent.succeeded and payment_intent.payment_failed.
- * The PaymentIntent metadata must include:
- *   - type: 'order' | 'subscription' | 'group-subscription' | 'pool-subscription'
+ * Handles:
+ *   - payment_intent.succeeded       → mark paid, send email, create invoice
+ *   - payment_intent.processing      → mark processing (MB Way async)
+ *   - payment_intent.payment_failed  → mark failed
+ *   - payment_intent.canceled        → mark failed/canceled
+ *
+ * PaymentIntent metadata must include:
+ *   - type: 'order' | 'subscription' | 'group-subscription' | 'pool-subscription' | 'form-payment'
  *   - recordId: the Payload document ID to update
  */
 export async function POST(req: NextRequest) {
@@ -17,6 +22,7 @@ export async function POST(req: NextRequest) {
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
 
   if (!stripeSecretKey || !webhookSecret) {
+    console.error('[webhook] Missing STRIPE_SECRET_KEY or STRIPE_WEBHOOK_SECRET')
     return NextResponse.json({ error: 'Stripe not configured' }, { status: 500 })
   }
 
@@ -24,6 +30,8 @@ export async function POST(req: NextRequest) {
 
   const body = await req.text()
   const signature = req.headers.get('stripe-signature')
+
+  console.log('[webhook] Received request, signature present:', !!signature)
 
   if (!signature) {
     return NextResponse.json({ error: 'Missing stripe-signature header' }, { status: 400 })
@@ -35,25 +43,85 @@ export async function POST(req: NextRequest) {
     event = stripe.webhooks.constructEvent(body, signature, webhookSecret)
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error'
+    console.error('[webhook] Signature verification failed:', message)
     return NextResponse.json(
       { error: `Webhook signature verification failed: ${message}` },
       { status: 400 },
     )
   }
 
+  console.log('[webhook] Event received:', event.type, (event.data.object as any)?.metadata)
+
   const payload = await getPayload({ config })
 
-  if (event.type === 'payment_intent.succeeded') {
-    const intent = event.data.object as Stripe.PaymentIntent
-    await handlePaymentSuccess(payload, intent)
-  }
-
-  if (event.type === 'payment_intent.payment_failed') {
-    const intent = event.data.object as Stripe.PaymentIntent
-    await handlePaymentFailure(payload, intent)
+  switch (event.type) {
+    case 'payment_intent.succeeded': {
+      const intent = event.data.object as Stripe.PaymentIntent
+      await handlePaymentSuccess(payload, intent)
+      break
+    }
+    case 'payment_intent.processing': {
+      // MB Way and other async methods land here first — mark as processing so the record
+      // isn't left as pending indefinitely while awaiting bank confirmation.
+      const intent = event.data.object as Stripe.PaymentIntent
+      await handlePaymentProcessing(payload, intent)
+      break
+    }
+    case 'payment_intent.payment_failed':
+    case 'payment_intent.canceled': {
+      const intent = event.data.object as Stripe.PaymentIntent
+      await handlePaymentFailure(payload, intent)
+      break
+    }
   }
 
   return NextResponse.json({ received: true })
+}
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+async function handlePaymentProcessing(
+  payload: Awaited<ReturnType<typeof getPayload>>,
+  intent: Stripe.PaymentIntent,
+) {
+  const { type, recordId } = intent.metadata || {}
+  if (!type || !recordId) return
+
+  // Add a 'processing' status to collections that support it; others stay pending.
+  // Currently only orders and subscriptions have a paymentStatus field.
+  if (type === 'order') {
+    await payload.update({
+      collection: 'orders',
+      id: recordId,
+      data: { paymentStatus: 'pending' }, // no 'processing' option — leave as pending
+    })
+  }
+
+  if (type === 'subscription') {
+    await payload.update({
+      collection: 'subscription',
+      id: recordId,
+      data: { paymentStatus: 'pending' },
+    })
+  }
+
+  if (type === 'pool-subscription') {
+    await payload.update({
+      collection: 'pool-subscriptions',
+      id: recordId,
+      data: { paymentStatus: 'pending' },
+    })
+  }
+
+  if (type === 'form-payment') {
+    await payload.update({
+      collection: 'form-payments',
+      id: recordId,
+      data: { paymentStatus: 'pending' },
+    })
+  }
 }
 
 async function handlePaymentSuccess(
@@ -76,22 +144,34 @@ async function handlePaymentSuccess(
       data: { paymentStatus: 'paid', stripePaymentIntentId: intent.id },
     })
 
-    // Fire-and-forget invoice creation
+    // Fire-and-forget: send confirmation email + create invoice
     ;(async () => {
       try {
-        const { createDraftInvoice } = await import('@/helpers/invoiceHelper')
-
-        const order = await payload.findByID({
-          collection: 'orders',
-          id: recordId,
-          depth: 3,
-        })
+        const order = await payload.findByID({ collection: 'orders', id: recordId, depth: 3 })
 
         const user =
           typeof order.user === 'string'
             ? await payload.findByID({ collection: 'users', id: order.user })
             : order.user
 
+        // Confirmation email
+        try {
+          const React = await import('react')
+          const { render } = await import('@react-email/components')
+          const { OrderConfirmationEmail } = await import('@/email/orderConfirmationEmail')
+          const { sendEmail } = await import('@/helpers/emailHelper')
+          const emailHtml = await render(
+            React.default.createElement(OrderConfirmationEmail, { order }),
+          )
+          if (user.email) {
+            await sendEmail({ emailHtml, subject: 'Confirmação de encomenda', to: user.email })
+          }
+        } catch (emailErr) {
+          console.error('[webhook] Order confirmation email failed:', emailErr)
+        }
+
+        // Invoice
+        const { createDraftInvoice } = await import('@/helpers/invoiceHelper')
         const lineItemMap = new Map<
           string,
           {
@@ -146,23 +226,52 @@ async function handlePaymentSuccess(
           stripePaymentIntentId: intent.id,
         })
       } catch (err) {
-        console.error('[webhook] Invoice creation failed:', err)
+        console.error('[webhook] Order post-payment tasks failed:', err)
       }
     })()
   }
 
   if (type === 'subscription') {
-    await payload.update({
-      collection: 'subscription',
-      id: recordId,
-      data: { paymentStatus: 'paid', stripePaymentIntentId: intent.id },
-    })
+    // Activate user + mark paid in a transaction
+    const transactionID = await payload.db.beginTransaction()
+    if (transactionID) {
+      try {
+        const subscription = await payload.findByID({
+          collection: 'subscription',
+          id: recordId,
+          depth: 1,
+          req: { transactionID },
+        })
 
-    // Fire-and-forget invoice creation
+        await payload.update({
+          collection: 'subscription',
+          id: recordId,
+          data: { paymentStatus: 'paid', stripePaymentIntentId: intent.id },
+          req: { transactionID },
+        })
+
+        const userId =
+          typeof subscription.user === 'string' ? subscription.user : subscription.user?.id
+        if (userId) {
+          await payload.update({
+            collection: 'users',
+            id: userId,
+            data: { status: 'active' },
+            req: { transactionID },
+          })
+        }
+
+        await payload.db.commitTransaction(transactionID)
+      } catch (err) {
+        await payload.db.rollbackTransaction(transactionID)
+        console.error('[webhook] subscription activation failed:', err)
+        return
+      }
+    }
+
+    // Fire-and-forget: send confirmation email + create invoice
     ;(async () => {
       try {
-        const { createDraftInvoice } = await import('@/helpers/invoiceHelper')
-
         const subscription = await payload.findByID({
           collection: 'subscription',
           id: recordId,
@@ -176,10 +285,30 @@ async function handlePaymentSuccess(
 
         if (!user) return
 
+        // Confirmation email
+        try {
+          const React = await import('react')
+          const { render } = await import('@react-email/components')
+          const { SubscriptionConfirmationEmail } = await import('@/email/subscriptionConfirmation')
+          const { sendEmail } = await import('@/helpers/emailHelper')
+          const emailHtml = await render(
+            React.default.createElement(SubscriptionConfirmationEmail, {
+              subscription,
+              locale: 'pt',
+            }),
+          )
+          if (user.email) {
+            await sendEmail({ emailHtml, subject: 'Confirmação de subscrição', to: user.email })
+          }
+        } catch (emailErr) {
+          console.error('[webhook] Subscription confirmation email failed:', emailErr)
+        }
+
+        // Invoice
+        const { createDraftInvoice } = await import('@/helpers/invoiceHelper')
         const startDate = subscription.startDate ? subscription.startDate.slice(0, 10) : ''
         const endDate = subscription.endDate ? subscription.endDate.slice(0, 10) : ''
 
-        // Check if this is the user's first subscription (registration fee included)
         const { getCachedGlobal } = await import('@/utilities/getGlobals')
         const globalConfig = (await getCachedGlobal(
           'generalConfigs',
@@ -242,7 +371,7 @@ async function handlePaymentSuccess(
           stripePaymentIntentId: intent.id,
         })
       } catch (err) {
-        console.error('[webhook] Invoice creation failed:', err)
+        console.error('[webhook] Subscription post-payment tasks failed:', err)
       }
     })()
   }
@@ -298,7 +427,7 @@ async function handlePaymentSuccess(
           stripePaymentIntentId: intent.id,
         })
       } catch (err) {
-        console.error('[webhook] Invoice creation failed:', err)
+        console.error('[webhook] Group subscription invoice creation failed:', err)
       }
     })()
   }
@@ -310,11 +439,9 @@ async function handlePaymentSuccess(
       data: { paymentStatus: 'paid', status: 'active', stripePaymentIntentId: intent.id },
     })
 
-    // Fire-and-forget invoice creation
+    // Fire-and-forget: send confirmation email + create invoice
     ;(async () => {
       try {
-        const { createDraftInvoice } = await import('@/helpers/invoiceHelper')
-
         const record = await payload.findByID({
           collection: 'pool-subscriptions',
           id: recordId,
@@ -327,6 +454,28 @@ async function handlePaymentSuccess(
             ? await payload.findByID({ collection: 'users', id: record.athlete })
             : record.athlete
 
+        // Confirmation email
+        try {
+          const React = await import('react')
+          const { render } = await import('@react-email/components')
+          const { default: PoolSubscriptionConfirmationEmail } = await import(
+            '@/email/poolSubscriptionConfirmation'
+          )
+          const { sendEmail } = await import('@/helpers/emailHelper')
+          const emailHtml = await render(
+            React.default.createElement(PoolSubscriptionConfirmationEmail, {
+              subscription: record,
+            }),
+          )
+          if (user.email) {
+            await sendEmail({ emailHtml, subject: 'Pool subscription confirmed', to: user.email })
+          }
+        } catch (emailErr) {
+          console.error('[webhook] Pool subscription confirmation email failed:', emailErr)
+        }
+
+        // Invoice
+        const { createDraftInvoice } = await import('@/helpers/invoiceHelper')
         const monthLabel = cycle?.month ? getMonthLabel(cycle.month, 'pt') : ''
 
         await createDraftInvoice({
@@ -350,7 +499,7 @@ async function handlePaymentSuccess(
           stripePaymentIntentId: intent.id,
         })
       } catch (err) {
-        console.error('[webhook] Pool subscription invoice creation failed:', err)
+        console.error('[webhook] Pool subscription post-payment tasks failed:', err)
       }
     })()
   }
@@ -383,6 +532,14 @@ async function handlePaymentFailure(
   if (type === 'pool-subscription') {
     await payload.update({
       collection: 'pool-subscriptions',
+      id: recordId,
+      data: { paymentStatus: 'failed' },
+    })
+  }
+
+  if (type === 'form-payment') {
+    await payload.update({
+      collection: 'form-payments',
       id: recordId,
       data: { paymentStatus: 'failed' },
     })

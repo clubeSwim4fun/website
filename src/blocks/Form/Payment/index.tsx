@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Loader } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { StripePaymentField } from '@/payload-types'
-import { createFormPayment, confirmFormPayment } from '@/actions/form-payment'
+import { createFormPayment } from '@/actions/form-payment'
 import { getClientSideURL } from '@/utilities/getURL'
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
@@ -63,7 +63,7 @@ const CheckoutForm: React.FC<{
     const acceptedStatuses = ['succeeded', 'processing', 'requires_action']
     if (paymentIntent && acceptedStatuses.includes(paymentIntent.status)) {
       try {
-        await confirmFormPayment(formPaymentId, paymentIntent.id)
+        // Webhook handles DB confirmation — just invoke the success callback
         await onSuccess(paymentIntent.id, formPaymentId)
       } catch {
         setErrorMessage(t('paymentFailed'))
