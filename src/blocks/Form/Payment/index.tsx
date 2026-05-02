@@ -8,6 +8,7 @@ import { Loader } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { StripePaymentField } from '@/payload-types'
 import { createFormPayment } from '@/actions/form-payment'
+import { checkUserGroupMembership } from '@/actions/checkGroupMembership'
 import { getClientSideURL } from '@/utilities/getURL'
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
@@ -117,25 +118,37 @@ export const PaymentFormField: React.FC<PaymentFieldProps> = ({
   const [clientSecret, setClientSecret] = useState<string | null>(null)
   const [formPaymentId, setFormPaymentId] = useState<string | null>(null)
   const [initError, setInitError] = useState<string | null>(null)
+  const [alreadyMemberName, setAlreadyMemberName] = useState<string | null>(null)
 
   useEffect(() => {
     if (initialized.current) return
     initialized.current = true
 
-    createFormPayment({
-      formId,
-      amountEur: amount,
-      description: typeof description === 'string' ? description : undefined,
-      assignToGroup: assignToGroup as any,
-      submissionData,
-    }).then((result) => {
+    const run = async () => {
+      if (assignToGroup) {
+        const { isMember, groupName } = await checkUserGroupMembership(assignToGroup as any)
+        if (isMember) {
+          setAlreadyMemberName(groupName ?? '')
+          return
+        }
+      }
+
+      const result = await createFormPayment({
+        formId,
+        amountEur: amount,
+        description: typeof description === 'string' ? description : undefined,
+        assignToGroup: assignToGroup as any,
+        submissionData,
+      })
       if (result.error) {
         setInitError(result.error)
         return
       }
       setClientSecret(result.clientSecret ?? null)
       setFormPaymentId(result.formPaymentId ?? null)
-    })
+    }
+
+    run()
   }, [])
 
   const returnUrl = `${getClientSideURL()}/${locale}`
@@ -159,14 +172,23 @@ export const PaymentFormField: React.FC<PaymentFieldProps> = ({
           </p>
         )}
 
-        {!initError && !clientSecret && (
+        {alreadyMemberName !== null && (
+          <p className="text-sm text-muted-foreground">
+            {t.rich('alreadyMember', {
+              groupName: alreadyMemberName,
+              b: (chunks) => <strong>{chunks}</strong>,
+            })}
+          </p>
+        )}
+
+        {!initError && !alreadyMemberName && !clientSecret && (
           <div className="flex items-center gap-2 text-muted-foreground text-sm py-2">
             <Loader className="w-4 h-4 animate-spin" />
             {t('initialising')}
           </div>
         )}
 
-        {clientSecret && formPaymentId && (
+        {!initError && !alreadyMemberName && clientSecret && formPaymentId && (
           <Elements
             stripe={stripePromise}
             options={{ clientSecret, appearance: { theme: 'stripe' }, locale: locale as any }}

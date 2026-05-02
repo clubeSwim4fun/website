@@ -251,7 +251,8 @@
     "mbwayPendingTitle": "Confirmação pendente no MB Way",
     "mbwayPendingDescription": "Foi enviada uma notificação para o seu telemóvel. Aceite o pagamento na app MB Way para concluir.",
     "securePaymentTitle": "Pagamento seguro por cartão",
-    "securePaymentSub": "Os seus dados são encriptados e nunca armazenados"
+    "securePaymentSub": "Os seus dados são encriptados e nunca armazenados",
+    "alreadyMember": "Já pertences ao grupo <b>{groupName}</b>. Não é necessário efetuar este pagamento."
   },
   "ArchiveBlock": {
     "readMore": "Ler mais",

@@ -9,6 +9,7 @@ import { getClientSideURL } from '@/utilities/getURL'
 import { useStepPayment } from '@/blocks/SectionWithAside/StepPaymentContext'
 import { createBlockInvoice } from '@/actions/invoice'
 import { createFormPayment, confirmFormPayment } from '@/actions/form-payment'
+import { checkUserGroupMembership } from '@/actions/checkGroupMembership'
 import type { StripePaymentBlock as StripePaymentBlockProps } from '@/payload-types'
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
@@ -74,27 +75,50 @@ export const StripePaymentBlockComponent: React.FC<StripePaymentBlockProps> = ({
   const [clientSecret, setClientSecret] = useState<string | null>(null)
   const [formPaymentId, setFormPaymentId] = useState<string | null>(null)
   const [initError, setInitError] = useState<string | null>(null)
+  const [alreadyMemberName, setAlreadyMemberName] = useState<string | null>(null)
   const initialized = useRef(false)
 
   useEffect(() => {
     if (initialized.current) return
     initialized.current = true
 
-    createFormPayment({
-      amountEur: amount,
-      description: description ?? undefined,
-      assignToGroup: (assignToGroup as any) ?? null,
-      submissionData: [],
-    }).then((result) => {
+    const run = async () => {
+      if (assignToGroup) {
+        const { isMember, groupName } = await checkUserGroupMembership(assignToGroup as any)
+        if (isMember) {
+          setAlreadyMemberName(groupName ?? '')
+          return
+        }
+      }
+
+      const result = await createFormPayment({
+        amountEur: amount,
+        description: description ?? undefined,
+        assignToGroup: (assignToGroup as any) ?? null,
+        submissionData: [],
+      })
       if (result.error) {
         setInitError(result.error)
         return
       }
       setClientSecret(result.clientSecret ?? null)
       setFormPaymentId(result.formPaymentId ?? null)
-    })
+    }
+
+    run()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  if (alreadyMemberName !== null) {
+    return (
+      <p className="text-sm text-muted-foreground">
+        {t.rich('alreadyMember', {
+          groupName: alreadyMemberName,
+          b: (chunks) => <strong>{chunks}</strong>,
+        })}
+      </p>
+    )
+  }
 
   if (initError) return <p className="text-sm text-destructive">{initError}</p>
 

@@ -251,7 +251,8 @@
     "mbwayPendingTitle": "Waiting for MB Way confirmation",
     "mbwayPendingDescription": "A notification was sent to your phone. Accept the payment in the MB Way app to complete.",
     "securePaymentTitle": "Secure card payment",
-    "securePaymentSub": "Your data is encrypted and never stored"
+    "securePaymentSub": "Your data is encrypted and never stored",
+    "alreadyMember": "You already belong to the group <b>{groupName}</b>. This payment is not required."
   },
   "ArchiveBlock": {
     "readMore": "Read more",

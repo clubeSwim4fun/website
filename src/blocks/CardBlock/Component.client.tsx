@@ -8,6 +8,7 @@ import { CheckCircle2, Loader } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { getClientSideURL } from '@/utilities/getURL'
 import { createFormPayment, confirmFormPayment } from '@/actions/form-payment'
+import { checkUserGroupMembership } from '@/actions/checkGroupMembership'
 import RichText from '@/components/RichText'
 import type { SerializedEditorState } from '@payloadcms/richtext-lexical/lexical'
 import { useStepPayment } from '@/blocks/SectionWithAside/StepPaymentContext'
@@ -163,23 +164,36 @@ export const CardPaymentVariant: React.FC<CardPaymentProps> = ({
   const [formPaymentId, setFormPaymentId] = useState<string | null>(null)
   const [initError, setInitError] = useState<string | null>(null)
   const [paid, setPaid] = useState(false)
+  const [alreadyMemberName, setAlreadyMemberName] = useState<string | null>(null)
 
   useEffect(() => {
     if (initialized.current) return
     initialized.current = true
-    createFormPayment({
-      amountEur: amount,
-      description,
-      assignToGroup: assignToGroup ?? null,
-      submissionData: [],
-    }).then((result) => {
+
+    const run = async () => {
+      if (assignToGroup) {
+        const { isMember, groupName } = await checkUserGroupMembership(assignToGroup)
+        if (isMember) {
+          setAlreadyMemberName(groupName ?? '')
+          return
+        }
+      }
+
+      const result = await createFormPayment({
+        amountEur: amount,
+        description,
+        assignToGroup: assignToGroup ?? null,
+        submissionData: [],
+      })
       if (result.error) {
         setInitError(result.error)
         return
       }
       setClientSecret(result.clientSecret ?? null)
       setFormPaymentId(result.formPaymentId ?? null)
-    })
+    }
+
+    run()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -191,6 +205,17 @@ export const CardPaymentVariant: React.FC<CardPaymentProps> = ({
         </div>
         {successMessage && <RichText data={successMessage} enableGutter={false} enableProse />}
       </div>
+    )
+  }
+
+  if (alreadyMemberName !== null) {
+    return (
+      <p className="text-sm text-muted-foreground">
+        {t.rich('alreadyMember', {
+          groupName: alreadyMemberName,
+          b: (chunks) => <strong>{chunks}</strong>,
+        })}
+      </p>
     )
   }
 
