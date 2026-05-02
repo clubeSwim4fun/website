@@ -30,10 +30,10 @@ export type CreateUserRequestType = {
 
 export type CreateuserType = Omit<User, 'id' | 'createdAt' | 'updatedAt'>
 
-const { S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY, S3_REGION } = process.env
+const { S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY, S3_REGION, S3_ENDPOINT } = process.env
 
-if (!S3_ACCESS_KEY_ID || !S3_SECRET_ACCESS_KEY || !S3_REGION) {
-  throw new Error('Missing required AWS S3 environment variables')
+if (!S3_ACCESS_KEY_ID || !S3_SECRET_ACCESS_KEY) {
+  throw new Error('Missing required S3 environment variables')
 }
 
 const s3 = new S3({
@@ -41,13 +41,14 @@ const s3 = new S3({
     accessKeyId: S3_ACCESS_KEY_ID,
     secretAccessKey: S3_SECRET_ACCESS_KEY,
   },
-  region: S3_REGION,
+  region: S3_REGION || 'auto',
+  ...(S3_ENDPOINT && { endpoint: S3_ENDPOINT, forcePathStyle: true }),
 })
 
 export const deleteS3Files = async (files: string[]) => {
   const deletePromises = files.map((fileKey) =>
     s3.deleteObject({
-      Bucket: process.env.S3_BUCKET || 'clube-swim-4fun-bucket',
+      Bucket: process.env.S3_BUCKET || 'clube-swim4fun',
       Key: fileKey,
     }),
   )
