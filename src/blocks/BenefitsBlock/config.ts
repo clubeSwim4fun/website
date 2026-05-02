@@ -1,4 +1,5 @@
 import type { Block } from 'payload'
+import { blockVisibilityDynamicField } from '@/fields/blockVisibilityDynamic'
 
 export const BenefitsBlock: Block = {
   slug: 'benefitsBlock',
@@ -8,6 +9,8 @@ export const BenefitsBlock: Block = {
     plural: { en: 'Benefits Pages', pt: 'Páginas de Benefícios' },
   },
   fields: [
+    blockVisibilityDynamicField,
+
     // ── Hero ──────────────────────────────────────────────────────────
     {
       name: 'hero',

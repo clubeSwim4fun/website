@@ -3088,6 +3088,27 @@ export interface CardBlock {
  * via the `definition` "BenefitsBlock".
  */
 export interface BenefitsBlock {
+  blockVisibility?: {
+    /**
+     * Choose who can see this block
+     */
+    visibilityType?: ('everyone' | 'loggedIn' | 'notLoggedIn' | 'active' | 'admin' | 'specificGroups') | null;
+    /**
+     * Select which groups and/or subgroups can see this block
+     */
+    allowedGroups?:
+      | (
+          | {
+              relationTo: 'groups';
+              value: string | Group;
+            }
+          | {
+              relationTo: 'group-categories';
+              value: string | GroupCategory;
+            }
+        )[]
+      | null;
+  };
   hero: {
     eyebrow?: string | null;
     title: string;
@@ -4830,6 +4851,12 @@ export interface CardBlockSelect<T extends boolean = true> {
  * via the `definition` "BenefitsBlock_select".
  */
 export interface BenefitsBlockSelect<T extends boolean = true> {
+  blockVisibility?:
+    | T
+    | {
+        visibilityType?: T;
+        allowedGroups?: T;
+      };
   hero?:
     | T
     | {
