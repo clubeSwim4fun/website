@@ -3856,6 +3856,7 @@ export interface FormPayment {
         relationTo: 'group-categories';
         value: string | GroupCategory;
       } | null);
+  description?: string | null;
   submissionData?:
     | {
         field?: string | null;
@@ -5552,6 +5553,7 @@ export interface FormPaymentsSelect<T extends boolean = true> {
   amount?: T;
   stripePaymentIntentId?: T;
   assignToGroup?: T;
+  description?: T;
   submissionData?:
     | T
     | {

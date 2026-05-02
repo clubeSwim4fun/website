@@ -74,6 +74,12 @@ export const FormPayments: CollectionConfig = {
       ],
     },
     {
+      name: 'description',
+      type: 'text',
+      label: { en: 'Description', pt: 'Descrição' },
+      admin: { readOnly: true },
+    },
+    {
       name: 'submissionData',
       type: 'array',
       label: { en: 'Submission Data', pt: 'Dados da Submissão' },

@@ -39,6 +39,7 @@ export async function createFormPayment({
         user: user?.id ?? undefined,
         paymentStatus: 'pending',
         amount: amountEur,
+        description: description ?? undefined,
         assignToGroup: assignToGroup ?? undefined,
         submissionData,
       } as any,

@@ -623,9 +623,10 @@ async function handleFormPaymentSuccess(
         : null
 
       const description =
-        typeof record.form === 'object'
+        (record as any).description ||
+        (typeof record.form === 'object' && record.form !== null
           ? ((record.form as any)?.title ?? 'Form payment')
-          : 'Form payment'
+          : 'Form payment')
 
       await createDraftInvoice({
         user: {
