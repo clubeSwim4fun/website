@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { loadStripe } from '@stripe/stripe-js'
 import { Elements, PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js'
 import { Button } from '@/components/ui/button'
@@ -10,6 +10,7 @@ import { StripePaymentField } from '@/payload-types'
 import { createFormPayment } from '@/actions/form-payment'
 import { checkUserGroupMembership } from '@/actions/checkGroupMembership'
 import { getClientSideURL } from '@/utilities/getURL'
+import { useStepBlocker } from '@/blocks/SectionWithAside/StepReadyContext'
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
 
@@ -119,6 +120,19 @@ export const PaymentFormField: React.FC<PaymentFieldProps> = ({
   const [formPaymentId, setFormPaymentId] = useState<string | null>(null)
   const [initError, setInitError] = useState<string | null>(null)
   const [alreadyMemberName, setAlreadyMemberName] = useState<string | null>(null)
+  const { block, unblock } = useStepBlocker(`payment-field-${formId}`)
+
+  // Block immediately before paint so the button is never enabled while loading
+  useLayoutEffect(() => {
+    block()
+    return () => unblock()
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (clientSecret || initError || alreadyMemberName !== null) {
+      unblock()
+    }
+  }, [clientSecret, initError, alreadyMemberName]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (initialized.current) return

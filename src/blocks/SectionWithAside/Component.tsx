@@ -168,10 +168,21 @@ export const SectionWithAsideBlock: React.FC<SectionWithAsideBlockProps & { user
     return acc
   }, [])
 
+  // Per-step button config (label override + submitForm flag)
+  const stepButtonConfigs = steps.map((_, stepIndex) => {
+    const stepNumber = stepIndex + 1
+    const row = (mainContent ?? []).find((r) => r.step === stepNumber)
+    return {
+      label: (row as any)?.nextStepLabel ?? null,
+      submitForm: (row as any)?.submitForm ?? false,
+    }
+  })
+
   return (
     <SectionWithAsideClient
       steps={steps}
       nextStepLabel={aside?.nextStepLabel ?? undefined}
+      stepButtonConfigs={stepButtonConfigs}
       stripeSteps={stripeSteps}
       aside={<Aside aside={aside} user={user} />}
     >

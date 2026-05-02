@@ -2309,6 +2309,14 @@ export interface SectionWithAsideBlock {
          * Which step this content belongs to.
          */
         step: number;
+        /**
+         * Overrides the global "next step" button label for this step.
+         */
+        nextStepLabel?: string | null;
+        /**
+         * When checked, clicking the button submits the form in this step instead of just advancing.
+         */
+        submitForm?: boolean | null;
         blocks?:
           | (
               | CallToActionBlock
@@ -4471,6 +4479,8 @@ export interface SectionWithAsideBlockSelect<T extends boolean = true> {
     | T
     | {
         step?: T;
+        nextStepLabel?: T;
+        submitForm?: T;
         blocks?:
           | T
           | {

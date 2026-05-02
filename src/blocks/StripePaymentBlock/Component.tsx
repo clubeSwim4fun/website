@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { loadStripe } from '@stripe/stripe-js'
 import { Elements, PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js'
 import { Loader } from 'lucide-react'
@@ -11,6 +11,7 @@ import { createBlockInvoice } from '@/actions/invoice'
 import { createFormPayment, confirmFormPayment } from '@/actions/form-payment'
 import { checkUserGroupMembership } from '@/actions/checkGroupMembership'
 import type { StripePaymentBlock as StripePaymentBlockProps } from '@/payload-types'
+import { useStepBlocker } from '@/blocks/SectionWithAside/StepReadyContext'
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
 
@@ -77,6 +78,18 @@ export const StripePaymentBlockComponent: React.FC<StripePaymentBlockProps> = ({
   const [initError, setInitError] = useState<string | null>(null)
   const [alreadyMemberName, setAlreadyMemberName] = useState<string | null>(null)
   const initialized = useRef(false)
+  const { block, unblock } = useStepBlocker(`stripe-block-${description ?? amount}`)
+
+  useLayoutEffect(() => {
+    block()
+    return () => unblock()
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (clientSecret || initError || alreadyMemberName !== null) {
+      unblock()
+    }
+  }, [clientSecret, initError, alreadyMemberName]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (initialized.current) return

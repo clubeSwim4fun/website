@@ -86,6 +86,30 @@ export const SectionWithAside: Block = {
           },
         },
         {
+          name: 'nextStepLabel',
+          type: 'text',
+          localized: true,
+          label: { en: 'Button label', pt: 'Texto do botão' },
+          admin: {
+            description: {
+              en: 'Overrides the global "next step" button label for this step.',
+              pt: 'Substitui o rótulo global do botão "próximo passo" para este passo.',
+            },
+          },
+        },
+        {
+          name: 'submitForm',
+          type: 'checkbox',
+          defaultValue: false,
+          label: { en: 'Submit form', pt: 'Submeter formulário' },
+          admin: {
+            description: {
+              en: 'When checked, clicking the button submits the form in this step instead of just advancing.',
+              pt: 'Quando marcado, clicar no botão submete o formulário deste passo em vez de apenas avançar.',
+            },
+          },
+        },
+        {
           name: 'blocks',
           type: 'blocks',
           label: { en: 'Blocks', pt: 'Blocos' },

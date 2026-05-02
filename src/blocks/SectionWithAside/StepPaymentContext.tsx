@@ -12,6 +12,8 @@ type StepPaymentContextType = {
   errorMessage: string | null
   setErrorMessage: (m: string | null) => void
   hasStripe: boolean
+  isReady: boolean
+  setReady: (ready: boolean) => void
   paymentIntentId: string | null
   setPaymentIntentId: (id: string) => void
 }
@@ -25,6 +27,7 @@ export const StepPaymentProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const [status, setStatus] = useState<PaymentStatus>('idle')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [hasStripe, setHasStripe] = useState(false)
+  const [isReady, setReady] = useState(false)
   const [paymentIntentId, setPaymentIntentId] = useState<string | null>(null)
 
   const registerSubmit = (fn: () => Promise<{ error?: string }>) => {
@@ -47,6 +50,8 @@ export const StepPaymentProvider: React.FC<{ children: React.ReactNode }> = ({ c
         errorMessage,
         setErrorMessage,
         hasStripe,
+        isReady,
+        setReady,
         paymentIntentId,
         setPaymentIntentId,
       }}

@@ -25,10 +25,14 @@ export async function checkUserGroupMembership(
 ): Promise<{ isMember: boolean; groupName: string | null }> {
   if (!assignToGroup) return { isMember: false, groupName: null }
 
-  const { user } = await getMeUser()
-  if (!user) return { isMember: false, groupName: null }
+  const { user: sessionUser } = await getMeUser()
+  if (!sessionUser) return { isMember: false, groupName: null }
 
   const payload = await getPayload({ config })
+
+  // Re-fetch from DB so group changes are reflected immediately (JWT can be stale)
+  const user = await payload.findByID({ collection: 'users', id: sessionUser.id, depth: 1 })
+  if (!user) return { isMember: false, groupName: null }
 
   const groupId =
     typeof assignToGroup.value === 'string' ? assignToGroup.value : assignToGroup.value?.id

@@ -4,13 +4,20 @@ import React, { useState, useRef } from 'react'
 import { cn } from '@/utilities/ui'
 import { ChevronRight, ArrowLeft, Loader, CheckCircle2 } from 'lucide-react'
 import { StepPaymentProvider, useStepPayment } from './StepPaymentContext'
+import { StepReadyProvider, useStepReady } from './StepReadyContext'
 import { useToast } from '@/hooks/use-toast'
 
 type Step = { label?: string; id?: string | null }
 
+type StepButtonConfig = {
+  label?: string | null
+  submitForm?: boolean | null
+}
+
 type Props = {
   steps: Step[]
   nextStepLabel?: string | null
+  stepButtonConfigs: StepButtonConfig[]
   stripeSteps: number[]
   aside: React.ReactNode
   children: React.ReactNode[]
@@ -21,16 +28,29 @@ const StripeStepLayout: React.FC<{
   panel: React.ReactNode
   asideStatic: React.ReactNode
   nextStepLabel?: string | null
+  submitForm?: boolean | null
   isLast: boolean
   onNext: () => void
   prevStepLabel?: string | null
   onBack: () => void
   animClass?: string
-}> = ({ panel, asideStatic, nextStepLabel, isLast, onNext, prevStepLabel, onBack, animClass }) => {
+}> = ({
+  panel,
+  asideStatic,
+  nextStepLabel,
+  submitForm,
+  isLast,
+  onNext,
+  prevStepLabel,
+  onBack,
+  animClass,
+}) => {
   const ctx = useStepPayment()!
   const { toast } = useToast()
+  const panelRef = useRef<HTMLDivElement>(null)
   const isProcessing = ctx.status === 'processing'
   const isSuccess = ctx.status === 'success'
+  const isReady = ctx.isReady
 
   const handlePay = async () => {
     ctx.setStatus('processing')
@@ -40,7 +60,18 @@ const StripeStepLayout: React.FC<{
       ctx.setStatus('error')
       ctx.setErrorMessage(result.error)
       toast({ variant: 'destructive', description: result.error })
-    } else if (!result.error) {
+    } else {
+      // After successful payment, also submit any form in the panel (fire-and-forget)
+      if (submitForm && panelRef.current) {
+        const form = panelRef.current.querySelector('form')
+        if (form) {
+          try {
+            form.requestSubmit()
+          } catch {
+            // non-critical — payment already succeeded
+          }
+        }
+      }
       if (!isLast) {
         setTimeout(onNext, 600)
       }
@@ -50,7 +81,7 @@ const StripeStepLayout: React.FC<{
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 items-start">
       {/* Main panel — hide stripe form on success when no next step */}
-      <div className={cn('flex flex-col gap-4 section-with-aside-main', animClass)}>
+      <div ref={panelRef} className={cn('flex flex-col gap-4 section-with-aside-main', animClass)}>
         {/* Breadcrumb — hidden after payment succeeds */}
         {prevStepLabel && !isSuccess && (
           <button
@@ -81,11 +112,11 @@ const StripeStepLayout: React.FC<{
         {!isSuccess && (
           <button
             type="button"
-            disabled={isProcessing}
+            disabled={isProcessing || !isReady}
             onClick={handlePay}
             className={cn(
               'w-full flex items-center justify-center gap-2 rounded-xl px-6 py-3.5 font-syne font-bold text-sm transition-all duration-200',
-              isProcessing
+              isProcessing || !isReady
                 ? 'bg-mid/60 text-white cursor-not-allowed'
                 : 'bg-mid text-white hover:-translate-y-0.5 hover:shadow-[0_8px_28px_rgba(14,126,168,0.35)]',
             )}
@@ -94,6 +125,8 @@ const StripeStepLayout: React.FC<{
               <>
                 <Loader size={16} className="animate-spin" />A processar…
               </>
+            ) : !isReady ? (
+              <Loader size={16} className="animate-spin" />
             ) : (
               <>
                 {nextStepLabel ?? 'Pagar'}
@@ -107,10 +140,65 @@ const StripeStepLayout: React.FC<{
   )
 }
 
+// ── Normal step layout ───────────────────────────────────────────────────────
+const NormalStepLayout: React.FC<{
+  panel: React.ReactNode
+  aside: React.ReactNode
+  isLast: boolean
+  stepBtnLabel?: string | null
+  stepSubmitsForm: boolean
+  animClass: string
+  onNext: () => void
+}> = ({ panel, aside, isLast, stepBtnLabel, stepSubmitsForm, animClass, onNext }) => {
+  const panelRef = useRef<HTMLDivElement>(null)
+  const ready = useStepReady()
+  const isBlocked = ready?.isBlocked ?? false
+
+  const handleNextOrSubmit = () => {
+    if (stepSubmitsForm && panelRef.current) {
+      const form = panelRef.current.querySelector('form')
+      if (form) {
+        form.requestSubmit()
+        return
+      }
+    }
+    onNext()
+  }
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 items-start">
+      <div ref={panelRef} className={cn('flex flex-col gap-4 section-with-aside-main', animClass)}>
+        {panel}
+      </div>
+      <div className="lg:sticky lg:top-24 flex flex-col gap-4">
+        {aside}
+        {!isLast && stepBtnLabel && (
+          <button
+            type="button"
+            disabled={isBlocked}
+            onClick={handleNextOrSubmit}
+            className={cn(
+              'w-full flex items-center justify-center gap-2 rounded-xl px-6 py-3.5 font-syne font-bold text-sm transition-all duration-200',
+              isBlocked
+                ? 'bg-mid/60 text-white cursor-not-allowed'
+                : 'bg-mid text-white hover:-translate-y-0.5 hover:shadow-[0_8px_28px_rgba(14,126,168,0.35)]',
+            )}
+          >
+            {isBlocked ? <Loader size={16} className="animate-spin" /> : null}
+            {stepBtnLabel}
+            {!isBlocked && <ChevronRight size={16} strokeWidth={2.5} />}
+          </button>
+        )}
+      </div>
+    </div>
+  )
+}
+
 // ── Main client shell ────────────────────────────────────────────────────────
 export const SectionWithAsideClient: React.FC<Props> = ({
   steps,
   nextStepLabel,
+  stepButtonConfigs,
   stripeSteps,
   aside,
   children,
@@ -132,6 +220,10 @@ export const SectionWithAsideClient: React.FC<Props> = ({
   const isLast = activeStep === steps.length - 1
   const isStripeStep = stripeSteps.includes(activeStep)
   const handleNext = () => goTo(Math.min(activeStep + 1, steps.length - 1))
+
+  const stepBtnConfig = stepButtonConfigs[activeStep]
+  const stepBtnLabel = stepBtnConfig?.label ?? nextStepLabel
+  const stepSubmitsForm = Boolean(stepBtnConfig?.submitForm)
 
   const childArray = React.Children.toArray(children)
 
@@ -193,7 +285,8 @@ export const SectionWithAsideClient: React.FC<Props> = ({
             <StripeStepLayout
               panel={childArray[activeStep]}
               asideStatic={aside}
-              nextStepLabel={nextStepLabel}
+              nextStepLabel={stepBtnLabel}
+              submitForm={stepSubmitsForm}
               isLast={isLast}
               onNext={handleNext}
               prevStepLabel={
@@ -207,24 +300,17 @@ export const SectionWithAsideClient: React.FC<Props> = ({
 
         {/* Normal step — only render the active panel, not all with hidden */}
         {!isStripeStep && (
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 items-start">
-            <div className={cn('flex flex-col gap-4 section-with-aside-main', animClass)}>
-              {childArray[activeStep]}
-            </div>
-            <div className="lg:sticky lg:top-24 flex flex-col gap-4">
-              {aside}
-              {!isLast && nextStepLabel && (
-                <button
-                  type="button"
-                  onClick={handleNext}
-                  className="w-full flex items-center justify-center gap-2 rounded-xl px-6 py-3.5 font-syne font-bold text-sm bg-mid text-white hover:-translate-y-0.5 hover:shadow-[0_8px_28px_rgba(14,126,168,0.35)] transition-all duration-200"
-                >
-                  {nextStepLabel}
-                  <ChevronRight size={16} strokeWidth={2.5} />
-                </button>
-              )}
-            </div>
-          </div>
+          <StepReadyProvider>
+            <NormalStepLayout
+              panel={childArray[activeStep]}
+              aside={aside}
+              isLast={isLast}
+              stepBtnLabel={stepBtnLabel}
+              stepSubmitsForm={stepSubmitsForm}
+              animClass={animClass}
+              onNext={handleNext}
+            />
+          </StepReadyProvider>
         )}
       </div>
     </section>

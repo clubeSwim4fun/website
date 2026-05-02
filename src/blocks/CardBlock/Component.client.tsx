@@ -165,6 +165,14 @@ export const CardPaymentVariant: React.FC<CardPaymentProps> = ({
   const [initError, setInitError] = useState<string | null>(null)
   const [paid, setPaid] = useState(false)
   const [alreadyMemberName, setAlreadyMemberName] = useState<string | null>(null)
+  const ctx = useStepPayment()
+
+  // Signal ready to the aside button once clientSecret is loaded (or no payment needed)
+  useEffect(() => {
+    if (clientSecret || initError || alreadyMemberName !== null) {
+      ctx?.setReady(true)
+    }
+  }, [clientSecret, initError, alreadyMemberName]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (initialized.current) return
