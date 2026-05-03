@@ -984,10 +984,18 @@ export interface Select {
     | {
         label: string;
         value: string;
+        /**
+         * Stripe amount for this option (used when "payment selector" is enabled).
+         */
+        price?: number | null;
         id?: string | null;
       }[]
     | null;
   required?: boolean | null;
+  /**
+   * When enabled, the selected option's value (numeric) is used as the Stripe payment amount and its label as the description.
+   */
+  isPaymentSelector?: boolean | null;
   relatesTo?:
     | (
         | 'email'
@@ -5771,9 +5779,11 @@ export interface SelectSelect<T extends boolean = true> {
     | {
         label?: T;
         value?: T;
+        price?: T;
         id?: T;
       };
   required?: T;
+  isPaymentSelector?: T;
   relatesTo?: T;
   prefillFromUser?: T;
   readOnly?: T;

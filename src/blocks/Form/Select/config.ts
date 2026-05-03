@@ -76,10 +76,22 @@ export const Select: Block = {
               name: 'value',
               type: 'text',
               admin: {
-                width: '50%',
+                width: '25%',
               },
               label: 'Value',
               required: true,
+            },
+            {
+              name: 'price',
+              type: 'number',
+              label: { en: 'Price (€)', pt: 'Preço (€)' },
+              admin: {
+                width: '25%',
+                description: {
+                  en: 'Stripe amount for this option (used when "payment selector" is enabled).',
+                  pt: 'Valor Stripe para esta opção (usado quando "seletor de pagamento" está ativo).',
+                },
+              },
             },
           ],
         },
@@ -96,6 +108,22 @@ export const Select: Block = {
     {
       name: 'required',
       type: 'checkbox',
+    },
+    {
+      name: 'isPaymentSelector',
+      label: {
+        en: 'Use as payment amount selector',
+        pt: 'Usar como seletor de valor de pagamento',
+      },
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        condition: (_, siblingData) => siblingData.type === 'default',
+        description: {
+          en: "When enabled, the selected option's value (numeric) is used as the Stripe payment amount and its label as the description.",
+          pt: 'Quando ativado, o valor numérico da opção selecionada é usado como valor de pagamento Stripe e o rótulo como descrição.',
+        },
+      },
     },
     {
       name: 'relatesTo',

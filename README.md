@@ -320,6 +320,10 @@ You can also deploy your app manually, check out the [deployment documentation](
 
 If you have any issues or questions, reach out to us on [Discord](https://discord.com/invite/payload) or start a [GitHub discussion](https://github.com/payloadcms/payload/discussions).
 
-# Chrome MCP usage
+## Chrome MCP usage
 
 run on terminal /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --remote-debugging-port=9222
+
+## stripe local webhook
+
+stripe listen --forward-to localhost:3000/api/stripe/webhook

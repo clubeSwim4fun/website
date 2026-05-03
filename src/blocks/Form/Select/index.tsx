@@ -15,10 +15,12 @@ import { Error } from '../Error'
 import { Width } from '../Width'
 import { GeneralConfig, Select as SelectType } from '@/payload-types'
 import { useTranslations } from 'next-intl'
+import { useStepPayment } from '@/blocks/SectionWithAside/StepPaymentContext'
 
 type optionsType = {
   label: string
   value: string
+  price?: number | null
   id?: string | null
   collectionId?: string | null
 }
@@ -39,9 +41,11 @@ export const Select: React.FC<
   type,
   generalConfigData,
   globalConfigCollection,
+  isPaymentSelector,
 }) => {
   const t = useTranslations()
   const [dynamicOptions, setDynamicOptions] = useState<optionsType[]>([])
+  const paymentCtx = useStepPayment()
 
   useEffect(() => {
     if (type === 'default') {
@@ -56,6 +60,19 @@ export const Select: React.FC<
       )
     }
   }, [])
+
+  const handleValueChange = (val: string, onChange: (v: string) => void) => {
+    onChange(val)
+    if (isPaymentSelector && paymentCtx) {
+      const opt = dynamicOptions.find((o) => o.value === val)
+      if (opt) {
+        const amount = opt.price ?? parseFloat(opt.value)
+        if (!isNaN(amount)) {
+          paymentCtx.setSelectedPaymentOption({ amount, label: opt.label })
+        }
+      }
+    }
+  }
 
   return (
     <Width width={100} className="flex flex-col gap-2">
@@ -78,7 +95,7 @@ export const Select: React.FC<
 
           return (
             <SelectComponent
-              onValueChange={(val) => onChange(val)}
+              onValueChange={(val) => handleValueChange(val, onChange)}
               value={
                 (type === 'default' ? controlledValue?.value : controlledValue?.collectionId) ||
                 value

@@ -80,6 +80,14 @@ export const StripePaymentBlockComponent: React.FC<StripePaymentBlockProps> = ({
   const initialized = useRef(false)
   const { block, unblock } = useStepBlocker(`stripe-block-${description ?? amount}`)
 
+  // Resolve effective amount/description from context override or static props
+  // `hasPaymentSelector` is true when the context was set up with a selector field
+  // (selectedPaymentOption starts as null and gets set on first user selection)
+  const hasPaymentSelector = ctx !== null && 'selectedPaymentOption' in ctx
+  const selectedOption = ctx?.selectedPaymentOption ?? null
+  const effectiveAmount = selectedOption?.amount ?? amount
+  const effectiveDescription = selectedOption?.label ?? description
+
   useLayoutEffect(() => {
     block()
     return () => unblock()
@@ -93,6 +101,8 @@ export const StripePaymentBlockComponent: React.FC<StripePaymentBlockProps> = ({
 
   useEffect(() => {
     if (initialized.current) return
+    // Wait for user to pick an option before creating the payment intent
+    if (hasPaymentSelector && selectedOption === null) return
     initialized.current = true
 
     const run = async () => {
@@ -105,8 +115,8 @@ export const StripePaymentBlockComponent: React.FC<StripePaymentBlockProps> = ({
       }
 
       const result = await createFormPayment({
-        amountEur: amount,
-        description: description ?? undefined,
+        amountEur: effectiveAmount,
+        description: effectiveDescription ?? undefined,
         assignToGroup: (assignToGroup as any) ?? null,
         submissionData: [],
       })
@@ -120,7 +130,7 @@ export const StripePaymentBlockComponent: React.FC<StripePaymentBlockProps> = ({
 
     run()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [selectedOption?.amount])
 
   if (alreadyMemberName !== null) {
     return (
@@ -134,6 +144,9 @@ export const StripePaymentBlockComponent: React.FC<StripePaymentBlockProps> = ({
   }
 
   if (initError) return <p className="text-sm text-destructive">{initError}</p>
+
+  // No option selected yet — hide the payment form entirely (button stays blocked)
+  if (hasPaymentSelector && selectedOption === null) return null
 
   if (!clientSecret) {
     return (
@@ -157,7 +170,7 @@ export const StripePaymentBlockComponent: React.FC<StripePaymentBlockProps> = ({
             lineItems: invoiceLineItems.map((item) => ({
               name: item.name,
               description: item.description ?? '',
-              unit_price: (item.unitPrice ?? amount).toFixed(2),
+              unit_price: (item.unitPrice ?? effectiveAmount).toFixed(2),
               quantity: item.quantity ?? 1,
               tax: { name: 'IVA0' as const },
             })),
@@ -171,7 +184,16 @@ export const StripePaymentBlockComponent: React.FC<StripePaymentBlockProps> = ({
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-swim-border shadow-sm p-6">
+    <div className="bg-white rounded-2xl border border-swim-border shadow-sm p-6 flex flex-col gap-4">
+      {/* Amount summary line */}
+      <div className="flex items-center justify-between pb-4 border-b border-swim-border">
+        <span className="text-sm text-ink-light">{effectiveDescription ?? t('paymentAmount')}</span>
+        <span className="font-outfit font-bold text-deep">
+          {new Intl.NumberFormat(locale, { style: 'currency', currency: 'EUR' }).format(
+            effectiveAmount,
+          )}
+        </span>
+      </div>
       <Elements
         stripe={stripePromise}
         options={{ clientSecret, appearance: { theme: 'stripe' }, locale: locale as any }}

@@ -167,6 +167,12 @@ export const CardPaymentVariant: React.FC<CardPaymentProps> = ({
   const [alreadyMemberName, setAlreadyMemberName] = useState<string | null>(null)
   const ctx = useStepPayment()
 
+  // Resolve effective amount/description from context override or static props
+  const hasPaymentSelector = ctx !== null && 'selectedPaymentOption' in ctx
+  const selectedOption = ctx?.selectedPaymentOption ?? null
+  const effectiveAmount = selectedOption?.amount ?? amount
+  const effectiveDescription = selectedOption?.label ?? description
+
   // Signal ready to the aside button once clientSecret is loaded (or no payment needed)
   useEffect(() => {
     if (clientSecret || initError || alreadyMemberName !== null) {
@@ -174,8 +180,20 @@ export const CardPaymentVariant: React.FC<CardPaymentProps> = ({
     }
   }, [clientSecret, initError, alreadyMemberName]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Re-initialize when the selected payment option changes
   useEffect(() => {
+    if (hasPaymentSelector && selectedOption === null) return
+    initialized.current = false
+    setClientSecret(null)
+    setFormPaymentId(null)
+    setInitError(null)
+    ctx?.setReady(false)
+  }, [selectedOption?.amount, selectedOption?.label]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (clientSecret !== null) return
     if (initialized.current) return
+    if (hasPaymentSelector && selectedOption === null) return
     initialized.current = true
 
     const run = async () => {
@@ -188,8 +206,8 @@ export const CardPaymentVariant: React.FC<CardPaymentProps> = ({
       }
 
       const result = await createFormPayment({
-        amountEur: amount,
-        description,
+        amountEur: effectiveAmount,
+        description: effectiveDescription,
         assignToGroup: assignToGroup ?? null,
         submissionData: [],
       })
@@ -203,7 +221,7 @@ export const CardPaymentVariant: React.FC<CardPaymentProps> = ({
 
     run()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [clientSecret, selectedOption?.amount])
 
   if (paid) {
     return (
@@ -235,6 +253,9 @@ export const CardPaymentVariant: React.FC<CardPaymentProps> = ({
     )
   }
 
+  // No option selected yet — hide entirely (button stays blocked)
+  if (hasPaymentSelector && selectedOption === null) return null
+
   if (!clientSecret) {
     return (
       <div className="flex items-center gap-2 text-muted-foreground text-sm py-4">
@@ -245,15 +266,26 @@ export const CardPaymentVariant: React.FC<CardPaymentProps> = ({
   }
 
   return (
-    <Elements
-      stripe={stripePromise}
-      options={{ clientSecret, appearance: { theme: 'stripe' }, locale: locale as any }}
-    >
-      <InnerCheckoutForm
-        onSuccess={() => setPaid(true)}
-        hideButton={hideButton}
-        formPaymentId={formPaymentId}
-      />
-    </Elements>
+    <div className="flex flex-col gap-4">
+      {/* Amount summary line */}
+      <div className="flex items-center justify-between pb-3 border-b border-swim-border">
+        <span className="text-sm text-ink-light">{effectiveDescription ?? t('paymentAmount')}</span>
+        <span className="font-outfit font-bold text-deep">
+          {new Intl.NumberFormat(locale, { style: 'currency', currency: 'EUR' }).format(
+            effectiveAmount,
+          )}
+        </span>
+      </div>
+      <Elements
+        stripe={stripePromise}
+        options={{ clientSecret, appearance: { theme: 'stripe' }, locale: locale as any }}
+      >
+        <InnerCheckoutForm
+          onSuccess={() => setPaid(true)}
+          hideButton={hideButton}
+          formPaymentId={formPaymentId}
+        />
+      </Elements>
+    </div>
   )
 }

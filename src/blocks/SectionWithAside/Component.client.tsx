@@ -50,9 +50,13 @@ const StripeStepLayout: React.FC<{
   const panelRef = useRef<HTMLDivElement>(null)
   const isProcessing = ctx.status === 'processing'
   const isSuccess = ctx.status === 'success'
-  const isReady = ctx.isReady
+  const isReady = ctx.isReady && ctx.formIsValid
 
   const handlePay = async () => {
+    // Validate any form on the same step first — shows field errors and blocks payment
+    const formValid = await ctx.triggerFormValidation()
+    if (!formValid) return
+
     ctx.setStatus('processing')
     ctx.setErrorMessage(null)
     const result = await ctx.triggerSubmit()
@@ -228,6 +232,67 @@ export const SectionWithAsideClient: React.FC<Props> = ({
   const childArray = React.Children.toArray(children)
 
   return (
+    <StepPaymentProvider>
+      <SectionWithAsideInner
+        steps={steps}
+        nextStepLabel={nextStepLabel}
+        stepButtonConfigs={stepButtonConfigs}
+        stripeSteps={stripeSteps}
+        aside={aside}
+        activeStep={activeStep}
+        animClass={animClass}
+        isLast={isLast}
+        isStripeStep={isStripeStep}
+        stepBtnLabel={stepBtnLabel}
+        stepSubmitsForm={stepSubmitsForm}
+        childArray={childArray}
+        goTo={goTo}
+        handleNext={handleNext}
+      />
+    </StepPaymentProvider>
+  )
+}
+
+// ── Inner shell (reads StepPaymentContext) ───────────────────────────────────
+const SectionWithAsideInner: React.FC<{
+  steps: Step[]
+  nextStepLabel?: string | null
+  stepButtonConfigs: StepButtonConfig[]
+  stripeSteps: number[]
+  aside: React.ReactNode
+  activeStep: number
+  animClass: string
+  isLast: boolean
+  isStripeStep: boolean
+  stepBtnLabel?: string | null
+  stepSubmitsForm: boolean
+  childArray: React.ReactNode[]
+  goTo: (n: number) => void
+  handleNext: () => void
+}> = ({
+  steps,
+  aside,
+  activeStep,
+  animClass,
+  isLast,
+  isStripeStep,
+  stepBtnLabel,
+  stepSubmitsForm,
+  childArray,
+  goTo,
+  handleNext,
+}) => {
+  const ctx = useStepPayment()
+
+  const handleGoTo = (next: number) => {
+    // Going back — reset payment option so the form select and payment stay in sync
+    if (next < activeStep) {
+      ctx?.setSelectedPaymentOption(null)
+    }
+    goTo(next)
+  }
+
+  return (
     <section className="w-full">
       {/* Step indicator — display only, not clickable */}
       {steps.length > 0 && (
@@ -271,7 +336,7 @@ export const SectionWithAsideClient: React.FC<Props> = ({
         {activeStep > 0 && !isStripeStep && (
           <button
             type="button"
-            onClick={() => goTo(activeStep - 1)}
+            onClick={() => handleGoTo(activeStep - 1)}
             className="flex items-center gap-1.5 text-sm text-ink-mid hover:text-deep transition-colors mb-6 group"
           >
             <ArrowLeft size={15} className="transition-transform group-hover:-translate-x-0.5" />
@@ -279,23 +344,21 @@ export const SectionWithAsideClient: React.FC<Props> = ({
           </button>
         )}
 
-        {/* Stripe step — provider wraps panel + aside so they share context */}
+        {/* Stripe step — StripeStepLayout reads from the shared StepPaymentProvider above */}
         {isStripeStep && (
-          <StepPaymentProvider>
-            <StripeStepLayout
-              panel={childArray[activeStep]}
-              asideStatic={aside}
-              nextStepLabel={stepBtnLabel}
-              submitForm={stepSubmitsForm}
-              isLast={isLast}
-              onNext={handleNext}
-              prevStepLabel={
-                activeStep > 0 ? (steps[activeStep - 1]?.label ?? `Step ${activeStep}`) : undefined
-              }
-              onBack={() => goTo(activeStep - 1)}
-              animClass={animClass}
-            />
-          </StepPaymentProvider>
+          <StripeStepLayout
+            panel={childArray[activeStep]}
+            asideStatic={aside}
+            nextStepLabel={stepBtnLabel}
+            submitForm={stepSubmitsForm}
+            isLast={isLast}
+            onNext={handleNext}
+            prevStepLabel={
+              activeStep > 0 ? (steps[activeStep - 1]?.label ?? `Step ${activeStep}`) : undefined
+            }
+            onBack={() => handleGoTo(activeStep - 1)}
+            animClass={animClass}
+          />
         )}
 
         {/* Normal step — only render the active panel, not all with hidden */}

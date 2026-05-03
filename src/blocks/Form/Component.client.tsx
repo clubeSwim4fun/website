@@ -16,6 +16,7 @@ import { useToast } from '@/hooks/use-toast'
 import { LoaderCircle } from 'lucide-react'
 import { cn } from '@/utilities/ui'
 import { useTranslations } from 'next-intl'
+import { useStepPayment } from '@/blocks/SectionWithAside/StepPaymentContext'
 
 export type FormBlockType = {
   generalConfigData: GeneralConfig
@@ -76,10 +77,10 @@ export const FormBlockClient: React.FC<{ id?: string } & FormBlockType> = (props
 
   const hasPayment = Boolean(paymentField)
 
-  const formMethods = useForm({ defaultValues })
+  const formMethods = useForm({ defaultValues, mode: 'all' })
   const {
     control,
-    formState: { errors },
+    formState: { errors, isValid },
     handleSubmit,
     getValues,
     register,
@@ -91,6 +92,30 @@ export const FormBlockClient: React.FC<{ id?: string } & FormBlockType> = (props
   const router = useRouter()
   const t = useTranslations()
   const { toast } = useToast()
+
+  // Register RHF validation with the stripe step context so the aside pay button
+  // can trigger validation (showing field errors) before attempting payment.
+  const paymentCtx = useStepPayment()
+  useEffect(() => {
+    if (!paymentCtx) return
+    paymentCtx.registerFormValidation(
+      () =>
+        new Promise<boolean>((resolve) => {
+          handleSubmit(
+            () => resolve(true),
+            () => resolve(false),
+          )()
+        }),
+    )
+    // handleSubmit identity is stable — only re-register if context changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paymentCtx])
+
+  // Keep context in sync with live RHF validity so the button is disabled reactively
+  useEffect(() => {
+    if (!paymentCtx) return
+    paymentCtx.setFormIsValid(isValid)
+  }, [isValid, paymentCtx]) // eslint-disable-line react-hooks/exhaustive-deps
 
   /* eslint-disable @typescript-eslint/no-explicit-any */
   const submitToPayload = useCallback(
@@ -104,11 +129,41 @@ export const FormBlockClient: React.FC<{ id?: string } & FormBlockType> = (props
         return
       }
 
+      // Upload any File[] values (media fields) to the media collection first,
+      // then replace with comma-separated filenames for the submission record.
+      const serialized: Record<string, string> = {}
+      for (const [key, value] of Object.entries(data)) {
+        if (Array.isArray(value) && value.length > 0 && value[0] instanceof File) {
+          const names: string[] = []
+          for (const file of value as File[]) {
+            try {
+              const fd = new FormData()
+              fd.append('file', file)
+              const res = await fetch(`${getClientSideURL()}/api/media`, {
+                method: 'POST',
+                body: fd,
+              })
+              if (res.ok) {
+                const json = await res.json()
+                names.push(json?.doc?.filename ?? file.name)
+              } else {
+                names.push(file.name)
+              }
+            } catch {
+              names.push(file.name)
+            }
+          }
+          serialized[key] = names.join(', ')
+        } else {
+          serialized[key] = String(value ?? '')
+        }
+      }
+
       try {
         const req = await fetch(`${getClientSideURL()}/api/form-submissions`, {
           body: JSON.stringify({
             form: formID,
-            submissionData: Object.entries(data).map(([field, value]) => ({ field, value })),
+            submissionData: Object.entries(serialized).map(([field, value]) => ({ field, value })),
           }),
           headers: { 'Content-Type': 'application/json' },
           method: 'POST',
