@@ -1,5 +1,3 @@
-'use server'
-
 import { Group, GroupCategory, Page, User } from '@/payload-types'
 import { getTranslations } from 'next-intl/server'
 
@@ -54,15 +52,24 @@ export const checkPageVisibility = async ({
     }
   }
 
-  const visibilityGroupIds = pageVisibilityGroups.map((group) => group.value)
-  const userGroups = user?.groups?.map((group) => group.value)
+  // Admins and editors bypass page visibility
+  if (user.role === 'admin' || user.role === 'editor') {
+    return { success: true }
+  }
+
+  // Normalize to string IDs regardless of whether values are populated objects or raw strings
+  const visibilityGroupIds = pageVisibilityGroups.map((group) => {
+    const val = group.value
+    return typeof val === 'string' ? val : (val as Group | GroupCategory).id
+  })
+
+  const userGroupIds = user?.groups?.map((group) => {
+    const val = group.value
+    return typeof val === 'string' ? val : (val as Group | GroupCategory).id
+  })
 
   const userHasValidyGroup =
-    userGroups &&
-    userGroups.some((userGroup) => {
-      const group = userGroup as Group | GroupCategory
-      return visibilityGroupIds.includes(group.id)
-    })
+    userGroupIds && userGroupIds.some((id) => visibilityGroupIds.includes(id))
 
   const userStatus = user.status
 

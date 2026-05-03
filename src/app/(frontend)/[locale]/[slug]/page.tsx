@@ -66,7 +66,7 @@ export default async function Page({ params: paramsPromise }: Args) {
 
   if (!canSeePage.success) {
     if (canSeePage.message?.code === 401) {
-      redirect(`sign-in?callbackUrl=/${page.slug}`)
+      redirect(`/${locale}/sign-in?callbackUrl=/${page.slug}`)
     }
   }
 
