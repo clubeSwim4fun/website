@@ -170,7 +170,7 @@ export const UserDetails: React.FC<Props> = ({ user, countryCode }) => {
               <InfoField
                 label={t('gender')}
                 value={(() => {
-                  const g = typeof user.gender === 'object' ? user.gender?.value : user.gender
+                  const g = user.gender
                   if (!g) return undefined
                   const map: Record<string, string> = {
                     male: tReg('genderMale'),

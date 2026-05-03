@@ -357,6 +357,7 @@
     "bannerTitle": "Hello {username} — finish your payment",
     "bannerAmountLabel": "Amount due",
     "bannerPeriodLabel": "Period",
+    "bannerSeasonLabel": "Season",
     "paymentMethodLabel": "Payment method",
     "methodCard": "Card",
     "methodCardSub": "Visa, MC, Amex",

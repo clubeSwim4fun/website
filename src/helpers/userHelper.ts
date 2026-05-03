@@ -169,7 +169,7 @@ export const updateUserData = async ({
             : undefined,
           nationality: nationalityValue,
           phoneNumber: data.phoneNumber,
-          gender: data.gender,
+          gender: data.gender as User['gender'],
           Address: data.address,
         }
       : {
