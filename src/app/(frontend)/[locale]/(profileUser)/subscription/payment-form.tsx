@@ -105,9 +105,13 @@ export const PaymentForm: React.FC<Args> = ({ user, associationFees }) => {
   const stripeDescription = t('Subscription.invoiceItemName')
   const returnUrl = `${getClientSideURL()}/${locale}/subscription/order-generation`
 
+  const isAnnual = associationFees?.periodicity === '12'
+
   const periodLabel = isLoading
     ? '...'
-    : format.dateTimeRange(fees.startDate, fees.endDate, { month: 'short', year: 'numeric' })
+    : isAnnual
+      ? String(fees.startDate.getUTCFullYear())
+      : format.dateTimeRange(fees.startDate, fees.endDate, { month: 'short', year: 'numeric' })
 
   const amountLabel = isLoading
     ? '...'
@@ -138,7 +142,9 @@ export const PaymentForm: React.FC<Args> = ({ user, associationFees }) => {
           </div>
           <div>
             <p className="font-extrabold text-xl">{periodLabel}</p>
-            <p className="text-[10px] opacity-65 mt-0.5">{t('Subscription.bannerPeriodLabel')}</p>
+            <p className="text-[10px] opacity-65 mt-0.5">
+              {isAnnual ? t('Subscription.bannerSeasonLabel') : t('Subscription.bannerPeriodLabel')}
+            </p>
           </div>
         </div>
       </div>
