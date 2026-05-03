@@ -462,6 +462,7 @@
     "subscribeTitle": "Subscrever à Piscina",
     "waitlistTitle": "Lista de Espera",
     "confirmationTitle": "Confirmação",
+    "redirectingIn": "A redirecionar em {seconds}s...",
     "mySubscriptionTitle": "A Minha Subscrição",
     "subscribeButton": "Subscrever à Piscina",
     "joinWaitlistButton": "Entrar na Lista de Espera",

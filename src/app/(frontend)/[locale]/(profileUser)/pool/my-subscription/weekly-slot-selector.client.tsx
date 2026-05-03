@@ -427,18 +427,14 @@ export const WeeklySlotSelector: React.FC<Props> = ({
     }
   }
 
-  const totalSelected = Object.values(selectedByWeek).flat().length
-
-  const totalHours = Object.entries(selectedByWeek).reduce((sum, [weekIdx, ids]) => {
-    const week = weeks.find((w) => w.weekIndex === Number(weekIdx))
-    if (!week) return sum
-    return (
-      sum +
-      ids.reduce((wSum, slotId) => {
-        const slot = week.slots.find((s) => s.slotId === slotId)
-        return wSum + (slot ? parseSlotHours(slot.time) : 1)
-      }, 0)
-    )
+  // Banner stats: unique slots selected across all weeks (deduplicated by slotId = weekly schedule)
+  const allSelectedIds = Object.values(selectedByWeek).flat()
+  const uniqueSelectedIds = [...new Set(allSelectedIds)]
+  const totalSessions = uniqueSelectedIds.length
+  const allSlots = weeks.flatMap((w) => w.slots)
+  const totalHours = uniqueSelectedIds.reduce((sum, slotId) => {
+    const slot = allSlots.find((s) => s.slotId === slotId)
+    return sum + (slot ? parseSlotHours(slot.time) : 1)
   }, 0)
 
   return (
@@ -456,7 +452,7 @@ export const WeeklySlotSelector: React.FC<Props> = ({
         </div>
         <div className="flex gap-6 text-center">
           <div>
-            <p className="text-2xl font-bold">{totalSelected}</p>
+            <p className="text-2xl font-bold">{totalSessions}</p>
             <p className="text-xs opacity-80">{t('daysSelected')}</p>
           </div>
           <div>

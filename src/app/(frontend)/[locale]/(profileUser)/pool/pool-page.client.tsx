@@ -4,10 +4,11 @@ import { PoolCycle, PoolSubscription, User } from '@/payload-types'
 import { useLocale, useTranslations } from 'next-intl'
 import { Info, Zap, CheckCircle2, AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Link } from '@/i18n/routing'
+import { Link, useRouter } from '@/i18n/routing'
 import { SubscribeInline } from './subscribe-inline.client'
 import { cn } from '@/utilities/ui'
 import { getMonthIndex, getMonthLabel } from '@/collections/Pool/PoolCycles'
+import { useEffect, useState } from 'react'
 
 type SlotAvailability = 'available' | 'limited' | 'full' | 'closed'
 
@@ -52,6 +53,18 @@ export const PoolPageClient: React.FC<Props> = ({
 }) => {
   const t = useTranslations('PoolSubscription')
   const locale = useLocale() as 'en' | 'pt'
+  const router = useRouter()
+  const [countdown, setCountdown] = useState(5)
+
+  useEffect(() => {
+    if (!confirmed) return
+    if (countdown <= 0) {
+      router.push('/pool/my-subscription')
+      return
+    }
+    const timer = setTimeout(() => setCountdown((c) => c - 1), 1000)
+    return () => clearTimeout(timer)
+  }, [confirmed, countdown, router])
 
   // Treat active-but-unpaid as subscribe so the payment form is shown
   const variant =
@@ -329,6 +342,11 @@ export const PoolPageClient: React.FC<Props> = ({
                   year: cycle.year,
                 })}
               </p>
+              {confirmed && (
+                <p className="text-xs text-muted-foreground mt-1">
+                  {t('redirectingIn', { seconds: countdown })}
+                </p>
+              )}
             </div>
           </div>
           <div className="flex gap-3">

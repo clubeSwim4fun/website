@@ -462,6 +462,7 @@
     "subscribeTitle": "Subscribe to Pool",
     "waitlistTitle": "Waitlist",
     "confirmationTitle": "Confirmation",
+    "redirectingIn": "Redirecting in {seconds}s...",
     "mySubscriptionTitle": "My Subscription",
     "subscribeButton": "Subscribe to Pool",
     "joinWaitlistButton": "Join Waitlist",
