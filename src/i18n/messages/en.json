@@ -9,7 +9,8 @@
     "closeMenu": "Close menu",
     "home": "Home",
     "calendar": "Calendar",
-    "account": "Account"
+    "account": "Account",
+    "menu": "Menu"
   },
   "Sign-in": {
     "email": "Email",

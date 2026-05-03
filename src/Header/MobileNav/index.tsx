@@ -3,7 +3,7 @@
 import React, { Fragment, useEffect, useState } from 'react'
 import type { Group, Header as HeaderType, Page, Post, User } from '@/payload-types'
 import { CMSLink } from '@/components/Link'
-import { ChevronDown, Home, Calendar, User as UserIcon, Search, X, Menu } from 'lucide-react'
+import { ChevronDown, Home, Calendar, User as UserIcon, X, Menu } from 'lucide-react'
 import { usePathname } from '@/i18n/routing'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
@@ -86,17 +86,8 @@ const MobileHeaderNav: React.FC<{
 
   return (
     <>
-      {/* ── Top-right menu button (mobile only) ── */}
-      <div className="flex md:hidden items-center gap-2">
-        {user && <Cart />}
-        <button
-          onClick={toggleMenu}
-          className="w-9 h-9 flex items-center justify-center rounded-lg bg-foam border border-swim-border text-ink-mid"
-          aria-label={isOpen ? t('closeMenu') : t('openMenu')}
-        >
-          {isOpen ? <X size={18} /> : <Menu size={18} />}
-        </button>
-      </div>
+      {/* ── Top-right cart button (mobile only) ── */}
+      {user && <div className="flex md:hidden items-center">{<Cart />}</div>}
 
       {/* ── Slide-down drawer ── */}
       <div
@@ -216,19 +207,6 @@ const MobileHeaderNav: React.FC<{
         </Link>
 
         <Link
-          href="/search"
-          className={`flex flex-col items-center gap-0.5 py-2 no-underline ${
-            pathname === '/search' ? 'text-mid' : 'text-ink-light'
-          }`}
-          aria-label={t('search')}
-        >
-          <Search size={20} strokeWidth={pathname === '/search' ? 2.2 : 1.8} />
-          <span className={`text-[9px] ${pathname === '/search' ? 'font-semibold' : ''}`}>
-            {t('search')}
-          </span>
-        </Link>
-
-        <Link
           href="/event"
           className={`flex flex-col items-center gap-0.5 py-2 no-underline ${
             pathname?.startsWith('/event') ? 'text-mid' : 'text-ink-light'
@@ -258,6 +236,15 @@ const MobileHeaderNav: React.FC<{
             {t('account')}
           </span>
         </Link>
+
+        <button
+          onClick={toggleMenu}
+          className={`flex flex-col items-center gap-0.5 py-2 w-full ${isOpen ? 'text-mid' : 'text-ink-light'}`}
+          aria-label={isOpen ? t('closeMenu') : t('openMenu')}
+        >
+          {isOpen ? <X size={20} strokeWidth={2.2} /> : <Menu size={20} strokeWidth={1.8} />}
+          <span className={`text-[9px] ${isOpen ? 'font-semibold' : ''}`}>{t('menu')}</span>
+        </button>
       </nav>
     </>
   )
