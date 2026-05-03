@@ -54,10 +54,11 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 
       {/* Posts count */}
       <div className="text-xs text-[hsl(var(--ink-light))]">
-        {t('postsCount', {
+        {t.rich('postsCount', {
           count: totalPosts,
           currentPage,
           totalPages: totalPages > 1 ? totalPages : 1,
+          strong: (chunks) => <strong>{chunks}</strong>,
         })}
       </div>
     </div>

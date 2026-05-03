@@ -4,10 +4,12 @@ import React, { useState } from 'react'
 import { useAuth, useTranslation } from '@payloadcms/ui'
 import { performAnnualReset } from '@/actions/annualReset'
 import { ConfirmationDialog } from './ConfirmationDialog'
+import { GroupResetDialog } from '@/components/admin/GroupReset/GroupResetDialog'
 
 const labels = {
   en: {
     button: '🔄 Annual Membership Reset',
+    groupButton: '🗂️ Group Reset',
     fetchError: 'Could not fetch the number of affected members. Please try again.',
     resetFailed: (msg: string) => `❌ Reset failed: ${msg}`,
     resetSuccess: (count: number) =>
@@ -15,6 +17,7 @@ const labels = {
   },
   pt: {
     button: '🔄 Renovação Anual de Membros',
+    groupButton: '🗂️ Remover Grupo',
     fetchError: 'Não foi possível obter o número de membros afetados. Por favor tente novamente.',
     resetFailed: (msg: string) => `❌ Renovação falhou: ${msg}`,
     resetSuccess: (count: number) =>
@@ -34,6 +37,8 @@ export default function ResetButton() {
   const [affectedCount, setAffectedCount] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
   const [feedback, setFeedback] = useState<FeedbackState>(null)
+
+  const [groupDialogOpen, setGroupDialogOpen] = useState(false)
 
   if (!user || (user as any).role !== 'admin') {
     return null
@@ -71,22 +76,44 @@ export default function ResetButton() {
 
   return (
     <div style={{ marginBottom: '1rem' }}>
-      <button
-        type="button"
-        onClick={handleButtonClick}
-        style={{
-          backgroundColor: '#b91c1c',
-          color: 'white',
-          padding: '0.5rem 1rem',
-          borderRadius: '4px',
-          cursor: 'pointer',
-          fontWeight: 600,
-          fontSize: '0.875rem',
-          border: 'none',
-        }}
-      >
-        {t.button}
-      </button>
+      <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+        <button
+          type="button"
+          onClick={handleButtonClick}
+          style={{
+            backgroundColor: '#b91c1c',
+            color: 'white',
+            padding: '0.5rem 1rem',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            fontWeight: 600,
+            fontSize: '0.875rem',
+            border: 'none',
+          }}
+        >
+          {t.button}
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            setFeedback(null)
+            setGroupDialogOpen(true)
+          }}
+          style={{
+            backgroundColor: '#1d4ed8',
+            color: 'white',
+            padding: '0.5rem 1rem',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            fontWeight: 600,
+            fontSize: '0.875rem',
+            border: 'none',
+          }}
+        >
+          {t.groupButton}
+        </button>
+      </div>
 
       {feedback && (
         <p
@@ -106,6 +133,13 @@ export default function ResetButton() {
         affectedCount={affectedCount}
         onConfirm={handleConfirm}
         isLoading={isLoading}
+      />
+
+      <GroupResetDialog
+        open={groupDialogOpen}
+        onOpenChange={setGroupDialogOpen}
+        onSuccess={(msg) => setFeedback({ type: 'success', message: msg })}
+        onError={(msg) => setFeedback({ type: 'error', message: msg })}
       />
     </div>
   )
