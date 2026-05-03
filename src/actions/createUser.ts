@@ -118,6 +118,7 @@ export async function createUser(formData: FormData): Promise<CreateUserResponse
         name: userObject.name,
         surname: userObject.surname,
         email: userObject.email,
+        emailNotificationsEnabled: true,
       },
       req: { transactionID },
     })

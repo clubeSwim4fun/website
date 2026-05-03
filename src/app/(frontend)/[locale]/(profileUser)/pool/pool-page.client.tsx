@@ -110,14 +110,14 @@ export const PoolPageClient: React.FC<Props> = ({
   return (
     <div className="flex flex-col gap-8 max-w-2xl">
       {/* Cycle banner — same style as the cycle banner in slot-selector */}
-      <div className="rounded-xl bg-[hsl(var(--blue-swim))] text-white px-6 py-5 flex flex-col sm:flex-row sm:items-center gap-6">
-        <div className="flex-1">
+      <div className="rounded-xl bg-[hsl(var(--blue-swim))] text-white px-6 py-5 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
+        <div className="flex-1 min-w-0">
           <p className="text-xs uppercase tracking-widest opacity-70 font-semibold mb-1">
             {t('currentCycle')}
           </p>
           <p className="text-3xl font-bold capitalize">{monthName}</p>
         </div>
-        <div className="flex gap-8 sm:gap-10 shrink-0">
+        <div className="grid grid-cols-3 sm:flex sm:gap-10 gap-x-4 gap-y-3">
           <div className="text-center">
             <p className="text-3xl font-bold">{sessionsPerWeek}</p>
             <p className="text-xs opacity-70 mt-0.5">{t('sessionsWeekLabel')}</p>

@@ -199,9 +199,8 @@ export const UserDetails: React.FC<Props> = ({ user, countryCode }) => {
 
         {activeTab === 'address' && (
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 sm:gap-x-6 gap-y-4 sm:gap-y-5 sm:pr-20">
-            <div className="col-span-2 sm:col-span-1">
-              <InfoField label={t('street')} value={user.Address?.street} />
-            </div>
+            <InfoField label={t('street')} value={user.Address?.street} />
+            <InfoField label={t('number')} value={user.Address?.number} />
             <InfoField label={t('state')} value={user.Address?.state} />
             <InfoField label={t('zipcode')} value={user.Address?.zipcode} />
           </div>
