@@ -65,15 +65,35 @@ export const PoolCycles: CollectionConfig = {
       admin: { hidden: true, readOnly: true },
     },
     {
-      name: 'status',
-      label: { en: 'Status', pt: 'Estado' },
-      type: 'select',
-      options: [
-        { label: { en: 'Open', pt: 'Aberto' }, value: 'open' },
-        { label: { en: 'Closed', pt: 'Fechado' }, value: 'closed' },
+      type: 'row',
+      fields: [
+        {
+          name: 'status',
+          label: { en: 'Status', pt: 'Estado' },
+          type: 'select',
+          options: [
+            { label: { en: 'Open', pt: 'Aberto' }, value: 'open' },
+            { label: { en: 'Closed', pt: 'Fechado' }, value: 'closed' },
+          ],
+          defaultValue: 'closed',
+          required: true,
+          admin: { width: '50%' },
+        },
+        {
+          name: 'openDate',
+          label: { en: 'Auto-Open Date', pt: 'Data de Abertura Automática' },
+          type: 'date',
+          required: false,
+          admin: {
+            width: '50%',
+            date: { pickerAppearance: 'dayAndTime', displayFormat: 'd MMM yyyy HH:mm' },
+            description: {
+              en: 'If set, the cycle will automatically open on this date and close the previous one.',
+              pt: 'Se definida, o ciclo abrirá automaticamente nesta data e fechará o anterior.',
+            },
+          },
+        },
       ],
-      defaultValue: 'closed',
-      required: true,
     },
     {
       type: 'row',

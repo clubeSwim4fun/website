@@ -44,8 +44,8 @@ const PoolPage = async ({
 
   const state = computePoolPageState(cycle, activeCount, waitlistCount, athleteSub)
 
-  // Already active without coming from a fresh payment → go straight to my-subscription
-  if (state.variant === 'already-active' && !confirmed) {
+  // Already active and paid → go straight to my-subscription
+  if (state.variant === 'already-active' && !confirmed && athleteSub?.paymentStatus === 'paid') {
     redirect(`/${locale}/pool/my-subscription`)
   }
 

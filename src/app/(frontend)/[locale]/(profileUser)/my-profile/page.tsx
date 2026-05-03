@@ -2,7 +2,7 @@ import { UserDetails } from '@/components/User/user-details'
 import { UserFutureEvents } from '@/components/User/user-future-events'
 import { UserSubscriptions } from '@/components/User/user-subscriptions'
 import { UserProfileHeader } from '@/components/User/user-profile-header'
-import { GeneralConfig } from '@/payload-types'
+import { GeneralConfig, User } from '@/payload-types'
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import { getMeUser } from '@/utilities/getMeUser'
 import { getCountryCode } from '@/helpers/userHelper'
@@ -11,6 +11,8 @@ import { getTranslations } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import { redirect } from 'next/navigation'
 import { TypedLocale } from 'payload'
+import { getPayload } from 'payload'
+import config from '@payload-config'
 import { getUserFutureEvents } from '@/helpers/userHelper'
 import { getUserSubscriptions } from '@/helpers/subscriptionHelper'
 
@@ -26,7 +28,14 @@ const UserPage = async ({ params }: { params: Promise<{ locale: string }> }) => 
 
   if (!userObject || !userObject.user) notFound()
 
-  const user = userObject.user
+  const payload = await getPayload({ config })
+  const user = (await payload.findByID({
+    collection: 'users',
+    id: userObject.user.id,
+    depth: 1,
+  })) as User
+
+  if (!user) notFound()
 
   if (user.status !== 'active') {
     redirect(`/${locale}/subscription`)

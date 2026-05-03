@@ -46,12 +46,18 @@ export const PoolPageClient: React.FC<Props> = ({
   remainingWaitlistSpots,
   user,
   athleteSub,
-  variant,
+  variant: variantProp,
   waitlistPosition,
   confirmed = false,
 }) => {
   const t = useTranslations('PoolSubscription')
   const locale = useLocale() as 'en' | 'pt'
+
+  // Treat active-but-unpaid as subscribe so the payment form is shown
+  const variant =
+    variantProp === 'already-active' && athleteSub?.paymentStatus !== 'paid'
+      ? 'subscribe'
+      : variantProp
 
   if (variant === 'closed' || !cycle) {
     return (
@@ -298,7 +304,16 @@ export const PoolPageClient: React.FC<Props> = ({
 
       {/* Actions */}
       {variant === 'subscribe' && !confirmed && (
-        <SubscribeInline cycle={cycle} user={user} remainingSpots={remainingSpots} />
+        <SubscribeInline
+          cycle={cycle}
+          user={user}
+          remainingSpots={remainingSpots}
+          existingPendingSubscriptionId={
+            variantProp === 'already-active' && athleteSub?.paymentStatus !== 'paid'
+              ? athleteSub?.id
+              : undefined
+          }
+        />
       )}
 
       {/* Confirmation panel — shown after successful payment instead of a separate page */}

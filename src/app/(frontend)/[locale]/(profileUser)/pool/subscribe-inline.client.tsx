@@ -1,6 +1,9 @@
 'use client'
 
-import { createPendingPoolSubscription } from '@/actions/pool-subscription'
+import {
+  createPendingPoolSubscription,
+  deletePendingPoolSubscription,
+} from '@/actions/pool-subscription'
 import { StripePaymentForm } from '@/components/StripePayment'
 import { useToast } from '@/hooks/use-toast'
 import { PoolCycle, User } from '@/payload-types'
@@ -16,9 +19,15 @@ type Props = {
   cycle: PoolCycle
   user: User
   remainingSpots: number
+  existingPendingSubscriptionId?: string
 }
 
-export const SubscribeInline: React.FC<Props> = ({ cycle, user, remainingSpots }) => {
+export const SubscribeInline: React.FC<Props> = ({
+  cycle,
+  user,
+  remainingSpots,
+  existingPendingSubscriptionId,
+}) => {
   const t = useTranslations('PoolSubscription')
   const locale = useLocale()
   const router = useRouter()
@@ -48,6 +57,14 @@ export const SubscribeInline: React.FC<Props> = ({ cycle, user, remainingSpots }
     creatingRef.current = true
     setIsCreating(true)
     setShowPayment(true)
+
+    // Reuse existing pending subscription if one already exists (e.g. previous failed payment)
+    if (existingPendingSubscriptionId) {
+      setSubscriptionId(existingPendingSubscriptionId)
+      creatingRef.current = false
+      setIsCreating(false)
+      return
+    }
 
     const result = await createPendingPoolSubscription(cycle.id)
     if (!result.success || !result.subscriptionId) {
@@ -148,7 +165,13 @@ export const SubscribeInline: React.FC<Props> = ({ cycle, user, remainingSpots }
         variant="ghost"
         size="sm"
         className="w-fit -mt-2"
-        onClick={() => setShowPayment(false)}
+        onClick={() => {
+          if (subscriptionId && !existingPendingSubscriptionId)
+            deletePendingPoolSubscription(subscriptionId)
+          setShowPayment(false)
+          setSubscriptionId(null)
+          creatingRef.current = false
+        }}
       >
         {t('cancelPayment')}
       </Button>

@@ -22,6 +22,9 @@ const MySubscriptionPage = async ({ params }: { params: Promise<{ locale: string
 
   const t = await getTranslations({ locale, namespace: 'PoolSubscription' })
 
+  const isPaid = subscription!.paymentStatus === 'paid'
+  if (!isPaid) redirect(`/${locale}/pool`)
+
   const isActive = subscription!.status === 'active'
   const weeks = isActive ? await getWeekSlotData(cycle!, user!.id) : []
 

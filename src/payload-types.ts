@@ -3649,6 +3649,10 @@ export interface PoolCycle {
   id: string;
   name?: string | null;
   status: 'open' | 'closed';
+  /**
+   * If set, the cycle will automatically open on this date and close the previous one.
+   */
+  openDate?: string | null;
   month:
     | 'january'
     | 'february'
@@ -5413,6 +5417,7 @@ export interface GroupSubscriptionSelect<T extends boolean = true> {
 export interface PoolCyclesSelect<T extends boolean = true> {
   name?: T;
   status?: T;
+  openDate?: T;
   month?: T;
   year?: T;
   maxAthletes?: T;

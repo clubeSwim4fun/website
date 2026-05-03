@@ -46,6 +46,11 @@ export async function createPendingPoolSubscription(
       return { success: false, message: t('Common.unexpectedError') }
     }
 
+    if (cycle.price < 0.5) {
+      await payload.db.rollbackTransaction(transactionID)
+      return { success: false, message: t('PoolSubscription.priceTooLow') }
+    }
+
     const activeResult = await payload.find({
       collection: 'pool-subscriptions',
       where: { and: [{ cycle: { equals: cycleId } }, { status: { equals: 'active' } }] },
@@ -229,6 +234,36 @@ export async function joinPoolWaitlist(cycleId: string): Promise<{
   }
 }
 
+/**
+ * Deletes a pending (unpaid) subscription created by createPendingPoolSubscription.
+ * Called when the user closes/cancels the payment form before completing payment.
+ * Only works on subscriptions owned by the current user with paymentStatus === 'pending'.
+ */
+export async function deletePendingPoolSubscription(
+  subscriptionId: string,
+): Promise<{ success: boolean }> {
+  const payload = await getPayload({ config })
+  const { user } = await getMeUser()
+  if (!user) return { success: false }
+
+  try {
+    const sub = (await payload.findByID({
+      collection: 'pool-subscriptions',
+      id: subscriptionId,
+      depth: 0,
+    })) as PoolSubscription
+
+    const athleteId = typeof sub.athlete === 'string' ? sub.athlete : sub.athlete.id
+    if (athleteId !== user.id) return { success: false }
+    if (sub.paymentStatus !== 'pending') return { success: false }
+
+    await payload.delete({ collection: 'pool-subscriptions', id: subscriptionId })
+    return { success: true }
+  } catch {
+    return { success: false }
+  }
+}
+
 export async function cancelPoolSubscription(
   subscriptionId: string,
 ): Promise<{ success: boolean; message?: string }> {
@@ -338,7 +373,11 @@ export async function selectPoolSlots(
       depth: 1,
     })) as PoolSubscription
 
-    if (!subscription || subscription.status !== 'active') {
+    if (
+      !subscription ||
+      subscription.status !== 'active' ||
+      subscription.paymentStatus !== 'paid'
+    ) {
       return { success: false, message: t('Common.unexpectedError') }
     }
 
