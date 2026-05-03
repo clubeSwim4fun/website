@@ -253,10 +253,43 @@ async function handlePaymentSuccess(
         const userId =
           typeof subscription.user === 'string' ? subscription.user : subscription.user?.id
         if (userId) {
+          // Find the "socio" group by slug
+          const socioGroupResult = await payload.find({
+            collection: 'groups',
+            where: { slug: { equals: 'socio' } },
+            limit: 1,
+            req: { transactionID },
+          })
+          const socioGroup = socioGroupResult.docs[0]
+
+          const userRecord = await payload.findByID({
+            collection: 'users',
+            id: userId,
+            depth: 0,
+            req: { transactionID },
+          })
+
+          const existingGroups: { relationTo: string; value: string }[] = (
+            (userRecord.groups as any[]) ?? []
+          ).map((g: any) =>
+            typeof g === 'string'
+              ? { relationTo: 'groups', value: g }
+              : {
+                  relationTo: g.relationTo ?? 'groups',
+                  value: typeof g.value === 'string' ? g.value : g.value?.id,
+                },
+          )
+
+          const groupsData =
+            socioGroup &&
+            !existingGroups.some((g) => g.relationTo === 'groups' && g.value === socioGroup.id)
+              ? [...existingGroups, { relationTo: 'groups', value: socioGroup.id }]
+              : existingGroups
+
           await payload.update({
             collection: 'users',
             id: userId,
-            data: { status: 'active' },
+            data: { status: 'active', groups: groupsData as any },
             req: { transactionID },
           })
         }
