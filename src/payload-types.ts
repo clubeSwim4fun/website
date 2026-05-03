@@ -271,7 +271,9 @@ export interface Page {
      */
     stats?:
       | {
-          value: string;
+          statsMode?: ('manual' | 'automatic') | null;
+          value?: string | null;
+          group?: (string | null) | Group;
           label: string;
           id?: string | null;
         }[]
@@ -2990,8 +2992,10 @@ export interface CardBlock {
    */
   stats?:
     | {
-        number: string;
-        description: string;
+        statsMode?: ('manual' | 'automatic') | null;
+        value?: string | null;
+        group?: (string | null) | Group;
+        label: string;
         id?: string | null;
       }[]
     | null;
@@ -3115,7 +3119,9 @@ export interface BenefitsBlock {
     description?: string | null;
     stats?:
       | {
-          value: string;
+          statsMode?: ('manual' | 'automatic') | null;
+          value?: string | null;
+          group?: (string | null) | Group;
           label: string;
           id?: string | null;
         }[]
@@ -4286,7 +4292,9 @@ export interface PagesSelect<T extends boolean = true> {
         stats?:
           | T
           | {
+              statsMode?: T;
               value?: T;
+              group?: T;
               label?: T;
               id?: T;
             };
@@ -4816,8 +4824,10 @@ export interface CardBlockSelect<T extends boolean = true> {
   stats?:
     | T
     | {
-        number?: T;
-        description?: T;
+        statsMode?: T;
+        value?: T;
+        group?: T;
+        label?: T;
         id?: T;
       };
   listItems?:
@@ -4870,7 +4880,9 @@ export interface BenefitsBlockSelect<T extends boolean = true> {
         stats?:
           | T
           | {
+              statsMode?: T;
               value?: T;
+              group?: T;
               label?: T;
               id?: T;
             };

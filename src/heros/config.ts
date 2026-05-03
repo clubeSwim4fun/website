@@ -1,6 +1,7 @@
 import type { Field } from 'payload'
 import { richTextWithColor } from '@/fields/richTextWithColor'
 import { ctaLinkFields } from '@/fields/ctaLink'
+import { statsFields } from '@/fields/statsFields'
 
 export const hero: Field = {
   name: 'hero',
@@ -76,13 +77,7 @@ export const hero: Field = {
     },
 
     // ── Stats ───────────────────────────────────────────────────────
-    {
-      name: 'stats',
-      type: 'array',
-      label: {
-        en: 'Stats',
-        pt: 'Estatísticas',
-      },
+    statsFields({
       maxRows: 4,
       admin: {
         initCollapsed: true,
@@ -92,29 +87,7 @@ export const hero: Field = {
           pt: 'Até 4 estatísticas abaixo dos botões (ex: "6 / Sessões/semana")',
         },
       },
-      fields: [
-        {
-          type: 'row',
-          fields: [
-            {
-              name: 'value',
-              type: 'text',
-              required: true,
-              label: { en: 'Value', pt: 'Valor' },
-              admin: { width: '50%' },
-            },
-            {
-              name: 'label',
-              type: 'text',
-              localized: true,
-              required: true,
-              label: { en: 'Label', pt: 'Rótulo' },
-              admin: { width: '50%' },
-            },
-          ],
-        },
-      ],
-    },
+    }),
 
     // ── Media ───────────────────────────────────────────────────────
     {

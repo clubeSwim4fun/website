@@ -8,6 +8,7 @@ import { CtaButton } from '@/components/CtaButton'
 import { cn } from '@/utilities/ui'
 import { shouldShowBlock } from '@/helpers/blockVisibilityHelper'
 import { HeroIcon, type HeroIconType } from '@/components/Icons/HeroIcons'
+import { StatsList } from '@/components/StatsList'
 
 // ── Cross-hatch background SVG (inline, matches design) ─────────────────────
 const CrossPattern = () => (
@@ -102,21 +103,14 @@ const HeroContent: React.FC<{ hero: Page['hero']; centered?: boolean; user?: Use
 
       {/* Stats */}
       {Array.isArray(stats) && stats.length > 0 && (
-        <div
+        <StatsList
+          stats={stats as any}
+          variant="hero-dark"
           className={cn(
-            'animate-fade-up-4 border-t border-white/15 pt-8 flex gap-8 flex-wrap',
+            'animate-fade-up-4 border-t border-white/15 pt-8',
             centered && 'justify-center',
           )}
-        >
-          {stats.map((stat, i) => (
-            <div key={i}>
-              <div className="font-outfit font-extrabold text-3xl text-white leading-none">
-                {stat.value}
-              </div>
-              <div className="text-[12px] text-white/60 mt-1">{stat.label}</div>
-            </div>
-          ))}
-        </div>
+        />
       )}
     </div>
   )

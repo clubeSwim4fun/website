@@ -7,6 +7,8 @@ import { Download } from 'lucide-react'
 import { cn } from '@/utilities/ui'
 import { FormBlock } from '@/blocks/Form/Component'
 import { CardPaymentVariant } from './Component.client'
+import { StatsList } from '@/components/StatsList'
+import { resolveStats } from '@/helpers/resolveStats'
 
 // ── Color map ────────────────────────────────────────────────────────────────
 const COLOR_MAP: Record<string, { bar: string; iconBg: string; iconText: string }> = {
@@ -62,8 +64,10 @@ export const CardBlockComponent: React.FC<CardBlockProps> = async ({
 }) => {
   const colors = COLOR_MAP[cardColor ?? 'blue'] ?? COLOR_MAP.blue!
   const iconNode = icon && icon !== 'none' ? ICON_MAP[icon] : null
-
   const metadataMap = Object.fromEntries((paymentMetadata ?? []).map((m) => [m.key, m.value]))
+
+  const resolvedStats =
+    variant === 'stats' && stats?.length ? await resolveStats(stats as any) : null
 
   return (
     <div className="container mb-4">
@@ -95,20 +99,8 @@ export const CardBlockComponent: React.FC<CardBlockProps> = async ({
             )}
 
             {/* Variant: stats */}
-            {variant === 'stats' && !!stats?.length && (
-              <div className="grid grid-cols-2 gap-3">
-                {stats.map((stat, i) => (
-                  <div
-                    key={stat.id ?? i}
-                    className="rounded-xl border border-swim-border bg-gray-50 px-4 py-5 text-center"
-                  >
-                    <p className="font-outfit text-2xl md:text-4xl font-extrabold leading-none mb-2 text-ink">
-                      {stat.number}
-                    </p>
-                    <p className="text-sm text-ink-light leading-snug">{stat.description}</p>
-                  </div>
-                ))}
-              </div>
+            {variant === 'stats' && !!resolvedStats?.length && (
+              <StatsList stats={resolvedStats} variant="card" />
             )}
 
             {/* Variant: list */}

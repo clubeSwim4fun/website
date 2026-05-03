@@ -2,6 +2,7 @@ import type { Block } from 'payload'
 import { ICON_OPTIONS } from '@/fields/iconOptions'
 import { richTextWithColor } from '@/fields/richTextWithColor'
 import { blockVisibilityDynamicField } from '@/fields/blockVisibilityDynamic'
+import { statsFields } from '@/fields/statsFields'
 
 export const CardBlock: Block = {
   slug: 'cardBlock',
@@ -79,27 +80,9 @@ export const CardBlock: Block = {
     },
 
     // ── Variant: stats ─────────────────────────────────────────────
-    {
-      name: 'stats',
-      type: 'array',
+    statsFields({
       label: { en: 'Statistics', pt: 'Estatísticas' },
       minRows: 1,
-      fields: [
-        {
-          name: 'number',
-          type: 'text',
-          localized: true,
-          required: true,
-          label: { en: 'Number / Value', pt: 'Número / Valor' },
-        },
-        {
-          name: 'description',
-          type: 'text',
-          localized: true,
-          required: true,
-          label: { en: 'Description', pt: 'Descrição' },
-        },
-      ],
       admin: {
         condition: (_, s) => s?.variant === 'stats',
         description: {
@@ -107,7 +90,7 @@ export const CardBlock: Block = {
           pt: 'As estatísticas são exibidas 2 por linha.',
         },
       },
-    },
+    }),
 
     // ── Variant: list ──────────────────────────────────────────────
     {

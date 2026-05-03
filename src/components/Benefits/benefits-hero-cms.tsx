@@ -1,12 +1,11 @@
 import React from 'react'
-
-type Stat = { value: string; label: string; id?: string | null }
+import { type StatItem } from '@/components/StatsList'
 
 type Props = {
   eyebrow?: string | null
   title?: string | null
   description?: string | null
-  stats?: Stat[] | null
+  stats?: StatItem[] | null
 }
 
 const dotPatternStyle = {

@@ -1,5 +1,6 @@
 import React from 'react'
 import type { BenefitsBlock as BenefitsBlockProps } from '@/payload-types'
+import { resolveStats } from '@/helpers/resolveStats'
 import { BenefitsHeroCMS } from '@/components/Benefits/benefits-hero-cms'
 import BenefitsAnchorNav from '@/components/Benefits/benefits-anchor-nav.client'
 import { BenefitCard } from '@/components/Benefits/benefit-card'
@@ -134,6 +135,12 @@ export const BenefitsBlockComponent: React.FC<BenefitsBlockProps> = async (props
   const locale = await getLocale()
   const t = await getTranslations('Benefits')
 
+  // Resolve automatic stats
+  let resolvedStats: { value: string; label: string; id?: string | null }[] | null = null
+  if (hero?.stats?.length) {
+    resolvedStats = await resolveStats(hero.stats as any)
+  }
+
   const anchorLabels = {
     pool: t('anchor.pool'),
     nutrition: t('anchor.nutrition'),
@@ -150,7 +157,7 @@ export const BenefitsBlockComponent: React.FC<BenefitsBlockProps> = async (props
             eyebrow={hero.eyebrow}
             title={hero.title}
             description={hero.description}
-            stats={hero.stats}
+            stats={resolvedStats ?? (hero.stats as any)}
           />
         </header>
       )}

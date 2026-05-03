@@ -1,5 +1,6 @@
 import type { Block } from 'payload'
 import { blockVisibilityDynamicField } from '@/fields/blockVisibilityDynamic'
+import { statsFields } from '@/fields/statsFields'
 
 export const BenefitsBlock: Block = {
   slug: 'benefitsBlock',
@@ -38,35 +39,7 @@ export const BenefitsBlock: Block = {
           localized: true,
           label: { en: 'Description', pt: 'Descrição' },
         },
-        {
-          name: 'stats',
-          type: 'array',
-          label: { en: 'Stats', pt: 'Estatísticas' },
-          maxRows: 3,
-          admin: { initCollapsed: true },
-          fields: [
-            {
-              type: 'row',
-              fields: [
-                {
-                  name: 'value',
-                  type: 'text',
-                  required: true,
-                  label: { en: 'Value', pt: 'Valor' },
-                  admin: { width: '30%' },
-                },
-                {
-                  name: 'label',
-                  type: 'text',
-                  localized: true,
-                  required: true,
-                  label: { en: 'Label', pt: 'Rótulo' },
-                  admin: { width: '70%' },
-                },
-              ],
-            },
-          ],
-        },
+        statsFields({ maxRows: 3, admin: { initCollapsed: true } }),
       ],
     },
 
