@@ -17,17 +17,17 @@ export const BlogSidebar: React.FC<BlogSidebarProps> = ({ recentPosts, categorie
     <div className="sticky top-[108px] flex flex-col gap-4">
       {/* About section */}
       <div className="bg-gradient-to-br from-[hsl(var(--deep))] to-[hsl(var(--mid))] rounded-[14px] p-5.5 text-white text-center">
-        <div className="w-14 h-14 rounded-full bg-white/18 border-2 border-white/30 flex items-center justify-center mx-auto mb-3.5 font-syne text-lg font-extrabold text-white">
+        <div className="w-14 h-14 rounded-full bg-white/18 border-2 border-white/30 flex items-center justify-center mx-auto mb-3.5 font-outfit text-lg font-extrabold text-white">
           S4
         </div>
-        <div className="font-syne text-[15px] font-bold mb-1">Clube Swim4fun</div>
+        <div className="font-outfit text-[15px] font-bold mb-1">Clube Swim4fun</div>
         <div className="text-xs opacity-65 mb-3 uppercase tracking-wider">
           {t('openWaterSwimming')}
         </div>
         <p className="text-xs opacity-78 leading-relaxed mb-4">{t('sidebarDescription')}</p>
         <Link
           href="/about"
-          className="block bg-white text-[hsl(var(--deep))] rounded-lg px-2.5 py-2.5 font-syne text-xs font-bold no-underline transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.2)]"
+          className="block bg-white text-[hsl(var(--deep))] rounded-lg px-2.5 py-2.5 font-outfit text-xs font-bold no-underline transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.2)]"
         >
           {t('learnAboutClub')}
         </Link>
@@ -36,7 +36,7 @@ export const BlogSidebar: React.FC<BlogSidebarProps> = ({ recentPosts, categorie
       {/* Recent posts */}
       <div className="bg-white border-2 border-[hsl(var(--swim-border))] rounded-[14px] overflow-hidden">
         <div className="px-4.5 py-3.5 border-b-1.5 border-[hsl(var(--swim-border))]">
-          <h3 className="font-syne text-xs font-bold text-[hsl(var(--deep))] uppercase tracking-wider">
+          <h3 className="font-outfit text-xs font-bold text-[hsl(var(--deep))] uppercase tracking-wider">
             {t('recentArticles')}
           </h3>
         </div>
@@ -50,7 +50,7 @@ export const BlogSidebar: React.FC<BlogSidebarProps> = ({ recentPosts, categorie
       {/* Tags */}
       <div className="bg-white border-2 border-[hsl(var(--swim-border))] rounded-[14px] overflow-hidden">
         <div className="px-4.5 py-3.5 border-b-1.5 border-[hsl(var(--swim-border))]">
-          <h3 className="font-syne text-xs font-bold text-[hsl(var(--deep))] uppercase tracking-wider">
+          <h3 className="font-outfit text-xs font-bold text-[hsl(var(--deep))] uppercase tracking-wider">
             {t('topics')}
           </h3>
         </div>
@@ -71,11 +71,11 @@ export const BlogSidebar: React.FC<BlogSidebarProps> = ({ recentPosts, categorie
 
       {/* Share CTA */}
       <div className="bg-gradient-to-br from-[hsl(var(--deep))] to-[hsl(var(--mid))] rounded-[14px] p-5.5">
-        <div className="font-syne text-[15px] font-bold text-white mb-2">{t('shareYourStory')}</div>
+        <div className="font-outfit text-[15px] font-bold text-white mb-2">{t('shareYourStory')}</div>
         <p className="text-xs text-white/75 leading-relaxed mb-3.5">{t('shareDescription')}</p>
         <a
           href="mailto:geral@clube-swim4fun.pt"
-          className="block bg-white text-[hsl(var(--deep))] rounded-lg px-2.5 py-2.5 font-syne text-xs font-bold text-center no-underline"
+          className="block bg-white text-[hsl(var(--deep))] rounded-lg px-2.5 py-2.5 font-outfit text-xs font-bold text-center no-underline"
         >
           {t('sendStory')}
         </a>

@@ -140,8 +140,8 @@ const config = {
       },
       fontFamily: {
         mono: ['var(--font-geist-mono)'],
-        sans: ['var(--font-dm-sans)', 'DM Sans', 'sans-serif'],
-        syne: ['var(--font-syne)', 'Syne', 'sans-serif'],
+        sans: ['var(--font-outfit)', 'Outfit', 'sans-serif'],
+        syne: ['var(--font-outfit)', 'Outfit', 'sans-serif'],
       },
       keyframes: {
         'accordion-down': {

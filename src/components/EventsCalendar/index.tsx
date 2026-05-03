@@ -179,7 +179,7 @@ export function EventsCalendar({ events }: { events: CalendarEvent[] }) {
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
-            <span className="font-syne font-bold text-lg text-deep min-w-[160px] text-center">
+            <span className="font-outfit font-bold text-lg text-deep min-w-[160px] text-center">
               {MONTHS[currentMonth]} {currentYear}
             </span>
             <button
@@ -450,7 +450,7 @@ function MonthView({
       {/* Day detail */}
       {selectedDay !== null && (
         <div className="mt-3 bg-white border-2 border-swim-border rounded-lg p-4">
-          <p className="font-syne font-bold text-sm text-deep mb-3">
+          <p className="font-outfit font-bold text-sm text-deep mb-3">
             {selectedDay} {locale === 'pt' ? 'de ' : ''}
             {MONTHS[month]}
           </p>
@@ -530,7 +530,7 @@ function ListView({
       {grouped.map((group) => (
         <div key={group.label}>
           <div className="flex items-center gap-3 mb-3">
-            <span className="font-syne text-xs font-bold uppercase tracking-wider text-ink-light">
+            <span className="font-outfit text-xs font-bold uppercase tracking-wider text-ink-light">
               {group.label}
             </span>
             <div className="flex-1 h-px bg-swim-border" />
@@ -561,7 +561,7 @@ function ListEventCard({ event, MONTHS_SHORT }: { event: CalendarEvent; MONTHS_S
       <div className="grid grid-cols-[5px_64px_1fr_auto]">
         <div className="self-stretch" style={{ background: c.bg }} />
         <div className="flex flex-col items-center justify-center px-3 py-4 border-r border-swim-border">
-          <span className="font-syne text-xl font-extrabold text-deep leading-none">
+          <span className="font-outfit text-xl font-extrabold text-deep leading-none">
             {String(d.getDate()).padStart(2, '0')}
           </span>
           <span className="text-[10px] font-bold uppercase tracking-wider text-ink-light mt-0.5">
@@ -577,7 +577,7 @@ function ListEventCard({ event, MONTHS_SHORT }: { event: CalendarEvent; MONTHS_S
               {catLabel}
             </span>
           )}
-          <p className="font-syne font-bold text-sm text-deep leading-snug line-clamp-2">
+          <p className="font-outfit font-bold text-sm text-deep leading-snug line-clamp-2">
             {event.title}
           </p>
           <div className="flex flex-wrap gap-3 mt-1.5">
@@ -619,7 +619,7 @@ function UpcomingPanel({
   return (
     <div className="bg-white border-2 border-swim-border rounded-lg overflow-hidden">
       <div className="px-4 py-3 border-b border-swim-border">
-        <p className="font-syne text-xs font-bold text-deep uppercase tracking-wider">
+        <p className="font-outfit text-xs font-bold text-deep uppercase tracking-wider">
           {locale === 'pt' ? 'Próximas provas' : 'Upcoming events'}
         </p>
       </div>
@@ -636,7 +636,7 @@ function UpcomingPanel({
               className="flex items-center gap-3 px-4 py-2.5 hover:bg-foam transition-colors"
             >
               <div className="w-10 h-10 rounded-lg bg-pale flex flex-col items-center justify-center flex-shrink-0">
-                <span className="font-syne text-sm font-extrabold text-deep leading-none">
+                <span className="font-outfit text-sm font-extrabold text-deep leading-none">
                   {new Date(ev.start).getDate()}
                 </span>
                 <span className="text-[9px] font-bold uppercase text-mid">
@@ -670,7 +670,7 @@ function LegendPanel({
   return (
     <div className="bg-white border-2 border-swim-border rounded-lg overflow-hidden">
       <div className="px-4 py-3 border-b border-swim-border">
-        <p className="font-syne text-xs font-bold text-deep uppercase tracking-wider">
+        <p className="font-outfit text-xs font-bold text-deep uppercase tracking-wider">
           {locale === 'pt' ? 'Legenda' : 'Legend'}
         </p>
       </div>

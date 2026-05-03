@@ -30,7 +30,7 @@ export function SwimGPCard({ t, teamCopyButton, promoCopyButton }: Props) {
           <div className="mb-2.5 inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[1px] text-white/60">
             {t('races.swimgp.label')}
           </div>
-          <h3 className="mb-3 font-['Syne',sans-serif] text-2xl font-extrabold leading-[1.2] text-white">
+          <h3 className="mb-3 font-['Outfit',sans-serif] text-2xl font-extrabold leading-[1.2] text-white">
             {t('races.swimgp.title')}
           </h3>
           <p className="text-[14px] leading-[1.65] text-white/80">
@@ -46,7 +46,7 @@ export function SwimGPCard({ t, teamCopyButton, promoCopyButton }: Props) {
               <div className="mb-1 text-[10px] font-bold uppercase tracking-[0.6px] text-white/55">
                 {t('races.swimgp.teamCodeLabel')}
               </div>
-              <div className="break-all font-['DM_Sans',sans-serif] text-[13px] font-medium text-white">
+              <div className="break-all font-['Outfit',sans-serif] text-[13px] font-medium text-white">
                 {TEAM_CODE}
               </div>
             </div>
@@ -59,7 +59,7 @@ export function SwimGPCard({ t, teamCopyButton, promoCopyButton }: Props) {
               <div className="mb-1 text-[10px] font-bold uppercase tracking-[0.6px] text-white/55">
                 {t('races.swimgp.promoCodeLabel')}
               </div>
-              <div className="break-all font-['DM_Sans',sans-serif] text-[13px] font-medium text-white">
+              <div className="break-all font-['Outfit',sans-serif] text-[13px] font-medium text-white">
                 {PROMO_CODE}
               </div>
             </div>

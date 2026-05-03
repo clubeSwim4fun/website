@@ -115,7 +115,7 @@ const StripeStepLayout: React.FC<{
             disabled={isProcessing || !isReady}
             onClick={handlePay}
             className={cn(
-              'w-full flex items-center justify-center gap-2 rounded-xl px-6 py-3.5 font-syne font-bold text-sm transition-all duration-200',
+              'w-full flex items-center justify-center gap-2 rounded-xl px-6 py-3.5 font-outfit font-bold text-sm transition-all duration-200',
               isProcessing || !isReady
                 ? 'bg-mid/60 text-white cursor-not-allowed'
                 : 'bg-mid text-white hover:-translate-y-0.5 hover:shadow-[0_8px_28px_rgba(14,126,168,0.35)]',
@@ -178,7 +178,7 @@ const NormalStepLayout: React.FC<{
             disabled={isBlocked}
             onClick={handleNextOrSubmit}
             className={cn(
-              'w-full flex items-center justify-center gap-2 rounded-xl px-6 py-3.5 font-syne font-bold text-sm transition-all duration-200',
+              'w-full flex items-center justify-center gap-2 rounded-xl px-6 py-3.5 font-outfit font-bold text-sm transition-all duration-200',
               isBlocked
                 ? 'bg-mid/60 text-white cursor-not-allowed'
                 : 'bg-mid text-white hover:-translate-y-0.5 hover:shadow-[0_8px_28px_rgba(14,126,168,0.35)]',

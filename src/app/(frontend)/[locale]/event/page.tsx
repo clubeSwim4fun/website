@@ -72,7 +72,7 @@ export default async function EventsPage({ params }: Args) {
           </p>
           <div className="flex gap-8">
             <div>
-              <p className="font-syne text-3xl font-extrabold text-white leading-none">
+              <p className="font-outfit text-3xl font-extrabold text-white leading-none">
                 {yearEvents.length}
               </p>
               <p className="text-xs text-white/60 mt-1">
@@ -80,7 +80,7 @@ export default async function EventsPage({ params }: Args) {
               </p>
             </div>
             <div>
-              <p className="font-syne text-3xl font-extrabold text-white leading-none">
+              <p className="font-outfit text-3xl font-extrabold text-white leading-none">
                 {upcomingCount}
               </p>
               <p className="text-xs text-white/60 mt-1">

@@ -147,7 +147,7 @@ export default function MembersDashboard() {
         style={{
           background: C.sand,
           padding: '2rem',
-          fontFamily: '"DM Sans",sans-serif',
+          fontFamily: '"Outfit",sans-serif',
           color: C.coral,
         }}
       >
@@ -184,13 +184,13 @@ export default function MembersDashboard() {
         background: C.sand,
         padding: '32px',
         minHeight: '100vh',
-        fontFamily: '"DM Sans",sans-serif',
+        fontFamily: '"Outfit",sans-serif',
         boxSizing: 'border-box',
         width: '100%',
       }}
     >
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
         .mem-row { cursor: pointer; transition: background .15s; }
         .mem-row:hover { background: #f0fafd !important; }
         .donut-seg { cursor: pointer; transition: opacity .15s; }
@@ -200,7 +200,7 @@ export default function MembersDashboard() {
       <div style={{ marginBottom: 28 }}>
         <h1
           style={{
-            fontFamily: '"Syne",sans-serif',
+            fontFamily: '"Outfit",sans-serif',
             fontWeight: 700,
             fontSize: 28,
             color: C.deep,
@@ -212,7 +212,7 @@ export default function MembersDashboard() {
         </h1>
         <p
           style={{
-            fontFamily: '"DM Sans",sans-serif',
+            fontFamily: '"Outfit",sans-serif',
             fontSize: 14,
             color: '#6b7280',
             margin: '4px 0 0',
@@ -305,7 +305,7 @@ export default function MembersDashboard() {
                   <span style={{ fontSize: 13, color: '#374151', flex: 1 }}>{item.label}</span>
                   <span
                     style={{
-                      fontFamily: '"Syne",sans-serif',
+                      fontFamily: '"Outfit",sans-serif',
                       fontWeight: 700,
                       fontSize: 13,
                       color: C.deep,
@@ -334,7 +334,7 @@ export default function MembersDashboard() {
             style={{
               width: '100%',
               borderCollapse: 'collapse',
-              fontFamily: '"DM Sans",sans-serif',
+              fontFamily: '"Outfit",sans-serif',
               fontSize: 14,
             }}
           >

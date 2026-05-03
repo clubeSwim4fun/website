@@ -47,7 +47,7 @@ export default function StatCard({ label, value, sub, trend, trendType, barColor
     >
       <span
         style={{
-          fontFamily: '"DM Sans", sans-serif',
+          fontFamily: '"Outfit", sans-serif',
           fontSize: '13px',
           color: '#6b7280',
           letterSpacing: '0.3px',
@@ -59,7 +59,7 @@ export default function StatCard({ label, value, sub, trend, trendType, barColor
 
       <span
         style={{
-          fontFamily: '"Syne", sans-serif',
+          fontFamily: '"Outfit", sans-serif',
           fontWeight: 800,
           fontSize: '20px',
           color: '#0a4a6e',
@@ -72,7 +72,7 @@ export default function StatCard({ label, value, sub, trend, trendType, barColor
       {sub && (
         <span
           style={{
-            fontFamily: '"DM Sans", sans-serif',
+            fontFamily: '"Outfit", sans-serif',
             fontSize: '12px',
             color: '#9ca3af',
           }}
@@ -84,7 +84,7 @@ export default function StatCard({ label, value, sub, trend, trendType, barColor
       {trend && trendType && (
         <span
           style={{
-            fontFamily: '"DM Sans", sans-serif',
+            fontFamily: '"Outfit", sans-serif',
             fontSize: '12px',
             color: trendColor[trendType],
             fontWeight: 600,

@@ -66,7 +66,7 @@ export async function Footer({ locale }: { locale: TypedLocale }) {
         <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_1fr] gap-10 mb-12">
           {/* Brand column */}
           <div>
-            <div className="font-syne font-extrabold text-xl text-white mb-3.5">
+            <div className="font-outfit font-extrabold text-xl text-white mb-3.5">
               Swim<span className="text-light">4</span>fun
             </div>
             <p className="text-[13px] text-white/55 leading-relaxed max-w-[280px] mb-6">
@@ -94,7 +94,7 @@ export async function Footer({ locale }: { locale: TypedLocale }) {
           {/* Nav column 1 */}
           {navItems.length > 0 && (
             <div>
-              <p className="font-syne text-[11px] font-bold uppercase tracking-[0.8px] text-white/40 mb-4">
+              <p className="font-outfit text-[11px] font-bold uppercase tracking-[0.8px] text-white/40 mb-4">
                 {navCol1?.label}
               </p>
               <div className="flex flex-col gap-2.5">
@@ -112,7 +112,7 @@ export async function Footer({ locale }: { locale: TypedLocale }) {
           {/* Nav column 2 */}
           {navItems2.length > 0 && (
             <div>
-              <p className="font-syne text-[11px] font-bold uppercase tracking-[0.8px] text-white/40 mb-4">
+              <p className="font-outfit text-[11px] font-bold uppercase tracking-[0.8px] text-white/40 mb-4">
                 {navCol2?.label}
               </p>
               <div className="flex flex-col gap-2.5">
@@ -130,7 +130,7 @@ export async function Footer({ locale }: { locale: TypedLocale }) {
           {/* Contact column */}
           {contact && (contact.phone || contact.whatsapp || contact.email) && (
             <div>
-              <p className="font-syne text-[11px] font-bold uppercase tracking-[0.8px] text-white/40 mb-4">
+              <p className="font-outfit text-[11px] font-bold uppercase tracking-[0.8px] text-white/40 mb-4">
                 {contact.label}
               </p>
               <div className="flex flex-col gap-2.5">

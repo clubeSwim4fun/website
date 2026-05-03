@@ -178,7 +178,7 @@ export const SponsorsBlockComponent: React.FC<SponsorsBlock> = ({ ctaLink }) => 
           font-weight: 500;
           color: #8aaabb !important;
           text-decoration: none !important;
-          font-family: 'DM Sans', sans-serif;
+          font-family: 'Outfit', sans-serif;
           border: 1.5px solid #d4eaf2;
           border-radius: 99px;
           padding: 8px 18px;
@@ -263,10 +263,10 @@ const styles: Record<string, React.CSSProperties> = {
     letterSpacing: '1.4px',
     color: '#0e7ea8',
     marginBottom: 10,
-    fontFamily: "'DM Sans', sans-serif",
+    fontFamily: "'Outfit', sans-serif",
   },
   title: {
-    fontFamily: "'Syne', sans-serif",
+    fontFamily: "'Outfit', sans-serif",
     fontSize: 'clamp(20px, 5vw, 28px)',
     fontWeight: 800,
     color: '#0a4a6e',
@@ -295,7 +295,7 @@ const styles: Record<string, React.CSSProperties> = {
     padding: '0 48px',
   },
   fallbackText: {
-    fontFamily: "'Syne', sans-serif",
+    fontFamily: "'Outfit', sans-serif",
     fontWeight: 800,
     fontSize: 16,
     color: '#0a4a6e',

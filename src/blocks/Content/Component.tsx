@@ -60,7 +60,7 @@ const PerkCards: React.FC<{ cards: PerkCard[]; perRow?: string }> = ({ cards, pe
                     {icon}
                   </div>
                 )}
-                <p className="font-syne text-[13px] font-bold text-deep mb-1.5">{card.title}</p>
+                <p className="font-outfit text-[13px] font-bold text-deep mb-1.5">{card.title}</p>
                 {card.text && (
                   <p className="text-[13px] text-ink-mid leading-relaxed">{card.text}</p>
                 )}
@@ -83,7 +83,7 @@ const PerkCards: React.FC<{ cards: PerkCard[]; perRow?: string }> = ({ cards, pe
                   {icon}
                 </div>
               )}
-              <p className="font-syne text-[11px] font-bold uppercase tracking-[0.6px] text-deep mb-1">
+              <p className="font-outfit text-[11px] font-bold uppercase tracking-[0.6px] text-deep mb-1">
                 {card.title}
               </p>
               {card.text && <p className="text-[12px] text-ink-mid leading-snug">{card.text}</p>}
@@ -128,7 +128,7 @@ const MediaColumn: React.FC<{ col: Column }> = ({ col }) => (
     )}
     {col.mediaBadge && (
       <div className="absolute top-5 left-5 z-10">
-        <span className="bg-green text-white font-syne font-bold text-sm px-4 py-2 rounded-full">
+        <span className="bg-green text-white font-outfit font-bold text-sm px-4 py-2 rounded-full">
           {col.mediaBadge}
         </span>
       </div>

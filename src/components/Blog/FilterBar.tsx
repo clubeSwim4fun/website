@@ -28,7 +28,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
       <div className="flex gap-1.75 flex-wrap">
         <button
           onClick={() => onCategoryChange(null)}
-          className={`px-3.75 py-1.75 rounded-full border-1.5 text-xs font-semibold cursor-pointer transition-all font-dm-sans ${
+          className={`px-3.75 py-1.75 rounded-full border-1.5 text-xs font-semibold cursor-pointer transition-all font-outfit ${
             activeCategory === null
               ? 'bg-[hsl(var(--pale))] border-[hsl(var(--mid))] text-[hsl(var(--deep))]'
               : 'border-[hsl(var(--swim-border))] bg-white text-[hsl(var(--ink-mid))] hover:border-[hsl(var(--light))]'
@@ -41,7 +41,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
           <button
             key={category.id}
             onClick={() => onCategoryChange(category.id)}
-            className={`px-3.75 py-1.75 rounded-full border-1.5 text-xs font-semibold cursor-pointer transition-all font-dm-sans ${
+            className={`px-3.75 py-1.75 rounded-full border-1.5 text-xs font-semibold cursor-pointer transition-all font-outfit ${
               activeCategory === category.id
                 ? 'bg-[hsl(var(--pale))] border-[hsl(var(--mid))] text-[hsl(var(--deep))]'
                 : 'border-[hsl(var(--swim-border))] bg-white text-[hsl(var(--ink-mid))] hover:border-[hsl(var(--light))]'

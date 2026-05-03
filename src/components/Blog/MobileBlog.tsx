@@ -57,7 +57,7 @@ export const MobileBlog: React.FC<MobileBlogProps> = ({
             {t('community')}
           </div>
 
-          <h1 className="font-syne text-[28px] font-extrabold text-white mb-2.5 tracking-tight leading-tight">
+          <h1 className="font-outfit text-[28px] font-extrabold text-white mb-2.5 tracking-tight leading-tight">
             {t('heroTitle')}
           </h1>
 
@@ -77,7 +77,7 @@ export const MobileBlog: React.FC<MobileBlogProps> = ({
             />
             <button
               type="submit"
-              className="bg-white text-[hsl(var(--deep))] border-none rounded-[7px] px-3.5 py-2 font-syne font-bold text-xs whitespace-nowrap"
+              className="bg-white text-[hsl(var(--deep))] border-none rounded-[7px] px-3.5 py-2 font-outfit font-bold text-xs whitespace-nowrap"
             >
               {t('go')}
             </button>
@@ -90,7 +90,7 @@ export const MobileBlog: React.FC<MobileBlogProps> = ({
         <div className="flex gap-1.75 scrollbar-none">
           <button
             onClick={() => onCategoryChange(null)}
-            className={`px-3.5 py-1.75 rounded-full border-1.5 text-xs font-medium cursor-pointer whitespace-nowrap flex-shrink-0 font-dm-sans transition-all ${
+            className={`px-3.5 py-1.75 rounded-full border-1.5 text-xs font-medium cursor-pointer whitespace-nowrap flex-shrink-0 font-outfit transition-all ${
               activeCategory === null
                 ? 'bg-[hsl(var(--pale))] border-[hsl(var(--mid))] text-[hsl(var(--deep))] font-semibold'
                 : 'border-[hsl(var(--swim-border))] bg-white text-[hsl(var(--ink-mid))]'
@@ -103,7 +103,7 @@ export const MobileBlog: React.FC<MobileBlogProps> = ({
             <button
               key={category.id}
               onClick={() => onCategoryChange(category.id)}
-              className={`px-3.5 py-1.75 rounded-full border-1.5 text-xs font-medium cursor-pointer whitespace-nowrap flex-shrink-0 font-dm-sans transition-all ${
+              className={`px-3.5 py-1.75 rounded-full border-1.5 text-xs font-medium cursor-pointer whitespace-nowrap flex-shrink-0 font-outfit transition-all ${
                 activeCategory === category.id
                   ? 'bg-[hsl(var(--pale))] border-[hsl(var(--mid))] text-[hsl(var(--deep))] font-semibold'
                   : 'border-[hsl(var(--swim-border))] bg-white text-[hsl(var(--ink-mid))]'
@@ -140,7 +140,7 @@ export const MobileBlog: React.FC<MobileBlogProps> = ({
 
               <div className="absolute inset-0 bg-gradient-to-t from-[rgba(10,74,110,0.55)] to-transparent opacity-55" />
 
-              <div className="absolute top-3 left-3 bg-[hsl(var(--mid))] text-white rounded-full px-2.75 py-1 font-syne text-[10px] font-bold uppercase tracking-wide">
+              <div className="absolute top-3 left-3 bg-[hsl(var(--mid))] text-white rounded-full px-2.75 py-1 font-outfit text-[10px] font-bold uppercase tracking-wide">
                 {t('featured')}
               </div>
             </div>
@@ -152,7 +152,7 @@ export const MobileBlog: React.FC<MobileBlogProps> = ({
                 </div>
               )}
 
-              <h2 className="font-syne text-lg font-extrabold text-[hsl(var(--deep))] leading-tight mb-2.5">
+              <h2 className="font-outfit text-lg font-extrabold text-[hsl(var(--deep))] leading-tight mb-2.5">
                 {featuredPost.title}
               </h2>
 
@@ -219,11 +219,11 @@ export const MobileBlog: React.FC<MobileBlogProps> = ({
 
       {/* Share CTA */}
       <div className="mx-4.5 mb-5 bg-gradient-to-br from-[hsl(var(--deep))] to-[hsl(var(--mid))] rounded-[14px] p-5 text-white text-center">
-        <div className="font-syne text-base font-bold mb-1.5">{t('shareYourStory')}</div>
+        <div className="font-outfit text-base font-bold mb-1.5">{t('shareYourStory')}</div>
         <p className="text-xs opacity-78 leading-relaxed mb-3.5">{t('shareDescription')}</p>
         <a
           href="mailto:geral@clube-swim4fun.pt"
-          className="block bg-white text-[hsl(var(--deep))] rounded-[9px] px-2.75 py-2.75 font-syne text-xs font-bold no-underline"
+          className="block bg-white text-[hsl(var(--deep))] rounded-[9px] px-2.75 py-2.75 font-outfit text-xs font-bold no-underline"
         >
           {t('sendStory')}
         </a>
@@ -271,7 +271,7 @@ const MobilePostCard: React.FC<MobilePostCardProps> = ({ post }) => {
           </div>
         )}
 
-        <h3 className="font-syne text-xs font-bold text-[hsl(var(--deep))] leading-snug mb-1.5 line-clamp-2">
+        <h3 className="font-outfit text-xs font-bold text-[hsl(var(--deep))] leading-snug mb-1.5 line-clamp-2">
           {title}
         </h3>
 
@@ -308,9 +308,9 @@ const MobilePaginationButton: React.FC<MobilePaginationButtonProps> = ({
     return `/posts/page/${pageNum}`
   }
 
-  const className = `w-9 h-9 rounded-lg border-1.5 flex items-center justify-center text-xs font-semibold cursor-pointer font-dm-sans no-underline ${
+  const className = `w-9 h-9 rounded-lg border-1.5 flex items-center justify-center text-xs font-semibold cursor-pointer font-outfit no-underline ${
     active
-      ? 'bg-gradient-to-br from-[hsl(var(--deep))] to-[hsl(var(--mid))] text-white border-transparent font-syne font-bold'
+      ? 'bg-gradient-to-br from-[hsl(var(--deep))] to-[hsl(var(--mid))] text-white border-transparent font-outfit font-bold'
       : disabled
         ? 'border-[hsl(var(--swim-border))] bg-white text-[hsl(var(--ink-light))] opacity-50 cursor-not-allowed'
         : 'border-[hsl(var(--swim-border))] bg-white text-[hsl(var(--ink-mid))]'

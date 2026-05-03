@@ -121,17 +121,17 @@ export default function NewsletterDashboard() {
         background: C.sand,
         padding: '24px 20px 48px',
         minHeight: '100vh',
-        fontFamily: '"DM Sans",sans-serif',
+        fontFamily: '"Outfit",sans-serif',
         boxSizing: 'border-box',
         width: '100%',
       }}
     >
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@400;500;600&display=swap');`}</style>
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');`}</style>
 
       <div style={{ marginBottom: 28 }}>
         <h1
           style={{
-            fontFamily: '"Syne",sans-serif',
+            fontFamily: '"Outfit",sans-serif',
             fontWeight: 700,
             fontSize: 28,
             color: C.deep,
@@ -294,7 +294,7 @@ export default function NewsletterDashboard() {
                   </div>
                   <div
                     style={{
-                      fontFamily: '"Syne",sans-serif',
+                      fontFamily: '"Outfit",sans-serif',
                       fontWeight: 800,
                       fontSize: 18,
                       color: C.deep,

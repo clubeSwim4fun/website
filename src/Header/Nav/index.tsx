@@ -104,7 +104,7 @@ export const HeaderNav: React.FC<{
       {!user && registerSlug && (
         <Link
           href={`/${registerSlug}`}
-          className="ml-2 bg-gradient-to-br from-deep to-mid text-white px-5 py-2 rounded-full font-syne font-bold text-[13px] tracking-wide hover:opacity-90 transition-opacity no-underline"
+          className="ml-2 bg-gradient-to-br from-deep to-mid text-white px-5 py-2 rounded-full font-outfit font-bold text-[13px] tracking-wide hover:opacity-90 transition-opacity no-underline"
         >
           {t('register')}
         </Link>

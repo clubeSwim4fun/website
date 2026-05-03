@@ -115,7 +115,7 @@
   }
   body {
     @apply bg-background text-foreground min-h-[100vh] flex flex-col;
-    font-family: var(--font-dm-sans), 'DM Sans', sans-serif;
+    font-family: var(--font-outfit), 'Outfit', sans-serif;
   }
   h1,
   h2,
@@ -123,7 +123,7 @@
   h4,
   h5,
   h6 {
-    font-family: var(--font-syne), 'Syne', sans-serif;
+    font-family: var(--font-outfit), 'Outfit', sans-serif;
   }
 }
 
@@ -202,12 +202,12 @@ html[data-theme='light'] {
 
 /* ── Hero rich text ─────────────────────────────────────────────────────────
    Renders inside the gradient hero background.
-   h1 → large white Syne heading
-   p  → smaller white/78 DM Sans body
+   h1 → large white Outfit heading
+   p  → smaller white/78 Outfit body
    Any text the editor marks as a custom colour (blue) → brand --light
    ────────────────────────────────────────────────────────────────────────── */
 .hero-richtext-inner h1 {
-  font-family: var(--font-syne), 'Syne', sans-serif;
+  font-family: var(--font-outfit), 'Outfit', sans-serif;
   font-size: clamp(2rem, 5vw, 3.25rem);
   font-weight: 800;
   line-height: 1.1;
@@ -234,11 +234,11 @@ html[data-theme='light'] {
 }
 
 /* ── Content block rich text ────────────────────────────────────────────────
-   h2 → large deep-blue Syne heading
+   h2 → large deep-blue Outfit heading
    p  → ink-mid body copy
    ────────────────────────────────────────────────────────────────────────── */
 .content-richtext-inner h2 {
-  font-family: var(--font-syne), 'Syne', sans-serif;
+  font-family: var(--font-outfit), 'Outfit', sans-serif;
   font-size: clamp(1.75rem, 4vw, 2.5rem);
   font-weight: 800;
   line-height: 1.15;
@@ -253,7 +253,7 @@ html[data-theme='light'] {
 }
 
 .content-richtext-inner h3 {
-  font-family: var(--font-syne), 'Syne', sans-serif;
+  font-family: var(--font-outfit), 'Outfit', sans-serif;
   font-size: 1.125rem;
   font-weight: 700;
   line-height: 1.3;

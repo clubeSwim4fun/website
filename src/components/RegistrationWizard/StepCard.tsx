@@ -21,7 +21,7 @@ export function StepCard({ ref, icon, title, subtitle, children }: Props) {
         <div>
           <p
             className="font-bold text-base text-foreground"
-            style={{ fontFamily: 'var(--font-syne, sans-serif)' }}
+            style={{ fontFamily: 'var(--font-outfit, sans-serif)' }}
           >
             {title}
           </p>

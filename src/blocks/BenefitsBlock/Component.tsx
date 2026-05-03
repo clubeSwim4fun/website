@@ -119,7 +119,7 @@ const SectionHeader = ({
       </div>
     )}
     {title && (
-      <h2 className="mb-1.5 font-['Syne',sans-serif] text-[30px] font-extrabold leading-[1.15] text-[#0a4a6e]">
+      <h2 className="mb-1.5 font-['Outfit',sans-serif] text-[30px] font-extrabold leading-[1.15] text-[#0a4a6e]">
         {title}
       </h2>
     )}

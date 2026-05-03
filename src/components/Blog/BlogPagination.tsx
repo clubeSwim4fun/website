@@ -32,9 +32,9 @@ export const BlogPagination: React.FC<BlogPaginationProps> = ({
           <Link
             key={i}
             href={getPageUrl(i)}
-            className={`w-9.5 h-9.5 rounded-[9px] border-1.5 flex items-center justify-center text-xs font-semibold cursor-pointer transition-all font-dm-sans no-underline ${
+            className={`w-9.5 h-9.5 rounded-[9px] border-1.5 flex items-center justify-center text-xs font-semibold cursor-pointer transition-all font-outfit no-underline ${
               i === currentPage
-                ? 'bg-gradient-to-br from-[hsl(var(--deep))] to-[hsl(var(--mid))] text-white border-transparent font-syne font-bold'
+                ? 'bg-gradient-to-br from-[hsl(var(--deep))] to-[hsl(var(--mid))] text-white border-transparent font-outfit font-bold'
                 : 'border-[hsl(var(--swim-border))] bg-white text-[hsl(var(--ink-mid))] hover:border-[hsl(var(--mid))] hover:text-[hsl(var(--mid))] hover:bg-[hsl(var(--pale))]'
             }`}
           >
@@ -48,9 +48,9 @@ export const BlogPagination: React.FC<BlogPaginationProps> = ({
         <Link
           key={1}
           href={getPageUrl(1)}
-          className={`w-9.5 h-9.5 rounded-[9px] border-1.5 flex items-center justify-center text-xs font-semibold cursor-pointer transition-all font-dm-sans no-underline ${
+          className={`w-9.5 h-9.5 rounded-[9px] border-1.5 flex items-center justify-center text-xs font-semibold cursor-pointer transition-all font-outfit no-underline ${
             1 === currentPage
-              ? 'bg-gradient-to-br from-[hsl(var(--deep))] to-[hsl(var(--mid))] text-white border-transparent font-syne font-bold'
+              ? 'bg-gradient-to-br from-[hsl(var(--deep))] to-[hsl(var(--mid))] text-white border-transparent font-outfit font-bold'
               : 'border-[hsl(var(--swim-border))] bg-white text-[hsl(var(--ink-mid))] hover:border-[hsl(var(--mid))] hover:text-[hsl(var(--mid))] hover:bg-[hsl(var(--pale))]'
           }`}
         >
@@ -76,9 +76,9 @@ export const BlogPagination: React.FC<BlogPaginationProps> = ({
             <Link
               key={i}
               href={getPageUrl(i)}
-              className={`w-9.5 h-9.5 rounded-[9px] border-1.5 flex items-center justify-center text-xs font-semibold cursor-pointer transition-all font-dm-sans no-underline ${
+              className={`w-9.5 h-9.5 rounded-[9px] border-1.5 flex items-center justify-center text-xs font-semibold cursor-pointer transition-all font-outfit no-underline ${
                 i === currentPage
-                  ? 'bg-gradient-to-br from-[hsl(var(--deep))] to-[hsl(var(--mid))] text-white border-transparent font-syne font-bold'
+                  ? 'bg-gradient-to-br from-[hsl(var(--deep))] to-[hsl(var(--mid))] text-white border-transparent font-outfit font-bold'
                   : 'border-[hsl(var(--swim-border))] bg-white text-[hsl(var(--ink-mid))] hover:border-[hsl(var(--mid))] hover:text-[hsl(var(--mid))] hover:bg-[hsl(var(--pale))]'
               }`}
             >
@@ -101,9 +101,9 @@ export const BlogPagination: React.FC<BlogPaginationProps> = ({
           <Link
             key={totalPages}
             href={getPageUrl(totalPages)}
-            className={`w-9.5 h-9.5 rounded-[9px] border-1.5 flex items-center justify-center text-xs font-semibold cursor-pointer transition-all font-dm-sans no-underline ${
+            className={`w-9.5 h-9.5 rounded-[9px] border-1.5 flex items-center justify-center text-xs font-semibold cursor-pointer transition-all font-outfit no-underline ${
               totalPages === currentPage
-                ? 'bg-gradient-to-br from-[hsl(var(--deep))] to-[hsl(var(--mid))] text-white border-transparent font-syne font-bold'
+                ? 'bg-gradient-to-br from-[hsl(var(--deep))] to-[hsl(var(--mid))] text-white border-transparent font-outfit font-bold'
                 : 'border-[hsl(var(--swim-border))] bg-white text-[hsl(var(--ink-mid))] hover:border-[hsl(var(--mid))] hover:text-[hsl(var(--mid))] hover:bg-[hsl(var(--pale))]'
             }`}
           >

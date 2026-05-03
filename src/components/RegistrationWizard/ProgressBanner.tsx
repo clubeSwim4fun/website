@@ -26,7 +26,7 @@ export function ProgressBanner({ currentStep, steps, done }: Props) {
         </p>
         <p
           className="text-lg font-bold text-white truncate"
-          style={{ fontFamily: 'var(--font-syne, sans-serif)' }}
+          style={{ fontFamily: 'var(--font-outfit, sans-serif)' }}
         >
           {stepLabel}
         </p>
@@ -51,7 +51,7 @@ export function ProgressBanner({ currentStep, steps, done }: Props) {
       <div className="flex flex-col items-end shrink-0">
         <p
           className="text-2xl font-extrabold text-white leading-none"
-          style={{ fontFamily: 'var(--font-syne, sans-serif)' }}
+          style={{ fontFamily: 'var(--font-outfit, sans-serif)' }}
         >
           {counter}
         </p>

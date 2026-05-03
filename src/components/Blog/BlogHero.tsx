@@ -44,7 +44,7 @@ export const BlogHero: React.FC<BlogHeroProps> = ({ onSearch }) => {
             </div>
 
             {/* Title */}
-            <h1 className="font-syne text-4xl md:text-5xl font-extrabold text-white mb-3 tracking-tight leading-tight">
+            <h1 className="font-outfit text-4xl md:text-5xl font-extrabold text-white mb-3 tracking-tight leading-tight">
               {t('heroTitle')}
             </h1>
 
@@ -70,7 +70,7 @@ export const BlogHero: React.FC<BlogHeroProps> = ({ onSearch }) => {
               />
               <button
                 type="submit"
-                className="bg-white text-[hsl(var(--deep))] border-none rounded-lg px-4.5 py-2.25 font-syne font-bold text-xs whitespace-nowrap transition-opacity hover:opacity-90"
+                className="bg-white text-[hsl(var(--deep))] border-none rounded-lg px-4.5 py-2.25 font-outfit font-bold text-xs whitespace-nowrap transition-opacity hover:opacity-90"
               >
                 {t('search')}
               </button>

@@ -82,7 +82,7 @@ export function Drawer({ open, onClose, title, sub, children }: DrawerProps) {
           <div style={{ flex: 1 }}>
             <div
               style={{
-                fontFamily: "'Syne',sans-serif",
+                fontFamily: "'Outfit',sans-serif",
                 fontWeight: 700,
                 fontSize: 17,
                 color: C.deep,
@@ -163,7 +163,7 @@ export function DrawerSection({ label, count }: { label: string; count: number }
         {label}
       </span>
       <span
-        style={{ fontFamily: "'Syne',sans-serif", fontWeight: 700, fontSize: 13, color: C.deep }}
+        style={{ fontFamily: "'Outfit',sans-serif", fontWeight: 700, fontSize: 13, color: C.deep }}
       >
         {count}
       </span>
@@ -208,7 +208,7 @@ export function DrawerPersonRow({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontFamily: "'Syne',sans-serif",
+          fontFamily: "'Outfit',sans-serif",
           fontWeight: 700,
           fontSize: 12,
           color: C.deep,

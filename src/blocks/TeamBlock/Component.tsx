@@ -119,7 +119,7 @@ const MemberCard: React.FC<{ member: Member }> = ({ member }) => {
 
       {/* Body */}
       <div className="p-[18px]">
-        <p className="font-syne text-[15px] font-bold text-deep mb-3 leading-snug">{member.name}</p>
+        <p className="font-outfit text-[15px] font-bold text-deep mb-3 leading-snug">{member.name}</p>
 
         {/* Rich text with animated height */}
         {hasRichText && (
@@ -188,13 +188,13 @@ const MemberCard: React.FC<{ member: Member }> = ({ member }) => {
           font-size: 13px !important;
           color: #3d5a70 !important;
           line-height: 1.6 !important;
-          font-family: 'DM Sans', sans-serif !important;
+          font-family: 'Outfit', sans-serif !important;
         }
         .team-card-bio p { margin-bottom: 0.6em; }
         .team-card-bio p:last-child { margin-bottom: 0; }
         .team-card-bio h1, .team-card-bio h2,
         .team-card-bio h3, .team-card-bio h4 {
-          font-family: 'Syne', sans-serif !important;
+          font-family: 'Outfit', sans-serif !important;
           color: #0a4a6e !important;
           font-size: 14px !important;
           font-weight: 700 !important;
@@ -223,7 +223,7 @@ export const TeamBlockComponent: React.FC<TeamBlockProps> = ({ subtitle, richTex
 
       {sections?.map((section, si) => (
         <div key={si} className="mb-12 last:mb-0">
-          <div className="flex items-center gap-2.5 font-syne text-[12px] font-bold uppercase tracking-[1px] text-ink-light mb-5 pb-2.5 border-b-[1.5px] border-swim-border">
+          <div className="flex items-center gap-2.5 font-outfit text-[12px] font-bold uppercase tracking-[1px] text-ink-light mb-5 pb-2.5 border-b-[1.5px] border-swim-border">
             {section.title}
             <span className="flex-1 h-px bg-swim-border" />
           </div>

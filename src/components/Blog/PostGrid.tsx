@@ -75,7 +75,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
           </div>
         )}
 
-        <h3 className="font-syne text-base font-bold text-[hsl(var(--deep))] leading-snug mb-2.5 flex-1">
+        <h3 className="font-outfit text-base font-bold text-[hsl(var(--deep))] leading-snug mb-2.5 flex-1">
           {title}
         </h3>
 
@@ -88,7 +88,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
         {/* Footer */}
         <div className="flex items-center justify-between pt-3 border-t border-[hsl(var(--swim-border))]">
           <div className="flex items-center gap-2">
-            <div className="w-6.5 h-6.5 rounded-full bg-gradient-to-br from-[hsl(var(--deep))] to-[hsl(var(--mid))] flex items-center justify-center font-syne text-[10px] font-bold text-white flex-shrink-0">
+            <div className="w-6.5 h-6.5 rounded-full bg-gradient-to-br from-[hsl(var(--deep))] to-[hsl(var(--mid))] flex items-center justify-center font-outfit text-[10px] font-bold text-white flex-shrink-0">
               S4
             </div>
             <div className="text-xs text-[hsl(var(--ink-light))] font-medium">Clube Swim4fun</div>

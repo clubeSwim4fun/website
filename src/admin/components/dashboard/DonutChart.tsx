@@ -94,7 +94,7 @@ export default function DonutChart({ segments, total, centerLabel }: DonutChartP
         >
           <span
             style={{
-              fontFamily: '"Syne", sans-serif',
+              fontFamily: '"Outfit", sans-serif',
               fontWeight: 800,
               fontSize: '22px',
               color: '#0a4a6e',
@@ -106,7 +106,7 @@ export default function DonutChart({ segments, total, centerLabel }: DonutChartP
           {centerLabel && (
             <span
               style={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: '"Outfit", sans-serif',
                 fontSize: '11px',
                 color: '#9ca3af',
                 marginTop: '2px',
@@ -135,7 +135,7 @@ export default function DonutChart({ segments, total, centerLabel }: DonutChartP
             />
             <span
               style={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: '"Outfit", sans-serif',
                 fontSize: '13px',
                 color: '#374151',
                 whiteSpace: 'nowrap',
@@ -145,7 +145,7 @@ export default function DonutChart({ segments, total, centerLabel }: DonutChartP
             </span>
             <span
               style={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: '"Outfit", sans-serif',
                 fontSize: '13px',
                 color: '#6b7280',
                 marginLeft: 'auto',

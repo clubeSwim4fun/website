@@ -23,7 +23,7 @@ export default function StatusBadge({ status, type }: StatusBadgeProps) {
     <span
       style={{
         display: 'inline-block',
-        fontFamily: '"DM Sans", sans-serif',
+        fontFamily: '"Outfit", sans-serif',
         fontSize: '11px',
         fontWeight: 600,
         textTransform: 'uppercase',

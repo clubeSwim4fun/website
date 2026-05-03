@@ -24,7 +24,7 @@ export const PaymentConfirmationBlockComponent: React.FC<Props & { user?: User }
         </div>
 
         {/* Title */}
-        {title && <h2 className="font-syne font-extrabold text-deep text-2xl mb-3">{title}</h2>}
+        {title && <h2 className="font-outfit font-extrabold text-deep text-2xl mb-3">{title}</h2>}
 
         {/* Message */}
         {message && (

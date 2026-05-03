@@ -37,7 +37,7 @@ export function SwimGPCardCMS({ races, teamCopyButton, promoCopyButton }: Props)
             </div>
           )}
           {races.swimgpTitle && (
-            <h3 className="mb-3 font-['Syne',sans-serif] text-2xl font-extrabold leading-[1.2] text-white">
+            <h3 className="mb-3 font-['Outfit',sans-serif] text-2xl font-extrabold leading-[1.2] text-white">
               {races.swimgpTitle}
             </h3>
           )}
@@ -55,7 +55,7 @@ export function SwimGPCardCMS({ races, teamCopyButton, promoCopyButton }: Props)
                     {races.teamCodeLabel}
                   </div>
                 )}
-                <div className="break-all font-['DM_Sans',sans-serif] text-[13px] font-medium text-white">
+                <div className="break-all font-['Outfit',sans-serif] text-[13px] font-medium text-white">
                   {races.teamCode}
                 </div>
               </div>
@@ -71,7 +71,7 @@ export function SwimGPCardCMS({ races, teamCopyButton, promoCopyButton }: Props)
                     {races.promoCodeLabel}
                   </div>
                 )}
-                <div className="break-all font-['DM_Sans',sans-serif] text-[13px] font-medium text-white">
+                <div className="break-all font-['Outfit',sans-serif] text-[13px] font-medium text-white">
                   {races.promoCode}
                 </div>
               </div>

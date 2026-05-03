@@ -19,7 +19,7 @@ export default function BarChart({ data, height = DEFAULT_HEIGHT }: BarChartProp
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontFamily: '"DM Sans", sans-serif',
+          fontFamily: '"Outfit", sans-serif',
           fontSize: '13px',
           color: '#9ca3af',
         }}
@@ -63,7 +63,7 @@ export default function BarChart({ data, height = DEFAULT_HEIGHT }: BarChartProp
               {/* Value label on top */}
               <span
                 style={{
-                  fontFamily: '"DM Sans", sans-serif',
+                  fontFamily: '"Outfit", sans-serif',
                   fontSize: '11px',
                   color: '#6b7280',
                   lineHeight: 1,
@@ -101,7 +101,7 @@ export default function BarChart({ data, height = DEFAULT_HEIGHT }: BarChartProp
             style={{
               flex: 1,
               textAlign: 'center',
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: '"Outfit", sans-serif',
               fontSize: '11px',
               color: '#6b7280',
               overflow: 'hidden',

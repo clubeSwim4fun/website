@@ -8,7 +8,7 @@ import { routing } from '@/i18n/routing'
 
 import { cn } from '@/utilities/ui'
 import { GeistMono } from 'geist/font/mono'
-import { Syne, DM_Sans } from 'next/font/google'
+import { Outfit } from 'next/font/google'
 import React from 'react'
 
 import { AdminBar } from '@/components/AdminBar'
@@ -25,18 +25,10 @@ import { getMeUser } from '@/utilities/getMeUser'
 import { Toaster } from '@/components/ui/toaster'
 import { TypedLocale } from 'payload'
 
-const syne = Syne({
+const outfit = Outfit({
   subsets: ['latin'],
-  weight: ['400', '600', '700', '800'],
-  variable: '--font-syne',
-  display: 'swap',
-})
-
-const dmSans = DM_Sans({
-  subsets: ['latin'],
-  weight: ['300', '400', '500'],
-  style: ['normal', 'italic'],
-  variable: '--font-dm-sans',
+  weight: ['300', '400', '500', '600', '700', '800'],
+  variable: '--font-outfit',
   display: 'swap',
 })
 
@@ -62,7 +54,7 @@ export default async function RootLayout({
 
   return (
     <html
-      className={cn(syne.variable, dmSans.variable, GeistMono.variable)}
+      className={cn(outfit.variable, GeistMono.variable)}
       lang={locale}
       suppressHydrationWarning
     >

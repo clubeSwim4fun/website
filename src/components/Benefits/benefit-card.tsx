@@ -79,7 +79,7 @@ export function BenefitCard({
               {icon}
             </div>
             <span
-              className="font-['Syne',sans-serif] text-[22px] font-extrabold leading-none"
+              className="font-['Outfit',sans-serif] text-[22px] font-extrabold leading-none"
               style={{ color: discountColor[color] }}
             >
               {discount}
@@ -87,7 +87,7 @@ export function BenefitCard({
           </div>
 
           {/* name */}
-          <div className="mb-[5px] font-['Syne',sans-serif] text-[15px] font-bold text-[#0a4a6e]">
+          <div className="mb-[5px] font-['Outfit',sans-serif] text-[15px] font-bold text-[#0a4a6e]">
             {name}
           </div>
 
@@ -100,7 +100,7 @@ export function BenefitCard({
               <span className="text-[10px] font-bold uppercase tracking-[0.6px] text-[#8aaabb]">
                 {codeLabel}
               </span>
-              <span className="rounded-[6px] border border-[#d4eaf2] bg-[#f0fafd] px-[9px] py-[3px] font-['DM_Sans',sans-serif] text-[12px] font-medium tracking-[0.5px] text-[#0f1f2e]">
+              <span className="rounded-[6px] border border-[#d4eaf2] bg-[#f0fafd] px-[9px] py-[3px] font-['Outfit',sans-serif] text-[12px] font-medium tracking-[0.5px] text-[#0f1f2e]">
                 {codeValue}
               </span>
               {variant === 'code' && copyButton}

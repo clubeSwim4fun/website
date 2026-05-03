@@ -110,7 +110,7 @@ const HeroContent: React.FC<{ hero: Page['hero']; centered?: boolean; user?: Use
         >
           {stats.map((stat, i) => (
             <div key={i}>
-              <div className="font-syne font-extrabold text-3xl text-white leading-none">
+              <div className="font-outfit font-extrabold text-3xl text-white leading-none">
                 {stat.value}
               </div>
               <div className="text-[12px] text-white/60 mt-1">{stat.label}</div>
@@ -198,7 +198,7 @@ const CompactHeroContent: React.FC<{ hero: Page['hero']; user?: User }> = ({ her
 
                 {sideBlock.price && (
                   <div className="mb-4">
-                    <div className="text-4xl md:text-5xl font-syne font-extrabold text-white leading-none">
+                    <div className="text-4xl md:text-5xl font-outfit font-extrabold text-white leading-none">
                       {sideBlock.price}
                     </div>
                     {sideBlock.priceLabel && (
@@ -209,7 +209,7 @@ const CompactHeroContent: React.FC<{ hero: Page['hero']; user?: User }> = ({ her
 
                 {sideBlock.secondaryPrice && (
                   <div className="border-t border-white/15 pt-4">
-                    <div className="text-2xl font-syne font-bold text-white/90">
+                    <div className="text-2xl font-outfit font-bold text-white/90">
                       {sideBlock.secondaryPrice}
                     </div>
                     {sideBlock.secondaryPriceLabel && (

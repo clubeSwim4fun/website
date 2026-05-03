@@ -40,7 +40,7 @@ export function BenefitsHero({ t }: Props) {
             {t('hero.eyebrow')}
           </div>
 
-          <h1 className="mb-[14px] font-['Syne',sans-serif] text-[44px] font-extrabold leading-[1.1] tracking-[-0.5px] text-white">
+          <h1 className="mb-[14px] font-['Outfit',sans-serif] text-[44px] font-extrabold leading-[1.1] tracking-[-0.5px] text-white">
             {t('hero.title')}
           </h1>
 
@@ -55,7 +55,7 @@ export function BenefitsHero({ t }: Props) {
                 key={labelKey}
                 className="rounded-[12px] border border-white/[0.18] bg-white/[0.12] px-5 py-4 text-center"
               >
-                <div className="font-['Syne',sans-serif] text-[26px] font-extrabold leading-none text-white">
+                <div className="font-['Outfit',sans-serif] text-[26px] font-extrabold leading-none text-white">
                   {value}
                 </div>
                 <div className="mt-1 text-[11px] uppercase tracking-[0.4px] text-white/60">
@@ -73,7 +73,7 @@ export function BenefitsHero({ t }: Props) {
               key={labelKey}
               className="min-w-[90px] rounded-[12px] border border-white/[0.18] bg-white/[0.12] px-5 py-4 text-center"
             >
-              <div className="font-['Syne',sans-serif] text-[26px] font-extrabold leading-none text-white">
+              <div className="font-['Outfit',sans-serif] text-[26px] font-extrabold leading-none text-white">
                 {value}
               </div>
               <div className="mt-1 text-[11px] uppercase tracking-[0.4px] text-white/60">

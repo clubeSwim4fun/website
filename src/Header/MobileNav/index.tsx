@@ -189,7 +189,7 @@ const MobileHeaderNav: React.FC<{
               <Link
                 href={`/${registerSlug}`}
                 onClick={close}
-                className="flex items-center justify-center bg-gradient-to-br from-deep to-mid text-white rounded-xl py-3.5 font-syne font-bold text-sm tracking-wide no-underline"
+                className="flex items-center justify-center bg-gradient-to-br from-deep to-mid text-white rounded-xl py-3.5 font-outfit font-bold text-sm tracking-wide no-underline"
               >
                 {t('register')}
               </Link>

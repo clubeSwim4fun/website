@@ -128,7 +128,7 @@ function PanelHeader({
     >
       <div>
         <div
-          style={{ fontFamily: "'Syne',sans-serif", fontSize: 14, fontWeight: 700, color: C.deep }}
+          style={{ fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 700, color: C.deep }}
         >
           {title}
         </div>
@@ -217,7 +217,7 @@ function StatCard({
           </div>
           <div
             style={{
-              fontFamily: "'Syne',sans-serif",
+              fontFamily: "'Outfit',sans-serif",
               fontSize: 22,
               fontWeight: 800,
               color: C.deep,
@@ -293,7 +293,7 @@ function BarChart({ data }: { data: { label: string; value: number; color?: stri
           >
             <div
               style={{
-                fontFamily: "'Syne',sans-serif",
+                fontFamily: "'Outfit',sans-serif",
                 fontSize: 11,
                 fontWeight: 700,
                 color: C.inkMid,
@@ -365,7 +365,7 @@ function DonutChart({
           x="55"
           y="51"
           textAnchor="middle"
-          fontFamily="Syne,sans-serif"
+          fontFamily="Outfit,sans-serif"
           fontSize="18"
           fontWeight="800"
           fill={C.deep}
@@ -376,7 +376,7 @@ function DonutChart({
           x="55"
           y="65"
           textAnchor="middle"
-          fontFamily="DM Sans,sans-serif"
+          fontFamily="Outfit,sans-serif"
           fontSize="10"
           fill={C.inkLight}
         >
@@ -398,7 +398,7 @@ function DonutChart({
             <span style={{ color: C.inkMid, flex: 1 }}>{s.label}</span>
             <span
               style={{
-                fontFamily: "'Syne',sans-serif",
+                fontFamily: "'Outfit',sans-serif",
                 fontWeight: 700,
                 fontSize: 13,
                 color: C.ink,
@@ -500,7 +500,7 @@ function ProgRow({ name, value, max }: { name: string; value: number; max: numbe
       </div>
       <div
         style={{
-          fontFamily: "'Syne',sans-serif",
+          fontFamily: "'Outfit',sans-serif",
           fontSize: 13,
           fontWeight: 700,
           color: C.ink,
@@ -549,7 +549,7 @@ function WaitlistItem({ name, sub, pos }: { name: string; sub?: string; pos: str
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontFamily: "'Syne',sans-serif",
+          fontFamily: "'Outfit',sans-serif",
           fontSize: 11,
           fontWeight: 700,
           color: C.deep,
@@ -564,7 +564,7 @@ function WaitlistItem({ name, sub, pos }: { name: string; sub?: string; pos: str
       </div>
       <div
         style={{
-          fontFamily: "'Syne',sans-serif",
+          fontFamily: "'Outfit',sans-serif",
           fontSize: 12,
           fontWeight: 700,
           color: C.purple,
@@ -625,7 +625,7 @@ function EventCard({
             <div>
               <div
                 style={{
-                  fontFamily: "'Syne',sans-serif",
+                  fontFamily: "'Outfit',sans-serif",
                   fontSize: 15,
                   fontWeight: 700,
                   color: C.deep,
@@ -638,7 +638,7 @@ function EventCard({
             <div style={{ textAlign: 'right', flexShrink: 0 }}>
               <div
                 style={{
-                  fontFamily: "'Syne',sans-serif",
+                  fontFamily: "'Outfit',sans-serif",
                   fontSize: 22,
                   fontWeight: 800,
                   color: C.deep,
@@ -730,7 +730,7 @@ function TabBar({ active, onChange }: { active: TabId; onChange: (t: TabId) => v
               className="tab-label-full"
               style={{
                 display: 'block',
-                fontFamily: "'Syne',sans-serif",
+                fontFamily: "'Outfit',sans-serif",
                 fontWeight: 700,
                 fontSize: 13,
                 color: isActive ? '#fff' : C.inkMid,
@@ -742,7 +742,7 @@ function TabBar({ active, onChange }: { active: TabId; onChange: (t: TabId) => v
               className="tab-label-short"
               style={{
                 display: 'none',
-                fontFamily: "'Syne',sans-serif",
+                fontFamily: "'Outfit',sans-serif",
                 fontWeight: 700,
                 fontSize: 12,
                 color: isActive ? '#fff' : C.inkMid,
@@ -837,7 +837,7 @@ function PoolDrawer({
           <div style={{ flex: 1 }}>
             <div
               style={{
-                fontFamily: "'Syne',sans-serif",
+                fontFamily: "'Outfit',sans-serif",
                 fontWeight: 700,
                 fontSize: 17,
                 color: C.deep,
@@ -1031,7 +1031,7 @@ function PoolTab({ data }: { data: PoolData }) {
                     >
                       <div
                         style={{
-                          fontFamily: "'Syne',sans-serif",
+                          fontFamily: "'Outfit',sans-serif",
                           fontSize: 11,
                           fontWeight: isHov ? 700 : 400,
                           color: isHov ? C.deep : C.inkMid,
@@ -1131,7 +1131,7 @@ function PoolTab({ data }: { data: PoolData }) {
                     </div>
                     <div
                       style={{
-                        fontFamily: "'Syne',sans-serif",
+                        fontFamily: "'Outfit',sans-serif",
                         fontSize: 13,
                         fontWeight: 700,
                         color: C.ink,
@@ -1273,7 +1273,7 @@ function PoolTab({ data }: { data: PoolData }) {
                         <div style={{ textAlign: 'right' }}>
                           <div
                             style={{
-                              fontFamily: "'Syne',sans-serif",
+                              fontFamily: "'Outfit',sans-serif",
                               fontWeight: 800,
                               fontSize: 20,
                               color: C.deep,
@@ -1380,7 +1380,7 @@ function PoolTab({ data }: { data: PoolData }) {
                     </span>
                     <span
                       style={{
-                        fontFamily: "'Syne',sans-serif",
+                        fontFamily: "'Outfit',sans-serif",
                         fontWeight: 700,
                         fontSize: 13,
                         color: C.deep,
@@ -1414,7 +1414,7 @@ function PoolTab({ data }: { data: PoolData }) {
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            fontFamily: "'Syne',sans-serif",
+                            fontFamily: "'Outfit',sans-serif",
                             fontWeight: 700,
                             fontSize: 12,
                             color: C.deep,
@@ -1469,7 +1469,7 @@ function PoolTab({ data }: { data: PoolData }) {
                     </span>
                     <span
                       style={{
-                        fontFamily: "'Syne',sans-serif",
+                        fontFamily: "'Outfit',sans-serif",
                         fontWeight: 700,
                         fontSize: 13,
                         color: C.deep,
@@ -1498,7 +1498,7 @@ function PoolTab({ data }: { data: PoolData }) {
                           style={{
                             background: '#ede9fe',
                             color: '#5b21b6',
-                            fontFamily: '"DM Sans",sans-serif',
+                            fontFamily: '"Outfit",sans-serif',
                             fontSize: 11,
                             fontWeight: 600,
                             borderRadius: 99,
@@ -1570,7 +1570,7 @@ function PoolTab({ data }: { data: PoolData }) {
                     </span>
                     <span
                       style={{
-                        fontFamily: "'Syne',sans-serif",
+                        fontFamily: "'Outfit',sans-serif",
                         fontWeight: 700,
                         fontSize: 13,
                         color: C.deep,
@@ -1604,7 +1604,7 @@ function PoolTab({ data }: { data: PoolData }) {
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            fontFamily: "'Syne',sans-serif",
+                            fontFamily: "'Outfit',sans-serif",
                             fontWeight: 700,
                             fontSize: 12,
                             color: C.deep,
@@ -1649,7 +1649,7 @@ function PoolTab({ data }: { data: PoolData }) {
             >
               <div
                 style={{
-                  fontFamily: "'Syne',sans-serif",
+                  fontFamily: "'Outfit',sans-serif",
                   fontWeight: 800,
                   fontSize: 36,
                   color: C.deep,
@@ -1835,7 +1835,7 @@ function MembersTab({ data }: { data: MembersData }) {
                     >
                       <div
                         style={{
-                          fontFamily: "'Syne',sans-serif",
+                          fontFamily: "'Outfit',sans-serif",
                           fontSize: 11,
                           fontWeight: 700,
                           color: C.inkMid,
@@ -1910,7 +1910,7 @@ function MembersTab({ data }: { data: MembersData }) {
                     <span style={{ fontSize: 13, color: C.ink, flex: 1 }}>{item.label}</span>
                     <span
                       style={{
-                        fontFamily: "'Syne',sans-serif",
+                        fontFamily: "'Outfit',sans-serif",
                         fontWeight: 700,
                         fontSize: 13,
                         color: C.deep,
@@ -2044,7 +2044,7 @@ function MembersTab({ data }: { data: MembersData }) {
                   </span>
                   <span
                     style={{
-                      fontFamily: "'Syne',sans-serif",
+                      fontFamily: "'Outfit',sans-serif",
                       fontWeight: 700,
                       fontSize: 13,
                       color: C.deep,
@@ -2080,7 +2080,7 @@ function MembersTab({ data }: { data: MembersData }) {
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            fontFamily: "'Syne',sans-serif",
+                            fontFamily: "'Outfit',sans-serif",
                             fontWeight: 700,
                             fontSize: 12,
                             color: C.deep,
@@ -2292,7 +2292,7 @@ function EventsTab({ data }: { data: EventsData }) {
                     >
                       <div
                         style={{
-                          fontFamily: "'Syne',sans-serif",
+                          fontFamily: "'Outfit',sans-serif",
                           fontSize: 11,
                           fontWeight: 700,
                           color: C.inkMid,
@@ -2374,7 +2374,7 @@ function EventsTab({ data }: { data: EventsData }) {
                     >
                       <div
                         style={{
-                          fontFamily: "'Syne',sans-serif",
+                          fontFamily: "'Outfit',sans-serif",
                           fontSize: 11,
                           fontWeight: 700,
                           color: C.inkMid,
@@ -2452,7 +2452,7 @@ function EventsTab({ data }: { data: EventsData }) {
                   </span>
                   <span
                     style={{
-                      fontFamily: "'Syne',sans-serif",
+                      fontFamily: "'Outfit',sans-serif",
                       fontWeight: 700,
                       fontSize: 13,
                       color: C.deep,
@@ -2486,7 +2486,7 @@ function EventsTab({ data }: { data: EventsData }) {
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          fontFamily: "'Syne',sans-serif",
+                          fontFamily: "'Outfit',sans-serif",
                           fontWeight: 700,
                           fontSize: 12,
                           color: C.deep,
@@ -2545,7 +2545,7 @@ function EventsTab({ data }: { data: EventsData }) {
                   </span>
                   <span
                     style={{
-                      fontFamily: "'Syne',sans-serif",
+                      fontFamily: "'Outfit',sans-serif",
                       fontWeight: 700,
                       fontSize: 13,
                       color: C.deep,
@@ -2579,7 +2579,7 @@ function EventsTab({ data }: { data: EventsData }) {
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          fontFamily: "'Syne',sans-serif",
+                          fontFamily: "'Outfit',sans-serif",
                           fontWeight: 700,
                           fontSize: 12,
                           color: C.deep,
@@ -2670,7 +2670,7 @@ export default function ClubDashboard() {
       <div
         style={{
           padding: '2rem',
-          fontFamily: "'DM Sans',sans-serif",
+          fontFamily: "'Outfit',sans-serif",
           color: C.coral,
           fontSize: 14,
         }}
@@ -2688,11 +2688,11 @@ export default function ClubDashboard() {
         padding: '36px 24px 80px',
         boxSizing: 'border-box',
         width: '100%',
-        fontFamily: "'DM Sans',sans-serif",
+        fontFamily: "'Outfit',sans-serif",
         color: C.ink,
       }}
     >
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
         .dash-stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
         .dash-row2{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:16px;margin-bottom:16px;}
         .club-slot-cards{display:none;}
@@ -2726,7 +2726,7 @@ export default function ClubDashboard() {
         <div>
           <div
             style={{
-              fontFamily: "'Syne',sans-serif",
+              fontFamily: "'Outfit',sans-serif",
               fontSize: 26,
               fontWeight: 800,
               color: C.deep,
@@ -2744,7 +2744,7 @@ export default function ClubDashboard() {
             color: '#fff',
             borderRadius: 99,
             padding: '8px 18px',
-            fontFamily: "'Syne',sans-serif",
+            fontFamily: "'Outfit',sans-serif",
             fontSize: 13,
             fontWeight: 700,
             letterSpacing: '.4px',

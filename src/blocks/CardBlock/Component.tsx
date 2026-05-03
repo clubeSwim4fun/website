@@ -86,7 +86,7 @@ export const CardBlockComponent: React.FC<CardBlockProps> = async ({
                   {iconNode}
                 </div>
               )}
-              <h3 className="font-syne text-lg font-bold text-deep leading-snug">{title}</h3>
+              <h3 className="font-outfit text-lg font-bold text-deep leading-snug">{title}</h3>
             </div>
 
             {/* Variant: text */}
@@ -102,7 +102,7 @@ export const CardBlockComponent: React.FC<CardBlockProps> = async ({
                     key={stat.id ?? i}
                     className="rounded-xl border border-swim-border bg-gray-50 px-4 py-5 text-center"
                   >
-                    <p className="font-syne text-2xl md:text-4xl font-extrabold leading-none mb-2 text-ink">
+                    <p className="font-outfit text-2xl md:text-4xl font-extrabold leading-none mb-2 text-ink">
                       {stat.number}
                     </p>
                     <p className="text-sm text-ink-light leading-snug">{stat.description}</p>

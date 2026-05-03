@@ -159,7 +159,7 @@ export default function EventsDashboard() {
         style={{
           background: C.sand,
           padding: '2rem',
-          fontFamily: '"DM Sans",sans-serif',
+          fontFamily: '"Outfit",sans-serif',
           color: C.coral,
         }}
       >
@@ -205,13 +205,13 @@ export default function EventsDashboard() {
         background: C.sand,
         padding: '24px 20px 48px',
         minHeight: '100vh',
-        fontFamily: '"DM Sans",sans-serif',
+        fontFamily: '"Outfit",sans-serif',
         boxSizing: 'border-box',
         width: '100%',
       }}
     >
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
         .event-card { cursor: pointer; transition: box-shadow .15s; }
         .event-card:hover { box-shadow: 0 4px 20px rgba(10,74,110,.12); }
       `}</style>
@@ -219,7 +219,7 @@ export default function EventsDashboard() {
       <div style={{ marginBottom: 28 }}>
         <h1
           style={{
-            fontFamily: '"Syne",sans-serif',
+            fontFamily: '"Outfit",sans-serif',
             fontWeight: 700,
             fontSize: 28,
             color: C.deep,
@@ -231,7 +231,7 @@ export default function EventsDashboard() {
         </h1>
         <p
           style={{
-            fontFamily: '"DM Sans",sans-serif',
+            fontFamily: '"Outfit",sans-serif',
             fontSize: 14,
             color: '#6b7280',
             margin: '4px 0 0',
@@ -270,7 +270,7 @@ export default function EventsDashboard() {
           {data.events.length === 0 ? (
             <p
               style={{
-                fontFamily: '"DM Sans",sans-serif',
+                fontFamily: '"Outfit",sans-serif',
                 fontSize: 14,
                 color: '#9ca3af',
                 margin: 0,
@@ -302,7 +302,7 @@ export default function EventsDashboard() {
                     <PanelCard title={event.title} borderColor={borderColor}>
                       <div
                         style={{
-                          fontFamily: '"DM Sans",sans-serif',
+                          fontFamily: '"Outfit",sans-serif',
                           fontSize: 13,
                           color: '#6b7280',
                           marginBottom: 8,
@@ -312,7 +312,7 @@ export default function EventsDashboard() {
                       </div>
                       <span
                         style={{
-                          fontFamily: '"Syne",sans-serif',
+                          fontFamily: '"Outfit",sans-serif',
                           fontWeight: 800,
                           fontSize: 24,
                           color: C.deep,
@@ -331,7 +331,7 @@ export default function EventsDashboard() {
                         <StatusBadge status={badgeLabel} type={badgeType} />
                         <span
                           style={{
-                            fontFamily: '"DM Sans",sans-serif',
+                            fontFamily: '"Outfit",sans-serif',
                             fontSize: 12,
                             color: '#6b7280',
                           }}
@@ -340,7 +340,7 @@ export default function EventsDashboard() {
                         </span>
                         <span
                           style={{
-                            fontFamily: '"DM Sans",sans-serif',
+                            fontFamily: '"Outfit",sans-serif',
                             fontSize: 12,
                             color: '#6b7280',
                           }}

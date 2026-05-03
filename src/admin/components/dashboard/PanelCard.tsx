@@ -70,7 +70,7 @@ export default function PanelCard({
         >
           <span
             style={{
-              fontFamily: '"Syne", sans-serif',
+              fontFamily: '"Outfit", sans-serif',
               fontWeight: 700,
               fontSize: '16px',
               color: '#0a4a6e',
@@ -84,7 +84,7 @@ export default function PanelCard({
           {badge && (
             <span
               style={{
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: '"Outfit", sans-serif',
                 fontSize: '11px',
                 fontWeight: 600,
                 textTransform: 'uppercase',
@@ -104,7 +104,7 @@ export default function PanelCard({
         {sub && (
           <p
             style={{
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: '"Outfit", sans-serif',
               fontSize: '13px',
               color: '#9ca3af',
               margin: '0 0 16px',

@@ -178,7 +178,7 @@ function Drawer({
           <div style={{ flex: 1 }}>
             <div
               style={{
-                fontFamily: "'Syne',sans-serif",
+                fontFamily: "'Outfit',sans-serif",
                 fontWeight: 700,
                 fontSize: 17,
                 color: C.deep,
@@ -237,7 +237,7 @@ function AthleteLine({ name, email, meta }: { name: string; email: string; meta?
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontFamily: "'Syne',sans-serif",
+          fontFamily: "'Outfit',sans-serif",
           fontWeight: 700,
           fontSize: 12,
           color: C.deep,
@@ -299,7 +299,7 @@ function SectionLabel({ label, count }: { label: string; count: number }) {
         {label}
       </span>
       <span
-        style={{ fontFamily: "'Syne',sans-serif", fontWeight: 700, fontSize: 13, color: C.deep }}
+        style={{ fontFamily: "'Outfit',sans-serif", fontWeight: 700, fontSize: 13, color: C.deep }}
       >
         {count}
       </span>
@@ -561,7 +561,7 @@ export default function PoolDashboard() {
       <div
         style={{
           padding: '2rem',
-          fontFamily: '"DM Sans",sans-serif',
+          fontFamily: '"Outfit",sans-serif',
           color: C.coral,
           fontSize: 14,
         }}
@@ -599,9 +599,9 @@ export default function PoolDashboard() {
       }}
     >
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
         .pool-slot-table{width:100%;border-collapse:collapse;}
-        .pool-slot-table th{font-family:"DM Sans",sans-serif;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:#8aaabb;text-align:left;padding-bottom:10px;padding-right:12px;white-space:nowrap;}
+        .pool-slot-table th{font-family:"Outfit",sans-serif;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:#8aaabb;text-align:left;padding-bottom:10px;padding-right:12px;white-space:nowrap;}
         .pool-slot-row{cursor:pointer;transition:background .15s;}
         .pool-slot-row:hover{background:#f0fafd;}
         .pool-slot-cards{display:none;}
@@ -626,7 +626,7 @@ export default function PoolDashboard() {
         <div style={{ flex: 1, minWidth: 0 }}>
           <h1
             style={{
-              fontFamily: '"Syne",sans-serif',
+              fontFamily: '"Outfit",sans-serif',
               fontWeight: 700,
               fontSize: 28,
               color: C.deep,
@@ -638,7 +638,7 @@ export default function PoolDashboard() {
           </h1>
           <p
             style={{
-              fontFamily: '"DM Sans",sans-serif',
+              fontFamily: '"Outfit",sans-serif',
               fontSize: 14,
               color: C.inkMid,
               margin: '4px 0 0',
@@ -651,7 +651,7 @@ export default function PoolDashboard() {
           style={{
             background: `linear-gradient(135deg,${C.deep},${C.mid})`,
             color: C.white,
-            fontFamily: '"DM Sans",sans-serif',
+            fontFamily: '"Outfit",sans-serif',
             fontSize: 12,
             fontWeight: 600,
             borderRadius: 99,
@@ -678,7 +678,7 @@ export default function PoolDashboard() {
         }}
       >
         <span
-          style={{ fontFamily: '"Syne",sans-serif', fontWeight: 700, fontSize: 22, color: C.white }}
+          style={{ fontFamily: '"Outfit",sans-serif', fontWeight: 700, fontSize: 22, color: C.white }}
         >
           Pool Cycle
         </span>
@@ -691,7 +691,7 @@ export default function PoolDashboard() {
             <div key={l} style={{ textAlign: 'center' }}>
               <div
                 style={{
-                  fontFamily: '"Syne",sans-serif',
+                  fontFamily: '"Outfit",sans-serif',
                   fontWeight: 800,
                   fontSize: 28,
                   color: C.white,
@@ -702,7 +702,7 @@ export default function PoolDashboard() {
               </div>
               <div
                 style={{
-                  fontFamily: '"DM Sans",sans-serif',
+                  fontFamily: '"Outfit",sans-serif',
                   fontSize: 12,
                   color: 'rgba(255,255,255,.75)',
                   marginTop: 4,
@@ -830,7 +830,7 @@ export default function PoolDashboard() {
                           </td>
                           <td
                             style={{
-                              fontFamily: '"Syne",sans-serif',
+                              fontFamily: '"Outfit",sans-serif',
                               fontWeight: 700,
                               fontSize: 15,
                               color: C.deep,
@@ -880,7 +880,7 @@ export default function PoolDashboard() {
                       <div style={{ textAlign: 'right' }}>
                         <div
                           style={{
-                            fontFamily: '"Syne",sans-serif',
+                            fontFamily: '"Outfit",sans-serif',
                             fontWeight: 800,
                             fontSize: 20,
                             color: C.deep,
@@ -942,7 +942,7 @@ export default function PoolDashboard() {
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      fontFamily: '"Syne",sans-serif',
+                      fontFamily: '"Outfit",sans-serif',
                       fontWeight: 700,
                       fontSize: 13,
                       flexShrink: 0,
@@ -952,7 +952,7 @@ export default function PoolDashboard() {
                   </div>
                   <span
                     style={{
-                      fontFamily: '"DM Sans",sans-serif',
+                      fontFamily: '"Outfit",sans-serif',
                       fontSize: 13,
                       color: C.inkMid,
                       flex: 1,
@@ -968,7 +968,7 @@ export default function PoolDashboard() {
                     style={{
                       background: '#ede9fe',
                       color: '#5b21b6',
-                      fontFamily: '"DM Sans",sans-serif',
+                      fontFamily: '"Outfit",sans-serif',
                       fontSize: 11,
                       fontWeight: 600,
                       borderRadius: 99,
@@ -1028,7 +1028,7 @@ export default function PoolDashboard() {
                           style={{
                             background: '#ede9fe',
                             color: '#5b21b6',
-                            fontFamily: '"DM Sans",sans-serif',
+                            fontFamily: '"Outfit",sans-serif',
                             fontSize: 11,
                             fontWeight: 600,
                             borderRadius: 99,
@@ -1101,7 +1101,7 @@ export default function PoolDashboard() {
             >
               <div
                 style={{
-                  fontFamily: '"Syne",sans-serif',
+                  fontFamily: '"Outfit",sans-serif',
                   fontWeight: 800,
                   fontSize: 36,
                   color: C.deep,

@@ -39,7 +39,7 @@ export function PoolCardCMS({ pool, locale }: Props) {
 
         <div className="flex flex-col justify-center p-7">
           {pool.cardTitle && (
-            <div className="mb-2 font-['Syne'] text-xl font-extrabold text-[var(--benefits-deep)]">
+            <div className="mb-2 font-['Outfit'] text-xl font-extrabold text-[var(--benefits-deep)]">
               {pool.cardTitle}
             </div>
           )}
@@ -97,7 +97,7 @@ export function PoolCardCMS({ pool, locale }: Props) {
           {pool.cta && (
             <Link
               href={`/${locale}/pool`}
-              className="mt-2 inline-flex self-start items-center gap-2 rounded-[10px] px-[22px] py-3 font-['Syne'] text-[13px] font-bold text-white transition-opacity hover:opacity-90"
+              className="mt-2 inline-flex self-start items-center gap-2 rounded-[10px] px-[22px] py-3 font-['Outfit'] text-[13px] font-bold text-white transition-opacity hover:opacity-90"
               style={{ background: 'linear-gradient(135deg, #0a4a6e, #0e7ea8)' }}
             >
               {pool.cta}

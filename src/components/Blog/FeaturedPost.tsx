@@ -54,7 +54,7 @@ export const FeaturedPost: React.FC<FeaturedPostProps> = ({ post }) => {
           <div className="absolute inset-0 bg-gradient-to-t from-[rgba(10,74,110,0.55)] to-transparent opacity-55" />
 
           {/* Featured tag */}
-          <div className="absolute top-4.5 left-4.5 bg-[hsl(var(--mid))] text-white rounded-full px-3.25 py-1.25 font-syne text-xs font-bold uppercase tracking-wide">
+          <div className="absolute top-4.5 left-4.5 bg-[hsl(var(--mid))] text-white rounded-full px-3.25 py-1.25 font-outfit text-xs font-bold uppercase tracking-wide">
             {t('featured')}
           </div>
         </div>
@@ -67,7 +67,7 @@ export const FeaturedPost: React.FC<FeaturedPostProps> = ({ post }) => {
             </div>
           )}
 
-          <h2 className="font-syne text-2xl font-extrabold text-[hsl(var(--deep))] leading-tight mb-3">
+          <h2 className="font-outfit text-2xl font-extrabold text-[hsl(var(--deep))] leading-tight mb-3">
             {title}
           </h2>
 

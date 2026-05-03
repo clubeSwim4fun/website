@@ -42,7 +42,7 @@ const Aside: React.FC<{ aside: SectionWithAsideBlockProps['aside']; user?: User 
             {priceAmount2 != null ? (
               <div className="flex items-center justify-center gap-4">
                 <div className="flex flex-col items-center">
-                  <p className="font-syne font-extrabold text-white leading-none">
+                  <p className="font-outfit font-extrabold text-white leading-none">
                     <sup className="text-xl font-semibold align-super">€</sup>
                     <span className="text-5xl">{priceAmount}</span>
                   </p>
@@ -50,7 +50,7 @@ const Aside: React.FC<{ aside: SectionWithAsideBlockProps['aside']; user?: User 
                 </div>
                 <div className="w-px self-stretch bg-white/20" />
                 <div className="flex flex-col items-center">
-                  <p className="font-syne font-extrabold text-white leading-none">
+                  <p className="font-outfit font-extrabold text-white leading-none">
                     <sup className="text-xl font-semibold align-super">€</sup>
                     <span className="text-5xl">{priceAmount2}</span>
                   </p>
@@ -62,7 +62,7 @@ const Aside: React.FC<{ aside: SectionWithAsideBlockProps['aside']; user?: User 
             ) : (
               <>
                 {priceAmount != null && (
-                  <p className="font-syne font-extrabold text-white leading-none">
+                  <p className="font-outfit font-extrabold text-white leading-none">
                     <sup className="text-xl font-semibold align-super">€</sup>
                     <span className="text-5xl">{priceAmount}</span>
                   </p>
