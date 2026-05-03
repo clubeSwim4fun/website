@@ -1,6 +1,6 @@
 'use server'
 
-import { Event, Gender, Ticket, User } from '@/payload-types'
+import { Event, Ticket, User } from '@/payload-types'
 import COUNTRY_LIST from '@/utilities/countryList'
 import config from '@payload-config'
 import { getPayload } from 'payload'
@@ -117,7 +117,7 @@ type UserData = {
   nationality?: string | null
   birthDate?: Date
   phoneNumber?: string | null
-  gender?: string | Gender | null
+  gender?: string | null
   address: {
     street?: string | null
     number?: string | null

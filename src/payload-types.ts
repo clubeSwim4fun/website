@@ -978,7 +978,7 @@ export interface Select {
   name: string;
   label: string;
   type?: ('default' | 'globalConfig') | null;
-  globalConfigCollection?: ('genders' | 'disabilities' | 'aboutClub') | null;
+  globalConfigCollection?: ('disabilities' | 'aboutClub') | null;
   defaultValue?: string | null;
   options?:
     | {
@@ -1878,7 +1878,7 @@ export interface User {
   profilePicture?: (string | null) | UserMedia;
   role?: ('admin' | 'editor' | 'default') | null;
   nif?: string | null;
-  gender?: (string | null) | Gender;
+  gender?: ('male' | 'female' | 'other' | 'not_specified') | null;
   groups?:
     | (
         | {
@@ -1975,18 +1975,6 @@ export interface UserMedia {
       filename?: string | null;
     };
   };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "gender".
- */
-export interface Gender {
-  id: string;
-  label: string;
-  value: string;
-  hiddenId?: string | null;
-  updatedAt: string;
-  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -3608,6 +3596,19 @@ export interface Order {
   total: number;
   stripePaymentIntentId?: string | null;
   paymentStatus?: ('pending' | 'paid' | 'failed') | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "gender".
+ */
+export interface Gender {
+  id: string;
+  title?: string | null;
+  label: string;
+  value: string;
+  hiddenId?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -5360,6 +5361,7 @@ export interface OrdersSelect<T extends boolean = true> {
  * via the `definition` "gender_select".
  */
 export interface GenderSelect<T extends boolean = true> {
+  title?: T;
   label?: T;
   value?: T;
   hiddenId?: T;

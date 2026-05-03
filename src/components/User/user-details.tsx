@@ -73,6 +73,7 @@ type Props = {
 export const UserDetails: React.FC<Props> = ({ user, countryCode }) => {
   const t = useTranslations('User.Details')
   const tc = useTranslations('Communications')
+  const tReg = useTranslations('Registration')
   const format = useFormatter()
   const [activeTab, setActiveTab] = useState<Tab>('personal')
   const nationality = user.nationality as string
@@ -168,9 +169,20 @@ export const UserDetails: React.FC<Props> = ({ user, countryCode }) => {
               )}
               <InfoField
                 label={t('gender')}
-                value={
-                  typeof user.gender === 'object' ? user.gender?.value : (user.gender ?? undefined)
-                }
+                value={(() => {
+                  const g = typeof user.gender === 'object' ? user.gender?.value : user.gender
+                  if (!g) return undefined
+                  const map: Record<string, string> = {
+                    male: tReg('genderMale'),
+                    female: tReg('genderFemale'),
+                    other: tReg('genderOther'),
+                    not_specified: tReg('genderNotSpecified'),
+                    // legacy values from old relationship-based gender docs
+                    masculino: tReg('genderMale'),
+                    feminino: tReg('genderFemale'),
+                  }
+                  return map[g.toLowerCase()] ?? g
+                })()}
               />
               <InfoField label={t('phone')} value={user.phone} />
             </div>

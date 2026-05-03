@@ -50,14 +50,15 @@ export function Step4({ data, errors, onChange, fieldMap, generalConfig }: Props
               description={t('emailNotificationsDesc')}
             />
           </div>
-          <div className="px-4">
+          {/* TODO: Unhide when WhatsApp integration is implemented */}
+          {/* <div className="px-4">
             <Toggle
               checked={data.whatsappNotifications}
               onChange={(v) => onChange('whatsappNotifications', v)}
               label={t('whatsappNotificationsLabel')}
               description={t('whatsappNotificationsDesc')}
             />
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -81,7 +82,7 @@ export function Step4({ data, errors, onChange, fieldMap, generalConfig }: Props
         </div>
       )}
 
-      <div className="flex items-center gap-3">
+      {/* <div className="flex items-center gap-3">
         <Checkbox
           id="wantsInvoiceWithNif"
           checked={data.wantsInvoiceWithNif}
@@ -90,7 +91,7 @@ export function Step4({ data, errors, onChange, fieldMap, generalConfig }: Props
         <label htmlFor="wantsInvoiceWithNif" className="text-sm cursor-pointer">
           {label(fieldMap, 'wantsInvoiceWithNif', t('wantsInvoice'))}
         </label>
-      </div>
+      </div> */}
 
       <div
         className={cn(

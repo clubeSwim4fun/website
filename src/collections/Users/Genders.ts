@@ -13,11 +13,27 @@ export const Gender: CollectionConfig = {
     },
   },
   admin: {
-    defaultColumns: ['label', 'value'],
-    useAsTitle: 'label',
+    defaultColumns: ['title', 'value'],
+    useAsTitle: 'title',
     hidden: true,
   },
+  hooks: {
+    beforeChange: [
+      ({ data }) => {
+        // Keep non-localized title in sync with value for admin display
+        if (!data.title) {
+          data.title = data.value || data.label || ''
+        }
+        return data
+      },
+    ],
+  },
   fields: [
+    {
+      name: 'title',
+      type: 'text',
+      admin: { hidden: true },
+    },
     {
       name: 'label',
       localized: true,

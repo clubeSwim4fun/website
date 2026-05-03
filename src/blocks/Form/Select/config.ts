@@ -41,7 +41,6 @@ export const Select: Block = {
       name: 'globalConfigCollection',
       type: 'select',
       options: [
-        { value: 'genders', label: { en: 'Gender', pt: 'Gênero' } },
         { value: 'disabilities', label: { en: 'Disability', pt: 'Deficiência' } },
         { value: 'aboutClub', label: { en: 'Heard About Club', pt: 'Soube do Clube' } },
       ],

@@ -48,6 +48,7 @@ const updateRelatedCollection = async ({
             data: {
               label: dataObj.label,
               value: dataObj.value,
+              ...(collection === 'gender' && { title: dataObj.value || dataObj.label }),
             },
             where: {
               hiddenId: {
@@ -66,6 +67,7 @@ const updateRelatedCollection = async ({
             label: dataObj.label,
             value: dataObj.value,
             hiddenId: dataObj.id,
+            ...(collection === 'gender' && { title: dataObj.value || dataObj.label }),
           },
         })
 
@@ -105,11 +107,6 @@ export const updateCollections: GlobalBeforeChangeHook = async ({
   const { userData } = data
   const { userData: originalUserData } = originalDoc
 
-  // Checks for current user Data to update
-  if (userData && userData.genders?.length > 0) {
-    data = await updateRelatedCollection({ payload, locale, data, collection: 'gender' })
-  }
-
   if (userData && userData.disabilities?.length > 0) {
     data = await updateRelatedCollection({ payload, locale, data, collection: 'disability' })
   }
@@ -118,44 +115,20 @@ export const updateCollections: GlobalBeforeChangeHook = async ({
     data = await updateRelatedCollection({ payload, locale, data, collection: 'aboutClub' })
   }
 
-  // Check for original user Data to delete deleted files
-  if (
-    originalUserData &&
-    (originalUserData.genders?.length > 0 || originalUserData.disabilities?.length > 0)
-  ) {
-    const deletedGenders = wasDeleted(originalUserData?.genders || [], userData?.genders || [])
+  // Note: gender and disability documents are intentionally NOT deleted when removed from
+  // GeneralConfigs, because existing users may still reference them. Removing them would
+  // cause broken relationships showing "Untitled - ID: ..." in the admin panel.
+  if (originalUserData && originalUserData.aboutClub?.length > 0) {
     const deletedAboutClub = wasDeleted(
       originalUserData?.aboutClub || [],
       userData?.aboutClub || [],
     )
-    const deletedDisabilities = wasDeleted(
-      originalUserData?.disabilities || [],
-      userData?.disabilities || [],
-    )
-
-    if (deletedGenders.length > 0) {
-      for (const genderToDelete of deletedGenders) {
-        await payload.delete({
-          collection: 'gender',
-          id: genderToDelete,
-        })
-      }
-    }
 
     if (deletedAboutClub.length > 0) {
       for (const aboutToDelete of deletedAboutClub) {
         await payload.delete({
           collection: 'aboutClub',
           id: aboutToDelete,
-        })
-      }
-    }
-
-    if (deletedDisabilities.length > 0) {
-      for (const disabilityToDelete of deletedDisabilities) {
-        await payload.delete({
-          collection: 'disability',
-          id: disabilityToDelete,
         })
       }
     }

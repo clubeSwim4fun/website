@@ -1,6 +1,6 @@
 'use client'
 
-import { Gender, GeneralConfig, User } from '@/payload-types'
+import { GeneralConfig, User } from '@/payload-types'
 import { Control, Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { Label } from '@/components/ui/label'
 import { Error } from '@/blocks/Form/Error'
@@ -23,7 +23,7 @@ export type UserFormData = {
   nationality?: string | null
   disability?: string | null
   phoneNumber?: string | null
-  gender?: string | Gender | null
+  gender?: string | null
   address: {
     street?: string | null
     number?: string | null

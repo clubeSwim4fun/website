@@ -15,7 +15,6 @@ import { CmsField, label, options, required, extraFieldsForStep } from './useFor
 import { DynamicField } from './DynamicField'
 import { MaskedInput } from './MaskedInput'
 import COUNTRY_LIST from '@/utilities/countryList'
-import { GeneralConfig } from '@/payload-types'
 import { useTranslations } from 'next-intl'
 
 type Errors = Partial<Record<keyof RegistrationFormData, string>>
@@ -23,26 +22,21 @@ type Props = {
   data: RegistrationFormData
   errors: Errors
   onChange: (field: keyof RegistrationFormData, value: string) => void
-  generalConfig: GeneralConfig
   fieldMap: Record<string, CmsField>
 }
 
 const TSHIRT_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL']
 
-export function Step2({ data, errors, onChange, generalConfig, fieldMap }: Props) {
+export function Step2({ data, errors, onChange, fieldMap }: Props) {
   const t = useTranslations('Registration')
   const extra = extraFieldsForStep(fieldMap, '2')
 
-  const genderField = fieldMap['gender']
-  const genderOptions =
-    genderField?.type === 'globalConfig'
-      ? (
-          (generalConfig?.userData?.genders ?? []) as {
-            label: string
-            collectionId?: string | null
-          }[]
-        ).map((g) => ({ label: g.label, value: g.collectionId ?? g.label }))
-      : options(fieldMap, 'gender')
+  const genderOptions = [
+    { label: t('genderMale'), value: 'male' },
+    { label: t('genderFemale'), value: 'female' },
+    { label: t('genderOther'), value: 'other' },
+    { label: t('genderNotSpecified'), value: 'not_specified' },
+  ]
 
   const tshirtOptions = options(fieldMap, 'tshirtSize').length
     ? options(fieldMap, 'tshirtSize')

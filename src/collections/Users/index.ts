@@ -198,15 +198,17 @@ export const Users: CollectionConfig = {
       name: 'gender',
       label: {
         en: 'Gender',
-        pt: 'Genero',
+        pt: 'Género',
       },
-      type: 'relationship',
-      relationTo: 'gender',
-      hasMany: false,
+      type: 'select',
+      options: [
+        { label: { en: 'Male', pt: 'Masculino' }, value: 'male' },
+        { label: { en: 'Female', pt: 'Feminino' }, value: 'female' },
+        { label: { en: 'Other', pt: 'Outro' }, value: 'other' },
+        { label: { en: 'Prefer not to say', pt: 'Prefiro não dizer' }, value: 'not_specified' },
+      ],
       admin: {
         position: 'sidebar',
-        allowCreate: false,
-        allowEdit: false,
       },
     },
     {
@@ -613,7 +615,29 @@ export const Users: CollectionConfig = {
     },
   ],
   hooks: {
-    beforeChange: [autoIncrement, saveFederationHistory],
+    beforeChange: [
+      autoIncrement,
+      saveFederationHistory,
+      ({ data }) => {
+        // Normalize legacy ObjectId-based gender values to new select strings
+        if (data.gender && typeof data.gender === 'object') {
+          const GENDER_OBJECT_ID_MAP: Record<string, string> = {
+            '69e3bca4afec338d8efe7aa1': 'male',
+            '69e3bca4afec338d8efe7aa2': 'female',
+          }
+          let hex: string | undefined
+          if (Buffer.isBuffer(data.gender)) {
+            hex = data.gender.toString('hex')
+          } else if (data.gender.buffer) {
+            hex = Buffer.from(data.gender.buffer).toString('hex')
+          } else if (typeof data.gender.toHexString === 'function') {
+            hex = data.gender.toHexString()
+          }
+          if (hex) data.gender = GENDER_OBJECT_ID_MAP[hex] ?? 'not_specified'
+        }
+        return data
+      },
+    ],
     afterChange: [
       async ({ doc, previousDoc, operation }) => {
         const t = await getTranslations({ locale: 'pt', namespace: 'Email' })

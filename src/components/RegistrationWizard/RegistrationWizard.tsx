@@ -245,7 +245,10 @@ export function RegistrationWizard({ generalConfig, form, submitButtonLabel, com
           <div className="w-16 h-16 rounded-full border-4 border-[#2ecc71] flex items-center justify-center">
             <CheckCircle className="w-8 h-8 text-[#2ecc71]" />
           </div>
-          <h2 className="text-2xl font-bold" style={{ fontFamily: 'var(--font-outfit, sans-serif)' }}>
+          <h2
+            className="text-2xl font-bold"
+            style={{ fontFamily: 'var(--font-outfit, sans-serif)' }}
+          >
             {t('successTitle')}
           </h2>
           <p className="text-muted-foreground max-w-sm">{t('successDescription')}</p>
@@ -275,13 +278,7 @@ export function RegistrationWizard({ generalConfig, form, submitButtonLabel, com
                 />
               )}
               {step === 2 && (
-                <Step2
-                  data={data}
-                  errors={errors}
-                  onChange={set}
-                  generalConfig={generalConfig}
-                  fieldMap={fieldMap}
-                />
+                <Step2 data={data} errors={errors} onChange={set} fieldMap={fieldMap} />
               )}
               {step === 3 && (
                 <Step3
