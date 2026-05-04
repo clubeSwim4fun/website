@@ -13,45 +13,49 @@ export async function GET(req: Request) {
   const payload = await getPayload({ config: configPromise })
   const now = new Date()
 
-  // Find all closed cycles with an openDate that has passed
-  const { docs: cyclesToOpen } = await payload.find({
+  // Get all cycles with openDate defined, sorted by openDate
+  const { docs: allCycles } = await payload.find({
     collection: 'pool-cycles',
-    where: {
-      and: [{ status: { equals: 'closed' } }, { openDate: { less_than_equal: now.toISOString() } }],
-    },
-    limit: 100,
+    where: { openDate: { exists: true } },
+    sort: 'openDate',
+    limit: 1000,
   })
 
-  if (cyclesToOpen.length === 0) {
-    return NextResponse.json({ message: 'No cycles to open', opened: 0, closed: 0 })
+  if (allCycles.length === 0) {
+    return NextResponse.json({ message: 'No cycles with openDate found', opened: 0, closed: 0 })
   }
 
-  // Close all currently open cycles
-  const { docs: openCycles } = await payload.find({
-    collection: 'pool-cycles',
-    where: { status: { equals: 'open' } },
-    limit: 100,
-  })
-
-  let closedCount = 0
-  for (const cycle of openCycles) {
-    await payload.update({
-      collection: 'pool-cycles',
-      id: cycle.id,
-      data: { status: 'closed' },
-    })
-    closedCount++
-  }
-
-  // Open the pending cycles
   let openedCount = 0
-  for (const cycle of cyclesToOpen) {
-    await payload.update({
-      collection: 'pool-cycles',
-      id: cycle.id,
-      data: { status: 'open' },
-    })
-    openedCount++
+  let closedCount = 0
+
+  // For each cycle, determine if it should be open
+  for (let i = 0; i < allCycles.length; i++) {
+    const cycle = allCycles[i]
+    const cycleOpenDate = new Date(cycle.openDate as string)
+
+    // Find the next cycle's openDate
+    const nextCycle = allCycles[i + 1]
+    const nextOpenDate = nextCycle ? new Date(nextCycle.openDate as string) : null
+
+    // Cycle should be open if: today >= openDate AND today < nextCycle.openDate
+    const shouldBeOpen = now >= cycleOpenDate && (!nextOpenDate || now < nextOpenDate)
+    const currentStatus = cycle.status
+
+    if (shouldBeOpen && currentStatus !== 'open') {
+      await payload.update({
+        collection: 'pool-cycles',
+        id: cycle.id,
+        data: { status: 'open' },
+      })
+      openedCount++
+    } else if (!shouldBeOpen && currentStatus === 'open') {
+      await payload.update({
+        collection: 'pool-cycles',
+        id: cycle.id,
+        data: { status: 'closed' },
+      })
+      closedCount++
+    }
   }
 
   payload.logger.info(
