@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useCallback, useEffect } from 'react'
 import { ChevronLeft, ChevronRight, MapPin, Route } from 'lucide-react'
-import { Link } from '@/i18n/routing'
+import { Link, useRouter, usePathname } from '@/i18n/routing'
+import { useSearchParams } from 'next/navigation'
 import { cn } from '@/utilities/ui'
 import { useLocale } from 'next-intl'
 import type { CalendarEvent } from '@/components/Calendar/calendar-types'
@@ -117,11 +118,38 @@ function dayKey(date: Date) {
 export function EventsCalendar({ events }: { events: CalendarEvent[] }) {
   const locale = useLocale() as 'pt' | 'en'
   const today = useMemo(() => new Date(), [])
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
 
-  const [currentYear, setCurrentYear] = useState(today.getFullYear())
-  const [currentMonth, setCurrentMonth] = useState(today.getMonth())
-  const [view, setView] = useState<'month' | 'list'>('month')
-  const [activeFilter, setActiveFilter] = useState<string>('all')
+  // Initialise state from URL params (so back-navigation restores the view)
+  const [currentYear, setCurrentYear] = useState(() => {
+    const raw = searchParams.get('year')
+    const y = Number(raw)
+    return raw !== null && y > 2000 ? y : today.getFullYear()
+  })
+  const [currentMonth, setCurrentMonth] = useState(() => {
+    const raw = searchParams.get('month')
+    const m = Number(raw)
+    return raw !== null && m >= 0 && m <= 11 ? m : today.getMonth()
+  })
+  const [view, setView] = useState<'month' | 'list'>(() => {
+    const v = searchParams.get('view')
+    return v === 'list' ? 'list' : 'month'
+  })
+  const [activeFilter, setActiveFilter] = useState<string>(
+    () => searchParams.get('filter') ?? 'all',
+  )
+
+  // Keep URL in sync whenever state changes
+  const updateParams = useCallback(
+    (updates: Record<string, string>) => {
+      const params = new URLSearchParams(searchParams.toString())
+      Object.entries(updates).forEach(([k, v]) => params.set(k, v))
+      router.replace(`${pathname}?${params.toString()}`, { scroll: false })
+    },
+    [router, pathname, searchParams],
+  )
 
   const MONTHS = locale === 'pt' ? MONTHS_PT : MONTHS_EN
   const MONTHS_SHORT = locale === 'pt' ? MONTHS_SHORT_PT : MONTHS_SHORT_EN
@@ -154,16 +182,30 @@ export function EventsCalendar({ events }: { events: CalendarEvent[] }) {
   )
 
   function prevMonth() {
+    let newMonth: number, newYear: number
     if (currentMonth === 0) {
-      setCurrentMonth(11)
-      setCurrentYear((y) => y - 1)
-    } else setCurrentMonth((m) => m - 1)
+      newMonth = 11
+      newYear = currentYear - 1
+    } else {
+      newMonth = currentMonth - 1
+      newYear = currentYear
+    }
+    setCurrentMonth(newMonth)
+    setCurrentYear(newYear)
+    updateParams({ month: String(newMonth), year: String(newYear) })
   }
   function nextMonth() {
+    let newMonth: number, newYear: number
     if (currentMonth === 11) {
-      setCurrentMonth(0)
-      setCurrentYear((y) => y + 1)
-    } else setCurrentMonth((m) => m + 1)
+      newMonth = 0
+      newYear = currentYear + 1
+    } else {
+      newMonth = currentMonth + 1
+      newYear = currentYear
+    }
+    setCurrentMonth(newMonth)
+    setCurrentYear(newYear)
+    updateParams({ month: String(newMonth), year: String(newYear) })
   }
 
   return (
@@ -192,6 +234,7 @@ export function EventsCalendar({ events }: { events: CalendarEvent[] }) {
               onClick={() => {
                 setCurrentMonth(today.getMonth())
                 setCurrentYear(today.getFullYear())
+                updateParams({ month: String(today.getMonth()), year: String(today.getFullYear()) })
               }}
               className="px-3 py-1.5 text-xs font-medium border border-swim-border rounded-lg bg-white text-ink-mid hover:border-mid hover:text-mid hover:bg-pale transition-colors"
             >
@@ -204,7 +247,10 @@ export function EventsCalendar({ events }: { events: CalendarEvent[] }) {
             {(['month', 'list'] as const).map((v) => (
               <button
                 key={v}
-                onClick={() => setView(v)}
+                onClick={() => {
+                  setView(v)
+                  updateParams({ view: v })
+                }}
                 className={cn(
                   'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all',
                   view === v
@@ -227,14 +273,23 @@ export function EventsCalendar({ events }: { events: CalendarEvent[] }) {
         {/* Row 2: filter chips — scrollable on mobile, wrap on desktop */}
         {categories.length > 0 && (
           <div className="flex gap-2 overflow-x-auto pb-0.5 md:flex-wrap md:overflow-visible [scrollbar-width:none] [-webkit-overflow-scrolling:touch]">
-            <FilterChip active={activeFilter === 'all'} onClick={() => setActiveFilter('all')}>
+            <FilterChip
+              active={activeFilter === 'all'}
+              onClick={() => {
+                setActiveFilter('all')
+                updateParams({ filter: 'all' })
+              }}
+            >
               {locale === 'pt' ? 'Todos' : 'All'}
             </FilterChip>
             {categories.map((cat) => (
               <FilterChip
                 key={cat.id}
                 active={activeFilter === cat.id}
-                onClick={() => setActiveFilter(cat.id)}
+                onClick={() => {
+                  setActiveFilter(cat.id)
+                  updateParams({ filter: cat.id })
+                }}
               >
                 <span
                   className="w-2 h-2 rounded-full flex-shrink-0 inline-block"

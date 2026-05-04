@@ -444,7 +444,8 @@
     "timeLimit": "Tempo limite",
     "regulation": "Regulamento",
     "inactiveUserTicketGate": "A sua conta não está ativa. Para comprar bilhetes, renove a sua inscrição.",
-    "renewMembership": "Renovar inscrição"
+    "renewMembership": "Renovar inscrição",
+    "backToCalendar": "Voltar ao calendário"
   },
   "FileUploader": {
     "uploading": "A carregar {target}...",

@@ -14,6 +14,7 @@ import { EventHero } from '@/heros/EventHero'
 import { EventDetails } from '@/components/EventDetails'
 import { EventDistanceCategories } from '@/components/EventDistanceCategories'
 import { getMeUser } from '@/utilities/getMeUser'
+import { BackToCalendarButton } from '@/components/BackToCalendarButton'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
@@ -95,6 +96,9 @@ export default async function Event({ params: paramsPromise }: Args) {
       <EventHero event={event} />
 
       <div className="container pt-8 max-w-6xl mx-auto">
+        <div className="mb-6">
+          <BackToCalendarButton />
+        </div>
         <section className="flex flex-col-reverse lg:flex-row gap-3">
           <div className="flex-1 min-w-0">
             <RichText data={description} enableGutter={false} />

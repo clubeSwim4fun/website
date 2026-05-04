@@ -444,7 +444,8 @@
     "timeLimit": "Time limit",
     "regulation": "Regulation",
     "inactiveUserTicketGate": "Your account is not active. To purchase tickets, please renew your membership.",
-    "renewMembership": "Renew membership"
+    "renewMembership": "Renew membership",
+    "backToCalendar": "Back to calendar"
   },
   "FileUploader": {
     "uploading": "Uploading {target}...",
