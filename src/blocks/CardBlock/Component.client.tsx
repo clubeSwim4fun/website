@@ -168,7 +168,6 @@ export const CardPaymentVariant: React.FC<CardPaymentProps> = ({
   const ctx = useStepPayment()
 
   // Resolve effective amount/description from context override or static props
-  const hasPaymentSelector = ctx !== null && 'selectedPaymentOption' in ctx
   const selectedOption = ctx?.selectedPaymentOption ?? null
   const effectiveAmount = selectedOption?.amount ?? amount
   const effectiveDescription = selectedOption?.label ?? description
@@ -180,9 +179,10 @@ export const CardPaymentVariant: React.FC<CardPaymentProps> = ({
     }
   }, [clientSecret, initError, alreadyMemberName]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Re-initialize when the selected payment option changes
+  // Re-initialize when the selected payment option changes (user picks a different option)
   useEffect(() => {
-    if (hasPaymentSelector && selectedOption === null) return
+    const hasSel = ctx?.hasPaymentSelectorRef.current ?? false
+    if (hasSel && selectedOption === null) return
     initialized.current = false
     setClientSecret(null)
     setFormPaymentId(null)
@@ -193,33 +193,43 @@ export const CardPaymentVariant: React.FC<CardPaymentProps> = ({
   useEffect(() => {
     if (clientSecret !== null) return
     if (initialized.current) return
-    if (hasPaymentSelector && selectedOption === null) return
-    initialized.current = true
+    // Defer by one tick so the Select's useEffect (which sets hasPaymentSelectorRef +
+    // selectedPaymentOption) always runs before we decide whether to wait or proceed.
+    const timer = setTimeout(() => {
+      if (clientSecret !== null || initialized.current) return
+      const hasSel = ctx?.hasPaymentSelectorRef.current ?? false
+      if (hasSel && ctx?.selectedPaymentOption === null) return
+      initialized.current = true
 
-    const run = async () => {
-      if (assignToGroup) {
-        const { isMember, groupName } = await checkUserGroupMembership(assignToGroup)
-        if (isMember) {
-          setAlreadyMemberName(groupName ?? '')
+      const effectiveAmt = ctx?.selectedPaymentOption?.amount ?? amount
+      const effectiveDesc = ctx?.selectedPaymentOption?.label ?? description
+
+      const run = async () => {
+        if (assignToGroup) {
+          const { isMember, groupName } = await checkUserGroupMembership(assignToGroup)
+          if (isMember) {
+            setAlreadyMemberName(groupName ?? '')
+            return
+          }
+        }
+
+        const result = await createFormPayment({
+          amountEur: effectiveAmt,
+          description: effectiveDesc,
+          assignToGroup: assignToGroup ?? null,
+          submissionData: [],
+        })
+        if (result.error) {
+          setInitError(result.error)
           return
         }
+        setClientSecret(result.clientSecret ?? null)
+        setFormPaymentId(result.formPaymentId ?? null)
       }
 
-      const result = await createFormPayment({
-        amountEur: effectiveAmount,
-        description: effectiveDescription,
-        assignToGroup: assignToGroup ?? null,
-        submissionData: [],
-      })
-      if (result.error) {
-        setInitError(result.error)
-        return
-      }
-      setClientSecret(result.clientSecret ?? null)
-      setFormPaymentId(result.formPaymentId ?? null)
-    }
-
-    run()
+      run()
+    }, 0)
+    return () => clearTimeout(timer)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clientSecret, selectedOption?.amount])
 
@@ -254,7 +264,7 @@ export const CardPaymentVariant: React.FC<CardPaymentProps> = ({
   }
 
   // No option selected yet — hide entirely (button stays blocked)
-  if (hasPaymentSelector && selectedOption === null) return null
+  if ((ctx?.hasPaymentSelectorRef.current ?? false) && selectedOption === null) return null
 
   if (!clientSecret) {
     return (

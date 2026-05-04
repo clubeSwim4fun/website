@@ -16,6 +16,7 @@ import { Width } from '../Width'
 import { GeneralConfig, Select as SelectType } from '@/payload-types'
 import { useTranslations } from 'next-intl'
 import { useStepPayment } from '@/blocks/SectionWithAside/StepPaymentContext'
+import type { PaymentOption } from '@/blocks/SectionWithAside/StepPaymentContext'
 
 type optionsType = {
   label: string
@@ -39,6 +40,7 @@ export const Select: React.FC<
   options,
   required,
   type,
+  defaultValue,
   generalConfigData,
   globalConfigCollection,
   isPaymentSelector,
@@ -48,18 +50,34 @@ export const Select: React.FC<
   const paymentCtx = useStepPayment()
 
   useEffect(() => {
+    let resolved: optionsType[] = []
     if (type === 'default') {
-      setDynamicOptions(options || [])
+      resolved = options || []
     } else if (!!globalConfigCollection) {
-      setDynamicOptions(
+      resolved =
         (
           generalConfigData?.userData as Partial<
             Record<'genders' | 'disabilities' | 'aboutClub', optionsType[]>
           >
-        )?.[globalConfigCollection as 'genders' | 'disabilities' | 'aboutClub'] ?? [],
-      )
+        )?.[globalConfigCollection as 'genders' | 'disabilities' | 'aboutClub'] ?? []
     }
-  }, [])
+    setDynamicOptions(resolved)
+
+    if (isPaymentSelector && paymentCtx) {
+      // Resolve default option (if any) and register — sets the ref synchronously
+      let defaultPaymentOption: PaymentOption | undefined
+      if (defaultValue) {
+        const opt = resolved.find((o) => o.value === defaultValue)
+        if (opt) {
+          const amount = opt.price ?? parseFloat(opt.value)
+          if (!isNaN(amount)) {
+            defaultPaymentOption = { amount, label: opt.label }
+          }
+        }
+      }
+      paymentCtx.registerPaymentSelector(defaultPaymentOption)
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleValueChange = (val: string, onChange: (v: string) => void) => {
     onChange(val)

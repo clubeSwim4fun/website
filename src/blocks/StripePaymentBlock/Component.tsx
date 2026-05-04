@@ -81,9 +81,6 @@ export const StripePaymentBlockComponent: React.FC<StripePaymentBlockProps> = ({
   const { block, unblock } = useStepBlocker(`stripe-block-${description ?? amount}`)
 
   // Resolve effective amount/description from context override or static props
-  // `hasPaymentSelector` is true when the context was set up with a selector field
-  // (selectedPaymentOption starts as null and gets set on first user selection)
-  const hasPaymentSelector = ctx !== null && 'selectedPaymentOption' in ctx
   const selectedOption = ctx?.selectedPaymentOption ?? null
   const effectiveAmount = selectedOption?.amount ?? amount
   const effectiveDescription = selectedOption?.label ?? description
@@ -101,34 +98,43 @@ export const StripePaymentBlockComponent: React.FC<StripePaymentBlockProps> = ({
 
   useEffect(() => {
     if (initialized.current) return
-    // Wait for user to pick an option before creating the payment intent
-    if (hasPaymentSelector && selectedOption === null) return
-    initialized.current = true
+    // Defer by one tick so the Select's useEffect (which sets hasPaymentSelectorRef +
+    // selectedPaymentOption) always runs before we decide whether to wait or proceed.
+    const timer = setTimeout(() => {
+      if (initialized.current) return
+      const hasSel = ctx?.hasPaymentSelectorRef.current ?? false
+      if (hasSel && ctx?.selectedPaymentOption === null) return
+      initialized.current = true
 
-    const run = async () => {
-      if (assignToGroup) {
-        const { isMember, groupName } = await checkUserGroupMembership(assignToGroup as any)
-        if (isMember) {
-          setAlreadyMemberName(groupName ?? '')
+      const effectiveAmt = ctx?.selectedPaymentOption?.amount ?? amount
+      const effectiveDesc = ctx?.selectedPaymentOption?.label ?? description
+
+      const run = async () => {
+        if (assignToGroup) {
+          const { isMember, groupName } = await checkUserGroupMembership(assignToGroup as any)
+          if (isMember) {
+            setAlreadyMemberName(groupName ?? '')
+            return
+          }
+        }
+
+        const result = await createFormPayment({
+          amountEur: effectiveAmt,
+          description: effectiveDesc ?? undefined,
+          assignToGroup: (assignToGroup as any) ?? null,
+          submissionData: [],
+        })
+        if (result.error) {
+          setInitError(result.error)
           return
         }
+        setClientSecret(result.clientSecret ?? null)
+        setFormPaymentId(result.formPaymentId ?? null)
       }
 
-      const result = await createFormPayment({
-        amountEur: effectiveAmount,
-        description: effectiveDescription ?? undefined,
-        assignToGroup: (assignToGroup as any) ?? null,
-        submissionData: [],
-      })
-      if (result.error) {
-        setInitError(result.error)
-        return
-      }
-      setClientSecret(result.clientSecret ?? null)
-      setFormPaymentId(result.formPaymentId ?? null)
-    }
-
-    run()
+      run()
+    }, 0)
+    return () => clearTimeout(timer)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedOption?.amount])
 
@@ -146,7 +152,7 @@ export const StripePaymentBlockComponent: React.FC<StripePaymentBlockProps> = ({
   if (initError) return <p className="text-sm text-destructive">{initError}</p>
 
   // No option selected yet — hide the payment form entirely (button stays blocked)
-  if (hasPaymentSelector && selectedOption === null) return null
+  if ((ctx?.hasPaymentSelectorRef.current ?? false) && selectedOption === null) return null
 
   if (!clientSecret) {
     return (

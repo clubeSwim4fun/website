@@ -129,8 +129,6 @@ const StripeStepLayout: React.FC<{
               <>
                 <Loader size={16} className="animate-spin" />A processar…
               </>
-            ) : !isReady ? (
-              <Loader size={16} className="animate-spin" />
             ) : (
               <>
                 {nextStepLabel ?? 'Pagar'}

@@ -52,11 +52,17 @@ export const FormBlockClient: React.FC<{ id?: string } & FormBlockType> = (props
     submitButtonLabel,
   } = formFromProps || {}
 
-  // Build defaultValues from prefillFromUser
+  // Build defaultValues from field defaultValue and prefillFromUser
   const defaultValues = React.useMemo(() => {
     const base: Record<string, any> = {}
     for (const field of (formFromProps?.fields ?? []) as CustomFormFieldBlock[]) {
       if (!field.name) continue
+      // Seed field-level defaultValue first (e.g. Select)
+      const fieldDefault = (field as any).defaultValue
+      if (fieldDefault !== undefined && fieldDefault !== null && fieldDefault !== '') {
+        base[field.name] = fieldDefault
+      }
+      // prefillFromUser overrides field default
       const prefill = (field as any).prefillFromUser as string | undefined
       if (prefill && currentUser) {
         const val = (currentUser as any)[prefill]
