@@ -3,7 +3,6 @@ import type { Metadata } from 'next/types'
 import { CollectionArchive } from '@/components/CollectionArchive'
 import configPromise from '@payload-config'
 import { getPayload, TypedLocale } from 'payload'
-import React from 'react'
 import { Search } from '@/search/Component'
 import PageClient from './page.client'
 import { CardPostData } from '@/components/Card'
@@ -29,48 +28,44 @@ export default async function Page({
   const t = await getTranslations({ locale, namespace: 'Search' })
   const payload = await getPayload({ config: configPromise })
 
-  const posts = await payload.find({
+  const searchResults = await payload.find({
     collection: 'search',
-    depth: 1,
+    depth: 0,
     limit: 12,
-    locale,
-    select: {
-      title: true,
-      slug: true,
-      categories: true,
-      meta: true,
-    },
-    // pagination: false reduces overhead if you don't need totalDocs
-    pagination: false,
+    pagination: true,
     ...(query
       ? {
           where: {
             or: [
-              {
-                title: {
-                  like: query,
-                },
-              },
-              {
-                'meta.description': {
-                  like: query,
-                },
-              },
-              {
-                'meta.title': {
-                  like: query,
-                },
-              },
-              {
-                slug: {
-                  like: query,
-                },
-              },
+              { title: { like: query } },
+              { 'meta.description': { like: query } },
+              { 'meta.title': { like: query } },
+              { slug: { like: query } },
             ],
           },
         }
       : {}),
   })
+
+  // Map search docs to CardPostData — avoids depth-1 join through drafts/access control
+  const mappedDocs = searchResults.docs.map((doc) => ({
+    slug: doc.slug as string,
+    title: doc.title as string,
+    categories: ((doc.categories ?? []) as any[]).map((cat) => ({
+      id: cat.id,
+      title: cat.title,
+      updatedAt: '',
+      createdAt: '',
+    })),
+    meta: doc.meta
+      ? {
+          title: (doc.meta as any).title ?? null,
+          description: (doc.meta as any).description ?? null,
+          image: (doc.meta as any).image ?? null,
+        }
+      : undefined,
+    publishedAt: null,
+  })) as CardPostData[]
 
   return (
     <div className="pt-24 pb-24">
@@ -85,8 +80,8 @@ export default async function Page({
         </div>
       </div>
 
-      {posts.totalDocs > 0 ? (
-        <CollectionArchive posts={posts.docs as CardPostData[]} />
+      {mappedDocs.length > 0 ? (
+        <CollectionArchive posts={mappedDocs} />
       ) : (
         <div className="container">{t('noResults')}</div>
       )}

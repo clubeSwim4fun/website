@@ -96,7 +96,7 @@ export function PoolCardCMS({ pool, locale }: Props) {
 
           {pool.cta && (
             <Link
-              href={`/${locale}/pool`}
+              href={`/pool`}
               className="mt-2 inline-flex self-start items-center gap-2 rounded-[10px] px-[22px] py-3 font-['Outfit'] text-[13px] font-bold text-white transition-opacity hover:opacity-90"
               style={{ background: 'linear-gradient(135deg, #0a4a6e, #0e7ea8)' }}
             >
