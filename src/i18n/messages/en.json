@@ -55,6 +55,8 @@
       "editProfile": "Edit My Profile",
       "birthday": "Birthday:",
       "email": "Email:",
+      "federationId": "Federation ID:",
+      "tshirtSize": "T-shirt Size:",
       "communications": "Communications"
     },
     "Profile": {

@@ -122,6 +122,10 @@ async function handlePaymentProcessing(
       data: { paymentStatus: 'pending' },
     })
   }
+
+  if (type === 'group-subscription') {
+    // group-subscription has no processing state — leave as pending until succeeded
+  }
 }
 
 async function handlePaymentSuccess(
@@ -413,7 +417,7 @@ async function handlePaymentSuccess(
     await payload.update({
       collection: 'group-subscription',
       id: recordId,
-      data: { transactionId: intent.id },
+      data: { transactionId: intent.id, paymentStatus: 'paid' },
     })
 
     // Fire-and-forget invoice creation
@@ -528,7 +532,7 @@ async function handlePaymentSuccess(
               tax: { name: 'IVA0' },
             },
           ],
-          context: 'subscription',
+          context: 'pool-subscription',
           stripePaymentIntentId: intent.id,
         })
       } catch (err) {
@@ -573,6 +577,14 @@ async function handlePaymentFailure(
   if (type === 'form-payment') {
     await payload.update({
       collection: 'form-payments',
+      id: recordId,
+      data: { paymentStatus: 'failed' },
+    })
+  }
+
+  if (type === 'group-subscription') {
+    await payload.update({
+      collection: 'group-subscription',
       id: recordId,
       data: { paymentStatus: 'failed' },
     })

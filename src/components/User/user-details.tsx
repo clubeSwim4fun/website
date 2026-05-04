@@ -185,14 +185,11 @@ export const UserDetails: React.FC<Props> = ({ user, countryCode }) => {
                 })()}
               />
               <InfoField label={t('phone')} value={user.phone} />
-            </div>
-            <div className="mt-4 pt-4 sm:hidden" style={{ borderTop: '1px solid #d4eaf2' }}>
               <InfoField label={t('email')} value={user.email} />
-            </div>
-            <div className="hidden sm:block mt-5">
-              <div className="grid grid-cols-3 gap-x-6">
-                <InfoField label={t('email')} value={user.email} />
-              </div>
+              {user.federationId != null && (
+                <InfoField label={t('federationId')} value={user.federationId} />
+              )}
+              {user.tshirtSize && <InfoField label={t('tshirtSize')} value={user.tshirtSize} />}
             </div>
           </>
         )}

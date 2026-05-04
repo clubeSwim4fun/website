@@ -3646,6 +3646,7 @@ export interface GroupSubscription {
   user: string | User;
   status?: ('pending' | 'approved' | 'rejected') | null;
   transactionId?: string | null;
+  paymentStatus?: ('pending' | 'paid' | 'failed') | null;
   submissionData?:
     | {
         field?: string | null;
@@ -5422,6 +5423,7 @@ export interface GroupSubscriptionSelect<T extends boolean = true> {
   user?: T;
   status?: T;
   transactionId?: T;
+  paymentStatus?: T;
   submissionData?:
     | T
     | {

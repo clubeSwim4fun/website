@@ -72,6 +72,23 @@ export const GroupSubscription: CollectionConfig = {
             readOnly: true,
           },
         },
+        {
+          name: 'paymentStatus',
+          type: 'select',
+          options: [
+            { label: { en: 'Pending', pt: 'Pendente' }, value: 'pending' },
+            { label: { en: 'Paid', pt: 'Pago' }, value: 'paid' },
+            { label: { en: 'Failed', pt: 'Falhado' }, value: 'failed' },
+          ],
+          defaultValue: 'pending',
+          label: {
+            en: 'Payment Status',
+            pt: 'Estado do Pagamento',
+          },
+          admin: {
+            readOnly: true,
+          },
+        },
       ],
     },
     {

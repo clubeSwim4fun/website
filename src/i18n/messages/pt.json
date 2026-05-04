@@ -55,6 +55,8 @@
       "editProfile": "Editar Meu Perfil",
       "birthday": "Data de Nascimento:",
       "email": "E-mail:",
+      "federationId": "ID de Federação:",
+      "tshirtSize": "Tamanho de T-shirt:",
       "communications": "Comunicações"
     },
     "Profile": {
