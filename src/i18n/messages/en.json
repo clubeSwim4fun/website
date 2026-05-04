@@ -305,7 +305,12 @@
     "topics": "Topics",
     "shareYourStory": "Share your story",
     "shareDescription": "Are you a Swim4fun member and want to share your experience? We love hearing your stories.",
-    "sendStory": "Send story"
+    "sendStory": "Send story",
+    "storyTitle": "Title",
+    "storyTitlePlaceholder": "Give your story a title...",
+    "storyImages": "Images",
+    "storyText": "Your story",
+    "storyTextPlaceholder": "Write your story here..."
   },
   "Search": {
     "title": "Search",

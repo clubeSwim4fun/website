@@ -305,7 +305,12 @@
     "topics": "Temas",
     "shareYourStory": "Partilhe a sua história",
     "shareDescription": "É sócio do Swim4fun e quer partilhar a sua experiência? Adoramos ouvir as vossas histórias.",
-    "sendStory": "Enviar história"
+    "sendStory": "Enviar história",
+    "storyTitle": "Título",
+    "storyTitlePlaceholder": "Dê um título à sua história...",
+    "storyImages": "Imagens",
+    "storyText": "A sua história",
+    "storyTextPlaceholder": "Escreva a sua história aqui..."
   },
   "Search": {
     "title": "Pesquisar",

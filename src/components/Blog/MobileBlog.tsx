@@ -6,6 +6,7 @@ import { formatDateTime } from '@/utilities/formatDateTime'
 import { ArrowRight, Search } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useRouter } from '@/i18n/routing'
+import { SubmitStoryDialog } from './SubmitStoryDialog'
 import type { Post, Category } from '@/payload-types'
 
 interface MobileBlogProps {
@@ -221,12 +222,10 @@ export const MobileBlog: React.FC<MobileBlogProps> = ({
       <div className="mx-4.5 mb-5 bg-gradient-to-br from-[hsl(var(--deep))] to-[hsl(var(--mid))] rounded-[14px] p-5 text-white text-center">
         <div className="font-outfit text-base font-bold mb-1.5">{t('shareYourStory')}</div>
         <p className="text-xs opacity-78 leading-relaxed mb-3.5">{t('shareDescription')}</p>
-        <a
-          href="mailto:geral@clube-swim4fun.pt"
-          className="block bg-white text-[hsl(var(--deep))] rounded-[9px] px-2.75 py-2.75 font-outfit text-xs font-bold no-underline"
-        >
-          {t('sendStory')}
-        </a>
+        <SubmitStoryDialog
+          triggerLabel={t('sendStory')}
+          triggerClassName="block w-full bg-white text-[hsl(var(--deep))] rounded-[9px] px-2.75 py-2.75 font-outfit text-xs font-bold cursor-pointer border-none"
+        />
       </div>
     </div>
   )

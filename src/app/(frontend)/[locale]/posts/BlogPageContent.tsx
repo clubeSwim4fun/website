@@ -5,7 +5,6 @@ import { useRouter } from '@/i18n/routing'
 import {
   BlogHero,
   FeaturedPost,
-  FilterBar,
   PostGrid,
   BlogSidebar,
   BlogPagination,
@@ -88,16 +87,6 @@ export const BlogPageContent: React.FC<BlogPageContentProps> = ({
           <div>
             {/* Featured Post */}
             {featuredPost && <FeaturedPost post={featuredPost} />}
-
-            {/* Filter Bar */}
-            <FilterBar
-              categories={categories}
-              activeCategory={selectedCategory}
-              onCategoryChange={handleCategoryChange}
-              totalPosts={totalPosts}
-              currentPage={currentPage}
-              totalPages={totalPages}
-            />
 
             {/* Posts Grid */}
             <PostGrid posts={gridPosts} />

@@ -4,6 +4,7 @@ import { Media } from '@/components/Media'
 import { formatDateTime } from '@/utilities/formatDateTime'
 import { useTranslations } from 'next-intl'
 import type { Post, Category } from '@/payload-types'
+import { SubmitStoryDialog } from './SubmitStoryDialog'
 
 interface BlogSidebarProps {
   recentPosts: Post[]
@@ -71,14 +72,14 @@ export const BlogSidebar: React.FC<BlogSidebarProps> = ({ recentPosts, categorie
 
       {/* Share CTA */}
       <div className="bg-gradient-to-br from-[hsl(var(--deep))] to-[hsl(var(--mid))] rounded-[14px] p-5.5">
-        <div className="font-outfit text-[15px] font-bold text-white mb-2">{t('shareYourStory')}</div>
+        <div className="font-outfit text-[15px] font-bold text-white mb-2">
+          {t('shareYourStory')}
+        </div>
         <p className="text-xs text-white/75 leading-relaxed mb-3.5">{t('shareDescription')}</p>
-        <a
-          href="mailto:geral@clube-swim4fun.pt"
-          className="block bg-white text-[hsl(var(--deep))] rounded-lg px-2.5 py-2.5 font-outfit text-xs font-bold text-center no-underline"
-        >
-          {t('sendStory')}
-        </a>
+        <SubmitStoryDialog
+          triggerLabel={t('sendStory')}
+          triggerClassName="block w-full bg-white text-[hsl(var(--deep))] rounded-lg px-2.5 py-2.5 font-outfit text-xs font-bold text-center cursor-pointer border-none"
+        />
       </div>
     </div>
   )
