@@ -20,12 +20,20 @@ export const formatSlugHook =
     }
 
     if (operation === 'create' || !data?.slug) {
-      const fallbackData = data?.[fallback] || data?.[fallback]
+      const fallbackData = data?.[fallback]
 
-      if (fallbackData && typeof fallbackData === 'string') {
-        return formatSlug(fallbackData)
+      // Handle localized fields (object with locale keys like { pt: '...', en: '...' })
+      const resolvedFallback =
+        typeof fallbackData === 'string'
+          ? fallbackData
+          : fallbackData && typeof fallbackData === 'object'
+            ? (Object.values(fallbackData).find((v) => typeof v === 'string') as string | undefined)
+            : undefined
+
+      if (resolvedFallback) {
+        return formatSlug(resolvedFallback)
       }
     }
 
-    return value ? formatSlug(value) : originalDoc.slug
+    return value ? formatSlug(value) : originalDoc?.slug
   }
