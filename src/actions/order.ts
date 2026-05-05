@@ -49,6 +49,7 @@ export const createPendingOrder = async (
       collection: 'orders',
       data: {
         user: cart.user,
+        cartId: cart.id,
         events: Object.keys(eventsTickets).map((eventTitle) => ({
           event: eventsTickets[eventTitle]?.id,
           tickets: eventsTickets[eventTitle]?.tickets.map((ticket) => ({
@@ -66,13 +67,9 @@ export const createPendingOrder = async (
       req: { transactionID },
     })
 
-    // Clear the cart atomically with the order creation
-    await payload.update({
-      collection: 'carts',
-      data: { items: [], totalPrice: 0 },
-      where: { id: { equals: cart.id } },
-      req: { transactionID },
-    })
+    // Cart is intentionally NOT cleared here.
+    // It will be cleared by the Stripe webhook after payment_intent.succeeded,
+    // so the /payment page can still validate the cart on re-renders.
 
     await payload.db.commitTransaction(transactionID)
 

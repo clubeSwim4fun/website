@@ -110,6 +110,7 @@ export const Orders: CollectionConfig = {
                   admin: {
                     width: '25%',
                     readOnly: false,
+                    condition: (data) => data?.paymentStatus === 'paid',
                   },
                 },
                 {
@@ -122,9 +123,8 @@ export const Orders: CollectionConfig = {
                   admin: {
                     readOnly: false,
                     width: '25%',
-                    condition: (_, siblingData) => {
-                      return siblingData?.ticketPurchased
-                    },
+                    condition: (data, siblingData) =>
+                      data?.paymentStatus === 'paid' && siblingData?.ticketPurchased,
                   },
                 },
               ],
@@ -151,6 +151,12 @@ export const Orders: CollectionConfig = {
       admin: {
         readOnly: true,
       },
+    },
+    {
+      name: 'cartId',
+      label: { en: 'Cart ID', pt: 'ID do Carrinho' },
+      type: 'text',
+      admin: { hidden: true },
     },
     {
       name: 'stripePaymentIntentId',

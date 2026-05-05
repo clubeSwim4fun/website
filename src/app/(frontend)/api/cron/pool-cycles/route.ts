@@ -31,6 +31,7 @@ export async function GET(req: Request) {
   // For each cycle, determine if it should be open
   for (let i = 0; i < allCycles.length; i++) {
     const cycle = allCycles[i]
+    if (!cycle) continue
     const cycleOpenDate = new Date(cycle.openDate as string)
 
     // Find the next cycle's openDate

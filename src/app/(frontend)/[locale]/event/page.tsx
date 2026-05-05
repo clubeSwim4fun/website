@@ -4,15 +4,12 @@ import React from 'react'
 import type { Metadata } from 'next'
 import { EventsCalendar } from '@/components/EventsCalendar'
 import type { CalendarEvent } from '@/components/Calendar/calendar-types'
-import { getTranslations } from 'next-intl/server'
-
 export const dynamic = 'force-dynamic'
 
 type Args = { params: Promise<{ locale: TypedLocale }> }
 
 export default async function EventsPage({ params }: Args) {
   const { locale } = await params
-  const t = await getTranslations({ locale, namespace: 'EventsPage' })
 
   const payload = await getPayload({ config })
 

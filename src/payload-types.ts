@@ -3573,7 +3573,6 @@ export interface Cart {
       }[]
     | null;
   totalPrice: number;
-  eventKey?: string | null;
   hasTshirt?: boolean | null;
   user: string | User;
   updatedAt: string;
@@ -3602,6 +3601,7 @@ export interface Order {
       }[]
     | null;
   total: number;
+  cartId?: string | null;
   stripePaymentIntentId?: string | null;
   paymentStatus?: ('pending' | 'paid' | 'failed') | null;
   updatedAt: string;
@@ -5317,7 +5317,6 @@ export interface CartsSelect<T extends boolean = true> {
         id?: T;
       };
   totalPrice?: T;
-  eventKey?: T;
   hasTshirt?: T;
   user?: T;
   updatedAt?: T;
@@ -5360,6 +5359,7 @@ export interface OrdersSelect<T extends boolean = true> {
         id?: T;
       };
   total?: T;
+  cartId?: T;
   stripePaymentIntentId?: T;
   paymentStatus?: T;
   updatedAt?: T;

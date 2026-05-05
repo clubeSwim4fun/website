@@ -148,10 +148,23 @@ async function handlePaymentSuccess(
       data: { paymentStatus: 'paid', stripePaymentIntentId: intent.id },
     })
 
-    // Fire-and-forget: send confirmation email + create invoice
+    // Fire-and-forget: clear cart + send confirmation email + create invoice
     ;(async () => {
       try {
         const order = await payload.findByID({ collection: 'orders', id: recordId, depth: 3 })
+
+        // Clear the cart now that payment is confirmed
+        if (order.cartId) {
+          try {
+            await payload.update({
+              collection: 'carts',
+              data: { items: [], totalPrice: 0 },
+              where: { id: { equals: order.cartId } },
+            })
+          } catch (cartErr) {
+            console.error('[webhook] Failed to clear cart:', cartErr)
+          }
+        }
 
         const user =
           typeof order.user === 'string'

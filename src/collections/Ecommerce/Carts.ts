@@ -67,14 +67,6 @@ export const Carts: CollectionConfig = {
       required: true,
     },
     {
-      name: 'eventKey',
-      label: {
-        en: 'Event Key',
-        pt: 'Chave do Evento',
-      },
-      type: 'text',
-    },
-    {
       name: 'hasTshirt',
       label: {
         en: 'Has T-Shirt?',
