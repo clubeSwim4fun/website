@@ -122,13 +122,65 @@ export const link: LinkType = ({ appearances, disableLabel = false, overrides = 
       type: 'row',
       fields: [
         {
-          name: 'reference',
-          type: 'relationship',
-          label: 'Page to related to',
+          name: 'type',
+          type: 'radio',
           admin: {
+            layout: 'horizontal',
             width: '50%',
           },
-          relationTo: ['pages'],
+          defaultValue: 'reference',
+          options: [
+            {
+              label: 'Internal link',
+              value: 'reference',
+            },
+            {
+              label: 'Custom URL',
+              value: 'custom',
+            },
+          ],
+        },
+        {
+          name: 'newTab',
+          type: 'checkbox',
+          admin: {
+            style: {
+              alignSelf: 'flex-end',
+            },
+            width: '25%',
+          },
+          label: 'Open in new tab',
+        },
+      ],
+    },
+    {
+      type: 'row',
+      fields: [
+        {
+          name: 'reference',
+          type: 'relationship',
+          label: {
+            en: 'Document to link to',
+            pt: 'Documento para vincular',
+          },
+          admin: {
+            condition: (_, siblingData) => siblingData?.type === 'reference' || !siblingData?.type,
+            width: '50%',
+          },
+          relationTo: ['pages', 'posts'],
+          required: true,
+        },
+        {
+          name: 'url',
+          type: 'text',
+          label: {
+            en: 'Custom URL',
+            pt: 'URL Personalizada',
+          },
+          admin: {
+            condition: (_, siblingData) => siblingData?.type === 'custom',
+            width: '50%',
+          },
           required: true,
         },
         {

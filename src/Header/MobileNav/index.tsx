@@ -21,7 +21,10 @@ type LinkType = {
   hasChildren?: boolean | null
   childrenPages?:
     | {
-        reference: { relationTo: 'pages'; value: string | Page }
+        type?: ('reference' | 'custom') | null
+        newTab?: boolean | null
+        reference?: { relationTo: 'pages' | 'posts'; value: string | Page | Post } | null
+        url?: string | null
         label: string
         id?: string | null
       }[]
@@ -129,8 +132,18 @@ const MobileHeaderNav: React.FC<{
                       {link.childrenPages?.map((child, j) => (
                         <CMSLink
                           key={j}
-                          type="reference"
-                          {...child}
+                          type={child.type ?? 'reference'}
+                          url={child.url}
+                          reference={
+                            child.reference
+                              ? {
+                                  relationTo: child.reference.relationTo as 'pages' | 'posts',
+                                  value: child.reference.value as any,
+                                }
+                              : null
+                          }
+                          label={child.label}
+                          newTab={child.newTab}
                           appearance="link"
                           onClick={close}
                           className="block px-8 py-3 text-sm text-ink-mid border-b border-swim-border hover:bg-foam no-underline"

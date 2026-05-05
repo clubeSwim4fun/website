@@ -91,10 +91,10 @@ export const StripePaymentBlockComponent: React.FC<StripePaymentBlockProps> = ({
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (clientSecret || initError || alreadyMemberName !== null) {
+    if (clientSecret || initError) {
       unblock()
     }
-  }, [clientSecret, initError, alreadyMemberName]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [clientSecret, initError]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (initialized.current) return

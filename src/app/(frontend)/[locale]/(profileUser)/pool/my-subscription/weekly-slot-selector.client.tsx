@@ -8,7 +8,7 @@ import { useRouter } from '@/i18n/routing'
 import { cn } from '@/utilities/ui'
 import { Check, Clock, Lock, Loader, Save, X } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { WeekData, WeekSlot } from '@/helpers/poolHelper'
 import { getMonthIndex, getMonthLabel } from '@/collections/Pool/PoolCycles'
 
@@ -361,6 +361,15 @@ export const WeeklySlotSelector: React.FC<Props> = ({
     for (const w of weeks) init[w.weekIndex] = [...w.selectedSlotIds]
     return init
   })
+
+  // Sync state when server re-renders after router.refresh()
+  useEffect(() => {
+    setSelectedByWeek(() => {
+      const init: Record<number, string[]> = {}
+      for (const w of weeks) init[w.weekIndex] = [...w.selectedSlotIds]
+      return init
+    })
+  }, [weeks])
   const [saving, setSaving] = useState(false)
   const [waitlistLoadingSlotId, setWaitlistLoadingSlotId] = useState<string | null>(null)
   const currentWeek = weeks.find((w) => w.status === 'current') ?? weeks[0]
@@ -427,13 +436,15 @@ export const WeeklySlotSelector: React.FC<Props> = ({
     }
   }
 
-  // Banner stats: unique slots selected across all weeks (deduplicated by slotId = weekly schedule)
-  const allSelectedIds = Object.values(selectedByWeek).flat()
-  const uniqueSelectedIds = [...new Set(allSelectedIds)]
-  const totalSessions = uniqueSelectedIds.length
-  const allSlots = weeks.flatMap((w) => w.slots)
-  const totalHours = uniqueSelectedIds.reduce((sum, slotId) => {
-    const slot = allSlots.find((s) => s.slotId === slotId)
+  // Banner stats: only count current week's selections (past weeks are read-only/done)
+  const currentWeekData = weeks.find((w) => w.status === 'current') ?? weeks[0]
+  const currentSelectedIds = currentWeekData
+    ? (selectedByWeek[currentWeekData.weekIndex] ?? [])
+    : []
+  const totalSessions = currentSelectedIds.length
+  const currentSlots = currentWeekData?.slots ?? []
+  const totalHours = currentSelectedIds.reduce((sum, slotId) => {
+    const slot = currentSlots.find((s) => s.slotId === slotId)
     return sum + (slot ? parseSlotHours(slot.time) : 1)
   }, 0)
 

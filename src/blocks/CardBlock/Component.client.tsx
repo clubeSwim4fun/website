@@ -173,11 +173,12 @@ export const CardPaymentVariant: React.FC<CardPaymentProps> = ({
   const effectiveDescription = selectedOption?.label ?? description
 
   // Signal ready to the aside button once clientSecret is loaded (or no payment needed)
+  // Do NOT set ready when user already belongs to the group — payment is not needed and button must stay disabled
   useEffect(() => {
-    if (clientSecret || initError || alreadyMemberName !== null) {
+    if (clientSecret || initError) {
       ctx?.setReady(true)
     }
-  }, [clientSecret, initError, alreadyMemberName]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [clientSecret, initError]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Re-initialize when the selected payment option changes (user picks a different option)
   useEffect(() => {

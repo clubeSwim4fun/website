@@ -54,8 +54,18 @@ export const HeaderNav: React.FC<{
                 {link.childrenPages?.map((child, j) => (
                   <CMSLink
                     key={j}
-                    type="reference"
-                    {...child}
+                    type={child.type ?? 'reference'}
+                    url={child.url}
+                    reference={
+                      child.reference
+                        ? {
+                            relationTo: child.reference.relationTo as 'pages' | 'posts',
+                            value: child.reference.value as any,
+                          }
+                        : null
+                    }
+                    label={child.label}
+                    newTab={child.newTab}
                     appearance="link"
                     className="block px-4 py-2 text-sm text-ink-mid hover:bg-foam hover:text-mid transition-colors no-underline"
                   />

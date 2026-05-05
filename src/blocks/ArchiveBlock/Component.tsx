@@ -20,8 +20,7 @@ export const ArchiveBlock: React.FC<ArchiveBlockProps & { id?: string }> = async
   } = props
 
   const limit = limitFromProps || 3
-  // Show (limit - 1) posts + 1 "view all" card
-  const postsToFetch = limit - 1
+  const postsToFetch = limit
 
   const t = await getTranslations('ArchiveBlock')
 
@@ -90,7 +89,7 @@ export const ArchiveBlock: React.FC<ArchiveBlockProps & { id?: string }> = async
           </div>
         )}
 
-        {/* Grid: (limit - 1) post cards + 1 view-all card */}
+        {/* Grid: post cards */}
         <div
           className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5"
           style={
@@ -100,23 +99,22 @@ export const ArchiveBlock: React.FC<ArchiveBlockProps & { id?: string }> = async
           {posts.map((post) => (
             <Card key={post.id} doc={post} relationTo="posts" showCategories />
           ))}
+        </div>
 
-          {/* View all card */}
+        {/* CTA */}
+        <div className="mt-8 flex justify-center">
           <Link
             href={viewAllHref}
-            className="bg-[#fdf8f3] border-2 border-dashed border-[#d4eaf2] rounded-[14px] flex flex-col items-center justify-center gap-3 min-h-[300px] no-underline transition-all duration-200 hover:border-[#3bb8d8] hover:bg-[#f0fafd]"
+            className="inline-flex items-center gap-2 rounded-xl px-6 py-3.5 font-outfit font-bold text-sm bg-deep text-white no-underline transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_28px_rgba(10,74,110,0.35)]"
           >
+            {t('viewAll')}
             <svg
               viewBox="0 0 24 24"
-              className="w-9 h-9 stroke-[#8aaabb] fill-none"
-              strokeWidth={1.5}
+              className="w-[15px] h-[15px] fill-none stroke-current"
+              strokeWidth={2.5}
             >
-              <rect x="3" y="4" width="18" height="18" rx="2" />
-              <line x1="16" y1="2" x2="16" y2="6" />
-              <line x1="8" y1="2" x2="8" y2="6" />
-              <line x1="3" y1="10" x2="21" y2="10" />
+              <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-            <span className="text-[13px] text-[#8aaabb]">{t('viewAll')}</span>
           </Link>
         </div>
       </div>

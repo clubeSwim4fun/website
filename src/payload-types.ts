@@ -405,10 +405,18 @@ export interface Page {
       hasChildren?: boolean | null;
       childrenPages?:
         | {
-            reference: {
-              relationTo: 'pages';
-              value: string | Page;
-            };
+            type?: ('reference' | 'custom') | null;
+            newTab?: boolean | null;
+            reference?:
+              | ({
+                  relationTo: 'pages';
+                  value: string | Page;
+                } | null)
+              | ({
+                  relationTo: 'posts';
+                  value: string | Post;
+                } | null);
+            url?: string | null;
             label: string;
             id?: string | null;
           }[]
@@ -2073,10 +2081,18 @@ export interface CallToActionBlock {
           hasChildren?: boolean | null;
           childrenPages?:
             | {
-                reference: {
-                  relationTo: 'pages';
-                  value: string | Page;
-                };
+                type?: ('reference' | 'custom') | null;
+                newTab?: boolean | null;
+                reference?:
+                  | ({
+                      relationTo: 'pages';
+                      value: string | Page;
+                    } | null)
+                  | ({
+                      relationTo: 'posts';
+                      value: string | Post;
+                    } | null);
+                url?: string | null;
                 label: string;
                 id?: string | null;
               }[]
@@ -2656,10 +2672,18 @@ export interface SponsorsBlock {
     hasChildren?: boolean | null;
     childrenPages?:
       | {
-          reference: {
-            relationTo: 'pages';
-            value: string | Page;
-          };
+          type?: ('reference' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: string | Page;
+              } | null)
+            | ({
+                relationTo: 'posts';
+                value: string | Post;
+              } | null);
+          url?: string | null;
           label: string;
           id?: string | null;
         }[]
@@ -4368,7 +4392,10 @@ export interface PagesSelect<T extends boolean = true> {
               childrenPages?:
                 | T
                 | {
+                    type?: T;
+                    newTab?: T;
                     reference?: T;
+                    url?: T;
                     label?: T;
                     id?: T;
                   };
@@ -4412,7 +4439,10 @@ export interface CallToActionBlockSelect<T extends boolean = true> {
               childrenPages?:
                 | T
                 | {
+                    type?: T;
+                    newTab?: T;
                     reference?: T;
+                    url?: T;
                     label?: T;
                     id?: T;
                   };
@@ -4691,7 +4721,10 @@ export interface SponsorsBlockSelect<T extends boolean = true> {
         childrenPages?:
           | T
           | {
+              type?: T;
+              newTab?: T;
               reference?: T;
+              url?: T;
               label?: T;
               id?: T;
             };
@@ -6060,10 +6093,18 @@ export interface Header {
           hasChildren?: boolean | null;
           childrenPages?:
             | {
-                reference: {
-                  relationTo: 'pages';
-                  value: string | Page;
-                };
+                type?: ('reference' | 'custom') | null;
+                newTab?: boolean | null;
+                reference?:
+                  | ({
+                      relationTo: 'pages';
+                      value: string | Page;
+                    } | null)
+                  | ({
+                      relationTo: 'posts';
+                      value: string | Post;
+                    } | null);
+                url?: string | null;
                 label: string;
                 id?: string | null;
               }[]
@@ -6140,10 +6181,18 @@ export interface Footer {
             hasChildren?: boolean | null;
             childrenPages?:
               | {
-                  reference: {
-                    relationTo: 'pages';
-                    value: string | Page;
-                  };
+                  type?: ('reference' | 'custom') | null;
+                  newTab?: boolean | null;
+                  reference?:
+                    | ({
+                        relationTo: 'pages';
+                        value: string | Page;
+                      } | null)
+                    | ({
+                        relationTo: 'posts';
+                        value: string | Post;
+                      } | null);
+                  url?: string | null;
                   label: string;
                   id?: string | null;
                 }[]
@@ -6178,10 +6227,18 @@ export interface Footer {
             hasChildren?: boolean | null;
             childrenPages?:
               | {
-                  reference: {
-                    relationTo: 'pages';
-                    value: string | Page;
-                  };
+                  type?: ('reference' | 'custom') | null;
+                  newTab?: boolean | null;
+                  reference?:
+                    | ({
+                        relationTo: 'pages';
+                        value: string | Page;
+                      } | null)
+                    | ({
+                        relationTo: 'posts';
+                        value: string | Post;
+                      } | null);
+                  url?: string | null;
                   label: string;
                   id?: string | null;
                 }[]
@@ -6297,7 +6354,10 @@ export interface HeaderSelect<T extends boolean = true> {
               childrenPages?:
                 | T
                 | {
+                    type?: T;
+                    newTab?: T;
                     reference?: T;
+                    url?: T;
                     label?: T;
                     id?: T;
                   };
@@ -6358,7 +6418,10 @@ export interface FooterSelect<T extends boolean = true> {
                     childrenPages?:
                       | T
                       | {
+                          type?: T;
+                          newTab?: T;
                           reference?: T;
+                          url?: T;
                           label?: T;
                           id?: T;
                         };
@@ -6386,7 +6449,10 @@ export interface FooterSelect<T extends boolean = true> {
                     childrenPages?:
                       | T
                       | {
+                          type?: T;
+                          newTab?: T;
                           reference?: T;
+                          url?: T;
                           label?: T;
                           id?: T;
                         };

@@ -57,10 +57,13 @@ type Args = {
           hasChildren?: boolean | null
           childrenPages?:
             | {
-                reference: {
-                  relationTo: 'pages'
-                  value: string | Page
-                }
+                type?: ('reference' | 'custom') | null
+                newTab?: boolean | null
+                reference?:
+                  | { relationTo: 'pages'; value: string | Page }
+                  | { relationTo: 'posts'; value: string | Post }
+                  | null
+                url?: string | null
                 label: string
                 id?: string | null
               }[]
