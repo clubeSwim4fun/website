@@ -4,15 +4,17 @@ import { redirect } from 'next/navigation'
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import { getLocale } from 'next-intl/server'
 import { TypedLocale } from 'payload'
-import { GeneralConfig } from '@/payload-types'
+import { GeneralConfig, Header, Media } from '@/payload-types'
 
 const SignInPage = async (props: { searchParams: Promise<{ callbackUrl: string }> }) => {
   const { callbackUrl } = await props.searchParams
   const session = await getMeUser({ invalidateCache: true })
   const locale = (await getLocale()) as TypedLocale
   const globalConfig = (await getCachedGlobal('generalConfigs', 1, locale)()) as GeneralConfig
+  const headerData = (await getCachedGlobal('header', 1, locale)()) as Header
 
   const login = globalConfig?.settings?.login
+  const logo = headerData?.logo as Media | null | undefined
 
   if (session.token && session.user) {
     if (session.user.status !== 'active') {
@@ -22,10 +24,8 @@ const SignInPage = async (props: { searchParams: Promise<{ callbackUrl: string }
   }
 
   return (
-    <section className="w-full h-screen container flex justify-center items-center">
-      <div className="w-full md:w-3/6 border border-gray-300 rounded-xl shadow-lg p-6">
-        <LoginForm loginSettings={login} />
-      </div>
+    <section className="w-full">
+      <LoginForm loginSettings={login} logo={logo} />
     </section>
   )
 }
