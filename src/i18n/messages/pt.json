@@ -534,6 +534,7 @@
     "statusLocked": "Ainda não aberta",
     "attended": "frequentado",
     "skipped": "não selecionado",
+    "slotPast": "passado",
     "lockedTitle": "Inscrições ainda não abertas",
     "lockedDescription": "Pode selecionar os seus horários para a próxima semana a partir de {date}. Volte então para reservar os seus lugares.",
     "lockedNoDate": "A seleção para esta semana ainda não está aberta.",
@@ -563,6 +564,20 @@
     "sslBadge": "Protegido por encriptação SSL de 256 bits",
     "cancelPayment": "Cancelar",
     "spotsRemainingLabel": "vagas restantes neste ciclo"
+  },
+  "PoolWaitlistResponse": {
+    "acceptedTitle": "Vaga reservada com sucesso!",
+    "acceptedDescription": "O teu lugar foi confirmado. Podes ver os teus horários na página da subscrição.",
+    "viewSubscription": "Ver a minha subscrição",
+    "rejectedTitle": "Vaga rejeitada",
+    "rejectedDescription": "Rejeitaste esta vaga. A vaga foi passada para o próximo atleta na lista de espera.",
+    "expiredTitle": "O tempo expirou",
+    "expiredDescription": "O tempo para aceitar esta vaga expirou. A vaga foi passada para o próximo atleta na lista de espera.",
+    "invalidTitle": "Link inválido",
+    "invalidDescription": "Este link não é válido ou já foi utilizado.",
+    "alreadyAcceptedTitle": "Já aceitaste esta vaga",
+    "alreadyAcceptedDescription": "Esta vaga já foi reservada para ti.",
+    "backToPool": "Voltar à piscina"
   },
   "emailNotificationsEnabled": "Notificações por email",
   "Registration": {

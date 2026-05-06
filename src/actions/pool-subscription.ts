@@ -7,30 +7,10 @@ import { getTranslations } from 'next-intl/server'
 import { sendEmail } from '@/helpers/emailHelper'
 import { render } from '@react-email/components'
 import React from 'react'
-import { notifyWaitlist } from '@/helpers/poolHelper'
+import { notifyWaitlist, notifySlotWaitlist } from '@/helpers/poolHelper'
 import { PoolCycle, PoolSubscription, User } from '@/payload-types'
 import { revalidatePath } from 'next/cache'
-
-/**
- * Formats a slot ISO dateTime string into a localized day name (PT).
- * e.g. "2026-05-04T20:00:00.000Z" → "Segunda-feira"
- */
-function formatSlotDay(dateTime: string): string {
-  const date = new Date(dateTime)
-  return date.toLocaleDateString('pt-PT', { weekday: 'long', timeZone: 'UTC' })
-}
-
-/**
- * Formats start time and computes end time from duration.
- * e.g. "2026-05-04T20:00:00.000Z", 60 → "20h-21h"
- */
-function formatSlotTime(dateTime: string, duration: number): string {
-  const start = new Date(dateTime)
-  const end = new Date(start.getTime() + duration * 60 * 1000)
-  const fmt = (d: Date) =>
-    `${d.getUTCHours()}h${d.getUTCMinutes() > 0 ? String(d.getUTCMinutes()).padStart(2, '0') : ''}`
-  return `${fmt(start)}-${fmt(end)}`
-}
+import { formatSlotDay, formatSlotTime } from '@/helpers/slotFormatHelper'
 
 /**
  * Creates a pool subscription record in `pending` state before payment.
@@ -525,6 +505,19 @@ export async function selectPoolSlots(
       if (regId) {
         await payload.delete({ collection: 'pool-slot-registrations', id: regId })
       }
+    }
+
+    // Notify slot waitlist for any released slots (fire-and-forget)
+    if (toRelease.length > 0) {
+      ;(async () => {
+        for (const sid of toRelease) {
+          try {
+            await notifySlotWaitlist(cycleId, sid)
+          } catch (e) {
+            payload.logger.error(`[selectPoolSlots] notifySlotWaitlist failed for ${sid}: ${e}`)
+          }
+        }
+      })()
     }
 
     await payload.update({

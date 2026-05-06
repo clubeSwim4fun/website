@@ -14,15 +14,27 @@ function getISOWeekBounds() {
 }
 
 function slotDayLabel(dateTime: string): string {
-  return new Date(dateTime).toLocaleDateString('pt-PT', { weekday: 'long', timeZone: 'UTC' })
+  return new Date(dateTime).toLocaleDateString('pt-PT', {
+    weekday: 'long',
+    timeZone: 'Europe/Lisbon',
+  })
 }
 
 function slotTimeRange(dateTime: string, duration: number): string {
-  const start = new Date(dateTime)
-  const end = new Date(start.getTime() + duration * 60 * 1000)
-  const fmt = (d: Date) =>
-    `${d.getUTCHours()}h${d.getUTCMinutes() > 0 ? String(d.getUTCMinutes()).padStart(2, '0') : ''}`
-  return `${fmt(start)}-${fmt(end)}`
+  const tz = 'Europe/Lisbon'
+  const fmt = (iso: string) => {
+    const parts = new Intl.DateTimeFormat('pt-PT', {
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZone: tz,
+      hour12: false,
+    }).formatToParts(new Date(iso))
+    const h = parts.find((p) => p.type === 'hour')?.value ?? '0'
+    const m = parts.find((p) => p.type === 'minute')?.value ?? '00'
+    return `${parseInt(h)}h${m === '00' ? '' : m}`
+  }
+  const endIso = new Date(new Date(dateTime).getTime() + duration * 60 * 1000).toISOString()
+  return `${fmt(dateTime)}-${fmt(endIso)}`
 }
 
 const emptyResponse = {

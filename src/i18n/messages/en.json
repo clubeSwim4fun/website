@@ -534,6 +534,7 @@
     "statusLocked": "Not yet open",
     "attended": "attended",
     "skipped": "skipped",
+    "slotPast": "past",
     "lockedTitle": "Subscriptions not open yet",
     "lockedDescription": "You can select your slots for next week starting {date}. Check back then to reserve your spots.",
     "lockedNoDate": "Selection for this week is not yet open.",
@@ -563,6 +564,20 @@
     "sslBadge": "Secured by 256-bit SSL encryption",
     "cancelPayment": "Cancel",
     "spotsRemainingLabel": "spots remaining in this cycle"
+  },
+  "PoolWaitlistResponse": {
+    "acceptedTitle": "Spot reserved successfully!",
+    "acceptedDescription": "Your spot has been confirmed. You can view your schedule on the subscription page.",
+    "viewSubscription": "View my subscription",
+    "rejectedTitle": "Spot rejected",
+    "rejectedDescription": "You rejected this spot. It has been passed to the next athlete on the waitlist.",
+    "expiredTitle": "Time expired",
+    "expiredDescription": "The time to accept this spot has expired. It has been passed to the next athlete on the waitlist.",
+    "invalidTitle": "Invalid link",
+    "invalidDescription": "This link is not valid or has already been used.",
+    "alreadyAcceptedTitle": "You already accepted this spot",
+    "alreadyAcceptedDescription": "This spot has already been reserved for you.",
+    "backToPool": "Back to pool"
   },
   "emailNotificationsEnabled": "Email notifications",
   "Registration": {

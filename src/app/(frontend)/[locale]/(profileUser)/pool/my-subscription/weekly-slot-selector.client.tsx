@@ -14,21 +14,35 @@ import { getMonthIndex, getMonthLabel } from '@/collections/Pool/PoolCycles'
 
 // ─── Slot display helpers ─────────────────────────────────────────────────────
 
-/** "2026-05-04T20:00:00.000Z" → "Segunda-feira" (locale-aware) */
+/** "2026-05-04T20:00:00.000Z" → "Segunda-feira" (locale-aware, Lisbon time) */
 function slotDayLabel(dateTime: string, locale: string): string {
   return new Date(dateTime).toLocaleDateString(locale === 'pt' ? 'pt-PT' : 'en-GB', {
     weekday: 'long',
-    timeZone: 'UTC',
+    timeZone: 'Europe/Lisbon',
   })
 }
 
-/** "2026-05-04T20:00:00.000Z", 60 → "20h-21h" */
+/** "2026-05-04T19:00:00.000Z", 60 → "20h-21h" (Lisbon time) */
 function slotTimeRange(dateTime: string, duration: number): string {
-  const start = new Date(dateTime)
-  const end = new Date(start.getTime() + duration * 60 * 1000)
-  const fmt = (d: Date) =>
-    `${d.getUTCHours()}h${d.getUTCMinutes() > 0 ? String(d.getUTCMinutes()).padStart(2, '0') : ''}`
-  return `${fmt(start)}-${fmt(end)}`
+  const tz = 'Europe/Lisbon'
+  const fmt = (iso: string) => {
+    const parts = new Intl.DateTimeFormat('pt-PT', {
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZone: tz,
+      hour12: false,
+    }).formatToParts(new Date(iso))
+    const h = parts.find((p) => p.type === 'hour')?.value ?? '0'
+    const m = parts.find((p) => p.type === 'minute')?.value ?? '00'
+    return `${parseInt(h)}h${m === '00' ? '' : m}`
+  }
+  const endIso = new Date(new Date(dateTime).getTime() + duration * 60 * 1000).toISOString()
+  return `${fmt(dateTime)}-${fmt(endIso)}`
+}
+
+/** Returns true if the slot's start time is in the past (Lisbon time) */
+function isSlotPast(dateTime: string): boolean {
+  return new Date(dateTime).getTime() < Date.now()
 }
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -100,9 +114,11 @@ function SlotRow({
 }) {
   const t = useTranslations('PoolSubscription')
   const locale = useLocale()
+  const isPast = isSlotPast(slot.dateTime)
   const status = getSlotStatus(slot, isSelected, heldOnServer)
   const isFull = slot.available <= 0 && !isSelected && !heldOnServer
   const isOnWaitlist = slot.userWaitlistPosition !== null
+  const isDisabled = readOnly || isPast
   const fillPct = Math.min(
     100,
     slot.maxAttendance > 0
@@ -114,16 +130,16 @@ function SlotRow({
     <li
       className={cn(
         'flex flex-col gap-3 rounded-lg border border-border bg-card px-5 py-4 border-l-4 transition-all duration-200',
-        STATUS_BORDER[status],
-        isSelected && !readOnly && 'ring-1 ring-[hsl(var(--blue-swim))]',
-        isOnWaitlist && !isSelected && 'ring-1 ring-[hsl(var(--slot-waitlist))]',
+        isPast ? 'border-l-muted-foreground/30 opacity-50' : STATUS_BORDER[status],
+        isSelected && !isDisabled && 'ring-1 ring-[hsl(var(--blue-swim))]',
+        isOnWaitlist && !isSelected && !isPast && 'ring-1 ring-[hsl(var(--slot-waitlist))]',
       )}
     >
       <div
-        onClick={readOnly || (isFull && !isOnWaitlist) ? undefined : onToggle}
+        onClick={isDisabled || (isFull && !isOnWaitlist) ? undefined : onToggle}
         className={cn(
           'flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4',
-          readOnly || (isFull && !isOnWaitlist) ? 'cursor-default' : 'cursor-pointer',
+          isDisabled || (isFull && !isOnWaitlist) ? 'cursor-default' : 'cursor-pointer',
         )}
       >
         {/* Day + time — always visible, full width on mobile */}
@@ -137,7 +153,7 @@ function SlotRow({
             </p>
           </div>
           {/* Checkbox — shown inline with day on mobile, at end on desktop */}
-          {!readOnly && (
+          {!isDisabled && (
             <div
               className={cn(
                 'sm:hidden w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-all duration-200',
@@ -179,32 +195,34 @@ function SlotRow({
               STATUS_LABEL_CLASS[status],
             )}
           >
-            {readOnly && isSelected && (
+            {isPast && <span className="text-muted-foreground">{t('slotPast')}</span>}
+            {!isPast && readOnly && isSelected && (
               <span className="inline-flex items-center justify-end gap-1 text-[hsl(var(--blue-swim))]">
                 <Check className="w-3 h-3" /> {t('attended')}
               </span>
             )}
-            {readOnly && !isSelected && (
+            {!isPast && readOnly && !isSelected && (
               <span className="text-muted-foreground">{t('skipped')}</span>
             )}
-            {!readOnly && status === 'selected' && (
+            {!isPast && !readOnly && status === 'selected' && (
               <span className="flex items-center justify-end gap-1">
                 <Check className="w-3 h-3" /> {t('legend_selected')}
               </span>
             )}
-            {!readOnly && status === 'waitlist' && (
+            {!isPast && !readOnly && status === 'waitlist' && (
               <span className="flex items-center justify-end gap-1">
                 <Clock className="w-3 h-3" /> #{slot.userWaitlistPosition}
               </span>
             )}
-            {!readOnly && status === 'full' && t('legend_full')}
-            {!readOnly &&
+            {!isPast && !readOnly && status === 'full' && t('legend_full')}
+            {!isPast &&
+              !readOnly &&
               (status === 'limited' || status === 'available') &&
               t('spotsLeft', { count: slot.available })}
           </div>
 
           {/* Checkbox — desktop only (mobile version is above) */}
-          {!readOnly && (
+          {!isDisabled && (
             <div
               className={cn(
                 'hidden sm:flex w-6 h-6 rounded-full border-2 items-center justify-center shrink-0 transition-all duration-200',
@@ -222,8 +240,8 @@ function SlotRow({
         </div>
       </div>
 
-      {/* Waitlist actions — only for full slots in open (non-readonly) weeks */}
-      {!readOnly && isFull && (
+      {/* Waitlist actions — only for full slots in open (non-readonly, non-past) weeks */}
+      {!isDisabled && isFull && (
         <div className="flex items-center gap-2 pt-1 border-t border-border">
           {isOnWaitlist ? (
             <div className="flex items-center justify-between w-full">
@@ -409,6 +427,7 @@ export const WeeklySlotSelector: React.FC<Props> = ({
   const defaultTab = currentWeek ? String(currentWeek.weekIndex) : '0'
 
   const toggle = (weekIndex: number, slot: WeekSlot, initialIds: string[]) => {
+    if (isSlotPast(slot.dateTime)) return
     const heldOnServer = initialIds.includes(slot.slotId)
     const current = selectedByWeek[weekIndex] ?? []
     if (slot.available <= 0 && !current.includes(slot.slotId) && !heldOnServer) return

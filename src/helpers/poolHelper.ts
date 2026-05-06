@@ -4,6 +4,10 @@ import { PoolCycle, PoolSubscription, User } from '@/payload-types'
 import { sendEmail } from '@/helpers/emailHelper'
 import { render } from '@react-email/components'
 import React from 'react'
+import { v4 as uuidv4 } from 'uuid'
+
+/** Minutes before a slot offer expires */
+export const SLOT_OFFER_TTL_MINUTES = 5
 
 export type PoolPageState =
   | { variant: 'subscribe'; remainingSpots: number }
@@ -335,4 +339,121 @@ export async function decrementWaitlistPositions(cycleId: string): Promise<void>
       })
     }
   }
+}
+
+/**
+ * Notifies the first pending person on the slot waitlist.
+ * Generates a one-time token, sets a TTL, and sends the accept/reject email.
+ * Safe to call multiple times — skips if there's already an active (non-expired) offer.
+ */
+export async function notifySlotWaitlist(cycleId: string, slotId: string): Promise<void> {
+  try {
+    const payload = await getPayload({ config })
+    const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL ?? ''
+
+    // Find the first pending entry (position 1, not already offered/accepted/rejected)
+    const result = await payload.find({
+      collection: 'pool-slot-waitlist',
+      where: {
+        and: [
+          { cycle: { equals: cycleId } },
+          { slotId: { equals: slotId } },
+          { position: { equals: 1 } },
+          { offerStatus: { in: ['pending', null] } },
+        ],
+      },
+      depth: 1,
+      limit: 1,
+    })
+
+    const entry = result.docs[0] as any
+    if (!entry) return
+
+    const athlete = entry.athlete as User
+    if (!athlete?.email) return
+
+    const token = uuidv4()
+    const expiresAt = new Date(Date.now() + SLOT_OFFER_TTL_MINUTES * 60 * 1000)
+
+    await payload.update({
+      collection: 'pool-slot-waitlist',
+      id: entry.id,
+      data: {
+        offerStatus: 'offered',
+        offerToken: token,
+        offerExpiresAt: expiresAt.toISOString(),
+      } as any,
+    })
+
+    const acceptUrl = `${baseUrl}/api/pool/slot-waitlist/respond?token=${token}&action=accept`
+    const rejectUrl = `${baseUrl}/api/pool/slot-waitlist/respond?token=${token}&action=reject`
+
+    const athleteName =
+      [athlete.name, (athlete as any).surname].filter(Boolean).join(' ') || athlete.email
+
+    const { default: PoolSlotAvailableEmail } = await import('@/email/poolSlotAvailable')
+    const emailHtml = await render(
+      React.createElement(PoolSlotAvailableEmail, {
+        athleteName,
+        slotDay: entry.slotDay,
+        slotTime: entry.slotTime,
+        acceptUrl,
+        rejectUrl,
+        expiresInMinutes: SLOT_OFFER_TTL_MINUTES,
+      }),
+    )
+
+    await sendEmail({
+      to: athlete.email,
+      subject: `Vaga disponível: ${entry.slotDay} ${entry.slotTime}`,
+      emailHtml,
+    })
+  } catch (error) {
+    console.error('[notifySlotWaitlist] Failed:', error)
+  }
+}
+
+/**
+ * Removes a waitlist entry and shifts positions for all entries below it.
+ * Then notifies the new position-1 person if any.
+ */
+export async function removeWaitlistEntryAndNotifyNext(
+  entryId: string,
+  cycleId: string,
+  slotId: string,
+  removedPosition: number,
+): Promise<void> {
+  const payload = await getPayload({ config })
+
+  await payload.delete({ collection: 'pool-slot-waitlist', id: entryId })
+
+  // Shift positions down
+  const later = await payload.find({
+    collection: 'pool-slot-waitlist',
+    where: {
+      and: [
+        { cycle: { equals: cycleId } },
+        { slotId: { equals: slotId } },
+        { position: { greater_than: removedPosition } },
+      ],
+    },
+    limit: 1000,
+  })
+
+  for (const e of later.docs as any[]) {
+    await payload.update({
+      collection: 'pool-slot-waitlist',
+      id: e.id,
+      data: {
+        position: (e.position as number) - 1,
+        // Reset offer state so the new position-1 can be notified
+        offerStatus: 'pending',
+        offerToken: null,
+        offerExpiresAt: null,
+      } as any,
+    })
+  }
+
+  // Notify the new first person
+  await notifySlotWaitlist(cycleId, slotId)
 }

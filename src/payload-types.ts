@@ -3801,6 +3801,9 @@ export interface PoolSlotWaitlist {
   slotDay: string;
   slotTime: string;
   position: number;
+  offerStatus?: ('pending' | 'offered' | 'accepted' | 'rejected' | 'expired') | null;
+  offerToken?: string | null;
+  offerExpiresAt?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -5561,6 +5564,9 @@ export interface PoolSlotWaitlistSelect<T extends boolean = true> {
   slotDay?: T;
   slotTime?: T;
   position?: T;
+  offerStatus?: T;
+  offerToken?: T;
+  offerExpiresAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }
