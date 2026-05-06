@@ -12,6 +12,27 @@ import { PoolCycle, PoolSubscription, User } from '@/payload-types'
 import { revalidatePath } from 'next/cache'
 
 /**
+ * Formats a slot ISO dateTime string into a localized day name (PT).
+ * e.g. "2026-05-04T20:00:00.000Z" → "Segunda-feira"
+ */
+function formatSlotDay(dateTime: string): string {
+  const date = new Date(dateTime)
+  return date.toLocaleDateString('pt-PT', { weekday: 'long', timeZone: 'UTC' })
+}
+
+/**
+ * Formats start time and computes end time from duration.
+ * e.g. "2026-05-04T20:00:00.000Z", 60 → "20h-21h"
+ */
+function formatSlotTime(dateTime: string, duration: number): string {
+  const start = new Date(dateTime)
+  const end = new Date(start.getTime() + duration * 60 * 1000)
+  const fmt = (d: Date) =>
+    `${d.getUTCHours()}h${d.getUTCMinutes() > 0 ? String(d.getUTCMinutes()).padStart(2, '0') : ''}`
+  return `${fmt(start)}-${fmt(end)}`
+}
+
+/**
  * Creates a pool subscription record in `pending` state before payment.
  * Pass the returned `subscriptionId` as `recordId` in the Stripe payment intent metadata
  * with `type: 'pool-subscription'`.
@@ -395,20 +416,31 @@ export async function selectPoolSlots(
       return { success: false, message: t('Common.unexpectedError') }
     }
 
-    const allSlots: Array<{ slotId: string; day: string; time: string; maxAttendance: number }> = []
+    const allSlots: Array<{
+      slotId: string
+      dateTime: string
+      duration: number
+      maxAttendance: number
+    }> = []
     const weeks = (cycle as any).weeks ?? []
     for (const week of weeks) {
       for (const slot of week.slots ?? []) {
         allSlots.push({
           slotId: slot.slotId,
-          day: slot.day,
-          time: slot.time,
+          dateTime: slot.dateTime,
+          duration: slot.duration ?? 60,
           maxAttendance: slot.maxAttendance ?? 0,
         })
       }
     }
     for (const slot of (cycle.availableSlots ?? []) as any[]) {
-      if (slot.slotId) allSlots.push(slot)
+      if (slot.slotId)
+        allSlots.push({
+          slotId: slot.slotId,
+          dateTime: slot.dateTime ?? '',
+          duration: slot.duration ?? 60,
+          maxAttendance: slot.maxAttendance ?? 0,
+        })
     }
 
     const existingRegs = await payload.find({
@@ -482,8 +514,8 @@ export async function selectPoolSlots(
           athlete: athleteId,
           cycle: cycleId,
           slotId: sid,
-          slotDay: slotDef.day ?? '',
-          slotTime: slotDef.time ?? '',
+          slotDay: formatSlotDay(slotDef.dateTime),
+          slotTime: formatSlotTime(slotDef.dateTime, slotDef.duration),
         } as any,
       })
     }
@@ -502,7 +534,11 @@ export async function selectPoolSlots(
         selectedSlots: slotIds.map((sid) => {
           const slotDef = allSlots.find((s) => s.slotId === sid)
           const idx = allSlots.findIndex((s) => s.slotId === sid)
-          return { slotIndex: idx, day: slotDef?.day ?? '', time: slotDef?.time ?? '' }
+          return {
+            slotIndex: idx,
+            day: slotDef ? formatSlotDay(slotDef.dateTime) : '',
+            time: slotDef ? formatSlotTime(slotDef.dateTime, slotDef.duration) : '',
+          }
         }),
       },
     })
@@ -518,8 +554,8 @@ export async function selectPoolSlots(
 export async function joinSlotWaitlist(
   cycleId: string,
   slotId: string,
-  slotDay: string,
-  slotTime: string,
+  slotDateTime: string,
+  slotDuration: number,
 ): Promise<{ success: boolean; position?: number; message?: string }> {
   const t = await getTranslations()
   const payload = await getPayload({ config })
@@ -562,7 +598,14 @@ export async function joinSlotWaitlist(
 
   await payload.create({
     collection: 'pool-slot-waitlist',
-    data: { athlete: user.id, cycle: cycleId, slotId, slotDay, slotTime, position } as any,
+    data: {
+      athlete: user.id,
+      cycle: cycleId,
+      slotId,
+      slotDay: formatSlotDay(slotDateTime),
+      slotTime: formatSlotTime(slotDateTime, slotDuration),
+      position,
+    } as any,
   })
 
   revalidatePath('/[locale]/(profileUser)/pool/my-subscription', 'page')

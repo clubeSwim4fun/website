@@ -10,6 +10,23 @@ import { cn } from '@/utilities/ui'
 import { getMonthIndex, getMonthLabel } from '@/collections/Pool/PoolCycles'
 import { useEffect, useState } from 'react'
 
+// ─── Slot display helpers ─────────────────────────────────────────────────────
+
+function slotDayLabel(dateTime: string, locale: string): string {
+  return new Date(dateTime).toLocaleDateString(locale === 'pt' ? 'pt-PT' : 'en-GB', {
+    weekday: 'long',
+    timeZone: 'UTC',
+  })
+}
+
+function slotTimeRange(dateTime: string, duration: number): string {
+  const start = new Date(dateTime)
+  const end = new Date(start.getTime() + duration * 60 * 1000)
+  const fmt = (d: Date) =>
+    `${d.getUTCHours()}h${d.getUTCMinutes() > 0 ? String(d.getUTCMinutes()).padStart(2, '0') : ''}`
+  return `${fmt(start)}-${fmt(end)}`
+}
+
 type SlotAvailability = 'available' | 'limited' | 'full' | 'closed'
 
 // Same dot colors as slot-selector.client.tsx / weekly-slot-selector.client.tsx
@@ -83,21 +100,29 @@ export const PoolPageClient: React.FC<Props> = ({
   const weeks = (cycle.weeks ?? []) as Array<{
     startDate: string
     endDate: string
-    slots: Array<{ slotId?: string | null; day: string; time: string; maxAttendance: number }>
+    slots: Array<{
+      slotId?: string | null
+      dateTime: string
+      duration: number
+      maxAttendance: number
+    }>
   }>
   const legacySlots = (cycle.availableSlots ?? []).map((s) => ({
     slotId: s.slotId ?? '',
-    day: s.day ?? '',
-    time: s.time ?? '',
+    day: (s as any).day ?? '',
+    time: (s as any).time ?? '',
     maxAttendance: s.maxAttendance ?? 0,
   }))
 
   // For sessionsPerWeek stat — use first week or legacy
-  const firstWeekSlots = weeks[0]?.slots ?? legacySlots
+  const firstWeekSlots = weeks[0]?.slots ?? []
   const uniqueSlots = firstWeekSlots.reduce(
-    (acc: Array<{ day: string; time: string }>, slot: { day: string; time: string }) => {
-      const key = `${slot.day}-${slot.time}`
-      if (!acc.find((s) => `${s.day}-${s.time}` === key)) acc.push(slot)
+    (
+      acc: Array<{ dateTime: string; duration: number }>,
+      slot: { dateTime: string; duration: number },
+    ) => {
+      const key = `${slot.dateTime}-${slot.duration}`
+      if (!acc.find((s) => `${s.dateTime}-${s.duration}` === key)) acc.push(slot)
       return acc
     },
     [],
@@ -231,10 +256,10 @@ export const PoolPageClient: React.FC<Props> = ({
                                   )}
                                 />
                                 <span className="font-bold text-sm uppercase tracking-wide w-28">
-                                  {slot.day}
+                                  {slotDayLabel(slot.dateTime, locale)}
                                 </span>
                                 <span className="text-sm text-muted-foreground flex-1">
-                                  {slot.time}
+                                  {slotTimeRange(slot.dateTime, slot.duration)}
                                 </span>
                                 <span
                                   className={cn(

@@ -208,17 +208,21 @@ export const PoolCycles: CollectionConfig = {
                   admin: { readOnly: true, hidden: true },
                 },
                 {
-                  name: 'day',
-                  label: { en: 'Day', pt: 'Dia' },
-                  type: 'text',
+                  name: 'dateTime',
+                  label: { en: 'Day & Time', pt: 'Dia e Hora' },
+                  type: 'date',
                   required: true,
-                  admin: { width: '33%' },
+                  admin: {
+                    width: '33%',
+                    date: { pickerAppearance: 'dayAndTime', displayFormat: 'd MMM yyyy HH:mm' },
+                  },
                 },
                 {
-                  name: 'time',
-                  label: { en: 'Time', pt: 'Hora' },
-                  type: 'text',
+                  name: 'duration',
+                  label: { en: 'Duration (min)', pt: 'Duração (min)' },
+                  type: 'number',
                   required: true,
+                  min: 1,
                   admin: { width: '33%' },
                 },
                 {

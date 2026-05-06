@@ -3723,8 +3723,8 @@ export interface PoolCycle {
         nextWeekOpenDate?: string | null;
         slots: {
           slotId?: string | null;
-          day: string;
-          time: string;
+          dateTime: string;
+          duration: number;
           /**
            * Maximum number of athletes allowed in this slot
            */
@@ -5490,8 +5490,8 @@ export interface PoolCyclesSelect<T extends boolean = true> {
           | T
           | {
               slotId?: T;
-              day?: T;
-              time?: T;
+              dateTime?: T;
+              duration?: T;
               maxAttendance?: T;
               id?: T;
             };

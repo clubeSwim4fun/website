@@ -201,8 +201,10 @@ export async function getSlotRegistrationData(
 
 export type WeekSlot = {
   slotId: string
-  day: string
-  time: string
+  /** ISO date string with time, e.g. "2026-05-04T20:00:00.000Z" */
+  dateTime: string
+  /** Duration in minutes */
+  duration: number
   maxAttendance: number
   available: number
   waitlistCount: number
@@ -232,7 +234,7 @@ export async function getWeekSlotData(cycle: PoolCycle, athleteId: string): Prom
         startDate: string
         endDate: string
         nextWeekOpenDate?: string
-        slots: Array<{ slotId: string; day: string; time: string; maxAttendance: number }>
+        slots: Array<{ slotId: string; dateTime: string; duration: number; maxAttendance: number }>
       }>
     | undefined
 
@@ -285,8 +287,8 @@ export async function getWeekSlotData(cycle: PoolCycle, athleteId: string): Prom
       const taken = countsBySlotId[slot.slotId] ?? 0
       return {
         slotId: slot.slotId,
-        day: slot.day,
-        time: slot.time,
+        dateTime: slot.dateTime,
+        duration: slot.duration ?? 60,
         maxAttendance: slot.maxAttendance ?? 0,
         available: (slot.maxAttendance ?? 0) - taken,
         waitlistCount: waitlistCountsBySlotId[slot.slotId] ?? 0,

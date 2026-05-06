@@ -13,6 +13,18 @@ function getISOWeekBounds() {
   return { weekStart: monday, weekEnd: sunday }
 }
 
+function slotDayLabel(dateTime: string): string {
+  return new Date(dateTime).toLocaleDateString('pt-PT', { weekday: 'long', timeZone: 'UTC' })
+}
+
+function slotTimeRange(dateTime: string, duration: number): string {
+  const start = new Date(dateTime)
+  const end = new Date(start.getTime() + duration * 60 * 1000)
+  const fmt = (d: Date) =>
+    `${d.getUTCHours()}h${d.getUTCMinutes() > 0 ? String(d.getUTCMinutes()).padStart(2, '0') : ''}`
+  return `${fmt(start)}-${fmt(end)}`
+}
+
 const emptyResponse = {
   subscribedAthletes: 0,
   confirmedSlotsThisWeek: 0,
@@ -81,6 +93,8 @@ export const dashboardPool: Endpoint = {
     const weeks: any[] = Array.isArray(cycle.weeks) ? cycle.weeks : []
     const allSlots: {
       slotId: string
+      dateTime: string
+      duration: number
       day: string
       time: string
       maxAttendance: number
@@ -91,8 +105,10 @@ export const dashboardPool: Endpoint = {
       slots.forEach((slot: any) => {
         allSlots.push({
           slotId: slot.slotId,
-          day: slot.day,
-          time: slot.time,
+          dateTime: slot.dateTime,
+          duration: slot.duration ?? 60,
+          day: slotDayLabel(slot.dateTime),
+          time: slotTimeRange(slot.dateTime, slot.duration ?? 60),
           maxAttendance: slot.maxAttendance,
           weekIndex,
         })

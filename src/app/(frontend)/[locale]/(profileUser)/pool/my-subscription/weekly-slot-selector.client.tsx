@@ -12,6 +12,25 @@ import { useState, useEffect } from 'react'
 import type { WeekData, WeekSlot } from '@/helpers/poolHelper'
 import { getMonthIndex, getMonthLabel } from '@/collections/Pool/PoolCycles'
 
+// ─── Slot display helpers ─────────────────────────────────────────────────────
+
+/** "2026-05-04T20:00:00.000Z" → "Segunda-feira" (locale-aware) */
+function slotDayLabel(dateTime: string, locale: string): string {
+  return new Date(dateTime).toLocaleDateString(locale === 'pt' ? 'pt-PT' : 'en-GB', {
+    weekday: 'long',
+    timeZone: 'UTC',
+  })
+}
+
+/** "2026-05-04T20:00:00.000Z", 60 → "20h-21h" */
+function slotTimeRange(dateTime: string, duration: number): string {
+  const start = new Date(dateTime)
+  const end = new Date(start.getTime() + duration * 60 * 1000)
+  const fmt = (d: Date) =>
+    `${d.getUTCHours()}h${d.getUTCMinutes() > 0 ? String(d.getUTCMinutes()).padStart(2, '0') : ''}`
+  return `${fmt(start)}-${fmt(end)}`
+}
+
 // ─── Types ───────────────────────────────────────────────────────────────────
 
 type SlotStatus = 'available' | 'limited' | 'full' | 'selected' | 'waitlist'
@@ -80,6 +99,7 @@ function SlotRow({
   waitlistLoading: boolean
 }) {
   const t = useTranslations('PoolSubscription')
+  const locale = useLocale()
   const status = getSlotStatus(slot, isSelected, heldOnServer)
   const isFull = slot.available <= 0 && !isSelected && !heldOnServer
   const isOnWaitlist = slot.userWaitlistPosition !== null
@@ -109,8 +129,12 @@ function SlotRow({
         {/* Day + time — always visible, full width on mobile */}
         <div className="flex items-center justify-between sm:flex-1 sm:min-w-0">
           <div>
-            <p className="font-semibold uppercase tracking-wide text-sm">{slot.day}</p>
-            <p className="text-muted-foreground text-sm">{slot.time}</p>
+            <p className="font-semibold uppercase tracking-wide text-sm">
+              {slotDayLabel(slot.dateTime, locale)}
+            </p>
+            <p className="text-muted-foreground text-sm">
+              {slotTimeRange(slot.dateTime, slot.duration)}
+            </p>
           </div>
           {/* Checkbox — shown inline with day on mobile, at end on desktop */}
           {!readOnly && (
@@ -254,11 +278,18 @@ function SlotRow({
 
 // ─── Summary panel ────────────────────────────────────────────────────────────
 
-// Parse hours from a time range string like "10h-11h" or "09h-10h"
-function parseSlotHours(time: string): number {
-  const match = time.match(/(\d+)h.*?(\d+)h/)
-  if (!match || !match[1] || !match[2]) return 1
-  return Math.abs(parseInt(match[2]) - parseInt(match[1]))
+// Returns total duration in minutes for a slot
+function slotMinutes(slot: WeekSlot): number {
+  return slot.duration
+}
+
+/** Format total minutes as "1h30" / "40min" / "2h" */
+function formatDuration(totalMinutes: number): string {
+  const h = Math.floor(totalMinutes / 60)
+  const m = totalMinutes % 60
+  if (h === 0) return `${m}min`
+  if (m === 0) return `${h}h`
+  return `${h}h${String(m).padStart(2, '0')}`
 }
 
 function SummaryPanel({
@@ -273,9 +304,10 @@ function SummaryPanel({
   readOnly: boolean
 }) {
   const t = useTranslations('PoolSubscription')
-  const totalHours = selectedIds.reduce((sum, slotId) => {
+  const locale = useLocale()
+  const totalMinutes = selectedIds.reduce((sum, slotId) => {
     const slot = slots.find((s) => s.slotId === slotId)
-    return sum + (slot ? parseSlotHours(slot.time) : 1)
+    return sum + (slot ? slotMinutes(slot) : 60)
   }, 0)
 
   return (
@@ -286,7 +318,7 @@ function SummaryPanel({
       <div className="grid grid-cols-3 gap-3">
         {[
           { value: selectedIds.length, label: t('confirmedSlots') },
-          { value: `${totalHours}h`, label: t('poolTimeMonth') },
+          { value: formatDuration(totalMinutes), label: t('poolTimeMonth') },
         ].map(({ value, label }) => (
           <div key={label} className="bg-muted rounded-lg p-3 text-center">
             <p className="text-xl font-bold">{value}</p>
@@ -310,7 +342,8 @@ function SummaryPanel({
                   key={slotId}
                   className="inline-flex items-center gap-1.5 rounded-full bg-[hsl(var(--blue-swim))] text-white text-xs px-3 py-1"
                 >
-                  {slot.day} {slot.time}
+                  {slotDayLabel(slot.dateTime, locale)}{' '}
+                  {slotTimeRange(slot.dateTime, slot.duration)}
                   {!readOnly && (
                     <button
                       onClick={(e) => {
@@ -318,7 +351,7 @@ function SummaryPanel({
                         onRemoveChip(slotId)
                       }}
                       className="hover:opacity-70 transition-opacity"
-                      aria-label={`Remove ${slot.day}`}
+                      aria-label={`Remove ${slotDayLabel(slot.dateTime, locale)}`}
                     >
                       <X className="w-3 h-3" />
                     </button>
@@ -414,7 +447,7 @@ export const WeeklySlotSelector: React.FC<Props> = ({
 
   const handleJoinWaitlist = async (slot: WeekSlot) => {
     setWaitlistLoadingSlotId(slot.slotId)
-    const result = await joinSlotWaitlist(cycleId, slot.slotId, slot.day, slot.time)
+    const result = await joinSlotWaitlist(cycleId, slot.slotId, slot.dateTime, slot.duration)
     setWaitlistLoadingSlotId(null)
     if (!result.success) {
       toast({ variant: 'destructive', description: result.message || t('cycleNotFound') })
@@ -436,16 +469,18 @@ export const WeeklySlotSelector: React.FC<Props> = ({
     }
   }
 
-  // Banner stats: only count current week's selections (past weeks are read-only/done)
-  const currentWeekData = weeks.find((w) => w.status === 'current') ?? weeks[0]
-  const currentSelectedIds = currentWeekData
-    ? (selectedByWeek[currentWeekData.weekIndex] ?? [])
-    : []
-  const totalSessions = currentSelectedIds.length
-  const currentSlots = currentWeekData?.slots ?? []
-  const totalHours = currentSelectedIds.reduce((sum, slotId) => {
-    const slot = currentSlots.find((s) => s.slotId === slotId)
-    return sum + (slot ? parseSlotHours(slot.time) : 1)
+  // Banner stats: aggregate across ALL weeks in the cycle
+  const totalCycleSelectedIds = weeks.flatMap((w) => selectedByWeek[w.weekIndex] ?? [])
+  const totalSessions = totalCycleSelectedIds.length
+  const totalCycleMinutes = weeks.reduce((sum, w) => {
+    const ids = selectedByWeek[w.weekIndex] ?? []
+    return (
+      sum +
+      ids.reduce((wSum, slotId) => {
+        const slot = w.slots.find((s) => s.slotId === slotId)
+        return wSum + (slot ? slotMinutes(slot) : 60)
+      }, 0)
+    )
   }, 0)
 
   return (
@@ -467,7 +502,7 @@ export const WeeklySlotSelector: React.FC<Props> = ({
             <p className="text-xs opacity-80">{t('daysSelected')}</p>
           </div>
           <div>
-            <p className="text-2xl font-bold">{totalHours}h</p>
+            <p className="text-2xl font-bold">{formatDuration(totalCycleMinutes)}</p>
             <p className="text-xs opacity-80">{t('poolTimeMonth')}</p>
           </div>
         </div>
