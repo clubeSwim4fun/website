@@ -351,7 +351,8 @@ export async function notifySlotWaitlist(cycleId: string, slotId: string): Promi
     const payload = await getPayload({ config })
     const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL ?? ''
 
-    // Find the first pending entry (position 1, not already offered/accepted/rejected)
+    // Find the first pending entry (position 1)
+    // Exclude entries already offered with a non-expired token
     const result = await payload.find({
       collection: 'pool-slot-waitlist',
       where: {
@@ -359,7 +360,6 @@ export async function notifySlotWaitlist(cycleId: string, slotId: string): Promi
           { cycle: { equals: cycleId } },
           { slotId: { equals: slotId } },
           { position: { equals: 1 } },
-          { offerStatus: { in: ['pending', null] } },
         ],
       },
       depth: 1,
@@ -368,6 +368,18 @@ export async function notifySlotWaitlist(cycleId: string, slotId: string): Promi
 
     const entry = result.docs[0] as any
     if (!entry) return
+
+    // Skip if already offered and not yet expired
+    if (
+      entry.offerStatus === 'offered' &&
+      entry.offerExpiresAt &&
+      new Date(entry.offerExpiresAt) > new Date()
+    ) {
+      return
+    }
+
+    // Skip if already accepted
+    if (entry.offerStatus === 'accepted') return
 
     const athlete = entry.athlete as User
     if (!athlete?.email) return
