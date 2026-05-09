@@ -1,6 +1,8 @@
 import { getLogo } from '@/helpers/emailHelper'
 import React from 'react'
 
+const TITLE_PREFIX = 'Clube Swim4Fun: '
+
 type Args = {
   title: string
   children?: React.ReactNode
@@ -9,6 +11,7 @@ type Args = {
 
 export async function TemplateEmail({ children, title, hideLogo }: Args) {
   const logo = await getLogo()
+  const prefixedTitle = title.startsWith(TITLE_PREFIX) ? title : `${TITLE_PREFIX}${title}`
 
   return (
     <div
@@ -32,14 +35,23 @@ export async function TemplateEmail({ children, title, hideLogo }: Args) {
           style={{
             display: 'flex',
             justifyContent: 'space-between',
+            alignItems: 'flex-start',
           }}
         >
-          <h1 style={{ fontSize: '26px', fontWeight: 'bold', color: '#2D6CB3' }}>{title}</h1>
+          <h1 style={{ fontSize: '26px', fontWeight: 'bold', color: '#2D6CB3', margin: 0 }}>
+            {prefixedTitle}
+          </h1>
           {!hideLogo && (
             <img
               src={'cid:logo'}
               alt={typeof logo === 'string' ? logo : logo?.alt || ''}
-              style={{ display: 'block', marginLeft: 'auto', width: '60px', height: '60px' }}
+              style={{
+                display: 'block',
+                marginLeft: '16px',
+                width: '60px',
+                height: '60px',
+                flexShrink: 0,
+              }}
             />
           )}
         </div>
