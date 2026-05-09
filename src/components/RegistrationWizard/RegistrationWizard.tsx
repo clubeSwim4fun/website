@@ -90,8 +90,15 @@ export function RegistrationWizard({ generalConfig, form, submitButtonLabel, com
     }
   }, [step])
 
-  const set = (field: keyof RegistrationFormData, value: string | boolean | File[]) =>
+  const set = (field: keyof RegistrationFormData, value: string | boolean | File[]) => {
     setData((prev) => ({ ...prev, [field]: value }))
+    setErrors((prev) => {
+      if (!prev[field]) return prev
+      const next = { ...prev }
+      delete next[field]
+      return next
+    })
+  }
 
   const validate = (): boolean => {
     const e: Partial<Record<keyof RegistrationFormData, string>> = {}
@@ -131,6 +138,23 @@ export function RegistrationWizard({ generalConfig, form, submitButtonLabel, com
       if (!data.consent) e.consent = t('errorConsent')
     }
     setErrors(e)
+
+    const firstErrorKey = Object.keys(e)[0] as string | undefined
+    if (firstErrorKey) {
+      // Use rAF to ensure the DOM has updated with the new error state before scrolling
+      requestAnimationFrame(() => {
+        const el = document.getElementById(firstErrorKey)
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+          el.focus({ preventScroll: true })
+        } else if (cardRef.current) {
+          // Fallback: scroll to the step card top
+          const top = cardRef.current.getBoundingClientRect().top + window.scrollY - 100
+          window.scrollTo({ top, behavior: 'smooth' })
+        }
+      })
+    }
+
     return Object.keys(e).length === 0
   }
 

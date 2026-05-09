@@ -120,6 +120,7 @@ export function Step1({ data, errors, onChange, onConfirmError, fieldMap }: Prop
           value={data.phone}
           onChange={(v) => onChange('phone', v ?? '')}
           placeholder="912 345 678"
+          id="phone"
           className={errors.phone ? '[&_input]:border-[#e85d4a]' : ''}
         />
         <FieldError message={errors.phone} />

@@ -14,6 +14,7 @@ import { RegistrationFormData } from './types'
 import { CmsField, label, options, required, extraFieldsForStep } from './useFormFields'
 import { DynamicField } from './DynamicField'
 import { MaskedInput } from './MaskedInput'
+import { DatePickerInput } from './DatePickerInput'
 import COUNTRY_LIST from '@/utilities/countryList'
 import { useTranslations } from 'next-intl'
 
@@ -56,7 +57,7 @@ export function Step2({ data, errors, onChange, fieldMap }: Props) {
             {label(fieldMap, 'gender', t('gender'))}
           </FieldLabel>
           <Select value={data.gender} onValueChange={(v) => onChange('gender', v)}>
-            <SelectTrigger className={errors.gender ? 'border-[#e85d4a]' : ''}>
+            <SelectTrigger id="gender" className={errors.gender ? 'border-[#e85d4a]' : ''}>
               <SelectValue placeholder={t('genderPlaceholder')} />
             </SelectTrigger>
             <SelectContent>
@@ -73,11 +74,10 @@ export function Step2({ data, errors, onChange, fieldMap }: Props) {
           <FieldLabel htmlFor="birthDate" required={required(fieldMap, 'birthDate')}>
             {label(fieldMap, 'birthDate', t('dateOfBirth'))}
           </FieldLabel>
-          <Input
+          <DatePickerInput
             id="birthDate"
-            type="date"
             value={data.birthDate}
-            onChange={(e) => onChange('birthDate', e.target.value)}
+            onChange={(iso) => onChange('birthDate', iso)}
             className={errors.birthDate ? 'border-[#e85d4a]' : ''}
           />
           <FieldError message={errors.birthDate} />
@@ -90,7 +90,10 @@ export function Step2({ data, errors, onChange, fieldMap }: Props) {
             {label(fieldMap, 'nationality', t('nationality'))}
           </FieldLabel>
           <Select value={data.nationality} onValueChange={(v) => onChange('nationality', v)}>
-            <SelectTrigger className={errors.nationality ? 'border-[#e85d4a]' : ''}>
+            <SelectTrigger
+              id="nationality"
+              className={errors.nationality ? 'border-[#e85d4a]' : ''}
+            >
               <SelectValue placeholder={t('nationalityPlaceholder')} />
             </SelectTrigger>
             <SelectContent>
@@ -108,7 +111,7 @@ export function Step2({ data, errors, onChange, fieldMap }: Props) {
             {label(fieldMap, 'tshirtSize', t('tshirtSize'))}
           </FieldLabel>
           <Select value={data.tshirtSize} onValueChange={(v) => onChange('tshirtSize', v)}>
-            <SelectTrigger className={errors.tshirtSize ? 'border-[#e85d4a]' : ''}>
+            <SelectTrigger id="tshirtSize" className={errors.tshirtSize ? 'border-[#e85d4a]' : ''}>
               <SelectValue placeholder={t('tshirtSizePlaceholder')} />
             </SelectTrigger>
             <SelectContent>
@@ -223,6 +226,7 @@ export function Step2({ data, errors, onChange, fieldMap }: Props) {
             value={data.emergencyPhone}
             onChange={(v) => onChange('emergencyPhone', v ?? '')}
             placeholder="912 345 678"
+            id="emergencyPhone"
             className={errors.emergencyPhone ? '[&_input]:border-[#e85d4a]' : ''}
           />
           <FieldError message={errors.emergencyPhone} />

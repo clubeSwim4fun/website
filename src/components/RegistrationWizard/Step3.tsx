@@ -122,7 +122,6 @@ export function Step3({ data, errors, onChange, onFileChange, generalConfig, fie
               ))}
             </SelectContent>
           </Select>
-          <Hint>{t('disabilityHint')}</Hint>
         </FieldGroup>
         <FieldGroup>
           <FieldLabel>{label(fieldMap, 'sportInsurance', t('sportsInsurance'))}</FieldLabel>
