@@ -73,7 +73,7 @@ export default async function Page({ params: paramsPromise }: Args) {
   const { hero, layout } = page
 
   return (
-    <article className=" pb-24">
+    <article className={canSeePage.success ? 'pb-24' : ''}>
       <PageClient />
       {canSeePage.success ? (
         <>
@@ -87,7 +87,7 @@ export default async function Page({ params: paramsPromise }: Args) {
           />
         </>
       ) : (
-        <RenderPermissionError data={canSeePage} content={page.visibility} />
+        <RenderPermissionError data={canSeePage} content={page.visibility} user={userObject} />
       )}
     </article>
   )
@@ -112,6 +112,7 @@ const queryPageBySlug = cache(async ({ slug, locale }: { slug: string; locale: s
     collection: 'pages',
     draft,
     limit: 1,
+    depth: 3,
     locale: locale as TypedLocale,
     pagination: false,
     overrideAccess: draft,

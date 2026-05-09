@@ -356,75 +356,171 @@ export interface Page {
     description?: string | null;
   };
   visibility?: {
-    visibleFor?:
-      | (
-          | {
-              relationTo: 'groups';
-              value: string | Group;
-            }
-          | {
-              relationTo: 'group-categories';
-              value: string | GroupCategory;
-            }
-        )[]
-      | null;
-    errorMessage?: {
-      root: {
-        type: string;
-        children: {
-          type: any;
-          version: number;
-          [k: string]: unknown;
-        }[];
-        direction: ('ltr' | 'rtl') | null;
-        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-        indent: number;
-        version: number;
-      };
-      [k: string]: unknown;
-    } | null;
-    enableLink?: boolean | null;
-    link?: {
-      type?: ('reference' | 'custom' | 'subscription') | null;
-      newTab?: boolean | null;
-      reference?:
-        | ({
-            relationTo: 'pages';
-            value: string | Page;
-          } | null)
-        | ({
-            relationTo: 'posts';
-            value: string | Post;
-          } | null);
+    /**
+     * Restrict this page to specific groups. Users not in these groups will see the error screen below.
+     */
+    visibleForConfig?: {
+      groups?:
+        | (
+            | {
+                relationTo: 'groups';
+                value: string | Group;
+              }
+            | {
+                relationTo: 'group-categories';
+                value: string | GroupCategory;
+              }
+          )[]
+        | null;
       /**
-       * Select the group that this subscription will be linked to.
+       * Shown when user does not have access.
        */
-      subscriptionGroup?: (string | null) | Group;
-      url?: string | null;
-      label: string;
-      hasChildren?: boolean | null;
-      childrenPages?:
+      errorMessage?: {
+        root: {
+          type: string;
+          children: {
+            type: any;
+            version: number;
+            [k: string]: unknown;
+          }[];
+          direction: ('ltr' | 'rtl') | null;
+          format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+          indent: number;
+          version: number;
+        };
+        [k: string]: unknown;
+      } | null;
+      links?:
         | {
-            type?: ('reference' | 'custom') | null;
-            newTab?: boolean | null;
-            reference?:
-              | ({
-                  relationTo: 'pages';
-                  value: string | Page;
-                } | null)
-              | ({
-                  relationTo: 'posts';
-                  value: string | Post;
-                } | null);
-            url?: string | null;
-            label: string;
+            link: {
+              type?: ('reference' | 'custom' | 'subscription') | null;
+              newTab?: boolean | null;
+              reference?:
+                | ({
+                    relationTo: 'pages';
+                    value: string | Page;
+                  } | null)
+                | ({
+                    relationTo: 'posts';
+                    value: string | Post;
+                  } | null);
+              /**
+               * Select the group that this subscription will be linked to.
+               */
+              subscriptionGroup?: (string | null) | Group;
+              url?: string | null;
+              label: string;
+              hasChildren?: boolean | null;
+              childrenPages?:
+                | {
+                    type?: ('reference' | 'custom') | null;
+                    newTab?: boolean | null;
+                    reference?:
+                      | ({
+                          relationTo: 'pages';
+                          value: string | Page;
+                        } | null)
+                      | ({
+                          relationTo: 'posts';
+                          value: string | Post;
+                        } | null);
+                    url?: string | null;
+                    label: string;
+                    id?: string | null;
+                  }[]
+                | null;
+              /**
+               * Choose how the link should be rendered.
+               */
+              appearance?: ('default' | 'outline') | null;
+            };
             id?: string | null;
           }[]
         | null;
+      backgroundColor?: ('green' | 'blue' | 'dark' | 'light' | 'red') | null;
+    };
+    /**
+     * Hide this page from specific groups (e.g. users already in a group). They will see the error screen below instead.
+     */
+    hiddenForConfig?: {
+      groups?:
+        | (
+            | {
+                relationTo: 'groups';
+                value: string | Group;
+              }
+            | {
+                relationTo: 'group-categories';
+                value: string | GroupCategory;
+              }
+          )[]
+        | null;
       /**
-       * Choose how the link should be rendered.
+       * Shown when user is blocked via Hidden For.
        */
-      appearance?: ('default' | 'outline') | null;
+      errorMessage?: {
+        root: {
+          type: string;
+          children: {
+            type: any;
+            version: number;
+            [k: string]: unknown;
+          }[];
+          direction: ('ltr' | 'rtl') | null;
+          format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+          indent: number;
+          version: number;
+        };
+        [k: string]: unknown;
+      } | null;
+      links?:
+        | {
+            link: {
+              type?: ('reference' | 'custom' | 'subscription') | null;
+              newTab?: boolean | null;
+              reference?:
+                | ({
+                    relationTo: 'pages';
+                    value: string | Page;
+                  } | null)
+                | ({
+                    relationTo: 'posts';
+                    value: string | Post;
+                  } | null);
+              /**
+               * Select the group that this subscription will be linked to.
+               */
+              subscriptionGroup?: (string | null) | Group;
+              url?: string | null;
+              label: string;
+              hasChildren?: boolean | null;
+              childrenPages?:
+                | {
+                    type?: ('reference' | 'custom') | null;
+                    newTab?: boolean | null;
+                    reference?:
+                      | ({
+                          relationTo: 'pages';
+                          value: string | Page;
+                        } | null)
+                      | ({
+                          relationTo: 'posts';
+                          value: string | Post;
+                        } | null);
+                    url?: string | null;
+                    label: string;
+                    id?: string | null;
+                  }[]
+                | null;
+              /**
+               * Choose how the link should be rendered.
+               */
+              appearance?: ('default' | 'outline') | null;
+            };
+            id?: string | null;
+          }[]
+        | null;
+      backgroundColor?: ('green' | 'blue' | 'dark' | 'light' | 'red') | null;
     };
   };
   parentPage?: (string | null) | Page;
@@ -4379,30 +4475,73 @@ export interface PagesSelect<T extends boolean = true> {
   visibility?:
     | T
     | {
-        visibleFor?: T;
-        errorMessage?: T;
-        enableLink?: T;
-        link?:
+        visibleForConfig?:
           | T
           | {
-              type?: T;
-              newTab?: T;
-              reference?: T;
-              subscriptionGroup?: T;
-              url?: T;
-              label?: T;
-              hasChildren?: T;
-              childrenPages?:
+              groups?: T;
+              errorMessage?: T;
+              links?:
                 | T
                 | {
-                    type?: T;
-                    newTab?: T;
-                    reference?: T;
-                    url?: T;
-                    label?: T;
+                    link?:
+                      | T
+                      | {
+                          type?: T;
+                          newTab?: T;
+                          reference?: T;
+                          subscriptionGroup?: T;
+                          url?: T;
+                          label?: T;
+                          hasChildren?: T;
+                          childrenPages?:
+                            | T
+                            | {
+                                type?: T;
+                                newTab?: T;
+                                reference?: T;
+                                url?: T;
+                                label?: T;
+                                id?: T;
+                              };
+                          appearance?: T;
+                        };
                     id?: T;
                   };
-              appearance?: T;
+              backgroundColor?: T;
+            };
+        hiddenForConfig?:
+          | T
+          | {
+              groups?: T;
+              errorMessage?: T;
+              links?:
+                | T
+                | {
+                    link?:
+                      | T
+                      | {
+                          type?: T;
+                          newTab?: T;
+                          reference?: T;
+                          subscriptionGroup?: T;
+                          url?: T;
+                          label?: T;
+                          hasChildren?: T;
+                          childrenPages?:
+                            | T
+                            | {
+                                type?: T;
+                                newTab?: T;
+                                reference?: T;
+                                url?: T;
+                                label?: T;
+                                id?: T;
+                              };
+                          appearance?: T;
+                        };
+                    id?: T;
+                  };
+              backgroundColor?: T;
             };
       };
   parentPage?: T;

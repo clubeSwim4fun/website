@@ -159,49 +159,186 @@ export const Pages: CollectionConfig<'pages'> = {
             pt: 'Visibilidade da página',
           },
           fields: [
+            // ── Visible For group ──────────────────────────────────────────
             {
-              type: 'row',
+              name: 'visibleForConfig',
+              label: {
+                en: 'Visible For',
+                pt: 'Visível Para',
+              },
+              type: 'group',
+              admin: {
+                description: {
+                  en: 'Restrict this page to specific groups. Users not in these groups will see the error screen below.',
+                  pt: 'Restringe esta página a grupos específicos. Utilizadores fora destes grupos verão o ecrã de erro abaixo.',
+                },
+              },
               fields: [
                 {
-                  name: 'visibleFor',
-                  label: {
-                    en: 'Visible For:',
-                    pt: 'Visível Para:',
-                  },
-                  type: 'relationship',
-                  relationTo: ['groups', 'group-categories'],
-                  hasMany: true,
-                  admin: {
-                    width: '25%',
-                  },
-                },
-                {
-                  name: 'errorMessage',
-                  label: {
-                    en: 'Error message',
-                    pt: 'Mensagem de erro',
-                  },
-                  type: 'richText',
-                  editor: defaultLexical,
-                  admin: {
-                    width: '50%',
-                  },
-                },
-                {
-                  name: 'enableLink',
-                  label: {
-                    en: 'Enable Link?',
-                    pt: 'Habilitar Link?',
-                  },
-                  type: 'checkbox',
-                },
-                link({
-                  overrides: {
-                    admin: {
-                      condition: (_, { enableLink }) => Boolean(enableLink),
+                  type: 'row',
+                  fields: [
+                    {
+                      name: 'groups',
+                      label: {
+                        en: 'Groups:',
+                        pt: 'Grupos:',
+                      },
+                      type: 'relationship',
+                      relationTo: ['groups', 'group-categories'],
+                      hasMany: true,
+                      admin: {
+                        width: '33%',
+                      },
                     },
-                  },
-                }),
+                    {
+                      name: 'errorMessage',
+                      label: {
+                        en: 'Error message',
+                        pt: 'Mensagem de erro',
+                      },
+                      type: 'richText',
+                      editor: defaultLexical,
+                      admin: {
+                        width: '67%',
+                        description: {
+                          en: 'Shown when user does not have access.',
+                          pt: 'Mostrado quando o utilizador não tem acesso.',
+                        },
+                      },
+                    },
+                  ],
+                },
+                {
+                  type: 'row',
+                  fields: [
+                    {
+                      name: 'links',
+                      label: {
+                        en: 'Buttons',
+                        pt: 'Botões',
+                      },
+                      type: 'array',
+                      admin: {
+                        width: '75%',
+                      },
+                      fields: [
+                        link({
+                          overrides: { admin: { hideGutter: true } },
+                        }),
+                      ],
+                    },
+                    {
+                      name: 'backgroundColor',
+                      label: {
+                        en: 'Background Color',
+                        pt: 'Cor de Fundo',
+                      },
+                      type: 'select',
+                      defaultValue: 'green',
+                      admin: {
+                        width: '25%',
+                      },
+                      options: [
+                        { label: { en: 'Green (default)', pt: 'Verde (padrão)' }, value: 'green' },
+                        { label: { en: 'Blue', pt: 'Azul' }, value: 'blue' },
+                        { label: { en: 'Dark', pt: 'Escuro' }, value: 'dark' },
+                        { label: { en: 'Light', pt: 'Claro' }, value: 'light' },
+                        { label: { en: 'Red', pt: 'Vermelho' }, value: 'red' },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+            // ── Hidden For group ───────────────────────────────────────────
+            {
+              name: 'hiddenForConfig',
+              label: {
+                en: 'Hidden For',
+                pt: 'Oculto Para',
+              },
+              type: 'group',
+              admin: {
+                description: {
+                  en: 'Hide this page from specific groups (e.g. users already in a group). They will see the error screen below instead.',
+                  pt: 'Oculta esta página de grupos específicos (ex: utilizadores já num grupo). Verão o ecrã de erro abaixo.',
+                },
+              },
+              fields: [
+                {
+                  type: 'row',
+                  fields: [
+                    {
+                      name: 'groups',
+                      label: {
+                        en: 'Groups:',
+                        pt: 'Grupos:',
+                      },
+                      type: 'relationship',
+                      relationTo: ['groups', 'group-categories'],
+                      hasMany: true,
+                      admin: {
+                        width: '33%',
+                      },
+                    },
+                    {
+                      name: 'errorMessage',
+                      label: {
+                        en: 'Error message',
+                        pt: 'Mensagem de erro',
+                      },
+                      type: 'richText',
+                      editor: defaultLexical,
+                      admin: {
+                        width: '67%',
+                        description: {
+                          en: 'Shown when user is blocked via Hidden For.',
+                          pt: 'Mostrado quando o utilizador é bloqueado via Oculto Para.',
+                        },
+                      },
+                    },
+                  ],
+                },
+                {
+                  type: 'row',
+                  fields: [
+                    {
+                      name: 'links',
+                      label: {
+                        en: 'Buttons',
+                        pt: 'Botões',
+                      },
+                      type: 'array',
+                      admin: {
+                        width: '75%',
+                      },
+                      fields: [
+                        link({
+                          overrides: { admin: { hideGutter: true } },
+                        }),
+                      ],
+                    },
+                    {
+                      name: 'backgroundColor',
+                      label: {
+                        en: 'Background Color',
+                        pt: 'Cor de Fundo',
+                      },
+                      type: 'select',
+                      defaultValue: 'green',
+                      admin: {
+                        width: '25%',
+                      },
+                      options: [
+                        { label: { en: 'Green (default)', pt: 'Verde (padrão)' }, value: 'green' },
+                        { label: { en: 'Blue', pt: 'Azul' }, value: 'blue' },
+                        { label: { en: 'Dark', pt: 'Escuro' }, value: 'dark' },
+                        { label: { en: 'Light', pt: 'Claro' }, value: 'light' },
+                        { label: { en: 'Red', pt: 'Vermelho' }, value: 'red' },
+                      ],
+                    },
+                  ],
+                },
               ],
             },
           ],

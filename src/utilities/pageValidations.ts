@@ -33,50 +33,72 @@ export const checkPageVisibility = async ({
   page: Page
 }): Promise<PageVisibilityResponse> => {
   const t = await getTranslations()
-  const pageVisibilityGroups: GroupsVisibleForType = page.visibility?.visibleFor
+  const pageVisibilityGroups: GroupsVisibleForType = page.visibility?.visibleForConfig?.groups
+  const pageHiddenForGroups: GroupsVisibleForType = page.visibility?.hiddenForConfig?.groups
 
-  // If no groups defined page is public
-  if (!pageVisibilityGroups || pageVisibilityGroups?.length === 0) {
-    return {
-      success: true,
-    }
-  }
+  const hasVisibilityRestriction = pageVisibilityGroups && pageVisibilityGroups.length > 0
+  const hasHiddenForRestriction = pageHiddenForGroups && pageHiddenForGroups.length > 0
 
-  if (!user) {
-    return {
-      success: false,
-      message: {
-        code: 401,
-        message: 'user not authenticated',
-      },
-    }
-  }
-
-  // Admins and editors bypass page visibility
-  if (user.role === 'admin' || user.role === 'editor') {
+  // If no restrictions defined, page is public
+  if (!hasVisibilityRestriction && !hasHiddenForRestriction) {
     return { success: true }
   }
 
-  // Normalize to string IDs regardless of whether values are populated objects or raw strings
-  const visibilityGroupIds = pageVisibilityGroups.map((group) => {
-    const val = group.value
-    return typeof val === 'string' ? val : (val as Group | GroupCategory).id
-  })
+  if (!user) {
+    if (hasVisibilityRestriction) {
+      return {
+        success: false,
+        message: { code: 401, message: 'user not authenticated' },
+      }
+    }
+    // hiddenFor only applies to authenticated users — unauthenticated can see the page
+    return { success: true }
+  }
 
   const userGroupIds = user?.groups?.map((group) => {
     const val = group.value
     return typeof val === 'string' ? val : (val as Group | GroupCategory).id
   })
 
-  const userHasValidyGroup =
+  // Check hiddenFor first — applies to ALL users including admins/editors
+  if (hasHiddenForRestriction) {
+    const hiddenGroupIds = pageHiddenForGroups!.map((group) => {
+      const val = group.value
+      return typeof val === 'string' ? val : (val as Group | GroupCategory).id
+    })
+
+    const userIsHidden = userGroupIds && userGroupIds.some((id) => hiddenGroupIds.includes(id))
+
+    if (userIsHidden) {
+      return {
+        success: false,
+        message: { code: 404, message: t('Common.notAuthorized') },
+      }
+    }
+  }
+
+  // Admins and editors bypass visibleFor restriction
+  if (user.role === 'admin' || user.role === 'editor') {
+    return { success: true }
+  }
+
+  // If no visibleFor restriction, page is accessible (hiddenFor check already passed)
+  if (!hasVisibilityRestriction) {
+    return { success: true }
+  }
+
+  const visibilityGroupIds = pageVisibilityGroups!.map((group) => {
+    const val = group.value
+    return typeof val === 'string' ? val : (val as Group | GroupCategory).id
+  })
+
+  const userHasValidGroup =
     userGroupIds && userGroupIds.some((id) => visibilityGroupIds.includes(id))
 
   const userStatus = user.status
 
-  if (userHasValidyGroup && userStatus === 'active') {
-    return {
-      success: true,
-    }
+  if (userHasValidGroup && userStatus === 'active') {
+    return { success: true }
   }
 
   if (userStatus !== 'active') {
@@ -92,9 +114,6 @@ export const checkPageVisibility = async ({
 
   return {
     success: false,
-    message: {
-      code: 403,
-      message: t('Common.notAuthorized'),
-    },
+    message: { code: 403, message: t('Common.notAuthorized') },
   }
 }
