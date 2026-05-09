@@ -18,7 +18,7 @@ fileMatchPattern: 'src/collections/**,src/payload.config.ts,src/payload-types.ts
 - `nif`, `phone`, `gender`, `disability`, `birthDate`, `nationality`
 - `Address`: street, number, state, zipcode
 - `identityFile`, `profilePicture`: uploads → `user-media`
-- `wantsToBeFederado`, `heardAboutClub` → `aboutClub`, `fieldsToUpdate`
+- `heardAboutClub` → `aboutClub`, `fieldsToUpdate`
 - Hooks: `beforeChange` auto-increments `associateId`; `afterChange` sends email on `pendingUpdate`/`pendingPayment`
 
 ### `events`

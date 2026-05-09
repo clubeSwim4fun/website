@@ -279,17 +279,6 @@ export const Users: CollectionConfig = {
       },
     },
     {
-      name: 'wantsToBeFederado',
-      label: {
-        en: 'Wants to be Federated?',
-        pt: 'Quer ser Federado?',
-      },
-      type: 'checkbox',
-      admin: {
-        position: 'sidebar',
-      },
-    },
-    {
       name: 'emergencyContact',
       label: {
         en: 'Emergency Contact Name',

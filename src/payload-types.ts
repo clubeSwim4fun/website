@@ -784,7 +784,6 @@ export interface Checkbox {
         | 'birthDate'
         | 'disability'
         | 'emailNotificationsEnabled'
-        | 'wantsToBeFederado'
         | 'emergencyContact'
         | 'emergencyPhone'
         | 'wantsInvoiceWithNif'
@@ -820,7 +819,6 @@ export interface Checkbox {
         | 'birthDate'
         | 'disability'
         | 'emailNotificationsEnabled'
-        | 'wantsToBeFederado'
         | 'emergencyContact'
         | 'emergencyPhone'
         | 'wantsInvoiceWithNif'
@@ -871,7 +869,6 @@ export interface Country {
         | 'birthDate'
         | 'disability'
         | 'emailNotificationsEnabled'
-        | 'wantsToBeFederado'
         | 'emergencyContact'
         | 'emergencyPhone'
         | 'wantsInvoiceWithNif'
@@ -907,7 +904,6 @@ export interface Country {
         | 'birthDate'
         | 'disability'
         | 'emailNotificationsEnabled'
-        | 'wantsToBeFederado'
         | 'emergencyContact'
         | 'emergencyPhone'
         | 'wantsInvoiceWithNif'
@@ -962,7 +958,6 @@ export interface Email {
         | 'birthDate'
         | 'disability'
         | 'emailNotificationsEnabled'
-        | 'wantsToBeFederado'
         | 'emergencyContact'
         | 'emergencyPhone'
         | 'wantsInvoiceWithNif'
@@ -1014,7 +1009,6 @@ export interface Number {
         | 'birthDate'
         | 'disability'
         | 'emailNotificationsEnabled'
-        | 'wantsToBeFederado'
         | 'emergencyContact'
         | 'emergencyPhone'
         | 'wantsInvoiceWithNif'
@@ -1050,7 +1044,6 @@ export interface Number {
         | 'birthDate'
         | 'disability'
         | 'emailNotificationsEnabled'
-        | 'wantsToBeFederado'
         | 'emergencyContact'
         | 'emergencyPhone'
         | 'wantsInvoiceWithNif'
@@ -1119,7 +1112,6 @@ export interface Select {
         | 'birthDate'
         | 'disability'
         | 'emailNotificationsEnabled'
-        | 'wantsToBeFederado'
         | 'emergencyContact'
         | 'emergencyPhone'
         | 'wantsInvoiceWithNif'
@@ -1155,7 +1147,6 @@ export interface Select {
         | 'birthDate'
         | 'disability'
         | 'emailNotificationsEnabled'
-        | 'wantsToBeFederado'
         | 'emergencyContact'
         | 'emergencyPhone'
         | 'wantsInvoiceWithNif'
@@ -1207,7 +1198,6 @@ export interface Text {
         | 'birthDate'
         | 'disability'
         | 'emailNotificationsEnabled'
-        | 'wantsToBeFederado'
         | 'emergencyContact'
         | 'emergencyPhone'
         | 'wantsInvoiceWithNif'
@@ -1243,7 +1233,6 @@ export interface Text {
         | 'birthDate'
         | 'disability'
         | 'emailNotificationsEnabled'
-        | 'wantsToBeFederado'
         | 'emergencyContact'
         | 'emergencyPhone'
         | 'wantsInvoiceWithNif'
@@ -1309,7 +1298,6 @@ export interface Phone {
         | 'birthDate'
         | 'disability'
         | 'emailNotificationsEnabled'
-        | 'wantsToBeFederado'
         | 'emergencyContact'
         | 'emergencyPhone'
         | 'wantsInvoiceWithNif'
@@ -1345,7 +1333,6 @@ export interface Phone {
         | 'birthDate'
         | 'disability'
         | 'emailNotificationsEnabled'
-        | 'wantsToBeFederado'
         | 'emergencyContact'
         | 'emergencyPhone'
         | 'wantsInvoiceWithNif'
@@ -1397,7 +1384,6 @@ export interface MediaUpload {
         | 'birthDate'
         | 'disability'
         | 'emailNotificationsEnabled'
-        | 'wantsToBeFederado'
         | 'emergencyContact'
         | 'emergencyPhone'
         | 'wantsInvoiceWithNif'
@@ -1443,7 +1429,6 @@ export interface Address {
         | 'birthDate'
         | 'disability'
         | 'emailNotificationsEnabled'
-        | 'wantsToBeFederado'
         | 'emergencyContact'
         | 'emergencyPhone'
         | 'wantsInvoiceWithNif'
@@ -1479,7 +1464,6 @@ export interface Address {
         | 'birthDate'
         | 'disability'
         | 'emailNotificationsEnabled'
-        | 'wantsToBeFederado'
         | 'emergencyContact'
         | 'emergencyPhone'
         | 'wantsInvoiceWithNif'
@@ -1544,7 +1528,6 @@ export interface DateField {
         | 'birthDate'
         | 'disability'
         | 'emailNotificationsEnabled'
-        | 'wantsToBeFederado'
         | 'emergencyContact'
         | 'emergencyPhone'
         | 'wantsInvoiceWithNif'
@@ -1580,7 +1563,6 @@ export interface DateField {
         | 'birthDate'
         | 'disability'
         | 'emailNotificationsEnabled'
-        | 'wantsToBeFederado'
         | 'emergencyContact'
         | 'emergencyPhone'
         | 'wantsInvoiceWithNif'
@@ -2006,7 +1988,6 @@ export interface User {
   birthDate?: string | null;
   disability?: (string | Disability)[] | null;
   emailNotificationsEnabled?: boolean | null;
-  wantsToBeFederado?: boolean | null;
   emergencyContact?: string | null;
   emergencyPhone?: string | null;
   wantsInvoiceWithNif?: boolean | null;
@@ -5315,7 +5296,6 @@ export interface UsersSelect<T extends boolean = true> {
   birthDate?: T;
   disability?: T;
   emailNotificationsEnabled?: T;
-  wantsToBeFederado?: T;
   emergencyContact?: T;
   emergencyPhone?: T;
   wantsInvoiceWithNif?: T;
