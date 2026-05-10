@@ -3103,7 +3103,7 @@ export interface CardBlock {
    */
   form?: (string | null) | Form;
   /**
-   * Payment amount in EUR.
+   * Fixed payment amount in EUR. Leave empty if the amount is controlled by a "payment selector" field in a form on a previous step.
    */
   paymentAmount?: number | null;
   /**

@@ -152,8 +152,8 @@ export const CardBlock: Block = {
           admin: {
             width: '50%',
             description: {
-              en: 'Payment amount in EUR.',
-              pt: 'Valor do pagamento em EUR.',
+              en: 'Fixed payment amount in EUR. Leave empty if the amount is controlled by a "payment selector" field in a form on a previous step.',
+              pt: 'Valor fixo do pagamento em EUR. Deixe vazio se o valor for controlado por um campo "seletor de pagamento" num formulário de um passo anterior.',
             },
           },
         },

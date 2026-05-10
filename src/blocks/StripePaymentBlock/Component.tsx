@@ -123,6 +123,7 @@ export const StripePaymentBlockComponent: React.FC<StripePaymentBlockProps> = ({
           description: effectiveDesc ?? undefined,
           assignToGroup: (assignToGroup as any) ?? null,
           submissionData: [],
+          formId: ctx?.stepFormIdRef.current ?? undefined,
         })
         if (result.error) {
           setInitError(result.error)

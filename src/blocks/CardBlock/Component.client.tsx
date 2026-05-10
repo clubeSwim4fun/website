@@ -200,10 +200,14 @@ export const CardPaymentVariant: React.FC<CardPaymentProps> = ({
       if (clientSecret !== null || initialized.current) return
       const hasSel = ctx?.hasPaymentSelectorRef.current ?? false
       if (hasSel && ctx?.selectedPaymentOption === null) return
-      initialized.current = true
 
       const effectiveAmt = ctx?.selectedPaymentOption?.amount ?? amount
       const effectiveDesc = ctx?.selectedPaymentOption?.label ?? description
+
+      // If no amount is available yet (controlled by a selector on another step), wait
+      if (!effectiveAmt) return
+
+      initialized.current = true
 
       const run = async () => {
         if (assignToGroup) {
@@ -219,6 +223,7 @@ export const CardPaymentVariant: React.FC<CardPaymentProps> = ({
           description: effectiveDesc,
           assignToGroup: assignToGroup ?? null,
           submissionData: [],
+          formId: ctx?.stepFormIdRef.current ?? undefined,
         })
         if (result.error) {
           setInitError(result.error)

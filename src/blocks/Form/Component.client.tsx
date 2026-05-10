@@ -2,7 +2,7 @@
 import type { Form as FormType } from '@payloadcms/plugin-form-builder/types'
 
 import { useRouter } from 'next/navigation'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useForm, FormProvider } from 'react-hook-form'
 import RichText from '@/components/RichText'
 import { Button } from '@/components/ui/button'
@@ -51,6 +51,9 @@ export const FormBlockClient: React.FC<{ id?: string } & FormBlockType> = (props
     redirect,
     submitButtonLabel,
   } = formFromProps || {}
+
+  // Ensure we always have the form ID — the plugin type may omit it but it's always present at runtime
+  const resolvedFormID: string | undefined = (formFromProps as any)?.id ?? formID
 
   // Build defaultValues from field defaultValue and prefillFromUser
   const defaultValues = React.useMemo(() => {
@@ -123,6 +126,13 @@ export const FormBlockClient: React.FC<{ id?: string } & FormBlockType> = (props
     paymentCtx.setFormIsValid(isValid)
   }, [isValid, paymentCtx]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Register this form's ID in the step context so sibling payment cards can link to it
+  const stepFormIdRegistered = useRef(false)
+  if (!stepFormIdRegistered.current && paymentCtx && resolvedFormID) {
+    stepFormIdRegistered.current = true
+    paymentCtx.setStepFormId(resolvedFormID)
+  }
+
   /* eslint-disable @typescript-eslint/no-explicit-any */
   const submitToPayload = useCallback(
     async (data: Record<string, any>) => {
@@ -168,7 +178,7 @@ export const FormBlockClient: React.FC<{ id?: string } & FormBlockType> = (props
       try {
         const req = await fetch(`${getClientSideURL()}/api/form-submissions`, {
           body: JSON.stringify({
-            form: formID,
+            form: resolvedFormID,
             submissionData: Object.entries(serialized).map(([field, value]) => ({ field, value })),
           }),
           headers: { 'Content-Type': 'application/json' },
@@ -194,7 +204,7 @@ export const FormBlockClient: React.FC<{ id?: string } & FormBlockType> = (props
         setError({ message: t('Common.unexpectedError') })
       }
     },
-    [router, formID, redirect, confirmationType, onSubmitFromProps],
+    [router, resolvedFormID, redirect, confirmationType, onSubmitFromProps],
   )
 
   const onSubmit = useCallback(
@@ -286,13 +296,18 @@ export const FormBlockClient: React.FC<{ id?: string } & FormBlockType> = (props
           {!hasSubmitted && (
             <>
               {/* Regular fields inside <form> */}
-              <form id={formID} onSubmit={handleSubmit(onSubmit)}>
+              <form id={resolvedFormID} onSubmit={handleSubmit(onSubmit)}>
                 <div className="mb-4 last:mb-0 grid grid-cols-6 gap-3">
                   {regularFields.map((field, index) => renderField(field, index))}
                 </div>
 
                 {!hasPayment && !hideSubmitButton && (
-                  <Button form={formID} type="submit" variant="default" disabled={isLoading}>
+                  <Button
+                    form={resolvedFormID}
+                    type="submit"
+                    variant="default"
+                    disabled={isLoading}
+                  >
                     {isLoading ? (
                       <span>
                         {submitButtonLabel} <LoaderCircle className="animate-spin inline ml-2" />
@@ -315,7 +330,7 @@ export const FormBlockClient: React.FC<{ id?: string } & FormBlockType> = (props
                     <div className="mt-6">
                       <PaymentField
                         {...paymentField}
-                        formId={formID}
+                        formId={resolvedFormID}
                         submissionData={submissionDataForPayment}
                         onSuccess={handlePaymentSuccess}
                         disabled={isLoading}

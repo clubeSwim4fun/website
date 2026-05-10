@@ -21,23 +21,16 @@ type StepPaymentContextType = {
   /** Set by a form select field marked as payment selector */
   selectedPaymentOption: PaymentOption | null
   setSelectedPaymentOption: (opt: PaymentOption | null) => void
-  /**
-   * Ref-based flag — set synchronously when a Select with isPaymentSelector mounts.
-   * Payment components read this ref inside their init effect (after all sibling effects
-   * have run) to decide whether to wait for a selection or use their own configured amount.
-   */
   hasPaymentSelectorRef: React.MutableRefObject<boolean>
   registerPaymentSelector: (defaultOption?: PaymentOption) => void
-  /**
-   * Form validity gate — when a FormBlock is on the same stripe step it registers
-   * its RHF trigger here. The pay button calls this before submitting so invalid
-   * fields are highlighted and the payment is blocked.
-   */
   registerFormValidation: (fn: () => Promise<boolean>) => void
   triggerFormValidation: () => Promise<boolean>
   /** Live form validity — false when a co-located FormBlock has invalid fields */
   formIsValid: boolean
   setFormIsValid: (valid: boolean) => void
+  /** Form ID registered by a form-variant CardBlock on a previous step */
+  stepFormIdRef: React.MutableRefObject<string | null>
+  setStepFormId: (id: string) => void
 }
 
 const StepPaymentContext = createContext<StepPaymentContextType | null>(null)
@@ -56,6 +49,10 @@ export const StepPaymentProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const [selectedPaymentOption, setSelectedPaymentOption] = useState<PaymentOption | null>(null)
   // true by default — only false when a FormBlock explicitly registers and reports invalid
   const [formIsValid, setFormIsValid] = useState(true)
+  const stepFormIdRef = useRef<string | null>(null)
+  const setStepFormId = React.useCallback((id: string) => {
+    stepFormIdRef.current = id
+  }, [])
 
   const registerPaymentSelector = (defaultOption?: PaymentOption) => {
     hasPaymentSelectorRef.current = true
@@ -105,6 +102,8 @@ export const StepPaymentProvider: React.FC<{ children: React.ReactNode }> = ({ c
         triggerFormValidation,
         formIsValid,
         setFormIsValid,
+        stepFormIdRef,
+        setStepFormId,
       }}
     >
       {children}
