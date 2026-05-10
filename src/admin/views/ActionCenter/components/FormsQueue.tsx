@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { T } from '../tokens'
+import { useACT } from '../LocaleContext'
 import QueueSection, {
   ActionsCell,
   EmptySection,
@@ -50,6 +51,7 @@ function AssignIdDialog({
   onClose: () => void
   onSave: (assignId: boolean, groupId?: string, idNumber?: string) => Promise<void>
 }) {
+  const t = useACT()
   const [step, setStep] = useState<'ask' | 'form'>('ask')
   const [selectedGroupId, setSelectedGroupId] = useState('')
   const [idNumber, setIdNumber] = useState('')
@@ -112,7 +114,7 @@ function AssignIdDialog({
                   marginBottom: 6,
                 }}
               >
-                Assign an ID to this user?
+                {t.assignIdQuestion}
               </div>
               <div style={{ fontSize: 12, color: T.textMuted }}>
                 {fp.user ? `${fp.user.name} ${fp.user.surname}` : '—'}
@@ -132,7 +134,7 @@ function AssignIdDialog({
                   cursor: 'pointer',
                 }}
               >
-                Cancel
+                {t.cancel}
               </button>
               <button
                 onClick={handleNo}
@@ -148,7 +150,7 @@ function AssignIdDialog({
                   cursor: saving ? 'not-allowed' : 'pointer',
                 }}
               >
-                No — just mark handled
+                {t.noJustMark}
               </button>
               <button
                 onClick={handleYes}
@@ -163,7 +165,7 @@ function AssignIdDialog({
                   cursor: 'pointer',
                 }}
               >
-                Yes — assign ID
+                {t.yesAssignId}
               </button>
             </div>
           </>
@@ -179,7 +181,7 @@ function AssignIdDialog({
                   marginBottom: 6,
                 }}
               >
-                Assign ID
+                {t.assignIdTitle}
               </div>
               <div style={{ fontSize: 12, color: T.textMuted }}>
                 {fp.user ? `${fp.user.name} ${fp.user.surname}` : '—'}
@@ -199,7 +201,7 @@ function AssignIdDialog({
                     letterSpacing: '0.6px',
                   }}
                 >
-                  Group
+                  {t.groupLabel}
                 </label>
                 <select
                   value={selectedGroupId}
@@ -218,12 +220,12 @@ function AssignIdDialog({
                     outline: 'none',
                   }}
                 >
-                  <option value="">Select a group…</option>
+                  <option value="">{t.selectGroup}</option>
                   {groups.map((g) => (
                     <option key={g.id} value={g.id}>
                       {g.title}
-                      {g.relationTo === 'group-categories' ? ' (subgroup)' : ''}
-                      {g.isPermanentId ? ' — permanent' : ' — seasonal'}
+                      {g.relationTo === 'group-categories' ? ` ${t.subgroup}` : ''}
+                      {g.isPermanentId ? ` ${t.permanent}` : ` ${t.seasonal}`}
                     </option>
                   ))}
                 </select>
@@ -242,7 +244,7 @@ function AssignIdDialog({
                       letterSpacing: '0.6px',
                     }}
                   >
-                    {selectedGroup?.isPermanentId ? 'Permanent ID' : 'Seasonal ID'}
+                    {selectedGroup?.isPermanentId ? t.permanentId : t.seasonalId}
                     {selectedGroup?.isPermanentId && selectedGroup.userField
                       ? ` (→ ${selectedGroup.userField})`
                       : ''}
@@ -251,7 +253,7 @@ function AssignIdDialog({
                     type="text"
                     value={idNumber}
                     onChange={(e) => setIdNumber(e.target.value)}
-                    placeholder="Enter ID number…"
+                    placeholder={t.idNumberPlaceholder}
                     style={{
                       width: '100%',
                       background: T.bgRaised,
@@ -265,7 +267,7 @@ function AssignIdDialog({
                   />
                   {selectedGroup && !selectedGroup.isPermanentId && (
                     <div style={{ fontSize: 11, color: T.textMuted, marginTop: 4 }}>
-                      Stored in Temporary Group IDs for the current season.
+                      {t.seasonalNote}
                     </div>
                   )}
                 </div>
@@ -286,7 +288,7 @@ function AssignIdDialog({
                   cursor: 'pointer',
                 }}
               >
-                Back
+                {t.back}
               </button>
               <button
                 onClick={handleSave}
@@ -304,7 +306,7 @@ function AssignIdDialog({
                   opacity: saving || !selectedGroupId || !idNumber.trim() ? 0.6 : 1,
                 }}
               >
-                {saving ? 'Saving…' : 'Save & Mark Handled'}
+                {saving ? t.saving : t.saveMarkHandled}
               </button>
             </div>
           </>
@@ -316,6 +318,7 @@ function AssignIdDialog({
 
 // ─── Main component ───────────────────────────────────────────────────────────
 export default function FormsQueue({ sectionRef, onAction, onCountChange }: FormsQueueProps) {
+  const t = useACT()
   const [docs, setDocs] = useState<FormPayment[]>([])
   const [groups, setGroups] = useState<Group[]>([])
   const [loading, setLoading] = useState(true)
@@ -361,13 +364,13 @@ export default function FormsQueue({ sectionRef, onAction, onCountChange }: Form
       const data = await res.json()
       if (!data.success) throw new Error(data.error ?? 'Unknown error')
 
-      onAction('Form submission marked as handled', 'success')
+      onAction(t.formHandledMsg, 'success')
       const next = docs.filter((d) => d.id !== dialogFp.id)
       setDocs(next)
       onCountChange(next.length)
       setExpandedId(null)
     } catch (err) {
-      onAction(`Error: ${String(err)}`, 'error')
+      onAction(t.formHandleFailMsg.replace('{err}', String(err)), 'error')
     } finally {
       setDialogFp(null)
     }
@@ -381,32 +384,28 @@ export default function FormsQueue({ sectionRef, onAction, onCountChange }: Form
         id="q-forms"
         sectionRef={sectionRef}
         icon="📋"
-        title="Paid Form Submissions"
+        title={t.paidFormSubmissions}
         count={docs.length}
         oldestAt={oldest?.createdAt ?? null}
         oldestName={oldest?.user ? `${oldest.user.name} ${oldest.user.surname}` : null}
       >
         {loading ? (
           <div style={{ padding: 24, textAlign: 'center', color: T.textMuted, fontSize: 13 }}>
-            Loading…
+            {t.loading}
           </div>
         ) : docs.length === 0 ? (
-          <EmptySection
-            icon="📋"
-            title="All form submissions handled"
-            sub="Paid form submissions requiring action will appear here"
-          />
+          <EmptySection icon="📋" title={t.allFormsHandled} sub={t.newFormsHere} />
         ) : (
           <TableWrap>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
               <thead>
                 <tr>
                   <Th width={28} />
-                  <Th>Submitter</Th>
-                  <Th>Form</Th>
-                  <Th>Paid</Th>
-                  <Th>Amount</Th>
-                  <Th>Actions</Th>
+                  <Th>{t.submitter}</Th>
+                  <Th>{t.form}</Th>
+                  <Th>{t.paid}</Th>
+                  <Th>{t.amount}</Th>
+                  <Th>{t.actions}</Th>
                 </tr>
               </thead>
               <tbody>
@@ -450,25 +449,25 @@ export default function FormsQueue({ sectionRef, onAction, onCountChange }: Form
                       {isExpanded && (
                         <ExpandPanel colSpan={6}>
                           <PanelCols>
-                            <PanelBox title="Submission Info">
+                            <PanelBox title={t.submissionInfo}>
                               <PanelField
-                                label="Submitter"
+                                label={t.submitter}
                                 value={fp.user ? `${fp.user.name} ${fp.user.surname}` : '—'}
                                 highlight
                               />
-                              <PanelField label="Email" value={fp.user?.email} />
-                              <PanelField label="Form" value={fp.form?.title} highlight />
-                              <PanelField label="Amount" value={`€${fp.amount}`} />
-                              <PanelField label="Description" value={fp.description} />
+                              <PanelField label={t.email} value={fp.user?.email} />
+                              <PanelField label={t.form} value={fp.form?.title} highlight />
+                              <PanelField label={t.amount} value={`€${fp.amount}`} />
+                              <PanelField label={t.description} value={fp.description} />
                             </PanelBox>
-                            <PanelBox title="Submission Data" scrollable>
+                            <PanelBox title={t.submissionData} scrollable>
                               {fp.submissionData.length === 0 ? (
                                 <div style={{ fontSize: 12, color: T.textMuted, padding: '8px 0' }}>
-                                  No submission data
+                                  {t.noSubmissionDataLabel}
                                 </div>
                               ) : (
                                 fp.submissionData.map((d, i) => (
-                                  <SubmissionField key={i} item={d} />
+                                  <SubmissionField key={i} item={d} openLabel={t.openInNewTab} />
                                 ))
                               )}
                             </PanelBox>
@@ -495,7 +494,7 @@ export default function FormsQueue({ sectionRef, onAction, onCountChange }: Form
                                 cursor: 'pointer',
                               }}
                             >
-                              Close
+                              {t.close}
                             </button>
                             <button
                               onClick={() => handleMarkAsHandled(fp)}
@@ -510,7 +509,7 @@ export default function FormsQueue({ sectionRef, onAction, onCountChange }: Form
                                 cursor: 'pointer',
                               }}
                             >
-                              ✓ Mark as Handled
+                              {t.markAsHandled}
                             </button>
                           </div>
                         </ExpandPanel>
@@ -538,9 +537,12 @@ export default function FormsQueue({ sectionRef, onAction, onCountChange }: Form
 
 function SubmissionField({
   item,
+  openLabel,
 }: {
   item: { field: string; label: string; value: string; isFile: boolean }
+  openLabel: string
 }) {
+  const t = useACT()
   const [lightbox, setLightbox] = useState<string | null>(null)
 
   if (!item.value) {
@@ -597,7 +599,7 @@ function SubmissionField({
                       whiteSpace: 'nowrap',
                     }}
                   >
-                    View
+                    {t.view}
                   </button>
                 </div>
               )
@@ -679,7 +681,7 @@ function SubmissionField({
                   rel="noopener noreferrer"
                   style={{ fontSize: 12, color: T.teal, textDecoration: 'none' }}
                 >
-                  Open in new tab ↗
+                  {t.openInNewTab}
                 </a>
               </div>
             </div>

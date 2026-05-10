@@ -1,6 +1,7 @@
 'use client'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { T } from '../tokens'
+import { useACT } from '../LocaleContext'
 import QueueSection, {
   EmptySection,
   FilterReset,
@@ -35,6 +36,7 @@ interface DorsalsQueueProps {
 }
 
 export default function DorsalsQueue({ sectionRef, onAction, onCountChange }: DorsalsQueueProps) {
+  const t = useACT()
   const [docs, setDocs] = useState<DorsalRow[]>([])
   const [loading, setLoading] = useState(true)
   const [eventFilter, setEventFilter] = useState('all')
@@ -90,7 +92,7 @@ export default function DorsalsQueue({ sectionRef, onAction, onCountChange }: Do
         : 'another athlete'
       setDorsalErrors((prev) => ({
         ...prev,
-        [key]: `⚠ ${cleaned} already assigned to ${conflictName}`,
+        [key]: t.alreadyAssigned.replace('{n}', cleaned).replace('{name}', conflictName),
       }))
     } else {
       setDorsalErrors((prev) => {
@@ -120,9 +122,9 @@ export default function DorsalsQueue({ sectionRef, onAction, onCountChange }: Do
         delete next[key]
         return next
       })
-      onAction(`Dorsal ${value} assigned`, 'success')
+      onAction(t.dorsalSavedMsg.replace('{n}', value), 'success')
     } catch {
-      onAction('Failed to save dorsal', 'error')
+      onAction(t.dorsalSaveFailMsg, 'error')
     }
   }
 
@@ -158,28 +160,28 @@ export default function DorsalsQueue({ sectionRef, onAction, onCountChange }: Do
       id="q-dorsals"
       sectionRef={sectionRef}
       icon="🎽"
-      title="Dorsal Assignment"
+      title={t.dorsalAssignment}
       count={docs.length}
       oldestAt={oldest?.createdAt ?? null}
       hasFilter
       filterContent={
         <>
           <FilterSelect
-            label="Event"
+            label={t.event}
             value={eventFilter}
             onChange={setEventFilter}
             options={[
-              { value: 'all', label: 'All events' },
+              { value: 'all', label: t.allEvents },
               ...events.map(([id, title]) => ({ value: id, label: title })),
             ]}
           />
           <FilterSelect
-            label="Sort"
+            label={t.sort}
             value={sort}
             onChange={setSort}
             options={[
-              { value: 'event', label: 'Event date' },
-              { value: 'paid', label: 'Paid date' },
+              { value: 'event', label: t.eventDate },
+              { value: 'paid', label: t.paidDate },
             ]}
           />
           <FilterReset
@@ -193,14 +195,10 @@ export default function DorsalsQueue({ sectionRef, onAction, onCountChange }: Do
     >
       {loading ? (
         <div style={{ padding: 24, textAlign: 'center', color: T.textMuted, fontSize: 13 }}>
-          Loading…
+          {t.loading}
         </div>
       ) : filtered.length === 0 ? (
-        <EmptySection
-          icon="🎽"
-          title="All dorsals assigned"
-          sub="Paid event orders needing dorsal assignment will appear here"
-        />
+        <EmptySection icon="🎽" title={t.allDorsalsAssigned} sub={t.newDorsalsHere} />
       ) : (
         <>
           {/* Bulk bar */}
@@ -225,11 +223,11 @@ export default function DorsalsQueue({ sectionRef, onAction, onCountChange }: Do
                 >
                   {selected.size}
                 </span>{' '}
-                selected
+                {t.selected}
               </span>
               <button
                 onClick={() => {
-                  onAction(`${selected.size} items marked as purchased (no dorsal)`, 'success')
+                  onAction(t.markPurchased, 'success')
                   setSelected(new Set())
                 }}
                 style={{
@@ -243,7 +241,7 @@ export default function DorsalsQueue({ sectionRef, onAction, onCountChange }: Do
                   cursor: 'pointer',
                 }}
               >
-                ✓ Mark as purchased (no dorsal)
+                {t.markPurchased}
               </button>
               <button
                 onClick={() => setSelected(new Set())}
@@ -256,7 +254,7 @@ export default function DorsalsQueue({ sectionRef, onAction, onCountChange }: Do
                   cursor: 'pointer',
                 }}
               >
-                ✕ Clear
+                {t.clearSelection}
               </button>
             </div>
           )}
@@ -273,13 +271,13 @@ export default function DorsalsQueue({ sectionRef, onAction, onCountChange }: Do
                       style={{ accentColor: T.teal, width: 14, height: 14, cursor: 'pointer' }}
                     />
                   </Th>
-                  <Th>Athlete</Th>
-                  <Th>Fed. ID</Th>
-                  <Th>Birth Date</Th>
-                  <Th>Event</Th>
-                  <Th>Category</Th>
-                  <Th>Paid</Th>
-                  <Th>Dorsal</Th>
+                  <Th>{t.athlete}</Th>
+                  <Th>{t.fedId}</Th>
+                  <Th>{t.birthDate}</Th>
+                  <Th>{t.event}</Th>
+                  <Th>{t.category}</Th>
+                  <Th>{t.paid}</Th>
+                  <Th>{t.dorsal}</Th>
                   <Th />
                 </tr>
               </thead>
@@ -466,7 +464,7 @@ export default function DorsalsQueue({ sectionRef, onAction, onCountChange }: Do
                               opacity: !dorsalVal || !!dorsalError ? 0.3 : 1,
                             }}
                           >
-                            Save
+                            {t.save}
                           </button>
                         )}
                       </td>
@@ -487,7 +485,7 @@ export default function DorsalsQueue({ sectionRef, onAction, onCountChange }: Do
                 gap: 8,
               }}
             >
-              <span style={{ fontSize: 11, color: T.textMuted }}>Select all for:</span>
+              <span style={{ fontSize: 11, color: T.textMuted }}>{t.selectAll}</span>
               {events.map(([id, title]) => {
                 const count = filtered.filter((d) => d.event?.id === id).length
                 return (

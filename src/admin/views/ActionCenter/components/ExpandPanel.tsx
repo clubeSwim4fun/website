@@ -1,6 +1,7 @@
 'use client'
 import React from 'react'
 import { T } from '../tokens'
+import { useACT } from '../LocaleContext'
 
 interface ExpandPanelProps {
   colSpan: number
@@ -160,6 +161,7 @@ export function DecisionSection({
   loading: boolean
   concurrencyWarning?: string | null
 }) {
+  const t = useACT()
   return (
     <div
       style={{
@@ -181,7 +183,7 @@ export function DecisionSection({
           borderBottom: `1px solid ${T.borderSubtle}`,
         }}
       >
-        Decision
+        {t.decision}
       </div>
 
       {concurrencyWarning && (
@@ -250,12 +252,10 @@ export function DecisionSection({
               </div>
               <div>
                 <div style={{ fontSize: 13, color: T.textPrimary, fontWeight: 500 }}>
-                  {opt === 'approve' ? 'Approve' : 'Reject'}
+                  {opt === 'approve' ? t.approve : t.reject}
                 </div>
                 <div style={{ fontSize: 11, color: T.textMuted }}>
-                  {opt === 'approve'
-                    ? 'User proceeds to payment — confirmation email sent'
-                    : 'Select fields that need correction below'}
+                  {opt === 'approve' ? t.approveDesc : t.rejectDesc}
                 </div>
               </div>
             </label>
@@ -283,7 +283,7 @@ export function DecisionSection({
               marginBottom: 8,
             }}
           >
-            Fields to fix
+            {t.fieldsToFix}
           </div>
           <div
             style={{
@@ -323,7 +323,7 @@ export function DecisionSection({
       <textarea
         value={note}
         onChange={(e) => onNoteChange(e.target.value)}
-        placeholder="Optional note to user (included in notification email)…"
+        placeholder={t.notePlaceholder}
         style={{
           width: '100%',
           background: T.bgActive,
@@ -357,7 +357,7 @@ export function DecisionSection({
             cursor: 'pointer',
           }}
         >
-          Cancel
+          {t.cancel}
         </button>
         <button
           onClick={onReject}
@@ -378,7 +378,7 @@ export function DecisionSection({
             gap: 5,
           }}
         >
-          ✕ Reject
+          {t.rejectingLabel}
         </button>
         <button
           onClick={onApprove}
@@ -398,7 +398,7 @@ export function DecisionSection({
             gap: 5,
           }}
         >
-          {loading ? '…' : '✓ Approve'}
+          {loading ? '…' : t.approvingLabel}
         </button>
       </div>
     </div>

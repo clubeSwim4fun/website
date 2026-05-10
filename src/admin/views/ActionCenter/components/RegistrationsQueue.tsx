@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { T } from '../tokens'
 import { maskNif } from '../utils'
+import { useACT } from '../LocaleContext'
 import QueueSection, {
   ActionsCell,
   EmptySection,
@@ -66,19 +67,19 @@ interface Registration {
   }[]
 }
 
-const REJECTION_FIELDS = [
-  { value: 'profilePicture', label: 'Profile photo' },
-  { value: 'identityCardFile', label: 'Identity doc' },
-  { value: 'nif', label: 'NIF document' },
-  { value: 'nationality', label: 'Nationality' },
-  { value: 'phoneNumber', label: 'Phone number' },
-  { value: 'identityCardNumber', label: 'ID number' },
-  { value: 'gender', label: 'Gender' },
-  { value: 'address', label: 'Address' },
-  { value: 'emergencyContact', label: 'Emergency contact' },
-  { value: 'emergencyPhone', label: 'Emergency phone' },
-  { value: 'tshirtSize', label: 'T-shirt size' },
-]
+const REJECTION_FIELD_KEYS = [
+  { value: 'profilePicture', tKey: 'rfProfilePhoto' },
+  { value: 'identityCardFile', tKey: 'rfIdentityDoc' },
+  { value: 'nif', tKey: 'rfNif' },
+  { value: 'nationality', tKey: 'rfNationality' },
+  { value: 'phoneNumber', tKey: 'rfPhone' },
+  { value: 'identityCardNumber', tKey: 'rfIdNumber' },
+  { value: 'gender', tKey: 'rfGender' },
+  { value: 'address', tKey: 'rfAddress' },
+  { value: 'emergencyContact', tKey: 'rfEmergencyContact' },
+  { value: 'emergencyPhone', tKey: 'rfEmergencyPhone' },
+  { value: 'tshirtSize', tKey: 'rfTshirtSize' },
+] as const
 
 interface RegistrationsQueueProps {
   sectionRef: React.RefObject<HTMLDivElement | null>
@@ -91,6 +92,11 @@ export default function RegistrationsQueue({
   onAction,
   onCountChange,
 }: RegistrationsQueueProps) {
+  const t = useACT()
+  const rejectionFields = REJECTION_FIELD_KEYS.map((f) => ({
+    value: f.value,
+    label: t[f.tKey],
+  }))
   const [docs, setDocs] = useState<Registration[]>([])
   const [loading, setLoading] = useState(true)
   const [sort, setSort] = useState('oldest')
@@ -146,7 +152,7 @@ export default function RegistrationsQueue({
       // Optimistic: mark for removal after undo window
       setPendingRemove(id)
       setExpandedId(null)
-      onAction('Registration approved — email sent', 'success')
+      onAction(t.regApprovedMsg, 'success')
 
       setTimeout(() => {
         setDocs((prev) => prev.filter((d) => d.id !== id))
@@ -154,7 +160,7 @@ export default function RegistrationsQueue({
         setPendingRemove(null)
       }, 4000)
     } catch {
-      onAction('Failed to approve registration', 'error')
+      onAction(t.regApproveFailMsg, 'error')
     } finally {
       setActionLoading(false)
     }
@@ -174,7 +180,7 @@ export default function RegistrationsQueue({
 
       setPendingRemove(id)
       setExpandedId(null)
-      onAction('Registration rejected — email sent', 'success')
+      onAction(t.regRejectedMsg, 'success')
 
       setTimeout(() => {
         setDocs((prev) => prev.filter((d) => d.id !== id))
@@ -182,7 +188,7 @@ export default function RegistrationsQueue({
         setPendingRemove(null)
       }, 4000)
     } catch {
-      onAction('Failed to reject registration', 'error')
+      onAction(t.regRejectFailMsg, 'error')
     } finally {
       setActionLoading(false)
     }
@@ -195,7 +201,7 @@ export default function RegistrationsQueue({
       id="q-registrations"
       sectionRef={sectionRef}
       icon="👤"
-      title="User Registrations"
+      title={t.userRegistrations}
       count={docs.length}
       oldestAt={oldest?.createdAt ?? null}
       oldestName={oldest ? `${oldest.name} ${oldest.surname}` : null}
@@ -203,27 +209,27 @@ export default function RegistrationsQueue({
       filterContent={
         <>
           <FilterSelect
-            label="Sort"
+            label={t.sort}
             value={sort}
             onChange={setSort}
             options={[
-              { value: 'oldest', label: 'Oldest first' },
-              { value: 'newest', label: 'Newest first' },
-              { value: 'name', label: 'Name A–Z' },
+              { value: 'oldest', label: t.oldestFirst },
+              { value: 'newest', label: t.newestFirst },
+              { value: 'name', label: t.nameAZ },
             ]}
           />
           <FilterSelect
-            label="Status"
+            label={t.status}
             value={statusFilter}
             onChange={setStatusFilter}
             options={[
-              { value: 'all', label: 'All' },
-              { value: 'complete', label: 'Complete docs' },
-              { value: 'missing', label: 'Missing docs' },
-              { value: 'resubmission', label: 'Re-submission' },
+              { value: 'all', label: t.all },
+              { value: 'complete', label: t.completeDocs },
+              { value: 'missing', label: t.missingDocs },
+              { value: 'resubmission', label: t.resubmission },
             ]}
           />
-          <FilterSearch value={search} onChange={setSearch} placeholder="Search name or email…" />
+          <FilterSearch value={search} onChange={setSearch} placeholder={t.searchPlaceholder} />
           <FilterReset
             onClick={() => {
               setSort('oldest')
@@ -236,25 +242,21 @@ export default function RegistrationsQueue({
     >
       {loading ? (
         <div style={{ padding: 24, textAlign: 'center', color: T.textMuted, fontSize: 13 }}>
-          Loading…
+          {t.loading}
         </div>
       ) : docs.length === 0 ? (
-        <EmptySection
-          icon="👤"
-          title="All registrations reviewed"
-          sub="New registration requests will appear here"
-        />
+        <EmptySection icon="👤" title={t.allRegistrationsReviewed} sub={t.newRegistrationsHere} />
       ) : (
         <TableWrap>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
             <thead>
               <tr>
                 <Th width={28} />
-                <Th>Member</Th>
-                <Th>NIF</Th>
-                <Th>Submitted</Th>
-                <Th>Documents</Th>
-                <Th>Actions</Th>
+                <Th>{t.member}</Th>
+                <Th>{t.nif}</Th>
+                <Th>{t.submitted}</Th>
+                <Th>{t.documents}</Th>
+                <Th>{t.actions}</Th>
               </tr>
             </thead>
             <tbody>
@@ -288,7 +290,7 @@ export default function RegistrationsQueue({
                                 color: T.blue,
                               }}
                             >
-                              🔄 Re-submission
+                              {t.resubmissionBadge}
                             </span>
                           ) : undefined
                         }
@@ -317,39 +319,39 @@ export default function RegistrationsQueue({
                     {isExpanded && (
                       <ExpandPanel colSpan={6}>
                         <PanelCols>
-                          <PanelBox title="Personal Info" scrollable>
+                          <PanelBox title={t.personalInfo} scrollable>
                             <PanelField
-                              label="Full name"
+                              label={t.fullName}
                               value={`${reg.name} ${reg.surname}`}
                               highlight
                             />
-                            <PanelField label="Email" value={reg.email} />
-                            <PanelField label="Phone" value={reg.phone} />
-                            <PanelField label="NIF" value={reg.nif} highlight />
+                            <PanelField label={t.email} value={reg.email} />
+                            <PanelField label={t.phone} value={reg.phone} />
+                            <PanelField label={t.nif} value={reg.nif} highlight />
                             <PanelField
-                              label="Birth date"
+                              label={t.birthDateLabel}
                               value={
                                 reg.birthDate
                                   ? new Date(reg.birthDate).toLocaleDateString('pt-PT')
                                   : null
                               }
                             />
-                            <PanelField label="Identity doc nº" value={reg.identity} />
-                            <PanelField label="Gender" value={reg.gender} />
-                            <PanelField label="Nationality" value={reg.nationality} />
-                            <PanelField label="Associate ID" value={reg.associateId} />
-                            <PanelField label="Federation ID" value={reg.federationId} />
-                            <PanelField label="T-shirt size" value={reg.tshirtSize} />
-                            <PanelField label="Sport insurance" value={reg.sportInsurance} />
-                            <PanelField label="Emergency contact" value={reg.emergencyContact} />
-                            <PanelField label="Emergency phone" value={reg.emergencyPhone} />
+                            <PanelField label={t.identityDocNo} value={reg.identity} />
+                            <PanelField label={t.gender} value={reg.gender} />
+                            <PanelField label={t.nationality} value={reg.nationality} />
+                            <PanelField label={t.associateId} value={reg.associateId} />
+                            <PanelField label={t.federationId} value={reg.federationId} />
+                            <PanelField label={t.tshirtSize} value={reg.tshirtSize} />
+                            <PanelField label={t.sportInsurance} value={reg.sportInsurance} />
+                            <PanelField label={t.emergencyContact} value={reg.emergencyContact} />
+                            <PanelField label={t.emergencyPhone} value={reg.emergencyPhone} />
                             <PanelField
-                              label="Email notifications"
-                              value={reg.emailNotificationsEnabled ? 'Yes' : 'No'}
+                              label={t.emailNotifications}
+                              value={reg.emailNotificationsEnabled ? t.yes : t.no}
                             />
                             {reg.address && (
                               <PanelField
-                                label="Address"
+                                label={t.address}
                                 value={
                                   [
                                     reg.address.street,
@@ -363,42 +365,55 @@ export default function RegistrationsQueue({
                               />
                             )}
                             {reg.disability.length > 0 && (
-                              <PanelField label="Disability" value={reg.disability.join(', ')} />
+                              <PanelField label={t.disability} value={reg.disability.join(', ')} />
                             )}
                             {reg.groups.length > 0 && (
                               <PanelField
-                                label="Groups"
+                                label={t.groups}
                                 value={reg.groups.map((g) => g.label).join(', ')}
                               />
                             )}
                             {reg.heardAboutClub && (
-                              <PanelField label="Heard about club" value={reg.heardAboutClub} />
+                              <PanelField label={t.heardAboutClub} value={reg.heardAboutClub} />
                             )}
                             {reg.isResubmission && reg.fieldsToUpdate.length > 0 && (
                               <PanelField
-                                label="Previous rejection"
+                                label={t.previousRejection}
                                 value={reg.fieldsToUpdate.join(', ')}
                                 valueColor={T.amber}
                               />
                             )}
                           </PanelBox>
-                          <PanelBox title="Documents">
+                          <PanelBox title={t.documentsLabel}>
                             <DocItem
                               ok={reg.hasProfilePicture}
-                              name="Profile Photo"
+                              name={t.profilePhoto}
                               file={reg.profilePicture}
+                              viewLabel={t.view}
+                              openLabel={t.openInNewTab}
+                              missingLabel={t.missing}
                             />
                             {reg.identityFiles.length > 0 ? (
                               reg.identityFiles.map((f, i) => (
                                 <DocItem
                                   key={f.id}
                                   ok
-                                  name={`Identity Document${reg.identityFiles.length > 1 ? ` ${i + 1}` : ''}`}
+                                  name={`${t.identityDocument}${reg.identityFiles.length > 1 ? ` ${i + 1}` : ''}`}
                                   file={f}
+                                  viewLabel={t.view}
+                                  openLabel={t.openInNewTab}
+                                  missingLabel={t.missing}
                                 />
                               ))
                             ) : (
-                              <DocItem ok={false} name="Identity Document" file={null} />
+                              <DocItem
+                                ok={false}
+                                name={t.identityDocument}
+                                file={null}
+                                viewLabel={t.view}
+                                openLabel={t.openInNewTab}
+                                missingLabel={t.missing}
+                              />
                             )}
                             {/* NIF is a text field, not a file — show as info row */}
                             <div
@@ -417,8 +432,8 @@ export default function RegistrationsQueue({
                                   flex: 1,
                                 }}
                               >
-                                NIF Document
-                                {!reg.hasNif && ' — missing'}
+                                {t.nifDocument}
+                                {!reg.hasNif && t.missing}
                               </span>
                               {reg.hasNif && (
                                 <span
@@ -440,7 +455,7 @@ export default function RegistrationsQueue({
                         <DecisionSection
                           decision={decision}
                           onDecisionChange={setDecision}
-                          rejectionFields={REJECTION_FIELDS}
+                          rejectionFields={rejectionFields}
                           selectedFields={selectedFields}
                           onFieldToggle={(f) =>
                             setSelectedFields((prev) =>
@@ -494,7 +509,21 @@ type MediaFile = {
   mimeType: string | null
 } | null
 
-function DocItem({ ok, name, file }: { ok: boolean; name: string; file: MediaFile }) {
+function DocItem({
+  ok,
+  name,
+  file,
+  viewLabel,
+  openLabel,
+  missingLabel,
+}: {
+  ok: boolean
+  name: string
+  file: MediaFile
+  viewLabel: string
+  openLabel: string
+  missingLabel: string
+}) {
   const [lightbox, setLightbox] = useState<string | null>(null)
   const isImage = file?.mimeType?.startsWith('image/') ?? false
   const viewUrl = file?.url ?? null
@@ -513,7 +542,7 @@ function DocItem({ ok, name, file }: { ok: boolean; name: string; file: MediaFil
         <span style={{ fontSize: 14 }}>{ok ? '✅' : '❌'}</span>
         <span style={{ fontSize: 12, color: ok ? T.textSecondary : T.red, flex: 1 }}>
           {name}
-          {!ok && ' — missing'}
+          {!ok && missingLabel}
         </span>
         <div style={{ display: 'flex', gap: 5 }}>
           {ok && viewUrl ? (
@@ -529,7 +558,7 @@ function DocItem({ ok, name, file }: { ok: boolean; name: string; file: MediaFil
                 cursor: 'pointer',
               }}
             >
-              View
+              {viewLabel}
             </button>
           ) : (
             <button
@@ -545,7 +574,7 @@ function DocItem({ ok, name, file }: { ok: boolean; name: string; file: MediaFil
                 cursor: 'not-allowed',
               }}
             >
-              View
+              {viewLabel}
             </button>
           )}
         </div>
@@ -628,7 +657,7 @@ function DocItem({ ok, name, file }: { ok: boolean; name: string; file: MediaFil
                 rel="noopener noreferrer"
                 style={{ fontSize: 12, color: T.teal, textDecoration: 'none' }}
               >
-                Open in new tab ↗
+                {openLabel}
               </a>
             </div>
           </div>

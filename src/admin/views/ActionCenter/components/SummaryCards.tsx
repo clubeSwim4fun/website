@@ -2,6 +2,7 @@
 import React from 'react'
 import { T } from '../tokens'
 import { relativeTime } from '../utils'
+import { useACT } from '../LocaleContext'
 
 interface QueueInfo {
   count: number
@@ -138,9 +139,10 @@ function SummaryCard({
 }
 
 export default function SummaryCards({ queues, onCardClick }: SummaryCardsProps) {
+  const t = useACT()
   const regFlag =
     queues.registrations.urgency === 'red' || queues.registrations.urgency === 'amber'
-      ? `⚠ oldest ${queues.registrations.oldestAt ? relativeTime(queues.registrations.oldestAt) : ''}`
+      ? `⚠ ${t.oldest} ${queues.registrations.oldestAt ? relativeTime(queues.registrations.oldestAt) : ''}`
       : undefined
 
   return (
@@ -154,9 +156,9 @@ export default function SummaryCards({ queues, onCardClick }: SummaryCardsProps)
     >
       <SummaryCard
         icon="👤"
-        label="Registrations"
+        label={t.registrations}
         count={queues.registrations.count}
-        status="pending review"
+        status={t.pendingReview}
         flag={regFlag}
         flagColor="amber"
         isEmpty={queues.registrations.count === 0}
@@ -165,36 +167,36 @@ export default function SummaryCards({ queues, onCardClick }: SummaryCardsProps)
       />
       <SummaryCard
         icon="🏷️"
-        label="Subscriptions"
+        label={t.subscriptions}
         count={queues.subscriptions.count}
-        status="awaiting approval"
+        status={t.awaitingApproval}
         isEmpty={queues.subscriptions.count === 0}
         onClick={() => onCardClick('subscriptions')}
         urgency={queues.subscriptions.urgency}
       />
       <SummaryCard
         icon="🎽"
-        label="Dorsals"
+        label={t.dorsals}
         count={queues.dorsals.count}
-        status="to assign"
+        status={t.toAssign}
         isEmpty={queues.dorsals.count === 0}
         onClick={() => onCardClick('dorsals')}
         urgency={queues.dorsals.urgency}
       />
       <SummaryCard
         icon="📋"
-        label="Form Reviews"
+        label={t.formReviews}
         count={queues.forms.count}
-        status="to complete"
+        status={t.toComplete}
         isEmpty={queues.forms.count === 0}
         onClick={() => onCardClick('forms')}
         urgency={queues.forms.urgency}
       />
       <SummaryCard
         icon="📖"
-        label="Stories"
+        label={t.stories}
         count={queues.stories.count}
-        status="all reviewed"
+        status={t.allReviewed}
         isEmpty={queues.stories.count === 0}
         onClick={() => onCardClick('stories')}
         urgency={queues.stories.urgency}

@@ -1,8 +1,10 @@
 'use client'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Banner, LoadingOverlay } from '@payloadcms/ui'
+import { useTranslation } from '@payloadcms/ui'
 import { useRequireAdmin } from '@/admin/utils/requireAdmin'
 import { T } from './tokens'
+import { ACLocaleProvider, useACT } from './LocaleContext'
 import SummaryCards from './components/SummaryCards'
 import RegistrationsQueue from './components/RegistrationsQueue'
 import SubscriptionsQueue from './components/SubscriptionsQueue'
@@ -32,25 +34,9 @@ interface QueueCounts {
   }
 }
 
-const LABELS = {
-  en: {
-    title: 'Action Center',
-    pending: 'pending',
-    updated: 'Updated',
-    minAgo: 'min ago',
-    refresh: 'Refresh',
-  },
-  pt: {
-    title: 'Central de Ação',
-    pending: 'pendentes',
-    updated: 'Atualizado',
-    minAgo: 'min atrás',
-    refresh: 'Atualizar',
-  },
-}
-
-export default function ActionCenter() {
+function ActionCenterInner() {
   const { isAdmin } = useRequireAdmin()
+  const t = useACT()
   const [counts, setCounts] = useState<QueueCounts | null>(null)
   const [countsLoading, setCountsLoading] = useState(true)
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date())
@@ -108,7 +94,7 @@ export default function ActionCenter() {
 
   const minutesAgo = Math.floor((Date.now() - lastUpdated.getTime()) / 60000)
 
-  if (!isAdmin) return <Banner type="error">You do not have permission to view this page.</Banner>
+  if (!isAdmin) return <Banner type="error">{t.noPermission}</Banner>
 
   const total = regCount + subCount + dorsalCount + formCount
 
@@ -165,7 +151,7 @@ export default function ActionCenter() {
             color: T.textPrimary,
           }}
         >
-          Action Center
+          {t.title}
         </span>
         {total > 0 && (
           <span
@@ -179,12 +165,12 @@ export default function ActionCenter() {
               fontFamily: "'Geist Mono', monospace",
             }}
           >
-            {total} pending
+            {total} {t.pending}
           </span>
         )}
         <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 10 }}>
           <span style={{ fontSize: 11, color: T.textMuted }}>
-            Updated {minutesAgo === 0 ? 'just now' : `${minutesAgo} min ago`}
+            {t.updated} {minutesAgo === 0 ? t.justNow : `${minutesAgo} ${t.minAgo}`}
           </span>
           <button
             onClick={handleRefresh}
@@ -204,7 +190,7 @@ export default function ActionCenter() {
               transition: 'all 0.15s',
             }}
           >
-            {refreshing ? '↻ …' : '↺ Refresh'}
+            {refreshing ? t.refreshing : `↺ ${t.refresh}`}
           </button>
         </div>
       </div>
@@ -249,18 +235,24 @@ export default function ActionCenter() {
           id="q-stories"
           sectionRef={storyRef}
           icon="📖"
-          title="Story Submissions"
+          title={t.storySubmissions}
           count={0}
         >
-          <EmptySection
-            icon="📖"
-            title="All stories reviewed"
-            sub="New story submissions will appear here"
-          />
+          <EmptySection icon="📖" title={t.allStoriesReviewed} sub={t.newStoriesHere} />
         </QueueSection>
       </div>
 
       <ToastContainer toasts={toasts} onRemove={removeToast} />
     </div>
+  )
+}
+
+export default function ActionCenter() {
+  const { i18n } = useTranslation()
+  const lang = i18n.language in { en: 1, pt: 1 } ? i18n.language : 'en'
+  return (
+    <ACLocaleProvider lang={lang}>
+      <ActionCenterInner />
+    </ACLocaleProvider>
   )
 }

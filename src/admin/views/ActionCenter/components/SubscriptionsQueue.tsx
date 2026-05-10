@@ -1,6 +1,7 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import { T } from '../tokens'
+import { useACT } from '../LocaleContext'
 import QueueSection, {
   ActionsCell,
   EmptySection,
@@ -37,6 +38,7 @@ export default function SubscriptionsQueue({
   onAction,
   onCountChange,
 }: SubscriptionsQueueProps) {
+  const t = useACT()
   const [docs, setDocs] = useState<Subscription[]>([])
   const [loading, setLoading] = useState(true)
   const [sort, setSort] = useState('oldest')
@@ -97,14 +99,14 @@ export default function SubscriptionsQueue({
       if (!data.success) throw new Error(data.error)
       setPendingRemove(id)
       setExpandedId(null)
-      onAction('Subscription approved', 'success')
+      onAction(t.approvedMsg, 'success')
       setTimeout(() => {
         setDocs((prev) => prev.filter((d) => d.id !== id))
         onCountChange(docs.filter((d) => d.id !== id).length)
         setPendingRemove(null)
       }, 4000)
     } catch {
-      onAction('Failed to approve subscription', 'error')
+      onAction(t.approveFailMsg, 'error')
     } finally {
       setActionLoading(false)
     }
@@ -118,14 +120,14 @@ export default function SubscriptionsQueue({
       if (!data.success) throw new Error(data.error)
       setPendingRemove(id)
       setExpandedId(null)
-      onAction('Subscription rejected', 'success')
+      onAction(t.rejectedMsg, 'success')
       setTimeout(() => {
         setDocs((prev) => prev.filter((d) => d.id !== id))
         onCountChange(docs.filter((d) => d.id !== id).length)
         setPendingRemove(null)
       }, 4000)
     } catch {
-      onAction('Failed to reject subscription', 'error')
+      onAction(t.rejectFailMsg, 'error')
     } finally {
       setActionLoading(false)
     }
@@ -138,7 +140,7 @@ export default function SubscriptionsQueue({
       id="q-subscriptions"
       sectionRef={sectionRef}
       icon="🏷️"
-      title="Group Subscriptions"
+      title={t.groupSubscriptions}
       count={docs.length}
       oldestAt={oldest?.createdAt ?? null}
       oldestName={oldest?.user ? `${oldest.user.name} ${oldest.user.surname}` : null}
@@ -146,15 +148,15 @@ export default function SubscriptionsQueue({
       filterContent={
         <>
           <FilterSelect
-            label="Sort"
+            label={t.sort}
             value={sort}
             onChange={setSort}
             options={[
-              { value: 'oldest', label: 'Oldest first' },
-              { value: 'newest', label: 'Newest first' },
+              { value: 'oldest', label: t.oldestFirst },
+              { value: 'newest', label: t.newestFirst },
             ]}
           />
-          <FilterSearch value={search} onChange={setSearch} placeholder="Search name or email…" />
+          <FilterSearch value={search} onChange={setSearch} placeholder={t.searchPlaceholder} />
           <FilterReset
             onClick={() => {
               setSort('oldest')
@@ -166,25 +168,21 @@ export default function SubscriptionsQueue({
     >
       {loading ? (
         <div style={{ padding: 24, textAlign: 'center', color: T.textMuted, fontSize: 13 }}>
-          Loading…
+          {t.loading}
         </div>
       ) : docs.length === 0 ? (
-        <EmptySection
-          icon="🏷️"
-          title="All subscriptions reviewed"
-          sub="New subscription requests will appear here"
-        />
+        <EmptySection icon="🏷️" title={t.allSubscriptionsReviewed} sub={t.newSubscriptionsHere} />
       ) : (
         <TableWrap>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
             <thead>
               <tr>
                 <Th width={28} />
-                <Th>Member</Th>
-                <Th>Group</Th>
-                <Th>Paid</Th>
-                <Th>Transaction</Th>
-                <Th>Actions</Th>
+                <Th>{t.member}</Th>
+                <Th>{t.group}</Th>
+                <Th>{t.paid}</Th>
+                <Th>{t.transaction}</Th>
+                <Th>{t.actions}</Th>
               </tr>
             </thead>
             <tbody>
@@ -211,7 +209,9 @@ export default function SubscriptionsQueue({
                         <div style={{ fontWeight: 600, color: T.textPrimary, fontSize: 13 }}>
                           {sub.group?.title ?? '—'}
                         </div>
-                        <div style={{ fontSize: 11, color: T.textMuted }}>Group subscription</div>
+                        <div style={{ fontSize: 11, color: T.textMuted }}>
+                          {t.groupSubscription}
+                        </div>
                       </td>
                       <TimeCell iso={sub.createdAt} />
                       <td
@@ -230,21 +230,21 @@ export default function SubscriptionsQueue({
                     {isExpanded && (
                       <ExpandPanel colSpan={6}>
                         <PanelCols>
-                          <PanelBox title="Member Info">
+                          <PanelBox title={t.memberInfo}>
                             <PanelField
-                              label="Name"
+                              label={t.name}
                               value={sub.user ? `${sub.user.name} ${sub.user.surname}` : '—'}
                               highlight
                             />
-                            <PanelField label="Email" value={sub.user?.email} />
-                            <PanelField label="Group" value={sub.group?.title} highlight />
-                            <PanelField label="Payment" value={sub.paymentStatus} />
-                            <PanelField label="Transaction ID" value={sub.transactionId} />
+                            <PanelField label={t.email} value={sub.user?.email} />
+                            <PanelField label={t.group} value={sub.group?.title} highlight />
+                            <PanelField label={t.payment} value={sub.paymentStatus} />
+                            <PanelField label={t.transactionId} value={sub.transactionId} />
                           </PanelBox>
-                          <PanelBox title="Submission Data">
+                          <PanelBox title={t.submissionData}>
                             {sub.submissionData.length === 0 ? (
                               <div style={{ fontSize: 12, color: T.textMuted }}>
-                                No submission data
+                                {t.noSubmissionData}
                               </div>
                             ) : (
                               sub.submissionData.map((d, i) => (
@@ -269,8 +269,7 @@ export default function SubscriptionsQueue({
                             border: `1px solid ${T.amberBorder}`,
                           }}
                         >
-                          ⚠ Rejecting will NOT auto-refund the payment. Contact the member
-                          separately if a refund is needed.
+                          {t.refundWarning}
                         </div>
 
                         <DecisionSection

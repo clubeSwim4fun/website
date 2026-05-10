@@ -2,6 +2,7 @@
 import React from 'react'
 import { T } from '../tokens'
 import { relativeTime } from '../utils'
+import { useACT } from '../LocaleContext'
 
 interface QueueSectionProps {
   id: string
@@ -30,6 +31,7 @@ export default function QueueSection({
 }: QueueSectionProps) {
   const [collapsed, setCollapsed] = React.useState(count === 0)
   const [filterOpen, setFilterOpen] = React.useState(false)
+  const t = useACT()
 
   // Auto-expand when count changes from 0 to >0
   React.useEffect(() => {
@@ -96,7 +98,7 @@ export default function QueueSection({
         </span>
         {oldestAt && oldestName && (
           <span style={{ fontSize: 11, color: T.textMuted, marginLeft: 4 }}>
-            Oldest: <span style={{ color: T.textSecondary }}>{oldestName}</span>
+            {t.oldest}: <span style={{ color: T.textSecondary }}>{oldestName}</span>
             {' — '}
             <span style={{ color: T.amber }}>{relativeTime(oldestAt)}</span>
           </span>
@@ -122,7 +124,7 @@ export default function QueueSection({
                 cursor: 'pointer',
               }}
             >
-              ⚙ Filters
+              {t.filters}
             </button>
           )}
           <span style={{ fontSize: 11, color: T.textMuted, width: 20, textAlign: 'center' }}>
@@ -222,6 +224,7 @@ export function FilterSearch({
 }
 
 export function FilterReset({ onClick }: { onClick: () => void }) {
+  const t = useACT()
   return (
     <button
       onClick={onClick}
@@ -235,7 +238,7 @@ export function FilterReset({ onClick }: { onClick: () => void }) {
         padding: '4px 6px',
       }}
     >
-      ✕ Reset
+      {t.reset}
     </button>
   )
 }
@@ -332,6 +335,7 @@ export function TimeCell({ iso }: { iso: string }) {
 }
 
 export function ActionsCell({ onReview, isOpen }: { onReview: () => void; isOpen: boolean }) {
+  const t = useACT()
   return (
     <td style={{ padding: '10px 12px' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap' }}>
@@ -349,7 +353,7 @@ export function ActionsCell({ onReview, isOpen }: { onReview: () => void; isOpen
             transition: 'all 0.15s',
           }}
         >
-          {isOpen ? '▲ Hide' : 'Review'}
+          {isOpen ? t.hide : t.review}
         </button>
       </div>
     </td>
