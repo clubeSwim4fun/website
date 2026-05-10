@@ -1,5 +1,5 @@
 'use client'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { T } from '../tokens'
 import { useACT } from '../LocaleContext'
 import QueueSection, {
@@ -14,6 +14,8 @@ interface DorsalRow {
   orderId: string
   createdAt: string
   total: number
+  ticketPurchased: boolean
+  suggestedDorsal: string | null
   user: {
     id: string
     name: string
@@ -40,19 +42,33 @@ export default function DorsalsQueue({ sectionRef, onAction, onCountChange }: Do
   const [docs, setDocs] = useState<DorsalRow[]>([])
   const [loading, setLoading] = useState(true)
   const [eventFilter, setEventFilter] = useState('all')
-  const [sort, setSort] = useState('event')
+  const [sort, setSort] = useState<'event' | 'paid'>('event')
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [dorsalValues, setDorsalValues] = useState<Record<string, string>>({})
   const [dorsalErrors, setDorsalErrors] = useState<Record<string, string>>({})
   const [savedDorsals, setSavedDorsals] = useState<Record<string, string>>({})
+  const [purchasedOverrides, setPurchasedOverrides] = useState<Record<string, boolean>>({})
+  const [savingPurchased, setSavingPurchased] = useState<Set<string>>(new Set())
 
   const fetchData = () => {
     setLoading(true)
     fetch('/api/action-center/dorsals')
       .then((r) => r.json())
       .then((d) => {
-        setDocs(d.docs ?? [])
+        const fetchedDocs: DorsalRow[] = d.docs ?? []
+        setDocs(fetchedDocs)
         onCountChange(d.totalDocs ?? 0)
+        // Prefill dorsal inputs from suggestedDorsal where no dorsal is assigned yet
+        const prefilled: Record<string, string> = {}
+        for (const row of fetchedDocs) {
+          if (row.suggestedDorsal && !row.currentDorsal) {
+            const key = `${row.orderId}-${row.ticket?.id}`
+            prefilled[key] = row.suggestedDorsal
+          }
+        }
+        if (Object.keys(prefilled).length > 0) {
+          setDorsalValues((prev) => ({ ...prefilled, ...prev }))
+        }
       })
       .finally(() => setLoading(false))
   }
@@ -67,12 +83,20 @@ export default function DorsalsQueue({ sectionRef, onAction, onCountChange }: Do
     new Map(docs.filter((d) => d.event).map((d) => [d.event!.id, d.event!.title])).entries(),
   )
 
-  const filtered = docs.filter((d) => {
-    if (eventFilter !== 'all' && d.event?.id !== eventFilter) return false
-    return true
-  })
+  const filtered = docs
+    .filter((d) => {
+      if (eventFilter !== 'all' && d.event?.id !== eventFilter) return false
+      return true
+    })
+    .sort((a, b) => {
+      if (sort === 'paid') return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      // 'event' — sort by event startDate
+      const aDate = a.event?.startDate ? new Date(a.event.startDate).getTime() : 0
+      const bDate = b.event?.startDate ? new Date(b.event.startDate).getTime() : 0
+      return aDate - bDate
+    })
 
-  // Duplicate detection per event
+  // Duplicate detection per event (only among already-assigned dorsals)
   const dorsalsByEvent: Record<string, Set<string>> = {}
   for (const d of docs) {
     if (!d.event) continue
@@ -85,7 +109,6 @@ export default function DorsalsQueue({ sectionRef, onAction, onCountChange }: Do
     setDorsalValues((prev) => ({ ...prev, [key]: cleaned }))
 
     if (cleaned && dorsalsByEvent[eventId]?.has(cleaned)) {
-      // Find conflicting athlete
       const conflict = docs.find((d) => d.event?.id === eventId && d.currentDorsal === cleaned)
       const conflictName = conflict?.user
         ? `${conflict.user.name} ${conflict.user.surname}`
@@ -103,7 +126,19 @@ export default function DorsalsQueue({ sectionRef, onAction, onCountChange }: Do
     }
   }
 
-  const handleSave = async (row: DorsalRow, key: string) => {
+  const removeRow = (key: string) => {
+    setDocs((prev) => {
+      const next = prev.filter((d) => `${d.orderId}-${d.ticket?.id}` !== key)
+      onCountChange(next.length)
+      return next
+    })
+  }
+
+  const scheduleRemove = (key: string, delay = 5000) => {
+    setTimeout(() => removeRow(key), delay)
+  }
+
+  const handleSaveDorsal = async (row: DorsalRow, key: string) => {
     const value = dorsalValues[key]
     if (!value || dorsalErrors[key]) return
 
@@ -123,8 +158,44 @@ export default function DorsalsQueue({ sectionRef, onAction, onCountChange }: Do
         return next
       })
       onAction(t.dorsalSavedMsg.replace('{n}', value), 'success')
+      scheduleRemove(key)
     } catch {
       onAction(t.dorsalSaveFailMsg, 'error')
+    }
+  }
+
+  const handleTogglePurchased = async (row: DorsalRow, key: string, checked: boolean) => {
+    setSavingPurchased((prev) => new Set(prev).add(key))
+    try {
+      const res = await fetch(`/api/action-center/dorsals/${row.orderId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ticketId: row.ticket?.id,
+          ticketPurchased: checked,
+          // If checking with no dorsal value, mark as no dorsal required so it leaves the list
+          ...(checked && !row.currentDorsal && !dorsalValues[key]
+            ? { dorsalNotRequired: true }
+            : {}),
+        }),
+      })
+      const data = await res.json()
+      if (!data.success) throw new Error(data.error)
+
+      setPurchasedOverrides((prev) => ({ ...prev, [key]: checked }))
+      onAction(t.ticketPurchasedSaved, 'success')
+      // If marked as purchased with no dorsal intent — remove after 5s
+      if (checked && !row.currentDorsal && !dorsalValues[key]) {
+        scheduleRemove(key)
+      }
+    } catch {
+      onAction(t.ticketPurchasedFail, 'error')
+    } finally {
+      setSavingPurchased((prev) => {
+        const next = new Set(prev)
+        next.delete(key)
+        return next
+      })
     }
   }
 
@@ -178,7 +249,7 @@ export default function DorsalsQueue({ sectionRef, onAction, onCountChange }: Do
           <FilterSelect
             label={t.sort}
             value={sort}
-            onChange={setSort}
+            onChange={(v) => setSort(v as 'event' | 'paid')}
             options={[
               { value: 'event', label: t.eventDate },
               { value: 'paid', label: t.paidDate },
@@ -215,20 +286,38 @@ export default function DorsalsQueue({ sectionRef, onAction, onCountChange }: Do
               }}
             >
               <span style={{ color: T.blue, fontWeight: 500 }}>
-                <span
-                  style={{
-                    fontWeight: 700,
-                    fontFamily: "'Geist Mono', monospace",
-                  }}
-                >
+                <span style={{ fontWeight: 700, fontFamily: "'Geist Mono', monospace" }}>
                   {selected.size}
                 </span>{' '}
                 {t.selected}
               </span>
               <button
-                onClick={() => {
-                  onAction(t.markPurchased, 'success')
+                onClick={async () => {
+                  const keys = Array.from(selected)
                   setSelected(new Set())
+                  // Fire PATCH for each selected row
+                  await Promise.all(
+                    keys.map(async (key) => {
+                      const row = docs.find((d) => `${d.orderId}-${d.ticket?.id}` === key)
+                      if (!row) return
+                      try {
+                        const res = await fetch(`/api/action-center/dorsals/${row.orderId}`, {
+                          method: 'PATCH',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({
+                            ticketId: row.ticket?.id,
+                            ticketPurchased: true,
+                            dorsalNotRequired: true,
+                          }),
+                        })
+                        const data = await res.json()
+                        if (data.success) scheduleRemove(key)
+                      } catch {
+                        // silent — individual failures don't block others
+                      }
+                    }),
+                  )
+                  onAction(t.markPurchased, 'success')
                 }}
                 style={{
                   padding: '4px 12px',
@@ -277,6 +366,7 @@ export default function DorsalsQueue({ sectionRef, onAction, onCountChange }: Do
                   <Th>{t.event}</Th>
                   <Th>{t.category}</Th>
                   <Th>{t.paid}</Th>
+                  <Th>{t.ticketPurchasedCol}</Th>
                   <Th>{t.dorsal}</Th>
                   <Th />
                 </tr>
@@ -289,6 +379,12 @@ export default function DorsalsQueue({ sectionRef, onAction, onCountChange }: Do
                   const saved = savedDorsals[key]
                   const hasValue = !!dorsalVal && !dorsalError
                   const isSelected = selected.has(key)
+                  // isPurchased: use override if admin toggled, otherwise fall back to DB value
+                  const isPurchased =
+                    key in purchasedOverrides ? purchasedOverrides[key] : row.ticketPurchased
+                  const isSavingPurchased = savingPurchased.has(key)
+                  const isSuggested =
+                    !row.currentDorsal && row.suggestedDorsal === dorsalVal && !!dorsalVal
 
                   return (
                     <tr
@@ -330,13 +426,7 @@ export default function DorsalsQueue({ sectionRef, onAction, onCountChange }: Do
                       >
                         {row.user?.federationId ?? '—'}
                       </td>
-                      <td
-                        style={{
-                          padding: '10px 12px',
-                          fontSize: 12,
-                          color: T.textSecondary,
-                        }}
-                      >
+                      <td style={{ padding: '10px 12px', fontSize: 12, color: T.textSecondary }}>
                         {row.user?.birthDate
                           ? new Date(row.user.birthDate).toLocaleDateString('pt-PT')
                           : '—'}
@@ -351,23 +441,12 @@ export default function DorsalsQueue({ sectionRef, onAction, onCountChange }: Do
                             : ''}
                         </div>
                       </td>
-                      <td
-                        style={{
-                          padding: '10px 12px',
-                          fontSize: 12,
-                          color: T.textSecondary,
-                        }}
-                      >
+                      <td style={{ padding: '10px 12px', fontSize: 12, color: T.textSecondary }}>
                         {row.ticket?.category ?? row.ticket?.name ?? '—'}
                         {row.ticket?.distance ? ` · ${row.ticket.distance}` : ''}
                       </td>
                       <td style={{ padding: '10px 12px' }}>
-                        <div
-                          style={{
-                            fontSize: 12,
-                            color: T.textSecondary,
-                          }}
-                        >
+                        <div style={{ fontSize: 12, color: T.textSecondary }}>
                           {new Date(row.createdAt).toLocaleDateString('pt-PT')}
                         </div>
                         <div
@@ -380,8 +459,28 @@ export default function DorsalsQueue({ sectionRef, onAction, onCountChange }: Do
                           €{row.total}
                         </div>
                       </td>
+                      {/* Ticket purchased checkbox */}
+                      <td style={{ padding: '10px 12px', textAlign: 'center' }}>
+                        <input
+                          type="checkbox"
+                          checked={isPurchased}
+                          disabled={isSavingPurchased}
+                          title={t.markTicketPurchased}
+                          onChange={(e) => handleTogglePurchased(row, key, e.target.checked)}
+                          style={{
+                            accentColor: T.teal,
+                            width: 16,
+                            height: 16,
+                            cursor: isSavingPurchased ? 'wait' : 'pointer',
+                            opacity: isSavingPurchased ? 0.5 : 1,
+                          }}
+                        />
+                      </td>
+                      {/* Dorsal input — only shown when ticket is purchased */}
                       <td style={{ padding: '10px 12px' }}>
-                        {saved ? (
+                        {!isPurchased ? (
+                          <span style={{ fontSize: 12, color: T.textMuted }}>—</span>
+                        ) : saved ? (
                           <span
                             style={{
                               fontFamily: "'Geist Mono', monospace",
@@ -406,24 +505,34 @@ export default function DorsalsQueue({ sectionRef, onAction, onCountChange }: Do
                                 handleDorsalChange(key, e.target.value, row.event?.id ?? '')
                               }
                               onKeyDown={(e) => {
-                                if (e.key === 'Enter') handleSave(row, key)
+                                if (e.key === 'Enter') handleSaveDorsal(row, key)
                               }}
                               style={{
                                 width: 72,
                                 background: dorsalError
                                   ? T.redDim
                                   : hasValue
-                                    ? 'rgba(34,197,94,0.14)'
+                                    ? isSuggested
+                                      ? 'rgba(234,179,8,0.14)'
+                                      : 'rgba(34,197,94,0.14)'
                                     : T.bgRaised,
                                 border: `1px solid ${
                                   dorsalError
                                     ? 'rgba(239,68,68,0.5)'
                                     : hasValue
-                                      ? 'rgba(34,197,94,0.3)'
+                                      ? isSuggested
+                                        ? 'rgba(234,179,8,0.4)'
+                                        : 'rgba(34,197,94,0.3)'
                                       : T.borderDefault
                                 }`,
                                 borderRadius: T.rSm,
-                                color: dorsalError ? T.red : hasValue ? T.green : T.textPrimary,
+                                color: dorsalError
+                                  ? T.red
+                                  : hasValue
+                                    ? isSuggested
+                                      ? '#ca8a04'
+                                      : T.green
+                                    : T.textPrimary,
                                 fontFamily: "'Geist Mono', monospace",
                                 fontSize: 13,
                                 fontWeight: 600,
@@ -432,6 +541,18 @@ export default function DorsalsQueue({ sectionRef, onAction, onCountChange }: Do
                                 outline: 'none',
                               }}
                             />
+                            {isSuggested && !dorsalError && (
+                              <div
+                                style={{
+                                  fontSize: 10,
+                                  color: '#ca8a04',
+                                  marginTop: 2,
+                                  whiteSpace: 'nowrap',
+                                }}
+                              >
+                                ✦ auto-filled
+                              </div>
+                            )}
                             {dorsalError && (
                               <div
                                 style={{
@@ -448,9 +569,9 @@ export default function DorsalsQueue({ sectionRef, onAction, onCountChange }: Do
                         )}
                       </td>
                       <td style={{ padding: '10px 12px' }}>
-                        {!saved && (
+                        {isPurchased && !saved && (
                           <button
-                            onClick={() => handleSave(row, key)}
+                            onClick={() => handleSaveDorsal(row, key)}
                             disabled={!dorsalVal || !!dorsalError}
                             style={{
                               padding: '5px 10px',
@@ -477,14 +598,7 @@ export default function DorsalsQueue({ sectionRef, onAction, onCountChange }: Do
 
           {/* Quick-select by event */}
           {events.length > 1 && (
-            <div
-              style={{
-                padding: '8px 16px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 8,
-              }}
-            >
+            <div style={{ padding: '8px 16px', display: 'flex', alignItems: 'center', gap: 8 }}>
               <span style={{ fontSize: 11, color: T.textMuted }}>{t.selectAll}</span>
               {events.map(([id, title]) => {
                 const count = filtered.filter((d) => d.event?.id === id).length

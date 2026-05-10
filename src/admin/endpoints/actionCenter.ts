@@ -40,21 +40,31 @@ export const actionCenterCounts: Endpoint = {
     const subCount = subResult.totalDocs
     const oldestSub = subResult.docs[0] ?? null
 
-    // Queue 3: paid orders without dorsal (ticketPurchased=true, eventPurchaseId empty)
+    // Queue 3: paid orders with any ticket not yet fully processed
+    // (ticketPurchased=false OR ticketPurchased=true but no dorsal assigned)
     const dorsalResult = await req.payload.find({
       collection: 'orders',
-      where: {
-        and: [
-          { paymentStatus: { equals: 'paid' } },
-          { 'events.tickets.ticketPurchased': { equals: true } },
-          { 'events.tickets.eventPurchaseId': { exists: false } },
-        ],
-      },
+      where: { paymentStatus: { equals: 'paid' } },
       sort: 'createdAt',
-      limit: 1,
+      limit: 200,
+      depth: 0,
     })
-    const dorsalCount = dorsalResult.totalDocs
-    const oldestDorsal = dorsalResult.docs[0] ?? null
+    // Count rows that still need action
+    let dorsalCount = 0
+    let oldestDorsal: any = null
+    for (const order of dorsalResult.docs as any[]) {
+      for (const ev of order.events ?? []) {
+        for (const t of ev.tickets ?? []) {
+          if (
+            !t.ticketPurchased ||
+            (t.ticketPurchased && !t.eventPurchaseId && !t.dorsalNotRequired)
+          ) {
+            dorsalCount++
+            if (!oldestDorsal) oldestDorsal = order
+          }
+        }
+      }
+    }
 
     // Queue 4: form payments — paid, no handledAt, no assignToGroup
     const formResult = await req.payload.find({
@@ -574,43 +584,95 @@ export const actionCenterDorsals: Endpoint = {
       for (const eventEntry of order.events ?? []) {
         const event = typeof eventEntry.event === 'object' ? eventEntry.event : null
         for (const ticketEntry of eventEntry.tickets ?? []) {
-          if (ticketEntry.ticketPurchased && !ticketEntry.eventPurchaseId) {
-            const ticket = typeof ticketEntry.ticket === 'object' ? ticketEntry.ticket : null
-            rows.push({
-              orderId: order.id,
-              ticketEntryRef: ticketEntry,
-              createdAt: order.createdAt,
-              total: order.total,
-              user: user
-                ? {
-                    id: user.id,
-                    name: user.name ?? '',
-                    surname: user.surname ?? '',
-                    email: user.email ?? '',
-                    federationId: user.federationId ?? null,
-                    birthDate: user.birthDate ?? null,
-                    gender: user.gender ?? null,
-                  }
-                : null,
-              event: event
-                ? {
-                    id: event.id,
-                    title: event.title ?? '',
-                    startDate: event.startDate ?? event.start ?? null,
-                  }
-                : null,
-              ticket: ticket
-                ? {
-                    id: ticket.id,
-                    name: ticket.name ?? '',
-                    category: ticket.category ?? null,
-                    distance: ticket.distance ?? null,
-                  }
-                : null,
-              tshirtSize: ticketEntry.tshirtSize ?? null,
-              currentDorsal: ticketEntry.eventPurchaseId ?? null,
+          // Show tickets that still need action:
+          // - not yet purchased, OR
+          // - purchased but no dorsal and not explicitly marked as "no dorsal required"
+          const needsAction =
+            !ticketEntry.ticketPurchased ||
+            (ticketEntry.ticketPurchased &&
+              !ticketEntry.eventPurchaseId &&
+              !ticketEntry.dorsalNotRequired)
+          if (!needsAction) continue
+
+          const ticket = typeof ticketEntry.ticket === 'object' ? ticketEntry.ticket : null
+
+          // Prefill dorsal: if ticket.canBePurchasedBy contains group-categories,
+          // look for a matching seasonal ID on the user
+          let suggestedDorsal: string | null = null
+          if (
+            user &&
+            ticket &&
+            Array.isArray(ticket.canBePurchasedBy) &&
+            ticket.canBePurchasedBy.length > 0
+          ) {
+            const categoryIds = new Set(
+              ticket.canBePurchasedBy.map((c: any) =>
+                typeof c === 'object' ? String(c.id) : String(c),
+              ),
+            )
+            // Fetch all seasonal IDs for this user and filter in JS
+            // (polymorphic relation queries are unreliable with `in`)
+            const tempIdResult = await req.payload.find({
+              collection: 'temporary-group-ids',
+              where: { user: { equals: user.id } },
+              limit: 50,
+              depth: 0,
             })
+            for (const doc of tempIdResult.docs as any[]) {
+              // group is stored as { relationTo, value } for polymorphic fields
+              const groupVal = doc.group
+              const groupId =
+                typeof groupVal === 'object' && groupVal !== null
+                  ? String(groupVal.value ?? groupVal.id ?? '')
+                  : String(groupVal ?? '')
+              const groupRelation =
+                typeof groupVal === 'object' && groupVal !== null ? groupVal.relationTo : null
+              if (
+                (groupRelation === 'group-categories' || groupRelation == null) &&
+                categoryIds.has(groupId) &&
+                doc.number
+              ) {
+                suggestedDorsal = String(doc.number)
+                break
+              }
+            }
           }
+
+          rows.push({
+            orderId: order.id,
+            createdAt: order.createdAt,
+            total: order.total,
+            ticketPurchased: ticketEntry.ticketPurchased ?? false,
+            suggestedDorsal,
+            user: user
+              ? {
+                  id: user.id,
+                  name: user.name ?? '',
+                  surname: user.surname ?? '',
+                  email: user.email ?? '',
+                  federationId: user.federationId ?? null,
+                  birthDate: user.birthDate ?? null,
+                  gender: user.gender ?? null,
+                }
+              : null,
+            event: event
+              ? {
+                  id: event.id,
+                  title: event.title ?? '',
+                  startDate: event.startDate ?? event.start ?? null,
+                }
+              : null,
+            ticket: ticket
+              ? {
+                  id: ticket.id,
+                  name: ticket.name ?? '',
+                  category: ticket.category ?? null,
+                  distance: ticket.distance ?? null,
+                }
+              : null,
+            tshirtSize: ticketEntry.tshirtSize ?? null,
+            currentDorsal: ticketEntry.eventPurchaseId ?? null,
+          })
         }
       }
     }
@@ -630,7 +692,12 @@ export const actionCenterSaveDorsal: Endpoint = {
 
     const orderId = req.routeParams?.orderId as string
     const body = (await req.json?.()) ?? {}
-    const { ticketId, dorsal } = body as { ticketId: string; dorsal: string }
+    const { ticketId, dorsal, ticketPurchased, dorsalNotRequired } = body as {
+      ticketId: string
+      dorsal?: string
+      ticketPurchased?: boolean
+      dorsalNotRequired?: boolean
+    }
 
     try {
       const order = await req.payload.findByID({
@@ -644,7 +711,11 @@ export const actionCenterSaveDorsal: Endpoint = {
         tickets: (ev.tickets ?? []).map((t: any) => {
           const tId = typeof t.ticket === 'object' ? t.ticket.id : t.ticket
           if (tId === ticketId) {
-            return { ...t, eventPurchaseId: dorsal }
+            const patch: any = {}
+            if (dorsal !== undefined) patch.eventPurchaseId = dorsal
+            if (ticketPurchased !== undefined) patch.ticketPurchased = ticketPurchased
+            if (dorsalNotRequired !== undefined) patch.dorsalNotRequired = dorsalNotRequired
+            return { ...t, ...patch }
           }
           return t
         }),

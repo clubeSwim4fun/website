@@ -3692,6 +3692,10 @@ export interface Order {
               tshirtSize?: string | null;
               ticketPurchased?: boolean | null;
               eventPurchaseId?: string | null;
+              /**
+               * Check if this ticket was purchased but does not require a dorsal number.
+               */
+              dorsalNotRequired?: boolean | null;
               id?: string | null;
             }[]
           | null;
@@ -5518,6 +5522,7 @@ export interface OrdersSelect<T extends boolean = true> {
               tshirtSize?: T;
               ticketPurchased?: T;
               eventPurchaseId?: T;
+              dorsalNotRequired?: T;
               id?: T;
             };
         id?: T;

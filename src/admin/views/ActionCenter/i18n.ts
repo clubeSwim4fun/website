@@ -13,7 +13,7 @@ export const AC_TRANSLATIONS = {
     // Summary cards
     registrations: 'Registrations',
     subscriptions: 'Subscriptions',
-    dorsals: 'Dorsals',
+    dorsals: 'Events',
     formReviews: 'Form Reviews',
     stories: 'Stories',
     pendingReview: 'pending review',
@@ -26,7 +26,7 @@ export const AC_TRANSLATIONS = {
     // Queue sections
     userRegistrations: 'User Registrations',
     groupSubscriptions: 'Group Subscriptions',
-    dorsalAssignment: 'Dorsal Assignment',
+    dorsalAssignment: 'Events Tickets',
     paidFormSubmissions: 'Paid Form Submissions',
     storySubmissions: 'Story Submissions',
     allStoriesReviewed: 'All stories reviewed',
@@ -170,6 +170,10 @@ export const AC_TRANSLATIONS = {
     dorsalSavedMsg: 'Dorsal {n} assigned',
     dorsalSaveFailMsg: 'Failed to save dorsal',
     alreadyAssigned: '⚠ {n} already assigned to {name}',
+    ticketPurchasedCol: 'Purchased?',
+    markTicketPurchased: 'Mark as purchased',
+    ticketPurchasedSaved: 'Ticket marked as purchased',
+    ticketPurchasedFail: 'Failed to update ticket status',
 
     // Forms
     submissionInfo: 'Submission Info',
@@ -210,7 +214,7 @@ export const AC_TRANSLATIONS = {
 
     registrations: 'Registos',
     subscriptions: 'Inscrições',
-    dorsals: 'Dorsais',
+    dorsals: 'Eventos',
     formReviews: 'Formulários',
     stories: 'Histórias',
     pendingReview: 'em análise',
@@ -222,7 +226,7 @@ export const AC_TRANSLATIONS = {
 
     userRegistrations: 'Registos de Utilizadores',
     groupSubscriptions: 'Inscrições em Grupos',
-    dorsalAssignment: 'Atribuição de Dorsais',
+    dorsalAssignment: 'Tickets de Eventos',
     paidFormSubmissions: 'Formulários Pagos',
     storySubmissions: 'Submissões de Histórias',
     allStoriesReviewed: 'Todas as histórias revistas',
@@ -357,6 +361,10 @@ export const AC_TRANSLATIONS = {
     dorsalSavedMsg: 'Dorsal {n} atribuído',
     dorsalSaveFailMsg: 'Falha ao guardar dorsal',
     alreadyAssigned: '⚠ {n} já atribuído a {name}',
+    ticketPurchasedCol: 'Comprado?',
+    markTicketPurchased: 'Marcar como comprado',
+    ticketPurchasedSaved: 'Bilhete marcado como comprado',
+    ticketPurchasedFail: 'Falha ao atualizar estado do bilhete',
 
     submissionInfo: 'Informação da Submissão',
     description: 'Descrição',

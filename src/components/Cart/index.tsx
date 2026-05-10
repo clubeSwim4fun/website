@@ -28,15 +28,15 @@ export const Cart: React.FC = () => {
               ? `/event/${cartItem.eventFor.slug}`
               : '#'
           }
-          className="flex items-center justify-between border-b-2 border-gray-200 pb-2 last:border-b-0"
+          className="flex items-center justify-between gap-2 border-b-2 border-gray-200 pb-2 last:border-b-0"
         >
-          <div className="flex flex-col">
-            <p className="text-sm font-medium">{cartItem.name}</p>
-            <p className="text-xs text-gray-500">
+          <div className="flex flex-col min-w-0">
+            <p className="text-sm font-medium truncate">{cartItem.name}</p>
+            <p className="text-xs text-gray-500 truncate">
               {typeof cartItem.eventFor === 'object' ? cartItem.eventFor.title : cartItem.eventFor}
             </p>
           </div>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-500 shrink-0">
             {format.number(cartItem.price, {
               currency: 'EUR',
               style: 'currency',
