@@ -130,6 +130,25 @@ export const Orders: CollectionConfig = {
                       data?.paymentStatus === 'paid' && siblingData?.ticketPurchased,
                   },
                 },
+                {
+                  name: 'dorsalNotRequired',
+                  label: {
+                    en: 'No dorsal required',
+                    pt: 'Sem dorsal necessário',
+                  },
+                  type: 'checkbox',
+                  defaultValue: false,
+                  admin: {
+                    readOnly: false,
+                    width: '25%',
+                    condition: (data, siblingData) =>
+                      data?.paymentStatus === 'paid' && siblingData?.ticketPurchased,
+                    description: {
+                      en: 'Check if this ticket was purchased but does not require a dorsal number.',
+                      pt: 'Marque se este bilhete foi comprado mas não requer número de dorsal.',
+                    },
+                  },
+                },
               ],
             },
           ],
