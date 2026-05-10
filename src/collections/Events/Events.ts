@@ -4,7 +4,33 @@ import { anyone } from '../../access/anyone'
 import { slugField } from '@/fields/slug'
 import { isAdminOrEditor } from '@/access/isAdminOrEditor'
 import COUNTRY_LIST from '@/utilities/countryList'
-import { defaultLexical } from '@/fields/defaultLexical'
+import {
+  BoldFeature,
+  ItalicFeature,
+  LinkFeature,
+  ParagraphFeature,
+  UnderlineFeature,
+  UploadFeature,
+  lexicalEditor,
+} from '@payloadcms/richtext-lexical'
+
+const eventsDescriptionEditor = lexicalEditor({
+  features: ({ defaultFeatures }) => [
+    ...defaultFeatures,
+    ParagraphFeature(),
+    UnderlineFeature(),
+    BoldFeature(),
+    ItalicFeature(),
+    UploadFeature({
+      collections: {
+        media: { fields: [] },
+      },
+    }),
+    LinkFeature({
+      enabledCollections: ['pages', 'posts'],
+    }),
+  ],
+})
 
 export const Events: CollectionConfig = {
   slug: 'events',
@@ -51,7 +77,7 @@ export const Events: CollectionConfig = {
       },
       type: 'richText',
       required: true,
-      editor: defaultLexical,
+      editor: eventsDescriptionEditor,
     },
     {
       name: 'start',
