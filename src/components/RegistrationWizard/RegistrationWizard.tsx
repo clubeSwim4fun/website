@@ -52,7 +52,6 @@ const EMPTY: RegistrationFormData = {
   emailNotifications: true,
   whatsappNotifications: false,
   heardAboutClub: '',
-  wantsInvoiceWithNif: false,
   consent: false,
 }
 
@@ -191,10 +190,6 @@ export function RegistrationWizard({ generalConfig, form, submitButtonLabel, com
         nif: { value: data.nif, relatesTo: 'nif' },
         disability: { value: data.disability, relatesTo: 'disability' },
         sportInsurance: { value: data.sportInsurance, relatesTo: 'sportInsurance' },
-        wantsInvoiceWithNif: {
-          value: String(data.wantsInvoiceWithNif),
-          relatesTo: 'wantsInvoiceWithNif',
-        },
         heardAboutClub: { value: data.heardAboutClub, relatesTo: 'heardAboutClub' },
       }
 

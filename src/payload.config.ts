@@ -55,6 +55,18 @@ import {
 import { dashboardEvents } from './admin/endpoints/dashboardEvents'
 import { dashboardEventDetail, dashboardEventsWeek } from './admin/endpoints/dashboardEventsDetail'
 import { dashboardNewsletter } from './admin/endpoints/dashboardNewsletter'
+import {
+  actionCenterCounts,
+  actionCenterRegistrations,
+  actionCenterApproveRegistration,
+  actionCenterRejectRegistration,
+  actionCenterSubscriptions,
+  actionCenterApproveSubscription,
+  actionCenterRejectSubscription,
+  actionCenterDorsals,
+  actionCenterSaveDorsal,
+  actionCenterForms,
+} from './admin/endpoints/actionCenter'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -75,6 +87,16 @@ export default buildConfig({
     dashboardEventDetail,
     dashboardEventsWeek,
     dashboardNewsletter,
+    actionCenterCounts,
+    actionCenterRegistrations,
+    actionCenterApproveRegistration,
+    actionCenterRejectRegistration,
+    actionCenterSubscriptions,
+    actionCenterApproveSubscription,
+    actionCenterRejectSubscription,
+    actionCenterDorsals,
+    actionCenterSaveDorsal,
+    actionCenterForms,
   ],
   admin: {
     suppressHydrationWarning: true,
@@ -91,6 +113,10 @@ export default buildConfig({
         NewsletterDashboard: {
           Component: '@/admin/views/NewsletterDashboard#default',
           path: '/newsletter-analytics',
+        },
+        ActionCenter: {
+          Component: '@/admin/views/ActionCenter#default',
+          path: '/action-center',
         },
       },
       afterNavLinks: ['@/admin/components/DashboardNavLinks#default'],

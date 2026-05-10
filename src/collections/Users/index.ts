@@ -301,17 +301,6 @@ export const Users: CollectionConfig = {
       },
     },
     {
-      name: 'wantsInvoiceWithNif',
-      label: {
-        en: 'Wants invoice with NIF?',
-        pt: 'Fatura com Contribuinte?',
-      },
-      type: 'checkbox',
-      admin: {
-        position: 'sidebar',
-      },
-    },
-    {
       name: 'sportInsurance',
       label: {
         en: 'Sport Insurance',

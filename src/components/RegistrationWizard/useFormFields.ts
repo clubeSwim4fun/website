@@ -97,7 +97,6 @@ const HARDCODED_FIELDS = new Set([
   'emailNotifications',
   'whatsappNotifications',
   'heardAboutClub',
-  'wantsInvoiceWithNif',
   'consent',
 ])
 

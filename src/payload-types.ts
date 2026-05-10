@@ -786,7 +786,6 @@ export interface Checkbox {
         | 'emailNotificationsEnabled'
         | 'emergencyContact'
         | 'emergencyPhone'
-        | 'wantsInvoiceWithNif'
         | 'sportInsurance'
         | 'tshirtSize'
         | 'heardAboutClub'
@@ -821,7 +820,6 @@ export interface Checkbox {
         | 'emailNotificationsEnabled'
         | 'emergencyContact'
         | 'emergencyPhone'
-        | 'wantsInvoiceWithNif'
         | 'sportInsurance'
         | 'tshirtSize'
         | 'heardAboutClub'
@@ -871,7 +869,6 @@ export interface Country {
         | 'emailNotificationsEnabled'
         | 'emergencyContact'
         | 'emergencyPhone'
-        | 'wantsInvoiceWithNif'
         | 'sportInsurance'
         | 'tshirtSize'
         | 'heardAboutClub'
@@ -906,7 +903,6 @@ export interface Country {
         | 'emailNotificationsEnabled'
         | 'emergencyContact'
         | 'emergencyPhone'
-        | 'wantsInvoiceWithNif'
         | 'sportInsurance'
         | 'tshirtSize'
         | 'heardAboutClub'
@@ -960,7 +956,6 @@ export interface Email {
         | 'emailNotificationsEnabled'
         | 'emergencyContact'
         | 'emergencyPhone'
-        | 'wantsInvoiceWithNif'
         | 'sportInsurance'
         | 'tshirtSize'
         | 'heardAboutClub'
@@ -1011,7 +1006,6 @@ export interface Number {
         | 'emailNotificationsEnabled'
         | 'emergencyContact'
         | 'emergencyPhone'
-        | 'wantsInvoiceWithNif'
         | 'sportInsurance'
         | 'tshirtSize'
         | 'heardAboutClub'
@@ -1046,7 +1040,6 @@ export interface Number {
         | 'emailNotificationsEnabled'
         | 'emergencyContact'
         | 'emergencyPhone'
-        | 'wantsInvoiceWithNif'
         | 'sportInsurance'
         | 'tshirtSize'
         | 'heardAboutClub'
@@ -1114,7 +1107,6 @@ export interface Select {
         | 'emailNotificationsEnabled'
         | 'emergencyContact'
         | 'emergencyPhone'
-        | 'wantsInvoiceWithNif'
         | 'sportInsurance'
         | 'tshirtSize'
         | 'heardAboutClub'
@@ -1149,7 +1141,6 @@ export interface Select {
         | 'emailNotificationsEnabled'
         | 'emergencyContact'
         | 'emergencyPhone'
-        | 'wantsInvoiceWithNif'
         | 'sportInsurance'
         | 'tshirtSize'
         | 'heardAboutClub'
@@ -1200,7 +1191,6 @@ export interface Text {
         | 'emailNotificationsEnabled'
         | 'emergencyContact'
         | 'emergencyPhone'
-        | 'wantsInvoiceWithNif'
         | 'sportInsurance'
         | 'tshirtSize'
         | 'heardAboutClub'
@@ -1235,7 +1225,6 @@ export interface Text {
         | 'emailNotificationsEnabled'
         | 'emergencyContact'
         | 'emergencyPhone'
-        | 'wantsInvoiceWithNif'
         | 'sportInsurance'
         | 'tshirtSize'
         | 'heardAboutClub'
@@ -1300,7 +1289,6 @@ export interface Phone {
         | 'emailNotificationsEnabled'
         | 'emergencyContact'
         | 'emergencyPhone'
-        | 'wantsInvoiceWithNif'
         | 'sportInsurance'
         | 'tshirtSize'
         | 'heardAboutClub'
@@ -1335,7 +1323,6 @@ export interface Phone {
         | 'emailNotificationsEnabled'
         | 'emergencyContact'
         | 'emergencyPhone'
-        | 'wantsInvoiceWithNif'
         | 'sportInsurance'
         | 'tshirtSize'
         | 'heardAboutClub'
@@ -1386,7 +1373,6 @@ export interface MediaUpload {
         | 'emailNotificationsEnabled'
         | 'emergencyContact'
         | 'emergencyPhone'
-        | 'wantsInvoiceWithNif'
         | 'sportInsurance'
         | 'tshirtSize'
         | 'heardAboutClub'
@@ -1431,7 +1417,6 @@ export interface Address {
         | 'emailNotificationsEnabled'
         | 'emergencyContact'
         | 'emergencyPhone'
-        | 'wantsInvoiceWithNif'
         | 'sportInsurance'
         | 'tshirtSize'
         | 'heardAboutClub'
@@ -1466,7 +1451,6 @@ export interface Address {
         | 'emailNotificationsEnabled'
         | 'emergencyContact'
         | 'emergencyPhone'
-        | 'wantsInvoiceWithNif'
         | 'sportInsurance'
         | 'tshirtSize'
         | 'heardAboutClub'
@@ -1530,7 +1514,6 @@ export interface DateField {
         | 'emailNotificationsEnabled'
         | 'emergencyContact'
         | 'emergencyPhone'
-        | 'wantsInvoiceWithNif'
         | 'sportInsurance'
         | 'tshirtSize'
         | 'heardAboutClub'
@@ -1565,7 +1548,6 @@ export interface DateField {
         | 'emailNotificationsEnabled'
         | 'emergencyContact'
         | 'emergencyPhone'
-        | 'wantsInvoiceWithNif'
         | 'sportInsurance'
         | 'tshirtSize'
         | 'heardAboutClub'
@@ -1990,7 +1972,6 @@ export interface User {
   emailNotificationsEnabled?: boolean | null;
   emergencyContact?: string | null;
   emergencyPhone?: string | null;
-  wantsInvoiceWithNif?: boolean | null;
   sportInsurance?: ('none' | 'fpn' | 'fpt') | null;
   tshirtSize?: ('XS' | 'S' | 'M' | 'L' | 'XL' | 'XXL' | 'XXXL') | null;
   heardAboutClub?: (string | null) | AboutClub;
@@ -5298,7 +5279,6 @@ export interface UsersSelect<T extends boolean = true> {
   emailNotificationsEnabled?: T;
   emergencyContact?: T;
   emergencyPhone?: T;
-  wantsInvoiceWithNif?: T;
   sportInsurance?: T;
   tshirtSize?: T;
   heardAboutClub?: T;

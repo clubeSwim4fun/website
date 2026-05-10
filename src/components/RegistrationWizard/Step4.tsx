@@ -82,17 +82,6 @@ export function Step4({ data, errors, onChange, fieldMap, generalConfig }: Props
         </div>
       )}
 
-      {/* <div className="flex items-center gap-3">
-        <Checkbox
-          id="wantsInvoiceWithNif"
-          checked={data.wantsInvoiceWithNif}
-          onCheckedChange={(v) => onChange('wantsInvoiceWithNif', Boolean(v))}
-        />
-        <label htmlFor="wantsInvoiceWithNif" className="text-sm cursor-pointer">
-          {label(fieldMap, 'wantsInvoiceWithNif', t('wantsInvoice'))}
-        </label>
-      </div> */}
-
       <div
         className={cn(
           'rounded-xl border p-4 flex gap-3 items-start',

@@ -28,7 +28,6 @@ export type RegistrationFormData = {
   emailNotifications: boolean
   whatsappNotifications: boolean
   heardAboutClub: string
-  wantsInvoiceWithNif: boolean
   consent: boolean
   // Extra CMS-configured fields (keyed by field name)
   [key: string]: string | boolean | File[]
