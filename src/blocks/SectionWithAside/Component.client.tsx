@@ -34,17 +34,7 @@ const StripeStepLayout: React.FC<{
   prevStepLabel?: string | null
   onBack: () => void
   animClass?: string
-}> = ({
-  panel,
-  asideStatic,
-  nextStepLabel,
-  submitForm,
-  isLast,
-  onNext,
-  prevStepLabel,
-  onBack,
-  animClass,
-}) => {
+}> = ({ panel, asideStatic, nextStepLabel, isLast, onNext, prevStepLabel, onBack, animClass }) => {
   const ctx = useStepPayment()!
   const { toast } = useToast()
   const panelRef = useRef<HTMLDivElement>(null)
@@ -65,17 +55,11 @@ const StripeStepLayout: React.FC<{
       ctx.setErrorMessage(result.error)
       toast({ variant: 'destructive', description: result.error })
     } else {
-      // After successful payment, also submit any form in the panel (fire-and-forget)
-      if (submitForm && panelRef.current) {
-        const form = panelRef.current.querySelector('form')
-        if (form) {
-          try {
-            form.requestSubmit()
-          } catch {
-            // non-critical — payment already succeeded
-          }
-        }
-      }
+      // After successful payment, submit any co-located form (sends configured emails)
+      await ctx.triggerPostPaymentSubmit().catch(() => {
+        // non-critical — payment already succeeded
+      })
+
       if (!isLast) {
         setTimeout(onNext, 600)
       }

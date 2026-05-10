@@ -1,7 +1,7 @@
 import { getLogo } from '@/helpers/emailHelper'
 import React from 'react'
 
-const TITLE_PREFIX = 'Clube Swim4Fun: '
+const TITLE_PREFIX = 'Clube Swim4fun: '
 
 type Args = {
   title: string

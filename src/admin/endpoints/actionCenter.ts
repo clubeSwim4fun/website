@@ -23,14 +23,19 @@ export const actionCenterCounts: Endpoint = {
     const regCount = regResult.totalDocs
     const oldestReg = regResult.docs[0] ?? null
 
-    // Queue 2: group subscriptions — payment cleared, admin approval pending
+    // Queue 2: group subscriptions — form-payments with assignToGroup, paid, not handled
     const subResult = await req.payload.find({
-      collection: 'group-subscription',
+      collection: 'form-payments',
       where: {
-        and: [{ paymentStatus: { equals: 'paid' } }, { status: { equals: 'pending' } }],
+        and: [
+          { paymentStatus: { equals: 'paid' } },
+          { handledAt: { exists: false } },
+          { assignToGroup: { exists: true } },
+        ],
       },
       sort: 'createdAt',
       limit: 1,
+      depth: 1,
     })
     const subCount = subResult.totalDocs
     const oldestSub = subResult.docs[0] ?? null
@@ -51,11 +56,15 @@ export const actionCenterCounts: Endpoint = {
     const dorsalCount = dorsalResult.totalDocs
     const oldestDorsal = dorsalResult.docs[0] ?? null
 
-    // Queue 4: form payments — paid, no handledAt
+    // Queue 4: form payments — paid, no handledAt, no assignToGroup
     const formResult = await req.payload.find({
       collection: 'form-payments',
       where: {
-        and: [{ paymentStatus: { equals: 'paid' } }, { handledAt: { exists: false } }],
+        and: [
+          { paymentStatus: { equals: 'paid' } },
+          { handledAt: { exists: false } },
+          { assignToGroup: { exists: false } },
+        ],
       },
       sort: 'createdAt',
       limit: 1,
@@ -353,9 +362,13 @@ export const actionCenterSubscriptions: Endpoint = {
       return Response.json({ error: 'Forbidden' }, { status: 403 })
 
     const result = await req.payload.find({
-      collection: 'group-subscription',
+      collection: 'form-payments',
       where: {
-        and: [{ paymentStatus: { equals: 'paid' } }, { status: { equals: 'pending' } }],
+        and: [
+          { paymentStatus: { equals: 'paid' } },
+          { handledAt: { exists: false } },
+          { assignToGroup: { exists: true } },
+        ],
       },
       sort: 'createdAt',
       limit: 100,
@@ -366,35 +379,125 @@ export const actionCenterSubscriptions: Endpoint = {
     const h48 = new Date(now.getTime() - 48 * 60 * 60 * 1000)
     const h72 = new Date(now.getTime() - 72 * 60 * 60 * 1000)
 
-    const docs = (result.docs as any[]).map((s) => {
-      const createdAt = new Date(s.createdAt)
-      const urgency = createdAt < h72 ? 'red' : createdAt < h48 ? 'amber' : 'none'
-      const user = typeof s.user === 'object' ? s.user : null
-      const group = typeof s.group === 'object' ? s.group : null
+    const docs = await Promise.all(
+      (result.docs as any[]).map(async (fp) => {
+        const createdAt = new Date(fp.createdAt)
+        const urgency = createdAt < h72 ? 'red' : createdAt < h48 ? 'amber' : 'none'
+        const user = typeof fp.user === 'object' ? fp.user : null
+        const form = typeof fp.form === 'object' ? fp.form : null
+        const formId = form?.id ?? (typeof fp.form === 'string' ? fp.form : null)
 
-      return {
-        id: s.id,
-        createdAt: s.createdAt,
-        urgency,
-        transactionId: s.transactionId ?? null,
-        paymentStatus: s.paymentStatus,
-        user: user
-          ? {
-              id: user.id,
-              name: user.name ?? '',
-              surname: user.surname ?? '',
-              email: user.email ?? '',
+        // assignToGroup is a polymorphic relation: { relationTo, value }
+        const atg = fp.assignToGroup as
+          | { relationTo: 'groups' | 'group-categories'; value: any }
+          | null
+          | undefined
+        const groupDoc = atg && typeof atg.value === 'object' ? atg.value : null
+        const groupTitle = groupDoc?.title
+          ? typeof groupDoc.title === 'object'
+            ? (groupDoc.title.pt ?? groupDoc.title.en ?? '')
+            : groupDoc.title
+          : null
+
+        // Build label map from form fields
+        const fieldLabelMap: Record<string, string> = {}
+        const fileFieldNames = new Set<string>()
+        if (form?.fields && Array.isArray(form.fields)) {
+          for (const f of form.fields) {
+            if (!f.name) continue
+            const label =
+              typeof f.label === 'string'
+                ? f.label
+                : typeof f.label === 'object' && f.label !== null
+                  ? (f.label.pt ?? f.label.en ?? f.name)
+                  : f.name
+            fieldLabelMap[f.name] = label
+            if (f.blockType === 'upload' || f.blockType === 'media' || f.type === 'upload') {
+              fileFieldNames.add(f.name)
             }
-          : null,
-        group: group
-          ? {
-              id: group.id,
-              title: group.title ?? group.name ?? '',
+          }
+        }
+
+        // Try to find the matching form-submission for richer data
+        let submissionData: { field: string; label: string; value: string; isFile: boolean }[] = []
+
+        if (formId) {
+          try {
+            const subResult = await req.payload.find({
+              collection: 'form-submissions',
+              where: { form: { equals: formId } },
+              sort: '-createdAt',
+              limit: 100,
+              depth: 0,
+            })
+
+            const paymentTime = new Date(fp.createdAt).getTime()
+            let bestSub: any = null
+            let bestDiff = Infinity
+            for (const sub of subResult.docs as any[]) {
+              const diff = Math.abs(new Date(sub.createdAt).getTime() - paymentTime)
+              if (diff < bestDiff) {
+                bestDiff = diff
+                bestSub = sub
+              }
             }
-          : null,
-        submissionData: s.submissionData ?? [],
-      }
-    })
+
+            if (bestSub?.submissionData && Array.isArray(bestSub.submissionData)) {
+              submissionData = bestSub.submissionData
+                .filter((d: any) => d.field && d.value)
+                .map((d: any) => ({
+                  field: d.field,
+                  label: fieldLabelMap[d.field] ?? d.field,
+                  value: d.value ?? '',
+                  isFile: fileFieldNames.has(d.field) || isLikelyFilename(d.value),
+                }))
+            }
+          } catch {
+            // fall through to snapshot
+          }
+        }
+
+        // Fall back to snapshot on the payment record
+        if (
+          submissionData.length === 0 &&
+          Array.isArray(fp.submissionData) &&
+          fp.submissionData.length > 0
+        ) {
+          submissionData = fp.submissionData.map((d: any) => ({
+            field: d.field,
+            label: fieldLabelMap[d.field] ?? d.field,
+            value: d.value ?? '',
+            isFile: fileFieldNames.has(d.field) || isLikelyFilename(d.value),
+          }))
+        }
+
+        return {
+          id: fp.id,
+          createdAt: fp.createdAt,
+          urgency,
+          amount: fp.amount ?? 0,
+          description: fp.description ?? null,
+          stripePaymentIntentId: fp.stripePaymentIntentId ?? null,
+          user: user
+            ? {
+                id: user.id,
+                name: user.name ?? '',
+                surname: user.surname ?? '',
+                email: user.email ?? '',
+              }
+            : null,
+          form: form ? { id: form.id, title: form.title ?? form.name ?? '' } : null,
+          group: atg
+            ? {
+                relationTo: atg.relationTo,
+                id: groupDoc?.id ?? atg.value,
+                title: groupTitle ?? '—',
+              }
+            : null,
+          submissionData,
+        }
+      }),
+    )
 
     return Response.json({ docs, totalDocs: docs.length })
   },
@@ -412,9 +515,9 @@ export const actionCenterApproveSubscription: Endpoint = {
     const id = req.routeParams?.id as string
     try {
       await req.payload.update({
-        collection: 'group-subscription',
+        collection: 'form-payments',
         id,
-        data: { status: 'approved' },
+        data: { handledAt: new Date().toISOString() } as any,
       })
       return Response.json({ success: true })
     } catch (err) {
@@ -434,10 +537,11 @@ export const actionCenterRejectSubscription: Endpoint = {
 
     const id = req.routeParams?.id as string
     try {
+      // Mark handled — group assignment reversal (removing from user.groups) is a manual step
       await req.payload.update({
-        collection: 'group-subscription',
+        collection: 'form-payments',
         id,
-        data: { status: 'rejected' },
+        data: { handledAt: new Date().toISOString() } as any,
       })
       return Response.json({ success: true })
     } catch (err) {
@@ -571,7 +675,11 @@ export const actionCenterForms: Endpoint = {
     const result = await req.payload.find({
       collection: 'form-payments',
       where: {
-        and: [{ paymentStatus: { equals: 'paid' } }, { handledAt: { exists: false } }],
+        and: [
+          { paymentStatus: { equals: 'paid' } },
+          { handledAt: { exists: false } },
+          { assignToGroup: { exists: false } },
+        ],
       },
       sort: 'createdAt',
       limit: 100,

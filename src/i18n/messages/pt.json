@@ -60,7 +60,7 @@
     "mustResetSubtitle": "Por razões de segurança, precisa de definir uma nova palavra-passe antes de continuar."
   },
   "Metadata": {
-    "Club": "Clube Swim4Fun",
+    "Club": "Clube Swim4fun",
     "Blog": "Blog",
     "Post": "Post",
     "Cart": "Carrinho",
@@ -252,7 +252,7 @@
       "amount": "Valor pago",
       "status": "Estado",
       "paid": "Pago",
-      "footer": "Obrigado por fazer parte do Clube Swim4Fun!"
+      "footer": "Obrigado por fazer parte do Clube Swim4fun!"
     }
   },
   "Order": {

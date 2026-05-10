@@ -232,7 +232,7 @@ export default buildConfig({
   },
   email: nodemailerAdapter({
     defaultFromAddress: 'noreply@clube-swim4fun.pt',
-    defaultFromName: 'Clube Swim4Fun',
+    defaultFromName: 'Clube Swim4fun',
     // Any Nodemailer transport
     transport: await nodemailer.createTransport({
       host: process.env.SMTP_HOST,

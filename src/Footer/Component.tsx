@@ -70,7 +70,7 @@ export async function Footer({ locale }: { locale: TypedLocale }) {
               Swim<span className="text-light">4</span>fun
             </div>
             <p className="text-[13px] text-white/55 leading-relaxed max-w-[280px] mb-6">
-              Descubra a paixão pela natação em águas abertas com o Clube Swim4Fun. Competimos
+              Descubra a paixão pela natação em águas abertas com o Clube Swim4fun. Competimos
               juntos, crescemos juntos.
             </p>
             {socialLinks.length > 0 && (
@@ -172,7 +172,7 @@ export async function Footer({ locale }: { locale: TypedLocale }) {
         <div className="border-t border-white/[0.08] pt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <p className="text-[12px] text-white/35">
             {company?.copyright ||
-              `© ${new Date().getFullYear()} Clube Swim4Fun. Todos os direitos reservados.`}
+              `© ${new Date().getFullYear()} Clube Swim4fun. Todos os direitos reservados.`}
           </p>
           <LanguageSwitch />
         </div>

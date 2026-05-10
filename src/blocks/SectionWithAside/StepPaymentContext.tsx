@@ -31,6 +31,9 @@ type StepPaymentContextType = {
   /** Form ID registered by a form-variant CardBlock on a previous step */
   stepFormIdRef: React.MutableRefObject<string | null>
   setStepFormId: (id: string) => void
+  /** Called after payment succeeds — submits the co-located form (sends email) */
+  registerPostPaymentSubmit: (fn: () => Promise<void>) => void
+  triggerPostPaymentSubmit: () => Promise<void>
 }
 
 const StepPaymentContext = createContext<StepPaymentContextType | null>(null)
@@ -40,6 +43,7 @@ export const useStepPayment = () => useContext(StepPaymentContext)
 export const StepPaymentProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const submitRef = useRef<(() => Promise<{ error?: string }>) | null>(null)
   const formValidatorRef = useRef<(() => Promise<boolean>) | null>(null)
+  const postPaymentSubmitRef = useRef<(() => Promise<void>) | null>(null)
   const hasPaymentSelectorRef = useRef(false)
   const [status, setStatus] = useState<PaymentStatus>('idle')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
@@ -80,6 +84,15 @@ export const StepPaymentProvider: React.FC<{ children: React.ReactNode }> = ({ c
     return formValidatorRef.current()
   }
 
+  const registerPostPaymentSubmit = (fn: () => Promise<void>) => {
+    postPaymentSubmitRef.current = fn
+  }
+
+  const triggerPostPaymentSubmit = async (): Promise<void> => {
+    if (!postPaymentSubmitRef.current) return
+    return postPaymentSubmitRef.current()
+  }
+
   return (
     <StepPaymentContext.Provider
       value={{
@@ -104,6 +117,8 @@ export const StepPaymentProvider: React.FC<{ children: React.ReactNode }> = ({ c
         setFormIsValid,
         stepFormIdRef,
         setStepFormId,
+        registerPostPaymentSubmit,
+        triggerPostPaymentSubmit,
       }}
     >
       {children}

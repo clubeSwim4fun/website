@@ -126,6 +126,29 @@ export const FormBlockClient: React.FC<{ id?: string } & FormBlockType> = (props
     paymentCtx.setFormIsValid(isValid)
   }, [isValid, paymentCtx]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Register post-payment submit so the aside Pay button triggers form submission
+  // (which sends the configured email) after Stripe payment succeeds.
+  useEffect(() => {
+    if (!paymentCtx) return
+    paymentCtx.registerPostPaymentSubmit(
+      () =>
+        new Promise<void>((resolve, reject) => {
+          handleSubmit(
+            async (data) => {
+              try {
+                await submitToPayload(data)
+                resolve()
+              } catch (e) {
+                reject(e)
+              }
+            },
+            () => resolve(), // validation errors are non-fatal here — payment already succeeded
+          )()
+        }),
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paymentCtx])
+
   // Register this form's ID in the step context so sibling payment cards can link to it
   const stepFormIdRegistered = useRef(false)
   if (!stepFormIdRegistered.current && paymentCtx && resolvedFormID) {

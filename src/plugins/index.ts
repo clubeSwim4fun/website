@@ -208,10 +208,15 @@ export const plugins: Plugin[] = [
             ),
           )
 
+          // Strip empty optional fields so nodemailer defaults (from address, etc.) are not overridden
+          const { from, replyTo, cc, bcc, ...rest } = { ...email, html: renderedHtml }
           return {
-            ...email,
-            html: renderedHtml,
-          }
+            ...rest,
+            ...(from && from.trim() ? { from } : {}),
+            ...(replyTo && replyTo.trim() ? { replyTo } : {}),
+            ...(cc && cc.trim() ? { cc } : {}),
+            ...(bcc && bcc.trim() ? { bcc } : {}),
+          } as typeof email
         }),
       )
 
