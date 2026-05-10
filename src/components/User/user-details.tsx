@@ -68,9 +68,15 @@ const TABS: Tab[] = ['personal', 'address', 'communications']
 type Props = {
   user: User
   countryCode: string
+  temporaryIds?: {
+    id: string
+    number: string
+    season: string
+    group: { id: string; title: string } | null
+  }[]
 }
 
-export const UserDetails: React.FC<Props> = ({ user, countryCode }) => {
+export const UserDetails: React.FC<Props> = ({ user, countryCode, temporaryIds = [] }) => {
   const t = useTranslations('User.Details')
   const tc = useTranslations('Communications')
   const tReg = useTranslations('Registration')
@@ -190,6 +196,35 @@ export const UserDetails: React.FC<Props> = ({ user, countryCode }) => {
                 <InfoField label={t('federationId')} value={user.federationId} />
               )}
               {user.tshirtSize && <InfoField label={t('tshirtSize')} value={user.tshirtSize} />}
+              {temporaryIds.length > 0 && (
+                <div className="col-span-2 sm:col-span-3">
+                  <div
+                    className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[.7px] mb-2"
+                    style={{ color: '#8aaabb' }}
+                  >
+                    {t('seasonalIds')}
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {temporaryIds.map((tid) => (
+                      <div
+                        key={tid.id}
+                        className="flex flex-col rounded-[8px] px-3 py-2"
+                        style={{ background: '#f0fafd', border: '1.5px solid #d4eaf2' }}
+                      >
+                        <span className="text-[11px] font-bold" style={{ color: '#0a4a6e' }}>
+                          {tid.group?.title ?? '—'}
+                        </span>
+                        <span className="text-[14px] font-semibold" style={{ color: '#0f1f2e' }}>
+                          {tid.number}
+                        </span>
+                        <span className="text-[10px]" style={{ color: '#8aaabb' }}>
+                          {tid.season}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </>
         )}

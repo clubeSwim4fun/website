@@ -16,6 +16,10 @@ export const Sponsors: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'name',
+    group: {
+      pt: 'Configurações Gerais',
+      en: 'General Configs',
+    },
   },
   fields: [
     {

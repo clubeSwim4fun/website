@@ -55,7 +55,7 @@ export const actionCenterCounts: Endpoint = {
     const formResult = await req.payload.find({
       collection: 'form-payments',
       where: {
-        paymentStatus: { equals: 'paid' },
+        and: [{ paymentStatus: { equals: 'paid' } }, { handledAt: { exists: false } }],
       },
       sort: 'createdAt',
       limit: 1,
@@ -570,7 +570,9 @@ export const actionCenterForms: Endpoint = {
 
     const result = await req.payload.find({
       collection: 'form-payments',
-      where: { paymentStatus: { equals: 'paid' } },
+      where: {
+        and: [{ paymentStatus: { equals: 'paid' } }, { handledAt: { exists: false } }],
+      },
       sort: 'createdAt',
       limit: 100,
       depth: 2,
@@ -689,4 +691,138 @@ export const actionCenterForms: Endpoint = {
 function isLikelyFilename(value: string): boolean {
   if (!value || typeof value !== 'string') return false
   return /\.(png|jpg|jpeg|gif|webp|pdf|doc|docx|xls|xlsx|csv|zip|txt)$/i.test(value.trim())
+}
+
+// ─── /api/action-center/forms/:id/handle ─────────────────────────────────────
+export const actionCenterHandleForm: Endpoint = {
+  path: '/action-center/forms/:id/handle',
+  method: 'post',
+  handler: async (req) => {
+    if (!req.user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
+    if ((req.user as any).role !== 'admin')
+      return Response.json({ error: 'Forbidden' }, { status: 403 })
+
+    const id = req.routeParams?.id as string
+    const body = (await req.json?.()) ?? {}
+    const { assignId, groupId, groupRelationTo, idNumber } = body as {
+      assignId: boolean
+      groupId?: string
+      groupRelationTo?: 'groups' | 'group-categories'
+      idNumber?: string
+    }
+
+    try {
+      // Mark the form payment as handled
+      await req.payload.update({
+        collection: 'form-payments',
+        id,
+        data: { handledAt: new Date().toISOString() } as any,
+      })
+
+      if (!assignId || !groupId || !idNumber) {
+        return Response.json({ success: true })
+      }
+
+      // Fetch the form payment to get the user
+      const fp = await req.payload.findByID({
+        collection: 'form-payments',
+        id,
+        depth: 1,
+      })
+
+      const userId = typeof (fp as any).user === 'object' ? (fp as any).user?.id : (fp as any).user
+
+      if (!userId) {
+        return Response.json(
+          { success: false, error: 'User not found on form payment' },
+          { status: 400 },
+        )
+      }
+
+      const collection = groupRelationTo === 'group-categories' ? 'group-categories' : 'groups'
+
+      // Fetch the group/subgroup to check if it's permanent
+      const group = await req.payload.findByID({
+        collection,
+        id: groupId,
+        depth: 0,
+      })
+
+      const isPermanent = (group as any).isPermanentId ?? false
+      const userField = (group as any).userField as string | undefined
+
+      if (isPermanent && userField) {
+        // Save directly to the user record
+        await req.payload.update({
+          collection: 'users',
+          id: userId,
+          data: { [userField]: idNumber } as any,
+        })
+      } else {
+        // Save to temporary-group-ids
+        const season = `${new Date().getFullYear()}-${new Date().getFullYear() + 1}`
+
+        // Check if a record already exists for this user+group+season
+        const existing = await req.payload.find({
+          collection: 'temporary-group-ids',
+          where: {
+            and: [
+              { user: { equals: userId } },
+              { group: { equals: groupId } },
+              { season: { equals: season } },
+            ],
+          },
+          limit: 1,
+        })
+
+        if (existing.totalDocs > 0) {
+          await req.payload.update({
+            collection: 'temporary-group-ids',
+            id: (existing.docs[0] as any).id,
+            data: { number: idNumber },
+          })
+        } else {
+          await req.payload.create({
+            collection: 'temporary-group-ids',
+            data: { user: userId, group: groupId, season, number: idNumber },
+          })
+        }
+      }
+
+      return Response.json({ success: true })
+    } catch (err) {
+      return Response.json({ success: false, error: String(err) }, { status: 500 })
+    }
+  },
+}
+
+// ─── /api/action-center/groups ────────────────────────────────────────────────
+export const actionCenterGroups: Endpoint = {
+  path: '/action-center/groups',
+  method: 'get',
+  handler: async (req) => {
+    if (!req.user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
+    if ((req.user as any).role !== 'admin')
+      return Response.json({ error: 'Forbidden' }, { status: 403 })
+
+    const [groupsResult, subgroupsResult] = await Promise.all([
+      req.payload.find({ collection: 'groups', limit: 200, depth: 0 }),
+      req.payload.find({ collection: 'group-categories', limit: 200, depth: 0 }),
+    ])
+
+    const mapDoc = (g: any, relationTo: 'groups' | 'group-categories') => ({
+      id: g.id,
+      relationTo,
+      title: typeof g.title === 'object' ? (g.title?.pt ?? g.title?.en ?? g.id) : (g.title ?? g.id),
+      isPermanentId: g.isPermanentId ?? false,
+      userField: g.userField ?? null,
+    })
+
+    const docs = [
+      ...(groupsResult.docs as any[]).map((g) => mapDoc(g, 'groups')),
+      ...(subgroupsResult.docs as any[]).map((g) => mapDoc(g, 'group-categories')),
+    ]
+
+    return Response.json({ docs })
+  },
 }

@@ -24,7 +24,7 @@ export const Carts: CollectionConfig = {
     update: authenticated,
   },
   admin: {
-    // hidden: true,
+    hidden: true,
   },
   fields: [
     {

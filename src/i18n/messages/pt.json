@@ -90,7 +90,8 @@
       "email": "E-mail:",
       "federationId": "ID de Federação:",
       "tshirtSize": "Tamanho de T-shirt:",
-      "communications": "Comunicações"
+      "communications": "Comunicações",
+      "seasonalIds": "IDs Sazonais:"
     },
     "Profile": {
       "profileTitle": "Perfil do Utilizador",

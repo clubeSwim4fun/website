@@ -69,18 +69,17 @@ export interface Config {
   collections: {
     pages: Page;
     posts: Post;
-    media: Media;
+    events: Event;
     categories: Category;
+    media: Media;
     users: User;
     'user-media': UserMedia;
     federationHistory: FederationHistory;
     groups: Group;
     'group-categories': GroupCategory;
-    events: Event;
     carts: Cart;
     tickets: Ticket;
     orders: Order;
-    gender: Gender;
     disability: Disability;
     aboutClub: AboutClub;
     subscription: Subscription;
@@ -94,6 +93,7 @@ export interface Config {
     newsletters: Newsletter;
     sponsors: Sponsor;
     'form-payments': FormPayment;
+    'temporary-group-ids': TemporaryGroupId;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -108,18 +108,17 @@ export interface Config {
   collectionsSelect: {
     pages: PagesSelect<false> | PagesSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
-    media: MediaSelect<false> | MediaSelect<true>;
+    events: EventsSelect<false> | EventsSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
+    media: MediaSelect<false> | MediaSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'user-media': UserMediaSelect<false> | UserMediaSelect<true>;
     federationHistory: FederationHistorySelect<false> | FederationHistorySelect<true>;
     groups: GroupsSelect<false> | GroupsSelect<true>;
     'group-categories': GroupCategoriesSelect<false> | GroupCategoriesSelect<true>;
-    events: EventsSelect<false> | EventsSelect<true>;
     carts: CartsSelect<false> | CartsSelect<true>;
     tickets: TicketsSelect<false> | TicketsSelect<true>;
     orders: OrdersSelect<false> | OrdersSelect<true>;
-    gender: GenderSelect<false> | GenderSelect<true>;
     disability: DisabilitySelect<false> | DisabilitySelect<true>;
     aboutClub: AboutClubSelect<false> | AboutClubSelect<true>;
     subscription: SubscriptionSelect<false> | SubscriptionSelect<true>;
@@ -133,6 +132,7 @@ export interface Config {
     newsletters: NewslettersSelect<false> | NewslettersSelect<true>;
     sponsors: SponsorsSelect<false> | SponsorsSelect<true>;
     'form-payments': FormPaymentsSelect<false> | FormPaymentsSelect<true>;
+    'temporary-group-ids': TemporaryGroupIdsSelect<false> | TemporaryGroupIdsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -540,6 +540,14 @@ export interface Group {
   title: string;
   badge?: (string | null) | Media;
   hasSubscription?: boolean | null;
+  /**
+   * If checked, the ID assigned to users for this group is permanent (stored on the user record). If unchecked, the ID is seasonal and stored in Temporary Group IDs.
+   */
+  isPermanentId?: boolean | null;
+  /**
+   * The field on the User record where this permanent ID will be stored.
+   */
+  userField?: ('federationId' | 'associateId') | null;
   subscriptionPrice: number;
   subscriptionPeriod: 'monthly' | 'yearly';
   subscriptionForm: string | Form;
@@ -1613,6 +1621,14 @@ export interface GroupCategory {
   slug?: string | null;
   slugLock?: boolean | null;
   parent?: (string | null) | Group;
+  /**
+   * If checked, the ID assigned to users for this subgroup is permanent (stored on the user record). If unchecked, the ID is seasonal and stored in Temporary Group IDs.
+   */
+  isPermanentId?: boolean | null;
+  /**
+   * The field on the User record where this permanent ID will be stored.
+   */
+  userField?: ('federationId' | 'associateId') | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -3292,18 +3308,6 @@ export interface BenefitsBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "federationHistory".
- */
-export interface FederationHistory {
-  id: string;
-  user?: (string | null) | User;
-  federationId?: number | null;
-  season?: string | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "events".
  */
 export interface Event {
@@ -3643,6 +3647,18 @@ export interface Ticket {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "federationHistory".
+ */
+export interface FederationHistory {
+  id: string;
+  user?: (string | null) | User;
+  federationId?: number | null;
+  season?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "carts".
  */
 export interface Cart {
@@ -3686,19 +3702,6 @@ export interface Order {
   cartId?: string | null;
   stripePaymentIntentId?: string | null;
   paymentStatus?: ('pending' | 'paid' | 'failed') | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "gender".
- */
-export interface Gender {
-  id: string;
-  title?: string | null;
-  label: string;
-  value: string;
-  hiddenId?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -3983,6 +3986,7 @@ export interface FormPayment {
         value: string | GroupCategory;
       } | null);
   description?: string | null;
+  handledAt?: string | null;
   submissionData?:
     | {
         field?: string | null;
@@ -3990,6 +3994,19 @@ export interface FormPayment {
         id?: string | null;
       }[]
     | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "temporary-group-ids".
+ */
+export interface TemporaryGroupId {
+  id: string;
+  user: string | User;
+  group: string | Group;
+  season: string;
+  number: string;
   updatedAt: string;
   createdAt: string;
 }
@@ -4192,12 +4209,16 @@ export interface PayloadLockedDocument {
         value: string | Post;
       } | null)
     | ({
-        relationTo: 'media';
-        value: string | Media;
+        relationTo: 'events';
+        value: string | Event;
       } | null)
     | ({
         relationTo: 'categories';
         value: string | Category;
+      } | null)
+    | ({
+        relationTo: 'media';
+        value: string | Media;
       } | null)
     | ({
         relationTo: 'users';
@@ -4220,10 +4241,6 @@ export interface PayloadLockedDocument {
         value: string | GroupCategory;
       } | null)
     | ({
-        relationTo: 'events';
-        value: string | Event;
-      } | null)
-    | ({
         relationTo: 'carts';
         value: string | Cart;
       } | null)
@@ -4234,10 +4251,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'orders';
         value: string | Order;
-      } | null)
-    | ({
-        relationTo: 'gender';
-        value: string | Gender;
       } | null)
     | ({
         relationTo: 'disability';
@@ -4290,6 +4303,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'form-payments';
         value: string | FormPayment;
+      } | null)
+    | ({
+        relationTo: 'temporary-group-ids';
+        value: string | TemporaryGroupId;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -5143,6 +5160,82 @@ export interface PostsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events_select".
+ */
+export interface EventsSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  start?: T;
+  end?: T;
+  timeToBeConfirmed?: T;
+  distances?:
+    | T
+    | {
+        distance?: T;
+        id?: T;
+      };
+  category?: T;
+  hasTshirt?: T;
+  tshirtSizes?: T;
+  isRiver?: T;
+  address?:
+    | T
+    | {
+        street?: T;
+        number?: T;
+        state?: T;
+        zipcode?: T;
+        country?: T;
+      };
+  image?: T;
+  externalRegistrationUrl?: T;
+  promoCode?: T;
+  memberDiscount?: T;
+  distanceCategories?:
+    | T
+    | {
+        name?: T;
+        totalDistance?: T;
+        swimDistance?: T;
+        runDistance?: T;
+        transitions?: T;
+        longestSwim?: T;
+        longestRun?: T;
+        elevationGain?: T;
+        timeLimit?: T;
+        regulationUrl?: T;
+        registrationUrl?: T;
+        id?: T;
+      };
+  tickets?: T;
+  slug?: T;
+  slugLock?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories_select".
+ */
+export interface CategoriesSelect<T extends boolean = true> {
+  title?: T;
+  color?: T;
+  slug?: T;
+  slugLock?: T;
+  parent?: T;
+  breadcrumbs?:
+    | T
+    | {
+        doc?: T;
+        url?: T;
+        label?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media_select".
  */
 export interface MediaSelect<T extends boolean = true> {
@@ -5234,27 +5327,6 @@ export interface MediaSelect<T extends boolean = true> {
               filename?: T;
             };
       };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "categories_select".
- */
-export interface CategoriesSelect<T extends boolean = true> {
-  title?: T;
-  color?: T;
-  slug?: T;
-  slugLock?: T;
-  parent?: T;
-  breadcrumbs?:
-    | T
-    | {
-        doc?: T;
-        url?: T;
-        label?: T;
-        id?: T;
-      };
-  updatedAt?: T;
-  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -5363,6 +5435,8 @@ export interface GroupsSelect<T extends boolean = true> {
   title?: T;
   badge?: T;
   hasSubscription?: T;
+  isPermanentId?: T;
+  userField?: T;
   subscriptionPrice?: T;
   subscriptionPeriod?: T;
   subscriptionForm?: T;
@@ -5381,61 +5455,8 @@ export interface GroupCategoriesSelect<T extends boolean = true> {
   slug?: T;
   slugLock?: T;
   parent?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "events_select".
- */
-export interface EventsSelect<T extends boolean = true> {
-  title?: T;
-  description?: T;
-  start?: T;
-  end?: T;
-  timeToBeConfirmed?: T;
-  distances?:
-    | T
-    | {
-        distance?: T;
-        id?: T;
-      };
-  category?: T;
-  hasTshirt?: T;
-  tshirtSizes?: T;
-  isRiver?: T;
-  address?:
-    | T
-    | {
-        street?: T;
-        number?: T;
-        state?: T;
-        zipcode?: T;
-        country?: T;
-      };
-  image?: T;
-  externalRegistrationUrl?: T;
-  promoCode?: T;
-  memberDiscount?: T;
-  distanceCategories?:
-    | T
-    | {
-        name?: T;
-        totalDistance?: T;
-        swimDistance?: T;
-        runDistance?: T;
-        transitions?: T;
-        longestSwim?: T;
-        longestRun?: T;
-        elevationGain?: T;
-        timeLimit?: T;
-        regulationUrl?: T;
-        registrationUrl?: T;
-        id?: T;
-      };
-  tickets?: T;
-  slug?: T;
-  slugLock?: T;
+  isPermanentId?: T;
+  userField?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -5497,18 +5518,6 @@ export interface OrdersSelect<T extends boolean = true> {
   cartId?: T;
   stripePaymentIntentId?: T;
   paymentStatus?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "gender_select".
- */
-export interface GenderSelect<T extends boolean = true> {
-  title?: T;
-  label?: T;
-  value?: T;
-  hiddenId?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -5748,6 +5757,7 @@ export interface FormPaymentsSelect<T extends boolean = true> {
   stripePaymentIntentId?: T;
   assignToGroup?: T;
   description?: T;
+  handledAt?: T;
   submissionData?:
     | T
     | {
@@ -5755,6 +5765,18 @@ export interface FormPaymentsSelect<T extends boolean = true> {
         value?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "temporary-group-ids_select".
+ */
+export interface TemporaryGroupIdsSelect<T extends boolean = true> {
+  user?: T;
+  group?: T;
+  season?: T;
+  number?: T;
   updatedAt?: T;
   createdAt?: T;
 }

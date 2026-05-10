@@ -29,7 +29,6 @@ import { Orders } from './collections/Ecommerce/Orders'
 import localization from './i18n/localization'
 import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 import nodemailer from 'nodemailer'
-import { Gender } from './collections/Users/Genders'
 import { GeneralConfigs } from './GeneralConfigs'
 import { Disability } from './collections/Users/Disability'
 import { AboutClub } from './collections/Users/HeardAboutClub'
@@ -45,6 +44,7 @@ import { PostLikes } from './collections/Posts/PostLikes'
 import { Newsletters } from './collections/Newsletters'
 import { Sponsors } from './collections/Sponsors'
 import { FormPayments } from './collections/FormPayments'
+import { TemporaryGroupId } from './collections/TemporaryGroupId'
 import { dashboardPool } from './admin/endpoints/dashboardPool'
 import { dashboardPoolSlot, dashboardPoolWeek } from './admin/endpoints/dashboardPoolSlot'
 import { dashboardMembers } from './admin/endpoints/dashboardMembers'
@@ -66,6 +66,8 @@ import {
   actionCenterDorsals,
   actionCenterSaveDorsal,
   actionCenterForms,
+  actionCenterHandleForm,
+  actionCenterGroups,
 } from './admin/endpoints/actionCenter'
 
 const filename = fileURLToPath(import.meta.url)
@@ -97,6 +99,8 @@ export default buildConfig({
     actionCenterDorsals,
     actionCenterSaveDorsal,
     actionCenterForms,
+    actionCenterHandleForm,
+    actionCenterGroups,
   ],
   admin: {
     suppressHydrationWarning: true,
@@ -153,18 +157,17 @@ export default buildConfig({
   collections: [
     Pages,
     Posts,
-    Media,
+    Events,
     Categories,
+    Media,
     Users,
     UserMedia,
     FederationHistory,
     Groups,
     GroupCategories,
-    Events,
     Carts,
     Tickets,
     Orders,
-    Gender,
     Disability,
     AboutClub,
     Subscription,
@@ -178,6 +181,7 @@ export default buildConfig({
     Newsletters,
     Sponsors,
     FormPayments,
+    TemporaryGroupId,
   ],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer, GeneralConfigs],

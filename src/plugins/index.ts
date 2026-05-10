@@ -67,6 +67,12 @@ export const plugins: Plugin[] = [
           return field
         })
       },
+      admin: {
+        group: {
+          pt: 'Configurações Gerais',
+          en: 'General Configs',
+        },
+      },
       hooks: {
         afterChange: [revalidateRedirects],
       },
@@ -132,8 +138,17 @@ export const plugins: Plugin[] = [
           }),
         ]
       },
+      admin: {
+        group: {
+          pt: 'Contéudo',
+          en: 'Content',
+        },
+      },
     },
     formSubmissionOverrides: {
+      admin: {
+        hidden: true,
+      },
       labels: {
         plural: {
           en: 'Form submissions',
@@ -223,6 +238,12 @@ export const plugins: Plugin[] = [
         singular: {
           en: 'Search Result',
           pt: 'Resultado de pesquisa',
+        },
+      },
+      admin: {
+        group: {
+          pt: 'Configurações Gerais',
+          en: 'General Configs',
         },
       },
       fields: ({ defaultFields }) => {

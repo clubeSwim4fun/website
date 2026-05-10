@@ -26,6 +26,10 @@ export const Groups: CollectionConfig = {
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'createdAt'],
+    group: {
+      pt: 'Configurações Gerais',
+      en: 'General Configs',
+    },
   },
   fields: [
     {
@@ -54,6 +58,46 @@ export const Groups: CollectionConfig = {
         pt: 'Tem Assinatura?',
       },
       type: 'checkbox',
+    },
+    {
+      name: 'isPermanentId',
+      label: {
+        en: 'Has Permanent ID?',
+        pt: 'Tem ID Permanente?',
+      },
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        description: {
+          en: 'If checked, the ID assigned to users for this group is permanent (stored on the user record). If unchecked, the ID is seasonal and stored in Temporary Group IDs.',
+          pt: 'Se marcado, o ID atribuído aos utilizadores para este grupo é permanente (guardado no registo do utilizador). Se não marcado, o ID é sazonal e guardado em IDs Temporários de Grupo.',
+        },
+      },
+    },
+    {
+      name: 'userField',
+      label: {
+        en: 'User Field (for permanent ID)',
+        pt: 'Campo do Utilizador (para ID permanente)',
+      },
+      type: 'select',
+      options: [
+        {
+          label: { en: 'Federation ID (federationId)', pt: 'ID da Federação (federationId)' },
+          value: 'federationId',
+        },
+        {
+          label: { en: 'Associate ID (associateId)', pt: 'ID de Sócio (associateId)' },
+          value: 'associateId',
+        },
+      ],
+      admin: {
+        condition: (_, sibling) => sibling.isPermanentId,
+        description: {
+          en: 'The field on the User record where this permanent ID will be stored.',
+          pt: 'O campo no registo do Utilizador onde este ID permanente será guardado.',
+        },
+      },
     },
     {
       type: 'row',

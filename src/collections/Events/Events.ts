@@ -26,6 +26,10 @@ export const Events: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'title',
+    group: {
+      pt: 'Gestão de Eventos',
+      en: 'Events control',
+    },
   },
   fields: [
     {

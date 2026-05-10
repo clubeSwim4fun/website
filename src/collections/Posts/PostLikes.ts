@@ -14,6 +14,9 @@ export const PostLikes: CollectionConfig = {
     update: isAdmin,
     delete: authenticated,
   },
+  admin: {
+    hidden: true,
+  },
   fields: [
     {
       name: 'post',

@@ -16,6 +16,9 @@ export const Orders: CollectionConfig = {
       pt: 'Pedido de compra',
     },
   },
+  admin: {
+    hidden: true,
+  },
   access: {
     admin: isAdminOrEditor,
     create: authenticated,

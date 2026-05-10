@@ -18,6 +18,7 @@ export const FormPayments: CollectionConfig = {
   admin: {
     defaultColumns: ['form', 'user', 'paymentStatus', 'amount', 'createdAt'],
     useAsTitle: 'id',
+    hidden: true,
   },
   fields: [
     {
@@ -78,6 +79,12 @@ export const FormPayments: CollectionConfig = {
       type: 'text',
       label: { en: 'Description', pt: 'Descrição' },
       admin: { readOnly: true },
+    },
+    {
+      name: 'handledAt',
+      type: 'date',
+      label: { en: 'Handled At', pt: 'Tratado Em' },
+      admin: { readOnly: true, position: 'sidebar' },
     },
     {
       name: 'submissionData',

@@ -29,6 +29,10 @@ export const Newsletters: CollectionConfig = {
     livePreview: {
       url: () => `${process.env.NEXT_PUBLIC_SERVER_URL}/newsletter-preview`,
     },
+    group: {
+      pt: 'Conteúdo',
+      en: 'Content',
+    },
   },
   fields: [
     {

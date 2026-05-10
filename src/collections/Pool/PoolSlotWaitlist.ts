@@ -17,6 +17,7 @@ export const PoolSlotWaitlist: CollectionConfig = {
   admin: {
     defaultColumns: ['athlete', 'cycle', 'slotId', 'position', 'createdAt'],
     useAsTitle: 'slotId',
+    hidden: true,
   },
   fields: [
     {

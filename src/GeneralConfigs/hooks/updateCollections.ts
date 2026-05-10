@@ -17,10 +17,9 @@ const updateRelatedCollection = async ({
   payload: BasePayload
   locale?: 'en' | 'pt' | 'all'
   data: any
-  collection: 'gender' | 'disability' | 'aboutClub'
+  collection: 'disability' | 'aboutClub'
 }) => {
-  const dataProperty =
-    collection === 'gender' ? 'genders' : collection === 'disability' ? 'disabilities' : collection
+  const dataProperty = collection === 'disability' ? 'disabilities' : collection
   const { userData } = data
 
   for (const [index, dataObj] of (userData[dataProperty] ?? []).entries()) {
@@ -48,7 +47,6 @@ const updateRelatedCollection = async ({
             data: {
               label: dataObj.label,
               value: dataObj.value,
-              ...(collection === 'gender' && { title: dataObj.value || dataObj.label }),
             },
             where: {
               hiddenId: {
@@ -57,7 +55,7 @@ const updateRelatedCollection = async ({
             },
           })
 
-          data.userData.genders[index].collectionId = response.docs[0]?.id
+          data.userData[dataProperty][index].collectionId = response.docs[0]?.id
         }
       } else {
         const response = await payload.create({
@@ -67,15 +65,10 @@ const updateRelatedCollection = async ({
             label: dataObj.label,
             value: dataObj.value,
             hiddenId: dataObj.id,
-            ...(collection === 'gender' && { title: dataObj.value || dataObj.label }),
           },
         })
 
-        if (collection === 'gender') {
-          if (userData.genders[index]) {
-            userData.genders[index].collectionId = response.id
-          }
-        } else if (collection === 'disability') {
+        if (collection === 'disability') {
           if (userData.disabilities[index]) {
             userData.disabilities[index].collectionId = response.id
           }

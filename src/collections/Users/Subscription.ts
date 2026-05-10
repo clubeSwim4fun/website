@@ -14,7 +14,7 @@ export const Subscription: CollectionConfig = {
   },
   admin: {
     defaultColumns: ['user', 'type', 'amount', 'startDate', 'endDate', 'paymentStatus'],
-    // hidden: true,
+    hidden: true,
   },
   fields: [
     {

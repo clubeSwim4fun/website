@@ -16,6 +16,9 @@ export const PoolSubscriptions: CollectionConfig = {
       pt: 'Subscrição de Piscina',
     },
   },
+  admin: {
+    hidden: true,
+  },
   access: {
     create: authenticated,
     read: isAdminOrSelf,

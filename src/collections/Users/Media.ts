@@ -16,6 +16,9 @@ export const UserMedia: CollectionConfig = {
       pt: 'Utilizador-Mídia',
     },
   },
+  admin: {
+    hidden: true,
+  },
   access: {
     admin: isAdminOrEditor,
     create: anyone,

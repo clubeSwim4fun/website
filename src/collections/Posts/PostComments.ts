@@ -14,6 +14,9 @@ export const PostComments: CollectionConfig = {
     update: isAdmin,
     delete: isAdmin,
   },
+  admin: {
+    hidden: true,
+  },
   fields: [
     {
       name: 'post',

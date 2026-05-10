@@ -8,12 +8,12 @@ export const Categories: CollectionConfig = {
   slug: 'categories',
   labels: {
     plural: {
-      en: 'Categories',
-      pt: 'Categorias',
+      en: 'Event Categories',
+      pt: 'Categorias dos Eventos',
     },
     singular: {
-      en: 'Category',
-      pt: 'Categoria',
+      en: 'Event Category',
+      pt: 'Categoria do Evento',
     },
   },
   access: {
@@ -24,6 +24,10 @@ export const Categories: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'title',
+    group: {
+      pt: 'Gestão de Eventos',
+      en: 'Events control',
+    },
   },
   fields: [
     {

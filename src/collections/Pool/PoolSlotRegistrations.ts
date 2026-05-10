@@ -17,6 +17,7 @@ export const PoolSlotRegistrations: CollectionConfig = {
   admin: {
     defaultColumns: ['athlete', 'cycle', 'slotDay', 'slotTime', 'createdAt'],
     useAsTitle: 'slotDay',
+    hidden: true,
   },
   fields: [
     {

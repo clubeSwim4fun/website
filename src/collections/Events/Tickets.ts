@@ -22,7 +22,7 @@ export const Tickets: CollectionConfig = {
     update: isAdminOrEditor,
   },
   admin: {
-    hidden: false,
+    hidden: true,
     useAsTitle: 'name',
   },
   fields: [

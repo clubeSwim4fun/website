@@ -40,6 +40,10 @@ export const Users: CollectionConfig = {
     components: {
       beforeListTable: ['src/components/admin/AnnualReset/ResetButton'],
     },
+    group: {
+      pt: 'Configurações Gerais',
+      en: 'General Configs',
+    },
   },
   auth: true,
   fields: [

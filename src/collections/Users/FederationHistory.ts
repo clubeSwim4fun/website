@@ -15,6 +15,7 @@ export const FederationHistory: CollectionConfig = {
   admin: {
     defaultColumns: ['user', 'federationId', 'season'],
     useAsTitle: 'federationId',
+    hidden: true,
   },
   fields: [
     {

@@ -15,6 +15,7 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import { getUserFutureEvents } from '@/helpers/userHelper'
 import { getUserSubscriptions } from '@/helpers/subscriptionHelper'
+import { getPayload as getPayloadInstance } from 'payload'
 
 const UserPage = async ({ params }: { params: Promise<{ locale: string }> }) => {
   const { locale } = await params
@@ -47,6 +48,35 @@ const UserPage = async ({ params }: { params: Promise<{ locale: string }> }) => 
     getCountryCode(user.nationality as string),
   ])
 
+  const season = `${new Date().getFullYear()}-${new Date().getFullYear() + 1}`
+  const temporaryIdsResult = await payload.find({
+    collection: 'temporary-group-ids',
+    where: {
+      and: [{ user: { equals: user.id } }, { season: { equals: season } }],
+    },
+    depth: 1,
+    limit: 50,
+  })
+
+  const temporaryIds = temporaryIdsResult.docs.map((doc: any) => ({
+    id: doc.id,
+    number: doc.number as string,
+    season: doc.season as string,
+    group:
+      typeof doc.group === 'object' && doc.group !== null
+        ? {
+            id: doc.group.id,
+            title:
+              typeof doc.group.title === 'object'
+                ? (doc.group.title?.[locale as string] ??
+                  doc.group.title?.pt ??
+                  doc.group.title?.en ??
+                  '')
+                : (doc.group.title ?? ''),
+          }
+        : null,
+  }))
+
   const poolSubCount = subsResult.rows.filter((r) => r.kind === 'pool').length
 
   return (
@@ -60,7 +90,7 @@ const UserPage = async ({ params }: { params: Promise<{ locale: string }> }) => 
           poolSubCount={poolSubCount}
         />
 
-        <UserDetails user={user} countryCode={countryCode || 'PT'} />
+        <UserDetails user={user} countryCode={countryCode || 'PT'} temporaryIds={temporaryIds} />
 
         <UserFutureEvents userId={user.id} />
         <UserSubscriptions userId={user.id} />
