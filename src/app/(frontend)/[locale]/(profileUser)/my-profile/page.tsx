@@ -54,28 +54,57 @@ const UserPage = async ({ params }: { params: Promise<{ locale: string }> }) => 
     where: {
       and: [{ user: { equals: user.id } }, { season: { equals: season } }],
     },
-    depth: 1,
+    depth: 2,
     limit: 50,
   })
 
-  const temporaryIds = temporaryIdsResult.docs.map((doc: any) => ({
-    id: doc.id,
-    number: doc.number as string,
-    season: doc.season as string,
-    group:
-      typeof doc.group === 'object' && doc.group !== null
-        ? {
-            id: doc.group.id,
-            title:
-              typeof doc.group.title === 'object'
-                ? (doc.group.title?.[locale as string] ??
-                  doc.group.title?.pt ??
-                  doc.group.title?.en ??
-                  '')
-                : (doc.group.title ?? ''),
+  const resolveTitle = (t: any, loc: string): string => {
+    if (!t) return ''
+    if (typeof t === 'string') return t
+    if (typeof t === 'object') return t[loc] ?? t.pt ?? t.en ?? ''
+    return ''
+  }
+
+  const temporaryIds = await Promise.all(
+    temporaryIdsResult.docs.map(async (doc: any) => {
+      // Polymorphic: { relationTo, value } — or legacy plain populated object
+      let groupDoc: any = null
+
+      if (doc.group && typeof doc.group === 'object') {
+        if ('value' in doc.group) {
+          // polymorphic shape
+          groupDoc = typeof doc.group.value === 'object' ? doc.group.value : null
+          // value is an unpopulated ID string — fetch manually
+          if (!groupDoc && typeof doc.group.value === 'string') {
+            const col = doc.group.relationTo === 'group-categories' ? 'group-categories' : 'groups'
+            groupDoc = await payload
+              .findByID({ collection: col, id: doc.group.value, depth: 0 })
+              .catch(() => null)
           }
-        : null,
-  }))
+        } else if (doc.group.id) {
+          // legacy plain populated object
+          groupDoc = doc.group
+        }
+      } else if (typeof doc.group === 'string') {
+        // legacy plain ID — try groups first, then group-categories
+        groupDoc = await payload
+          .findByID({ collection: 'groups', id: doc.group, depth: 0 })
+          .catch(() => null)
+        if (!groupDoc) {
+          groupDoc = await payload
+            .findByID({ collection: 'group-categories', id: doc.group, depth: 0 })
+            .catch(() => null)
+        }
+      }
+
+      return {
+        id: doc.id,
+        number: doc.number as string,
+        season: doc.season as string,
+        group: groupDoc ? { id: groupDoc.id, title: resolveTitle(groupDoc.title, locale) } : null,
+      }
+    }),
+  )
 
   const poolSubCount = subsResult.rows.filter((r) => r.kind === 'pool').length
 

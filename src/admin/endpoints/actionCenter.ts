@@ -761,6 +761,10 @@ export const actionCenterHandleForm: Endpoint = {
       } else {
         // Save to temporary-group-ids
         const season = `${new Date().getFullYear()}-${new Date().getFullYear() + 1}`
+        const groupRelation = {
+          relationTo: collection as 'groups' | 'group-categories',
+          value: groupId,
+        }
 
         // Check if a record already exists for this user+group+season
         const existing = await req.payload.find({
@@ -768,7 +772,7 @@ export const actionCenterHandleForm: Endpoint = {
           where: {
             and: [
               { user: { equals: userId } },
-              { group: { equals: groupId } },
+              { 'group.value': { equals: groupId } },
               { season: { equals: season } },
             ],
           },
@@ -779,12 +783,12 @@ export const actionCenterHandleForm: Endpoint = {
           await req.payload.update({
             collection: 'temporary-group-ids',
             id: (existing.docs[0] as any).id,
-            data: { number: idNumber },
+            data: { group: groupRelation, number: idNumber } as any,
           })
         } else {
           await req.payload.create({
             collection: 'temporary-group-ids',
-            data: { user: userId, group: groupId, season, number: idNumber },
+            data: { user: userId, group: groupRelation, season, number: idNumber } as any,
           })
         }
       }

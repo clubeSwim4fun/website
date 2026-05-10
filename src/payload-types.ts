@@ -4004,7 +4004,15 @@ export interface FormPayment {
 export interface TemporaryGroupId {
   id: string;
   user: string | User;
-  group: string | Group;
+  group:
+    | {
+        relationTo: 'groups';
+        value: string | Group;
+      }
+    | {
+        relationTo: 'group-categories';
+        value: string | GroupCategory;
+      };
   season: string;
   number: string;
   updatedAt: string;

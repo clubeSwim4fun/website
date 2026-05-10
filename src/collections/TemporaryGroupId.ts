@@ -35,7 +35,7 @@ export const TemporaryGroupId: CollectionConfig = {
         {
           name: 'group',
           type: 'relationship',
-          relationTo: 'groups',
+          relationTo: ['groups', 'group-categories'] as const,
           required: true,
           label: { en: 'Group', pt: 'Grupo' },
           admin: { width: '33%' },

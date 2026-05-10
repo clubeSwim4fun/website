@@ -84,7 +84,7 @@ export const FormPayments: CollectionConfig = {
       name: 'handledAt',
       type: 'date',
       label: { en: 'Handled At', pt: 'Tratado Em' },
-      admin: { readOnly: true, position: 'sidebar' },
+      admin: { readOnly: false, position: 'sidebar' },
     },
     {
       name: 'submissionData',
