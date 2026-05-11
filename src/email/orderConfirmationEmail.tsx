@@ -3,14 +3,15 @@ import { TemplateEmail } from './template'
 import { Order, User } from '@/payload-types'
 import { OrderEvent, OrderEventTicket } from '@/app/(frontend)/[locale]/order/[id]/order-table'
 import { convertMtoKm } from '@/utilities/util'
-import { getFormatter, getLocale, getTranslations } from 'next-intl/server'
+import { getFormatter, getTranslations } from 'next-intl/server'
+import { TypedLocale } from 'payload'
 
 type Args = {
   order?: Order
+  locale?: TypedLocale
 }
-export async function OrderConfirmationEmail({ order }: Args) {
+export async function OrderConfirmationEmail({ order, locale = 'pt' }: Args) {
   const user = order?.user as User
-  const locale = await getLocale()
   const t = await getTranslations({ locale })
   const format = await getFormatter({ locale })
 

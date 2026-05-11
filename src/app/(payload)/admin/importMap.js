@@ -34,6 +34,7 @@ import { SlugComponent as SlugComponent_92cc057d0a2abb4f6cf0307edf59f986 } from 
 import { BlocksFeatureClient as BlocksFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { default as default_494ffa38dbe6a23df1784d4037b56487 } from 'src/components/admin/ValidateUser/ValidationControls'
 import { default as default_6d76baece3b875d22d3a169ed534fa3f } from 'src/components/admin/AnnualReset/ResetButton'
+import { default as default_ffb39ca0b289ef504cf46452c47b616f } from '@/components/admin/Orders/ResendOrderEmailButton.client'
 import { PoolSubscriptionSlotRowLabel as PoolSubscriptionSlotRowLabel_4b95c03cc50c3f74ec02e1f2b82931f0 } from '@/collections/Pool/PoolSubscriptionSlotRowLabel'
 import { default as default_2965055f0240cdf12faf0eaba104ac3b } from 'src/components/admin/Newsletter/SendButton'
 import { LinkToDoc as LinkToDoc_aead06e4cbf6b2620c5c51c9ab283634 } from '@payloadcms/plugin-search/client'
@@ -84,6 +85,7 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#BlocksFeatureClient": BlocksFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "src/components/admin/ValidateUser/ValidationControls#default": default_494ffa38dbe6a23df1784d4037b56487,
   "src/components/admin/AnnualReset/ResetButton#default": default_6d76baece3b875d22d3a169ed534fa3f,
+  "@/components/admin/Orders/ResendOrderEmailButton.client#default": default_ffb39ca0b289ef504cf46452c47b616f,
   "@/collections/Pool/PoolSubscriptionSlotRowLabel#PoolSubscriptionSlotRowLabel": PoolSubscriptionSlotRowLabel_4b95c03cc50c3f74ec02e1f2b82931f0,
   "src/components/admin/Newsletter/SendButton#default": default_2965055f0240cdf12faf0eaba104ac3b,
   "@payloadcms/plugin-search/client#LinkToDoc": LinkToDoc_aead06e4cbf6b2620c5c51c9ab283634,

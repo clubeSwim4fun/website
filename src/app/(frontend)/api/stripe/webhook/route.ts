@@ -158,8 +158,8 @@ async function handlePaymentSuccess(
           try {
             await payload.update({
               collection: 'carts',
+              id: order.cartId,
               data: { items: [], totalPrice: 0 },
-              where: { id: { equals: order.cartId } },
             })
           } catch (cartErr) {
             console.error('[webhook] Failed to clear cart:', cartErr)
@@ -177,11 +177,13 @@ async function handlePaymentSuccess(
           const { render } = await import('@react-email/components')
           const { OrderConfirmationEmail } = await import('@/email/orderConfirmationEmail')
           const { sendEmail } = await import('@/helpers/emailHelper')
+          const locale = (intent.metadata?.locale as 'pt' | 'en') ?? 'pt'
           const emailHtml = await render(
-            React.default.createElement(OrderConfirmationEmail, { order }),
+            React.default.createElement(OrderConfirmationEmail, { order, locale }),
           )
+          const subject = locale === 'en' ? 'Order confirmation' : 'Confirmação de encomenda'
           if (user.email) {
-            await sendEmail({ emailHtml, subject: 'Confirmação de encomenda', to: user.email })
+            await sendEmail({ emailHtml, subject, to: user.email })
           }
         } catch (emailErr) {
           console.error('[webhook] Order confirmation email failed:', emailErr)

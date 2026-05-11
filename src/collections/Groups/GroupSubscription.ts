@@ -14,7 +14,7 @@ export const GroupSubscription: CollectionConfig = {
   },
   admin: {
     defaultColumns: ['group', 'user', 'status', 'createdAt'],
-    hidden: true,
+    hidden: false,
   },
   fields: [
     {

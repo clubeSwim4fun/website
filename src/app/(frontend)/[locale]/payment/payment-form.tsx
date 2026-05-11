@@ -69,7 +69,7 @@ export const PaymentForm: React.FC<Props> = ({ amountCents, description, lineIte
     <StripePaymentForm
       amount={amountCents}
       description={description}
-      metadata={{ type: 'order', recordId: orderId }}
+      metadata={{ type: 'order', recordId: orderId, locale }}
       customer={customer}
       lineItems={lineItems}
       onSuccess={handleSuccess}

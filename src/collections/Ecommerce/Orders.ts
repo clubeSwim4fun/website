@@ -17,7 +17,7 @@ export const Orders: CollectionConfig = {
     },
   },
   admin: {
-    hidden: true,
+    hidden: false,
   },
   access: {
     admin: isAdminOrEditor,
@@ -39,6 +39,15 @@ export const Orders: CollectionConfig = {
       admin: {
         readOnly: true,
         allowEdit: false,
+      },
+    },
+    {
+      name: 'resendEmailButton',
+      type: 'ui',
+      admin: {
+        components: {
+          Field: '@/components/admin/Orders/ResendOrderEmailButton.client#default',
+        },
       },
     },
     {
