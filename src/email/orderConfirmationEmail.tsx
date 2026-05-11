@@ -5,6 +5,7 @@ import { OrderEvent, OrderEventTicket } from '@/app/(frontend)/[locale]/order/[i
 import { convertMtoKm } from '@/utilities/util'
 import { getFormatter, getTranslations } from 'next-intl/server'
 import { TypedLocale } from 'payload'
+import { getServerSideURL } from '@/utilities/getURL'
 
 type Args = {
   order?: Order
@@ -14,6 +15,7 @@ export async function OrderConfirmationEmail({ order, locale = 'pt' }: Args) {
   const user = order?.user as User
   const t = await getTranslations({ locale })
   const format = await getFormatter({ locale })
+  const baseUrl = getServerSideURL()
 
   return (
     <TemplateEmail title={t('Order.title')}>
@@ -37,7 +39,9 @@ export async function OrderConfirmationEmail({ order, locale = 'pt' }: Args) {
                 marginTop: '12px',
               }}
             >
-              <a href={`/event/${eventObj?.event?.slug}` || '/'}>{eventObj?.event?.title}</a>
+              <a href={`${baseUrl}/${locale}/event/${eventObj?.event?.slug}`}>
+                {eventObj?.event?.title}
+              </a>
             </h2>
             <table
               style={{
